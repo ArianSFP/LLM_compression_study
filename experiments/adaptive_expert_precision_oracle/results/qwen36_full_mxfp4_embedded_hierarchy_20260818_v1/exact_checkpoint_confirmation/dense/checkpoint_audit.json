@@ -1,0 +1,20 @@
+{
+  "checkpoint": "/root/qwen36_mxfp4_candidate",
+  "errors": [],
+  "experts_per_layer": 256,
+  "format": "mxfp4-pack-quantized",
+  "group_size": 32,
+  "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "missing_count": 0,
+  "missing_sample": [],
+  "passed": true,
+  "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+  "required_tensor_entries": 6144,
+  "revision": "7eceff3a9f7e6f916c824d197266d86676bce695"
+}

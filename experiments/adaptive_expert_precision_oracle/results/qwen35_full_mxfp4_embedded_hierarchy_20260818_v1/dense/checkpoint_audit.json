@@ -1,0 +1,20 @@
+{
+  "checkpoint": "/root/mxfp4_checkpoint_audit",
+  "errors": [],
+  "experts_per_layer": 256,
+  "format": "mxfp4-pack-quantized",
+  "group_size": 32,
+  "index_sha256": "846b318cd06dea6270d9166b72bb3c551d7e97318cd54bae34b8eceb5c568744",
+  "layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "missing_count": 0,
+  "missing_sample": [],
+  "passed": true,
+  "repository": "olka-fi/Qwen3.5-35B-A3B-MXFP4",
+  "required_tensor_entries": 6144,
+  "revision": "f9edc32e907150f0fb6f902c452f6d111d430703"
+}

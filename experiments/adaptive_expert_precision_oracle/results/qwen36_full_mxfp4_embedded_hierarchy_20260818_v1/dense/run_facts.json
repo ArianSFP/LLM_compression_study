@@ -1,0 +1,295 @@
+{
+  "capture_status": "cross-reference exploratory oracle; activations are aligned Qwen3.6 BF16 captures, not a forward pass from this exact MXFP4 checkpoint",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "required_tensor_entries": 6144,
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695"
+  },
+  "completed_unix": 1787086172.1954722,
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "host": "4324999ecfd9",
+  "last_completed": {
+    "expert": 235,
+    "layer": 39,
+    "unix": 1787086172.1514702
+  },
+  "layers": {
+    "0": {
+      "experts": [
+        17,
+        71,
+        181,
+        205,
+        207,
+        238
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "split_occurrences": {
+        "17": {
+          "test": 5,
+          "train": 5,
+          "validation": 5
+        },
+        "181": {
+          "test": 19,
+          "train": 77,
+          "validation": 12
+        },
+        "205": {
+          "test": 8,
+          "train": 31,
+          "validation": 3
+        },
+        "207": {
+          "test": 12,
+          "train": 27,
+          "validation": 3
+        },
+        "238": {
+          "test": 24,
+          "train": 70,
+          "validation": 16
+        },
+        "71": {
+          "test": 3,
+          "train": 8,
+          "validation": 3
+        }
+      },
+      "strata": {
+        "17": "cold",
+        "181": "hot",
+        "205": "median",
+        "207": "median",
+        "238": "hot",
+        "71": "cold"
+      }
+    },
+    "20": {
+      "experts": [
+        65,
+        72,
+        129,
+        192,
+        225,
+        232
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "split_occurrences": {
+        "129": {
+          "test": 4,
+          "train": 4,
+          "validation": 3
+        },
+        "192": {
+          "test": 3,
+          "train": 4,
+          "validation": 4
+        },
+        "225": {
+          "test": 8,
+          "train": 32,
+          "validation": 9
+        },
+        "232": {
+          "test": 77,
+          "train": 215,
+          "validation": 73
+        },
+        "65": {
+          "test": 11,
+          "train": 32,
+          "validation": 6
+        },
+        "72": {
+          "test": 84,
+          "train": 275,
+          "validation": 54
+        }
+      },
+      "strata": {
+        "129": "cold",
+        "192": "cold",
+        "225": "median",
+        "232": "hot",
+        "65": "median",
+        "72": "hot"
+      }
+    },
+    "39": {
+      "experts": [
+        22,
+        139,
+        155,
+        180,
+        192,
+        235
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "split_occurrences": {
+        "139": {
+          "test": 7,
+          "train": 33,
+          "validation": 6
+        },
+        "155": {
+          "test": 5,
+          "train": 36,
+          "validation": 5
+        },
+        "180": {
+          "test": 3,
+          "train": 8,
+          "validation": 3
+        },
+        "192": {
+          "test": 4,
+          "train": 6,
+          "validation": 5
+        },
+        "22": {
+          "test": 39,
+          "train": 115,
+          "validation": 29
+        },
+        "235": {
+          "test": 60,
+          "train": 178,
+          "validation": 42
+        }
+      },
+      "strata": {
+        "139": "median",
+        "155": "median",
+        "180": "cold",
+        "192": "cold",
+        "22": "hot",
+        "235": "hot"
+      }
+    },
+    "4": {
+      "experts": [
+        23,
+        134,
+        154,
+        156,
+        174,
+        176
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.03125,
+          0.046875,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 6.080580642446876e-06,
+        "train_samples": 823
+      },
+      "split_occurrences": {
+        "134": {
+          "test": 70,
+          "train": 177,
+          "validation": 66
+        },
+        "154": {
+          "test": 28,
+          "train": 92,
+          "validation": 18
+        },
+        "156": {
+          "test": 4,
+          "train": 8,
+          "validation": 3
+        },
+        "174": {
+          "test": 3,
+          "train": 10,
+          "validation": 3
+        },
+        "176": {
+          "test": 7,
+          "train": 34,
+          "validation": 3
+        },
+        "23": {
+          "test": 11,
+          "train": 27,
+          "validation": 6
+        }
+      },
+      "strata": {
+        "134": "hot",
+        "154": "hot",
+        "156": "cold",
+        "174": "cold",
+        "176": "median",
+        "23": "median"
+      }
+    }
+  },
+  "run_id": "qwen36_full_mxfp4_embedded_hierarchy_20260818_v1",
+  "split_requests": {
+    "test": 16,
+    "train": 53,
+    "validation": 12
+  },
+  "started_unix": 1787086127.6444986,
+  "test_invocations": 285,
+  "torch": "2.8.0+cu128",
+  "wall_seconds": 44.550973653793335
+}

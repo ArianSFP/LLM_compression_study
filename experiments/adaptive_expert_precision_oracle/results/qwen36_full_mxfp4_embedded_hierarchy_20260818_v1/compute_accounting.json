@@ -1,0 +1,33 @@
+{
+  "scope": "analytical deployment accounting; no DGX Spark timing was measured",
+  "original_weights_per_expert": 3145728,
+  "reference_expert_bytes": 1671168,
+  "reference_effective_bpw": 4.25,
+  "resident_parent_bytes": 884736,
+  "resident_parent_effective_bpw": 2.25,
+  "resident_parent_breakdown": {
+    "two_bit_parent_codes": 786432,
+    "shared_e8m0_scale_codes": 98304
+  },
+  "complete_reference_gemv_flops": 6291456,
+  "correction_arithmetic_intensity_flops_per_external_byte": 16.0,
+  "gb10_assumption": {
+    "memory_bandwidth_bytes_per_second": 273000000000.0,
+    "source": "same analytical assumption as the preceding RRQ study",
+    "classification": "memory-bound; no claim of measured Spark latency"
+  },
+  "operating_points": [
+    {"physical_bpw": 0.25, "external_bytes": 98304, "bandwidth_reduction_vs_reference": 17.0, "extra_flops": 1572864, "extra_flops_over_reference_gemv": 0.25, "base_plus_correction_flops": 7864320, "local_plus_external_bytes": 983040, "combined_arithmetic_intensity": 8.0},
+    {"physical_bpw": 0.5, "external_bytes": 196608, "bandwidth_reduction_vs_reference": 8.5, "extra_flops": 3145728, "extra_flops_over_reference_gemv": 0.5, "base_plus_correction_flops": 9437184, "local_plus_external_bytes": 1081344, "combined_arithmetic_intensity": 8.7272727273},
+    {"physical_bpw": 0.75, "external_bytes": 294912, "bandwidth_reduction_vs_reference": 5.6666666667, "extra_flops": 4718592, "extra_flops_over_reference_gemv": 0.75, "base_plus_correction_flops": 11010048, "local_plus_external_bytes": 1179648, "combined_arithmetic_intensity": 9.3333333333},
+    {"physical_bpw": 1.0, "external_bytes": 393216, "bandwidth_reduction_vs_reference": 4.25, "extra_flops": 6291456, "extra_flops_over_reference_gemv": 1.0, "base_plus_correction_flops": 12582912, "local_plus_external_bytes": 1277952, "combined_arithmetic_intensity": 9.8461538462},
+    {"physical_bpw": 1.25, "external_bytes": 491520, "bandwidth_reduction_vs_reference": 3.4, "extra_flops": 7864320, "extra_flops_over_reference_gemv": 1.25, "base_plus_correction_flops": 14155776, "local_plus_external_bytes": 1376256, "combined_arithmetic_intensity": 10.2857142857},
+    {"physical_bpw": 1.5, "external_bytes": 589824, "bandwidth_reduction_vs_reference": 2.8333333333, "extra_flops": 9437184, "extra_flops_over_reference_gemv": 1.5, "base_plus_correction_flops": 15728640, "local_plus_external_bytes": 1474560, "combined_arithmetic_intensity": 10.6666666667},
+    {"physical_bpw": 2.0, "external_bytes": 786432, "bandwidth_reduction_vs_reference": 2.125, "extra_flops": 12582912, "extra_flops_over_reference_gemv": 2.0, "base_plus_correction_flops": 18874368, "local_plus_external_bytes": 1671168, "combined_arithmetic_intensity": 11.2941176471}
+  ],
+  "notes": [
+    "Each selected refinement bit for one input coordinate accumulates one full output vector.",
+    "Lookup, bit unpack, scheduler, and output-write overhead are excluded; these require a fused-kernel benchmark.",
+    "The H0 search cost is not included in deployment FLOPs because predicted support is the intended deployment path."
+  ]
+}

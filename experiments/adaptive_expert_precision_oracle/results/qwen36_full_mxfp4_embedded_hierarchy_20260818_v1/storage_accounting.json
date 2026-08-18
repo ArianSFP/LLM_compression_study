@@ -1,0 +1,37 @@
+{
+  "weights_per_projection": 1048576,
+  "weights_per_expert": 3145728,
+  "authoritative_reference": {
+    "leaf_code_bpw": 4.0,
+    "e8m0_scale_bpw": 0.25,
+    "effective_bpw": 4.25,
+    "bytes_per_projection": 557056,
+    "bytes_per_expert": 1671168
+  },
+  "spark_resident_parent": {
+    "parent_code_bpw": 2.0,
+    "shared_scale_bpw": 0.25,
+    "effective_bpw": 2.25,
+    "bytes_per_projection": 294912,
+    "bytes_per_expert": 884736,
+    "external_duplicate_counted": false
+  },
+  "external_exact_suffix": {
+    "refinement_planes": 2,
+    "bpw_per_plane": 1.0,
+    "bytes_per_projection_per_plane": 131072,
+    "bytes_per_expert_for_both_planes": 786432,
+    "per_atom_headers": 0,
+    "per_atom_scales": 0,
+    "identity": "implicit in fixed bitplane offset"
+  },
+  "external_fallback_and_layouts": [
+    {"layout_replicas": 1, "total_external_bpw": 6.25, "multiplier_vs_reference": 1.4705882353, "within_5x": true},
+    {"layout_replicas": 2, "total_external_bpw": 8.25, "multiplier_vs_reference": 1.9411764706, "within_5x": true},
+    {"layout_replicas": 4, "total_external_bpw": 12.25, "multiplier_vs_reference": 2.8823529412, "within_5x": true}
+  ],
+  "primary_layout": "one training-only co-selection layout, 512-byte pages, separate refinement planes",
+  "actual_equals_ideal_packed": true,
+  "zero_points": "none",
+  "tree_metadata_bytes_per_projection": 32
+}

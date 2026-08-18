@@ -1,0 +1,212 @@
+{
+  "capture_status": "confirmatory activations captured directly from the exact MXFP4 checkpoint through compressed-tensors dequantize=True; hierarchy locked from the cross-reference validation split",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "required_tensor_entries": 6144,
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695"
+  },
+  "completed_unix": 1787087383.0584419,
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "host": "4324999ecfd9",
+  "last_completed": {
+    "expert": 231,
+    "layer": 39,
+    "unix": 1787087383.0186217
+  },
+  "layers": {
+    "0": {
+      "experts": [
+        62,
+        72,
+        160
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.078125,
+          0.0859375,
+          0.09375,
+          0.09375
+        ],
+        "rank": 4,
+        "ridge": 2.5282183196395635e-06,
+        "train_samples": 70
+      },
+      "split_occurrences": {
+        "160": {
+          "test": 1,
+          "train": 5,
+          "validation": 3
+        },
+        "62": {
+          "test": 11,
+          "train": 9,
+          "validation": 7
+        },
+        "72": {
+          "test": 1,
+          "train": 1,
+          "validation": 1
+        }
+      },
+      "strata": {
+        "160": "median",
+        "62": "hot",
+        "72": "cold"
+      }
+    },
+    "20": {
+      "experts": [
+        191,
+        242,
+        251
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0006722354888916015,
+        "train_samples": 70
+      },
+      "split_occurrences": {
+        "191": {
+          "test": 11,
+          "train": 33,
+          "validation": 18
+        },
+        "242": {
+          "test": 2,
+          "train": 1,
+          "validation": 1
+        },
+        "251": {
+          "test": 6,
+          "train": 5,
+          "validation": 3
+        }
+      },
+      "strata": {
+        "191": "hot",
+        "242": "cold",
+        "251": "median"
+      }
+    },
+    "39": {
+      "experts": [
+        68,
+        108,
+        231
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.03125,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0008366943895816803,
+        "train_samples": 70
+      },
+      "split_occurrences": {
+        "108": {
+          "test": 17,
+          "train": 26,
+          "validation": 18
+        },
+        "231": {
+          "test": 5,
+          "train": 5,
+          "validation": 2
+        },
+        "68": {
+          "test": 1,
+          "train": 2,
+          "validation": 1
+        }
+      },
+      "strata": {
+        "108": "hot",
+        "231": "median",
+        "68": "cold"
+      }
+    },
+    "4": {
+      "experts": [
+        17,
+        110,
+        154
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0859375,
+          0.078125,
+          0.078125,
+          0.0859375
+        ],
+        "rank": 4,
+        "ridge": 1.042504096403718e-05,
+        "train_samples": 70
+      },
+      "split_occurrences": {
+        "110": {
+          "test": 6,
+          "train": 4,
+          "validation": 2
+        },
+        "154": {
+          "test": 23,
+          "train": 41,
+          "validation": 24
+        },
+        "17": {
+          "test": 1,
+          "train": 1,
+          "validation": 1
+        }
+      },
+      "strata": {
+        "110": "median",
+        "154": "hot",
+        "17": "cold"
+      }
+    }
+  },
+  "run_id": "qwen36_exact_mxfp4_capture_confirm_20260818_v1",
+  "split_requests": {
+    "test": 3,
+    "train": 6,
+    "validation": 3
+  },
+  "started_unix": 1787087374.0873141,
+  "test_invocations": 85,
+  "torch": "2.8.0+cu128",
+  "tree_selection": "locked before exact-checkpoint confirmation",
+  "wall_seconds": 8.97112774848938
+}
