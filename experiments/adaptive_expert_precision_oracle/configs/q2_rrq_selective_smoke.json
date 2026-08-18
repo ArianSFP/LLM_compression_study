@@ -1,0 +1,27 @@
+{
+  "run_id": "qwen36_q2_rrq_selective_smoke",
+  "seed": 20260818,
+  "layers": [0],
+  "base_group_size": 64,
+  "page_size": 512,
+  "physical_budgets_bpw": [0.5, 1.0],
+  "support_targets": [0.8, 0.9],
+  "experts_per_frequency_stratum": 1,
+  "max_train_invocations_per_expert": 4,
+  "max_validation_invocations_per_expert": 1,
+  "max_test_invocations_per_expert": 1,
+  "basis_audit_experts_per_stratum": 1,
+  "ranking_audit_invocations_per_layer": 0,
+  "ranking_exact_max_steps": 64,
+  "beam_widths": [16],
+  "beam_candidate_pool": 16,
+  "primary_basis": {"gate": "generalized", "up": "generalized", "down": "native"},
+  "basis_families": ["native", "pca", "generalized", "refit_generalized", "learned_orthogonal", "overcomplete_2x"],
+  "dense_result": "results/qwen36_q2_rrq_dense_ceiling_20260818_v1",
+  "remote": {
+    "gguf_model": "/workspace/LLM_prefetch_study/models/Qwen3.6-35B-A3B-MXFP4_MOE.gguf",
+    "hf_model": "/workspace/LLM_prefetch_study/artifacts/j_route_0/hf/Qwen3.6-35B-A3B",
+    "capture_root": "/workspace/LLM_prefetch_study/artifacts/gcrp2/captures/gcrp2r_transformers_bf16_corpus_v1",
+    "gguf_python": "/workspace/LLM_prefetch_study/src/llama.cpp/gguf-py"
+  }
+}

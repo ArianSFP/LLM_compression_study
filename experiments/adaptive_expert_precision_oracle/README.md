@@ -62,6 +62,90 @@ PYTHONPATH=experiments/adaptive_expert_precision_oracle/src:experiments/adaptive
 
 Remote GPU commands are recorded verbatim in the execution ledger. They require the external paths named in the configs; raw captures and model files are intentionally not copied into this repository.
 
+## Dense recurrent-residual quantization ceiling
+
+The RRQ continuation asks whether PR #2's 84.6% plateau came from the
+high-bit-prefix atom codec rather than from the underlying correction.  It is a
+dense-prefix ceiling, not a selective packet experiment: every recurrent stage
+has independent two-bit codes and independently serialized scales, and each
+later residual is formed from the exact stored-scale decode of earlier stages.
+
+The primary run uses layers 0/4/20/39, the same 12 hot/median/cold experts per
+layer, request-level splits, production-reference GGUF matrices, serialized Q2
+base, and future-router-gradient proxy as PR #2.  Quantizer formats are selected
+on validation only with a bounded two-path beam.  The held-out set is labelled
+exploratory because the prior result informed the RRQ hypothesis; a new request
+set is required for a subsequent confirmatory result.
+
+Important rate convention: a complete symmetric two-bit stage is 2.25 bpw at
+group 64 or 2.125 bpw at group 128 after FP16 scales.  The implemented affine
+G64 stage is 2.375 bpw because zero points are byte-aligned.  Reported physical
+rates include these parameter streams and page rounding.  The resident Q2 base
+is local and excluded from streamed bpw.  The production-reference fallback is
+included in the 5x external-capacity check.
+
+Run the remote experiment (paths are machine-specific and recorded in the RRQ
+ledger):
+
+```bash
+python experiments/adaptive_expert_precision_oracle/scripts/run_dense_rrq_ceiling.py \
+  --config experiments/adaptive_expert_precision_oracle/configs/q2_rrq_dense_ceiling.json \
+  --captures /path/to/rrq_captures_seed20260817.npz \
+  --output experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_dense_ceiling_20260818_v1
+```
+
+Regenerate every RRQ table and PNG/SVG figure from saved Parquet files:
+
+```bash
+MPLBACKEND=Agg python experiments/adaptive_expert_precision_oracle/scripts/analyze_dense_rrq.py \
+  --result experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_dense_ceiling_20260818_v1 \
+  --prior-allocator experiments/adaptive_expert_precision_oracle/results/qwen36_q2_corrected_allocator_20260818_v7/allocator_metrics.parquet \
+  --config experiments/adaptive_expert_precision_oracle/configs/q2_rrq_dense_ceiling.json
+```
+
+Large serialized code streams are not committed. Their exact sizes and SHA-256
+hashes are retained in `serialized_stage_manifest.json`.
+
+## Selective RRQ retention follow-up
+
+The selective follow-up changes the storage orientation from row-major dense
+matrices to atom-major RRQ packets, so every quantization group belongs to one
+independently fetchable atom. It measures the fraction of the matched
+full-support three-stage atom-RRQ benefit retained at 0.5–3 physical correction
+bpw, exact stage-1/2/3 support crossings, full-support basis transfer, ranking
+regret, and nonlinear gate/up/down allocation. Exact selected atom IDs, stage
+depths, packet/page IDs, bytes, and marginal scores are retained in Parquet.
+
+Run and reproduce it with:
+
+```bash
+python experiments/adaptive_expert_precision_oracle/scripts/run_selective_rrq_retention.py \
+  --config experiments/adaptive_expert_precision_oracle/configs/q2_rrq_selective_retention.json \
+  --captures /path/to/rrq_captures_seed20260817.npz \
+  --dense-result experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_dense_ceiling_20260818_v1 \
+  --output experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_selective_retention_20260818_v1
+
+python experiments/adaptive_expert_precision_oracle/scripts/run_selective_rrq_ranking_supplement.py \
+  --config experiments/adaptive_expert_precision_oracle/configs/q2_rrq_selective_retention.json \
+  --captures /path/to/rrq_captures_seed20260817.npz \
+  --dense-result experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_dense_ceiling_20260818_v1 \
+  --output experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_selective_retention_20260818_v1/ranking_regret_supplement.parquet \
+  --layers 20 39
+
+MPLBACKEND=Agg python experiments/adaptive_expert_precision_oracle/scripts/analyze_selective_rrq.py \
+  --result experiments/adaptive_expert_precision_oracle/results/qwen36_q2_rrq_selective_retention_20260818_v1
+```
+
+The basis audit includes a stage-refitted generalized basis and two-view
+overcomplete diagnostic. The butterfly result is explicitly a fixed
+Hadamard-style control; it is not represented as a trained butterfly model.
+
+The final difficult-layer frontier reaches 87.43% median proxy recovery at 2
+physical bpw and 90.38% at 2.5 bpw. `RRQ_SELECTIVE_FOLLOWUP_REPORT.md` explains
+why this is material but still exploratory/partial support. The result directory
+contains standard `metrics.parquet`, `summary.csv`, per-layer/per-expert tables,
+all exact H0 action labels, and `artifact_hashes.json`.
+
 ## Scope boundary
 
 The pilot validates projection and sequential complete-expert representation with a rank-4 future-router-gradient proxy. It does not claim direct teacher-forced H1-H4 replay, top-8 joint layer allocation, or token/logit agreement: the available captures did not include a validated arbitrary-MoE-output replay checkpoint, and the replay identity prerequisite was therefore not satisfied. Those omissions are explicit in the report rather than filled with synthetic data.

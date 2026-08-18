@@ -1,0 +1,1539 @@
+{
+  "centroid4_diagnostic_scores": {
+    "down": 0.0008160140257150371,
+    "gate": 0.0004591717626871667,
+    "up": 0.0005412169004954261
+  },
+  "cuda": "12.8",
+  "down_calibration": {
+    "selected": "sequential_mix",
+    "validation": {
+      "authoritative_h": {
+        "denominator": 205.85907811748632,
+        "fraction_worsened": 0.0,
+        "invocations": 66,
+        "numerator": 1.083608462429424,
+        "score": 0.00526383617540051
+      },
+      "sequential_mix": {
+        "denominator": 205.85907811748632,
+        "fraction_worsened": 0.0,
+        "invocations": 66,
+        "numerator": 0.9210775749645049,
+        "score": 0.00447431118116071
+      },
+      "weight_only": {
+        "denominator": 205.85907811748632,
+        "fraction_worsened": 0.0,
+        "invocations": 66,
+        "numerator": 0.9329741171114243,
+        "score": 0.0045321009189546865
+      }
+    }
+  },
+  "external_capacity": "production-reference fallback plus selected three-stage RRQ package; base excluded",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "490a4c917101",
+  "layers": {
+    "0": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9991137578578702,
+          "max_abs_error": 0.003977775573730469,
+          "relative_rmse": 0.042095288984584284
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9932557693329298,
+          "max_abs_error": 0.015625,
+          "relative_rmse": 0.11631709208671244
+        },
+        "up": {
+          "bf16_q4_cosine": 0.9934549982739729,
+          "max_abs_error": 0.01513671875,
+          "relative_rmse": 0.11455121574093366
+        }
+      },
+      "experts": [
+        1,
+        8,
+        17,
+        22,
+        114,
+        158,
+        164,
+        181,
+        206,
+        238,
+        248,
+        252
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "search_experts": [
+        17,
+        1,
+        238
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.0.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      }
+    },
+    "20": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.999354980798801,
+          "max_abs_error": 0.002872169017791748,
+          "relative_rmse": 0.03591256635790636
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9932752036672813,
+          "max_abs_error": 0.015380859375,
+          "relative_rmse": 0.1164547288310138
+        },
+        "up": {
+          "bf16_q4_cosine": 0.993433696881787,
+          "max_abs_error": 0.015625,
+          "relative_rmse": 0.11489496959693818
+        }
+      },
+      "experts": [
+        5,
+        30,
+        44,
+        45,
+        46,
+        54,
+        72,
+        142,
+        148,
+        156,
+        232,
+        240
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "search_experts": [
+        5,
+        142,
+        232
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.20.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      }
+    },
+    "39": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9998299504255073,
+          "max_abs_error": 0.0048828125,
+          "relative_rmse": 0.01845641837380763
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9993299251297251,
+          "max_abs_error": 0.005588531494140625,
+          "relative_rmse": 0.036603530175156565
+        },
+        "up": {
+          "bf16_q4_cosine": 0.999343928114516,
+          "max_abs_error": 0.0039948225021362305,
+          "relative_rmse": 0.03621889507759392
+        }
+      },
+      "experts": [
+        22,
+        28,
+        37,
+        43,
+        55,
+        70,
+        119,
+        147,
+        153,
+        189,
+        193,
+        235
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "search_experts": [
+        153,
+        193,
+        235
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 860160,
+          "effective_bpw": 6.5625,
+          "quantization_type": "14",
+          "quantization_type_id": 14,
+          "tensor_name": "blk.39.ffn_down_exps.weight",
+          "tensor_storage_bytes": 220200960
+        },
+        "gate": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "up": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_up_exps.weight",
+          "tensor_storage_bytes": 184549376
+        }
+      }
+    },
+    "4": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9993543755202308,
+          "max_abs_error": 0.0024810433387756348,
+          "relative_rmse": 0.03592927770579052
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9934279830092947,
+          "max_abs_error": 0.015380859375,
+          "relative_rmse": 0.11499055752015261
+        },
+        "up": {
+          "bf16_q4_cosine": 0.993490378899211,
+          "max_abs_error": 0.01513671875,
+          "relative_rmse": 0.11433032662732326
+        }
+      },
+      "experts": [
+        28,
+        36,
+        82,
+        111,
+        129,
+        134,
+        143,
+        154,
+        190,
+        193,
+        220,
+        252
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.03125,
+          0.046875,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 6.080580060370267e-06,
+        "train_samples": 823
+      },
+      "search_experts": [
+        111,
+        193,
+        134
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.4.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.4.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.4.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      }
+    }
+  },
+  "peak_cuda_bytes": 159514624,
+  "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+  "quantizer_selection": {
+    "down": {
+      "beam_history": [
+        [
+          {
+            "denominator": 205.85907811748632,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 23.95459582134296,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "midrise_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.1163640488454523
+          },
+          {
+            "denominator": 205.85907811748632,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 26.481172751831703,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.12863738142613546
+          }
+        ],
+        [
+          {
+            "denominator": 205.85907811748632,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 3.837629222337092,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.01864202083012783
+          },
+          {
+            "denominator": 205.85907811748632,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 4.7903310960309975,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "signed_zero_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.023269953114708385
+          }
+        ],
+        [
+          {
+            "denominator": 205.85907811748632,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 0.9329741171114243,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.0045321009189546865
+          },
+          {
+            "denominator": 205.85907811748632,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 0.9896534901134516,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "signed_zero_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.004807431856605537
+          }
+        ]
+      ],
+      "heterogeneous": [
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        }
+      ],
+      "heterogeneous_score": 0.0045321009189546865,
+      "homogeneous": [
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        }
+      ],
+      "homogeneous_grid": [
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 0.6273363726953752,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0030474068884023013
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 0.9329741171114243,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0045321009189546865
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 0.976737883084821,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.004744691815472838
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 1.3877997429698212,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0067415037299340605
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 2.2143101848736295,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.010756436903938214
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.0149632090163005,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.014645762706153885
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.0724555464800023,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.014925042774778744
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.2626687649627253,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.015849040007362123
+        },
+        {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.6480832734840125,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.017721264987896265
+        }
+      ],
+      "homogeneous_score": 0.0030474068884023013
+    },
+    "down_calibration": {
+      "selected": "sequential_mix",
+      "validation": {
+        "authoritative_h": {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 1.083608462429424,
+          "score": 0.00526383617540051
+        },
+        "sequential_mix": {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 0.9210775749645049,
+          "score": 0.00447431118116071
+        },
+        "weight_only": {
+          "denominator": 205.85907811748632,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 0.9329741171114243,
+          "score": 0.0045321009189546865
+        }
+      }
+    },
+    "gate": {
+      "beam_history": [
+        [
+          {
+            "denominator": 953.6511866548794,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 104.97053262981197,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.11007225083839818
+          },
+          {
+            "denominator": 953.6511866548794,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 115.86251457471846,
+            "path": [
+              {
+                "group_size": 128,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.12149359870366144
+          }
+        ],
+        [
+          {
+            "denominator": 953.6511866548794,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 18.396174352470133,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.019290254770193662
+          },
+          {
+            "denominator": 953.6511866548794,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 20.18647592278445,
+            "path": [
+              {
+                "group_size": 128,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.021167567560621946
+          }
+        ],
+        [
+          {
+            "denominator": 953.6511866548794,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 3.625156691398328,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.0038013444979964673
+          },
+          {
+            "denominator": 953.6511866548794,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 3.7071389169504285,
+            "path": [
+              {
+                "group_size": 128,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.0038873111771128323
+          }
+        ]
+      ],
+      "heterogeneous": [
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        }
+      ],
+      "heterogeneous_score": 0.0038013444979964673,
+      "homogeneous": [
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        }
+      ],
+      "homogeneous_grid": [
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 2.2395116137969606,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0023483550853142555
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.5191768288015837,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0036902138623093354
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.625156691398328,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0038013444979964673
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 5.802567405203648,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.006084580490648057
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 6.753788739161205,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.007082032543629981
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 8.616825664829115,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.00903561573184252
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 9.620968235512809,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.010088561069441188
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 10.064957076699923,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.010554128404123057
+        },
+        {
+          "denominator": 953.6511866548794,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 12.433647991587588,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.013037941089551907
+        }
+      ],
+      "homogeneous_score": 0.0023483550853142555
+    },
+    "up": {
+      "beam_history": [
+        [
+          {
+            "denominator": 769.5772116245099,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 93.63899567322778,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.12167589458056338
+          },
+          {
+            "denominator": 769.5772116245099,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 98.74807619553243,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "midrise_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.12831470930263633
+          }
+        ],
+        [
+          {
+            "denominator": 769.5772116245099,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 16.27863075231354,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "midrise_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.02115269333138228
+          },
+          {
+            "denominator": 769.5772116245099,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 16.4879172436596,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.021424643290638833
+          }
+        ],
+        [
+          {
+            "denominator": 769.5772116245099,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 3.1810489857522857,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "midrise_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.004133502055027553
+          },
+          {
+            "denominator": 769.5772116245099,
+            "fraction_worsened": 0.0,
+            "invocations": 66,
+            "numerator": 3.3155835652879,
+            "path": [
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              },
+              {
+                "group_size": 64,
+                "name": "affine_mse",
+                "scale_storage": "fp16"
+              }
+            ],
+            "score": 0.004308318275548979
+          }
+        ]
+      ],
+      "heterogeneous": [
+        {
+          "group_size": 64,
+          "name": "midrise_mse",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_mse",
+          "scale_storage": "fp16"
+        }
+      ],
+      "heterogeneous_score": 0.004133502055027553,
+      "homogeneous": [
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        },
+        {
+          "group_size": 64,
+          "name": "affine_rtn",
+          "scale_storage": "fp16"
+        }
+      ],
+      "homogeneous_grid": [
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 2.1853595873119516,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0028396885384623714
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.206956445152033,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.00416716659057826
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 3.3155835652879,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.004308318275548979
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 5.613575595167183,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "affine_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.007294363074131858
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 6.262284491819387,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.008137304999715694
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 7.542919950745704,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "midrise_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.009801381637617962
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 8.857596412502923,
+          "path": [
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 64,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.011509691657586007
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 9.054121728577092,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_mse",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.0117650595571361
+        },
+        {
+          "denominator": 769.5772116245099,
+          "fraction_worsened": 0.0,
+          "invocations": 66,
+          "numerator": 11.135693284777515,
+          "path": [
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            },
+            {
+              "group_size": 128,
+              "name": "signed_zero_rtn",
+              "scale_storage": "fp16"
+            }
+          ],
+          "score": 0.014469884394407995
+        }
+      ],
+      "homogeneous_score": 0.0028396885384623714
+    }
+  },
+  "reference_hashes": {
+    "capture_manifest": {
+      "bytes": 35582,
+      "path": "/workspace/LLM_prefetch_study/artifacts/gcrp2/captures/gcrp2r_transformers_bf16_corpus_v1/CORPUS_MANIFEST.json",
+      "sha256": "9931e72b07e63d12151fa5f4d11613ce9d44f94f927ea5b437aab1ef97c14a9a"
+    },
+    "production_reference": {
+      "bytes": 22182574368,
+      "path": "/workspace/LLM_prefetch_study/models/Qwen3.6-35B-A3B-MXFP4_MOE.gguf",
+      "sha256": "e1a4925d2ea132576daa9cb980b1102b970d919d896936b7b6e681ef5bc3d3f6"
+    }
+  },
+  "resident_base": "Q2 codes/scales resident on Spark only; no external duplicate counted",
+  "rows": {
+    "projection": 32448,
+    "stages": 4212,
+    "tuples": 173056
+  },
+  "run_id": "qwen36_q2_rrq_dense_ceiling_20260818_v1",
+  "split_requests": {
+    "test": 16,
+    "train": 53,
+    "validation": 12
+  },
+  "started_unix": 1787051105.9385664,
+  "test_status": "exploratory; PR #2 outcomes informed the RRQ hypothesis",
+  "torch": "2.8.0+cu128",
+  "wall_seconds": 19751.814898490906
+}

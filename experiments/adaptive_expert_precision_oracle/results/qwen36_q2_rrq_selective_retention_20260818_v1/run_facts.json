@@ -1,0 +1,162 @@
+{
+  "benefit_retention_definition": "reciprocal intuitive retention: (D_Q2-D_selective)/(D_Q2-D_dense_atom_RRQ)",
+  "dense_comparator": "matched full-support three-stage atom-major RRQ",
+  "eta_definition": "literal prompt: (D_Q2-D_dense_atom_RRQ)/(D_Q2-D_selective)",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "490a4c917101",
+  "layers": {
+    "0": {
+      "experts": [
+        1,
+        8,
+        17,
+        22,
+        114,
+        158,
+        164,
+        181,
+        206,
+        238,
+        248,
+        252
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "search_experts": [
+        17,
+        1,
+        238
+      ]
+    },
+    "20": {
+      "experts": [
+        5,
+        30,
+        44,
+        45,
+        46,
+        54,
+        72,
+        142,
+        148,
+        156,
+        232,
+        240
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "search_experts": [
+        5,
+        142,
+        232
+      ]
+    },
+    "39": {
+      "experts": [
+        22,
+        28,
+        37,
+        43,
+        55,
+        70,
+        119,
+        147,
+        153,
+        189,
+        193,
+        235
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "search_experts": [
+        153,
+        193,
+        235
+      ]
+    },
+    "4": {
+      "experts": [
+        28,
+        36,
+        82,
+        111,
+        129,
+        134,
+        143,
+        154,
+        190,
+        193,
+        220,
+        252
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.03125,
+          0.046875,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 6.080580060370267e-06,
+        "train_samples": 823
+      },
+      "search_experts": [
+        111,
+        193,
+        134
+      ]
+    }
+  },
+  "peak_cuda_bytes": 159514624,
+  "rows": {
+    "actions": 1498464,
+    "basis": 6288,
+    "metrics": 2586,
+    "ranking": 660,
+    "support": 8136
+  },
+  "run_id": "qwen36_q2_rrq_selective_retention_20260818_v1",
+  "split_requests": {
+    "test": 16,
+    "train": 53,
+    "validation": 12
+  },
+  "started_unix": 1787071935.225819,
+  "test_status": "paired exploratory; PR #2 and dense RRQ outcomes informed this hypothesis",
+  "wall_seconds": 5673.694437742233
+}

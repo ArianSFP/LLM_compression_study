@@ -1,0 +1,53 @@
+{"prepared_layer": 0, "experts": 12}
+{"prepared_layer": 4, "experts": 12}
+{"prepared_layer": 20, "experts": 12}
+{"prepared_layer": 39, "experts": 12}
+{"completed_layer": 0, "expert": 1, "metrics": 96, "actions": 53856}
+{"completed_layer": 0, "expert": 8, "metrics": 114, "actions": 60384}
+{"completed_layer": 0, "expert": 17, "metrics": 174, "actions": 96192}
+{"completed_layer": 0, "expert": 22, "metrics": 234, "actions": 128352}
+{"completed_layer": 0, "expert": 114, "metrics": 264, "actions": 134496}
+{"completed_layer": 0, "expert": 158, "metrics": 360, "actions": 185088}
+{"completed_layer": 0, "expert": 164, "metrics": 384, "actions": 205824}
+{"completed_layer": 0, "expert": 181, "metrics": 480, "actions": 257952}
+{"completed_layer": 0, "expert": 206, "metrics": 570, "actions": 311232}
+{"completed_layer": 0, "expert": 238, "metrics": 666, "actions": 362688}
+{"completed_layer": 0, "expert": 248, "metrics": 696, "actions": 389376}
+{"completed_layer": 0, "expert": 252, "metrics": 792, "actions": 443136}
+{"completed_layer": 4, "expert": 28, "metrics": 888, "actions": 495936}
+{"completed_layer": 4, "expert": 36, "metrics": 924, "actions": 524064}
+{"completed_layer": 4, "expert": 82, "metrics": 966, "actions": 570432}
+{"completed_layer": 4, "expert": 111, "metrics": 978, "actions": 576288}
+{"completed_layer": 4, "expert": 129, "metrics": 1074, "actions": 630432}
+{"completed_layer": 4, "expert": 134, "metrics": 1170, "actions": 685536}
+{"completed_layer": 4, "expert": 143, "metrics": 1182, "actions": 692352}
+{"completed_layer": 4, "expert": 154, "metrics": 1278, "actions": 744288}
+{"completed_layer": 4, "expert": 190, "metrics": 1332, "actions": 785376}
+{"completed_layer": 4, "expert": 193, "metrics": 1422, "actions": 838560}
+{"completed_layer": 4, "expert": 220, "metrics": 1428, "actions": 838560}
+{"completed_layer": 4, "expert": 252, "metrics": 1434, "actions": 838560}
+{"completed_layer": 20, "expert": 5, "metrics": 1434, "actions": 838560}
+{"completed_layer": 20, "expert": 30, "metrics": 1440, "actions": 845376}
+{"completed_layer": 20, "expert": 44, "metrics": 1476, "actions": 866400}
+{"completed_layer": 20, "expert": 45, "metrics": 1482, "actions": 873408}
+{"completed_layer": 20, "expert": 46, "metrics": 1482, "actions": 873408}
+{"completed_layer": 20, "expert": 54, "metrics": 1482, "actions": 873408}
+{"completed_layer": 20, "expert": 72, "metrics": 1578, "actions": 927744}
+{"completed_layer": 20, "expert": 142, "metrics": 1620, "actions": 948864}
+{"completed_layer": 20, "expert": 148, "metrics": 1716, "actions": 1003488}
+{"completed_layer": 20, "expert": 156, "metrics": 1722, "actions": 1003488}
+{"completed_layer": 20, "expert": 232, "metrics": 1818, "actions": 1057344}
+{"completed_layer": 20, "expert": 240, "metrics": 1914, "actions": 1111008}
+{"completed_layer": 39, "expert": 22, "metrics": 2010, "actions": 1161600}
+{"completed_layer": 39, "expert": 28, "metrics": 2010, "actions": 1161600}
+{"completed_layer": 39, "expert": 37, "metrics": 2076, "actions": 1202496}
+{"completed_layer": 39, "expert": 43, "metrics": 2088, "actions": 1214592}
+{"completed_layer": 39, "expert": 55, "metrics": 2124, "actions": 1242336}
+{"completed_layer": 39, "expert": 70, "metrics": 2220, "actions": 1291968}
+{"completed_layer": 39, "expert": 119, "metrics": 2220, "actions": 1291968}
+{"completed_layer": 39, "expert": 147, "metrics": 2292, "actions": 1339008}
+{"completed_layer": 39, "expert": 153, "metrics": 2298, "actions": 1339008}
+{"completed_layer": 39, "expert": 189, "metrics": 2394, "actions": 1391136}
+{"completed_layer": 39, "expert": 193, "metrics": 2490, "actions": 1445472}
+{"completed_layer": 39, "expert": 235, "metrics": 2586, "actions": 1498464}
+{"selective_rrq_complete": true, "wall_seconds": 5673.694437742233, "rows": {"metrics": 2586, "actions": 1498464, "support": 8136, "ranking": 660, "basis": 6288}}

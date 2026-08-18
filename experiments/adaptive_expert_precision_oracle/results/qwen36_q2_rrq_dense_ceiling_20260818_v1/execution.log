@@ -1,0 +1,62 @@
+{"prepared_layer": 0, "experts": [1, 8, 17, 22, 114, 158, 164, 181, 206, 238, 248, 252], "search": [17, 1, 238]}
+{"prepared_layer": 4, "experts": [28, 36, 82, 111, 129, 134, 143, 154, 190, 193, 220, 252], "search": [111, 193, 134]}
+{"prepared_layer": 20, "experts": [5, 30, 44, 45, 46, 54, 72, 142, 148, 156, 232, 240], "search": [5, 142, 232]}
+{"prepared_layer": 39, "experts": [22, 28, 37, 43, 55, 70, 119, 147, 153, 189, 193, 235], "search": [153, 193, 235]}
+{"rrq_search": "gate", "depth": 1, "best_score": 0.11007225083839818, "path": ["affine_mse_g64_fp16"]}
+{"rrq_search": "gate", "depth": 2, "best_score": 0.019290254770193662, "path": ["affine_mse_g64_fp16", "affine_mse_g64_fp16"]}
+{"rrq_search": "gate", "depth": 3, "best_score": 0.0038013444979964673, "path": ["affine_mse_g64_fp16", "affine_mse_g64_fp16", "affine_mse_g64_fp16"]}
+{"rrq_search": "up", "depth": 1, "best_score": 0.12167589458056338, "path": ["affine_mse_g64_fp16"]}
+{"rrq_search": "up", "depth": 2, "best_score": 0.02115269333138228, "path": ["midrise_mse_g64_fp16", "affine_mse_g64_fp16"]}
+{"rrq_search": "up", "depth": 3, "best_score": 0.004133502055027553, "path": ["midrise_mse_g64_fp16", "affine_mse_g64_fp16", "affine_mse_g64_fp16"]}
+{"rrq_search": "down", "depth": 1, "best_score": 0.1163640488454523, "path": ["midrise_mse_g64_fp16"]}
+{"rrq_search": "down", "depth": 2, "best_score": 0.01864202083012783, "path": ["affine_mse_g64_fp16", "affine_mse_g64_fp16"]}
+{"rrq_search": "down", "depth": 3, "best_score": 0.0045321009189546865, "path": ["affine_mse_g64_fp16", "affine_mse_g64_fp16", "affine_mse_g64_fp16"]}
+{"completed_layer": 0, "expert": 1, "tuple_rows": 6144}
+{"completed_layer": 0, "expert": 8, "tuple_rows": 7680}
+{"completed_layer": 0, "expert": 17, "tuple_rows": 12288}
+{"completed_layer": 0, "expert": 22, "tuple_rows": 16896}
+{"completed_layer": 0, "expert": 114, "tuple_rows": 19456}
+{"completed_layer": 0, "expert": 158, "tuple_rows": 25600}
+{"completed_layer": 0, "expert": 164, "tuple_rows": 27648}
+{"completed_layer": 0, "expert": 181, "tuple_rows": 33792}
+{"completed_layer": 0, "expert": 206, "tuple_rows": 39424}
+{"completed_layer": 0, "expert": 238, "tuple_rows": 45568}
+{"completed_layer": 0, "expert": 248, "tuple_rows": 48128}
+{"completed_layer": 0, "expert": 252, "tuple_rows": 54272}
+{"completed_layer": 4, "expert": 28, "tuple_rows": 60416}
+{"completed_layer": 4, "expert": 36, "tuple_rows": 63488}
+{"completed_layer": 4, "expert": 82, "tuple_rows": 65536}
+{"completed_layer": 4, "expert": 111, "tuple_rows": 66560}
+{"completed_layer": 4, "expert": 129, "tuple_rows": 72704}
+{"completed_layer": 4, "expert": 134, "tuple_rows": 78848}
+{"completed_layer": 4, "expert": 143, "tuple_rows": 79872}
+{"completed_layer": 4, "expert": 154, "tuple_rows": 86016}
+{"completed_layer": 4, "expert": 190, "tuple_rows": 89600}
+{"completed_layer": 4, "expert": 193, "tuple_rows": 95232}
+{"completed_layer": 4, "expert": 220, "tuple_rows": 95744}
+{"completed_layer": 4, "expert": 252, "tuple_rows": 96256}
+{"completed_layer": 20, "expert": 5, "tuple_rows": 96256}
+{"completed_layer": 20, "expert": 30, "tuple_rows": 96768}
+{"completed_layer": 20, "expert": 44, "tuple_rows": 99840}
+{"completed_layer": 20, "expert": 45, "tuple_rows": 100352}
+{"completed_layer": 20, "expert": 46, "tuple_rows": 100352}
+{"completed_layer": 20, "expert": 54, "tuple_rows": 100352}
+{"completed_layer": 20, "expert": 72, "tuple_rows": 106496}
+{"completed_layer": 20, "expert": 142, "tuple_rows": 110080}
+{"completed_layer": 20, "expert": 148, "tuple_rows": 116224}
+{"completed_layer": 20, "expert": 156, "tuple_rows": 116736}
+{"completed_layer": 20, "expert": 232, "tuple_rows": 122880}
+{"completed_layer": 20, "expert": 240, "tuple_rows": 129024}
+{"completed_layer": 39, "expert": 22, "tuple_rows": 135168}
+{"completed_layer": 39, "expert": 28, "tuple_rows": 135168}
+{"completed_layer": 39, "expert": 37, "tuple_rows": 139776}
+{"completed_layer": 39, "expert": 43, "tuple_rows": 140800}
+{"completed_layer": 39, "expert": 55, "tuple_rows": 143872}
+{"completed_layer": 39, "expert": 70, "tuple_rows": 150016}
+{"completed_layer": 39, "expert": 119, "tuple_rows": 150016}
+{"completed_layer": 39, "expert": 147, "tuple_rows": 154112}
+{"completed_layer": 39, "expert": 153, "tuple_rows": 154624}
+{"completed_layer": 39, "expert": 189, "tuple_rows": 160768}
+{"completed_layer": 39, "expert": 193, "tuple_rows": 166912}
+{"completed_layer": 39, "expert": 235, "tuple_rows": 173056}
+{"dense_rrq_complete": true, "wall_seconds": 19751.814898490906, "rows": {"tuples": 173056, "projection": 32448, "stages": 4212}}

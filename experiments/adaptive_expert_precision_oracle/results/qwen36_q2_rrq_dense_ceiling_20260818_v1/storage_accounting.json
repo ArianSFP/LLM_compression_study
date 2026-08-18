@@ -1,0 +1,44 @@
+{
+  "actual_serialized_implementation": true,
+  "cap_multiplier": 5.0,
+  "method_median": [
+    {
+      "correction_capacity_bytes": 2785856.0,
+      "external_storage_multiplier": 2.5181710379464284,
+      "method": "rrq_generalized_heterogeneous",
+      "reference_fallback_bytes": 1835008.0
+    },
+    {
+      "correction_capacity_bytes": 2785856.0,
+      "external_storage_multiplier": 2.5181710379464284,
+      "method": "rrq_raw_heterogeneous",
+      "reference_fallback_bytes": 1835008.0
+    },
+    {
+      "correction_capacity_bytes": 2785856.0,
+      "external_storage_multiplier": 2.5181710379464284,
+      "method": "rrq_raw_heterogeneous_bf16_scales",
+      "reference_fallback_bytes": 1835008.0
+    },
+    {
+      "correction_capacity_bytes": 3080768.0,
+      "external_storage_multiplier": 2.6788853236607144,
+      "method": "rrq_raw_heterogeneous_fp32_scales_upper",
+      "reference_fallback_bytes": 1835008.0
+    },
+    {
+      "correction_capacity_bytes": 2785856.0,
+      "external_storage_multiplier": 2.5181710379464284,
+      "method": "rrq_raw_heterogeneous_weight_only_down",
+      "reference_fallback_bytes": 1835008.0
+    },
+    {
+      "correction_capacity_bytes": 2802240.0,
+      "external_storage_multiplier": 2.527099609375,
+      "method": "rrq_raw_homogeneous",
+      "reference_fallback_bytes": 1835008.0
+    }
+  ],
+  "reference_fallback_included": true,
+  "resident_base_external_copy": false
+}

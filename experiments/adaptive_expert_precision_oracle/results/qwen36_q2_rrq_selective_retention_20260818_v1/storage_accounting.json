@@ -1,0 +1,11 @@
+{
+  "max_external_storage_multiplier": 2.5181710379464284,
+  "median_external_storage_multiplier": 2.5181710379464284,
+  "min_external_storage_multiplier": 2.2102146352313166,
+  "primary_page_bytes": 512,
+  "reference_fallback_included": true,
+  "resident_q2_bytes_per_expert": 884928,
+  "resident_q2_effective_bpw": 2.25048828125,
+  "resident_q2_external_duplicate_included": false,
+  "scale_tables_streamed": true
+}
