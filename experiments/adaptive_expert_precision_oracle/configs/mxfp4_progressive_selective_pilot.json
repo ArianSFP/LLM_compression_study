@@ -1,0 +1,25 @@
+{
+  "run_id": "qwen35_full_mxfp4_embedded_selective_20260818_v1",
+  "seed": 20260818,
+  "layers": [0, 4, 20, 39],
+  "experts_per_stratum": 1,
+  "minimum_split_occurrences": 3,
+  "max_train_invocations_per_expert": 48,
+  "max_validation_invocations_per_expert": 16,
+  "max_test_invocations_per_expert": 24,
+  "tree_random_candidates": 256,
+  "tree_q2_tolerance": 0.001,
+  "page_sizes": [512, 1024, 4096],
+  "physical_budgets_bpw": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+  "selective_rate_step": 0.25,
+  "bootstrap_resamples": 1000,
+  "reference": {
+    "repository": "olka-fi/Qwen3.5-35B-A3B-MXFP4",
+    "revision": "f9edc32e907150f0fb6f902c452f6d111d430703",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0"
+  },
+  "status": "cross-reference exploratory oracle; activations were captured from the aligned BF16 model, not this MXFP4 execution"
+}

@@ -1,0 +1,23 @@
+{
+  "aggregate_exact_stream_sha256": "28ea957daf4248338116620c0be810b70852f85cfcbb098d2f6712940a54e45e",
+  "all_pairs_4_25_bpw": true,
+  "all_pairs_uint8": true,
+  "checkpoint": "/root/qwen36_mxfp4_candidate",
+  "errors": [],
+  "expected_pairs": 3072,
+  "experts_per_layer": 256,
+  "format": "mxfp4-pack-quantized",
+  "group_size": 32,
+  "layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "missing_count": 0,
+  "missing_sample": [],
+  "opened_and_verified_pairs": 3072,
+  "passed": true,
+  "proof": "every pair was opened from safetensors; nibbles were losslessly unpacked/repacked; original packed bytes and E8M0 scale bytes were hashed",
+  "required_tensor_entries": 6144
+}

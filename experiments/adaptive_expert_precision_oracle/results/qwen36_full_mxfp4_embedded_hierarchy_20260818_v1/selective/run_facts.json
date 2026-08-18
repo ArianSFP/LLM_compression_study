@@ -1,0 +1,114 @@
+{
+  "capture_status": "cross-reference exploratory oracle; activations are aligned Qwen3.6 BF16 captures, not a forward pass from this exact MXFP4 checkpoint",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "completed_unix": 1787086812.3157384,
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "host": "4324999ecfd9",
+  "last_completed": {
+    "expert": 235,
+    "layer": 39,
+    "unix": 1787086811.6683075
+  },
+  "layers": {
+    "0": {
+      "experts": [
+        71,
+        207,
+        238
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      }
+    },
+    "20": {
+      "experts": [
+        72,
+        129,
+        225
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      }
+    },
+    "39": {
+      "experts": [
+        155,
+        180,
+        235
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      }
+    },
+    "4": {
+      "experts": [
+        134,
+        156,
+        176
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.03125,
+          0.046875,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 6.080580642446876e-06,
+        "train_samples": 823
+      }
+    }
+  },
+  "replica_policy": "H0 best-replica diagnostic; one-replica co-selection is the primary deployable layout",
+  "run_id": "qwen36_full_mxfp4_embedded_selective_20260818_v1",
+  "started_unix": 1787086187.4479954,
+  "wall_seconds": 624.8677430152893
+}

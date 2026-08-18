@@ -1,0 +1,31 @@
+{
+  "bootstrap_resamples": 1000,
+  "dense_rows": 4158,
+  "layout_rows": 1512,
+  "plots": [
+    "01_dense_vs_selective_frontier.png",
+    "01_dense_vs_selective_frontier.svg",
+    "02_projection_dense_levels.png",
+    "02_projection_dense_levels.svg",
+    "03_selective_dense_retention.png",
+    "03_selective_dense_retention.svg",
+    "04_logical_vs_physical.png",
+    "04_logical_vs_physical.svg",
+    "05_page_amplification.png",
+    "05_page_amplification.svg",
+    "06_recovery_by_page_size.png",
+    "06_recovery_by_page_size.svg",
+    "07_layout_replica_comparison.png",
+    "07_layout_replica_comparison.svg",
+    "08_projection_allocation.png",
+    "08_projection_allocation.svg",
+    "09_ranking_regret.png",
+    "09_ranking_regret.svg",
+    "10_recovery_cdf.png",
+    "10_recovery_cdf.svg",
+    "11_storage_multiplier.png",
+    "11_storage_multiplier.svg"
+  ],
+  "selective_rows": 595,
+  "test_invocations": 85
+}
