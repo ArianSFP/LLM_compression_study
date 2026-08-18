@@ -107,3 +107,10 @@ runpodctl pod stop gszpnl0eshsw9s
 ```
 
 RunPod returned `desiredStatus: EXITED` and `lastStatusChange: Exited by user: Tue Aug 18 2026 18:31:26 GMT+0000`. A following `runpodctl pod list` returned no active pods. No terminate command was issued.
+
+## Publication
+
+- Experiment commit: `c3cbabdb6c000fe4495b55917da4b5631d9410af`
+- Branch: `agent/rrq-dense-prefix-ceiling`
+- Draft review PR: <https://github.com/ArianSFP/LLM_compression_study/pull/3>
+- Stacked base branch: `agent/q2-corrected-allocator-low-rank-down`
