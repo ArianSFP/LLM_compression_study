@@ -19,6 +19,29 @@ The principal deployment x-axis is actual bytes read after 4 KiB page accounting
 - `ORACLE_STUDY_REPORT.md`: interpretation and recommendation.
 - `EXECUTION_LEDGER_20260818.md`: commands, timings, hashes, environment, and failures/corrections.
 
+## Corrected allocator and output-side-down continuation
+
+The 2026-08-18 continuation adds a four-layer Q2 pilot that audits the legacy selected-count/page mismatch, saves exact atom/precision/page labels, evaluates a nonlinear complete-expert per-atom allocator at 512 B through 4 KiB transfer granularity, and compares native down packets with shared, clustered, and per-expert output-side low-rank factors.
+
+- `results/qwen36_q2_single_view_baseline_20260818_v2/`: reproduced deployable Q2 generalized/generalized/native baseline.
+- `results/qwen36_q2_corrected_allocator_20260818_v7/`: corrected Run A metrics and exact H0 label sequence.
+- `results/qwen36_q2_output_side_down_20260818_v3/`: Run B validation/test controls, storage, spectra, and complete-expert metrics.
+- `results/qwen36_q2_next_oracles_analysis_20260818_v1/`: leakage-free selected headlines, 1,000-resample statistics, accounting, and PNG/SVG plots.
+- `NEXT_ORACLE_EXPERIMENT_REPORT.md`: scientific conclusion and next-iteration recommendation.
+- `EXECUTION_LEDGER_NEXT_20260818.md`: exact commands, failures/corrections, hardware, hashes, and timings.
+- `REPLAY_IDENTITY_AUDIT_NEXT_20260818.md`: why production-reference replay identity remains unavailable.
+
+Reproduce the continuation analysis after the three immutable result directories are present:
+
+```bash
+MPLBACKEND=Agg python experiments/adaptive_expert_precision_oracle/scripts/analyze_next_oracles.py \
+  --baseline experiments/adaptive_expert_precision_oracle/results/qwen36_q2_single_view_baseline_20260818_v2 \
+  --run-a experiments/adaptive_expert_precision_oracle/results/qwen36_q2_corrected_allocator_20260818_v7 \
+  --run-b experiments/adaptive_expert_precision_oracle/results/qwen36_q2_output_side_down_20260818_v3 \
+  --output experiments/adaptive_expert_precision_oracle/results/qwen36_q2_next_oracles_analysis_20260818_v1 \
+  --bootstrap 1000 --seed 20260818
+```
+
 ## Reproduce saved figures and statistics
 
 From the repository root:

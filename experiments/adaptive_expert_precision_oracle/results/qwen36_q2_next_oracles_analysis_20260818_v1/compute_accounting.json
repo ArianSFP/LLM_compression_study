@@ -1,0 +1,37 @@
+{
+  "reference_expert_gemv_flops": 6291456,
+  "hardware_timing_claim": "none; analytical GB10 ratios only",
+  "run_a_compute_summary": "run_a_compute_summary.csv",
+  "rank_costs": {
+    "32": {
+      "c_h_flops": 32768,
+      "u_q_flops": 131072,
+      "total_flops": 163840,
+      "ratio_to_reference_expert": 0.026041666666666668
+    },
+    "64": {
+      "c_h_flops": 65536,
+      "u_q_flops": 262144,
+      "total_flops": 327680,
+      "ratio_to_reference_expert": 0.052083333333333336
+    },
+    "128": {
+      "c_h_flops": 131072,
+      "u_q_flops": 524288,
+      "total_flops": 655360,
+      "ratio_to_reference_expert": 0.10416666666666667
+    },
+    "256": {
+      "c_h_flops": 262144,
+      "u_q_flops": 1048576,
+      "total_flops": 1310720,
+      "ratio_to_reference_expert": 0.20833333333333334
+    },
+    "512": {
+      "c_h_flops": 524288,
+      "u_q_flops": 2097152,
+      "total_flops": 2621440,
+      "ratio_to_reference_expert": 0.4166666666666667
+    }
+  }
+}
