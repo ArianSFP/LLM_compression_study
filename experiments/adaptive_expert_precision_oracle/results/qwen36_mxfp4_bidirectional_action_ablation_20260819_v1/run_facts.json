@@ -1,0 +1,187 @@
+{
+  "capture_status": "paired action ablation on one identical training-only A/B layout: isolates B-first eligibility from direct two-bit AB actions",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "completed_unix": 1787095547.710353,
+  "description_fit": "locked from results/qwen36_mxfp4_multiple_description_fresh_20260818_v1/description_trees.json",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "host": "b3bcd9044643",
+  "last_completed": {
+    "expert": 251,
+    "layer": 39,
+    "unix": 1787095547.6364577
+  },
+  "layers": {
+    "0": {
+      "counts": {
+        "207": {
+          "test": 3,
+          "train": 15,
+          "validation": 4
+        },
+        "52": {
+          "test": 5,
+          "train": 3,
+          "validation": 3
+        },
+        "62": {
+          "test": 25,
+          "train": 38,
+          "validation": 17
+        }
+      },
+      "experts": [
+        52,
+        62,
+        207
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.078125,
+          0.078125,
+          0.078125,
+          0.078125
+        ],
+        "rank": 4,
+        "ridge": 2.4890992790460587e-06,
+        "train_samples": 173
+      }
+    },
+    "20": {
+      "counts": {
+        "172": {
+          "test": 29,
+          "train": 63,
+          "validation": 39
+        },
+        "226": {
+          "test": 3,
+          "train": 5,
+          "validation": 3
+        },
+        "8": {
+          "test": 7,
+          "train": 17,
+          "validation": 6
+        }
+      },
+      "experts": [
+        8,
+        172,
+        226
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.046875,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0005581191927194596,
+        "train_samples": 173
+      }
+    },
+    "39": {
+      "counts": {
+        "127": {
+          "test": 3,
+          "train": 4,
+          "validation": 3
+        },
+        "251": {
+          "test": 10,
+          "train": 15,
+          "validation": 9
+        },
+        "70": {
+          "test": 26,
+          "train": 51,
+          "validation": 37
+        }
+      },
+      "experts": [
+        70,
+        127,
+        251
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0008013882488012315,
+        "train_samples": 173
+      }
+    },
+    "4": {
+      "counts": {
+        "12": {
+          "test": 3,
+          "train": 4,
+          "validation": 4
+        },
+        "154": {
+          "test": 43,
+          "train": 81,
+          "validation": 30
+        },
+        "36": {
+          "test": 6,
+          "train": 13,
+          "validation": 14
+        }
+      },
+      "experts": [
+        12,
+        36,
+        154
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.024023862555623e-05,
+        "train_samples": 173
+      }
+    }
+  },
+  "run_id": "qwen36_mxfp4_bidirectional_action_ablation_20260819_v1",
+  "split_requests": {
+    "test": 6,
+    "train": 12,
+    "validation": 6
+  },
+  "started_unix": 1787095175.3322804,
+  "wall_seconds": 372.3780725002289
+}

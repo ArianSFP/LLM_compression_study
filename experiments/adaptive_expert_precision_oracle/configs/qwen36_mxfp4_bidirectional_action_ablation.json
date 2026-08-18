@@ -1,0 +1,35 @@
+{
+  "run_id": "qwen36_mxfp4_bidirectional_action_ablation_20260819_v1",
+  "seed": 20260818,
+  "layers": [0, 4, 20, 39],
+  "experts_per_stratum": 1,
+  "minimum_split_occurrences": 3,
+  "max_train_invocations_per_expert": 48,
+  "max_test_invocations_per_expert": 8,
+  "page_sizes": [512, 1024, 4096],
+  "physical_budgets_bpw": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+  "selective_rate_step": 0.25,
+  "bootstrap_resamples": 1000,
+  "policies": {
+    "ordered_a_with_direct_ab": {
+      "descriptions": ["a", "b"],
+      "first_descriptions": ["a"],
+      "allow_direct_pairs": true
+    },
+    "bidirectional_ab_no_direct": {
+      "descriptions": ["a", "b"],
+      "first_descriptions": ["a", "b"],
+      "allow_direct_pairs": false
+    }
+  },
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "base_model": "Qwen/Qwen3.6-35B-A3B",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0"
+  },
+  "status": "paired action ablation on one identical training-only A/B layout: isolates B-first eligibility from direct two-bit AB actions"
+}
