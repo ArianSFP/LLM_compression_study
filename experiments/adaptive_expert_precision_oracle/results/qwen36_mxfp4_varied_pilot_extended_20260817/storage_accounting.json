@@ -1,0 +1,170 @@
+{
+  "five_times_cap_respected_by_full_16bit_prefix": true,
+  "layers": {
+    "0": {
+      "progressive_views": {
+        "16": {
+          "correction_view_bytes_per_expert": 6337728,
+          "external_multiplier_vs_q4": 4.453787667410714,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 8172736
+        },
+        "2": {
+          "correction_view_bytes_per_expert": 832704,
+          "external_multiplier_vs_q4": 1.4537876674107142,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 2667712
+        },
+        "4": {
+          "correction_view_bytes_per_expert": 1619136,
+          "external_multiplier_vs_q4": 1.8823590959821428,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 3454144
+        },
+        "8": {
+          "correction_view_bytes_per_expert": 3192000,
+          "external_multiplier_vs_q4": 2.739501953125,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 5027008
+        }
+      },
+      "q4": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.0.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      },
+      "resident_binary_bytes_per_expert": 491712
+    },
+    "20": {
+      "progressive_views": {
+        "16": {
+          "correction_view_bytes_per_expert": 6337728,
+          "external_multiplier_vs_q4": 4.453787667410714,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 8172736
+        },
+        "2": {
+          "correction_view_bytes_per_expert": 832704,
+          "external_multiplier_vs_q4": 1.4537876674107142,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 2667712
+        },
+        "4": {
+          "correction_view_bytes_per_expert": 1619136,
+          "external_multiplier_vs_q4": 1.8823590959821428,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 3454144
+        },
+        "8": {
+          "correction_view_bytes_per_expert": 3192000,
+          "external_multiplier_vs_q4": 2.739501953125,
+          "q4_bytes_per_expert": 1835008,
+          "q4_plus_view_bytes_per_expert": 5027008
+        }
+      },
+      "q4": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.20.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      },
+      "resident_binary_bytes_per_expert": 491712
+    },
+    "39": {
+      "progressive_views": {
+        "16": {
+          "correction_view_bytes_per_expert": 6337728,
+          "external_multiplier_vs_q4": 3.753197286476868,
+          "q4_bytes_per_expert": 2301952,
+          "q4_plus_view_bytes_per_expert": 8639680
+        },
+        "2": {
+          "correction_view_bytes_per_expert": 832704,
+          "external_multiplier_vs_q4": 1.3617382117437722,
+          "q4_bytes_per_expert": 2301952,
+          "q4_plus_view_bytes_per_expert": 3134656
+        },
+        "4": {
+          "correction_view_bytes_per_expert": 1619136,
+          "external_multiplier_vs_q4": 1.7033752224199288,
+          "q4_bytes_per_expert": 2301952,
+          "q4_plus_view_bytes_per_expert": 3921088
+        },
+        "8": {
+          "correction_view_bytes_per_expert": 3192000,
+          "external_multiplier_vs_q4": 2.386649243772242,
+          "q4_bytes_per_expert": 2301952,
+          "q4_plus_view_bytes_per_expert": 5493952
+        }
+      },
+      "q4": {
+        "down": {
+          "bytes_per_expert": 860160,
+          "effective_bpw": 6.5625,
+          "quantization_type": "14",
+          "quantization_type_id": 14,
+          "tensor_name": "blk.39.ffn_down_exps.weight",
+          "tensor_storage_bytes": 220200960
+        },
+        "gate": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "up": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_up_exps.weight",
+          "tensor_storage_bytes": 184549376
+        }
+      },
+      "resident_binary_bytes_per_expert": 491712
+    }
+  }
+}

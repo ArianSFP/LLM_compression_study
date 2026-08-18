@@ -1,0 +1,36 @@
+{
+  "capture_schema": "gcrp2r_transformers_run_manifest_v1",
+  "layer_rows": {
+    "0": 1259,
+    "20": 1259,
+    "39": 1259
+  },
+  "model_config_hash": "93a4693fa9d8392fbfccd4b3c9873f4bfdcb14fdede978b123d07d19675efe99",
+  "model_revision": "995ad96eacd98c81ed38be0c5b274b04031597b0",
+  "pilot_only": true,
+  "position_stride": 16,
+  "quantization_format": "BF16 frozen checkpoint",
+  "rows": 3777,
+  "sampling_design": "six evenly spaced audited capture segments; deterministic token stride; complete-request split",
+  "segments": 6,
+  "source_prompt_manifest_sha256": "916315802286cdead8fc9e4d12a3bdb288fe9feb9d0b3e84c21ecd6ea032c2f7",
+  "source_run_ids": [
+    "gcrp2r_tf_bf16_seg_000000_000000",
+    "gcrp2r_tf_bf16_seg_000097_000112",
+    "gcrp2r_tf_bf16_seg_000225_000240",
+    "gcrp2r_tf_bf16_seg_000337_000352",
+    "gcrp2r_tf_bf16_seg_000465_000480",
+    "gcrp2r_tf_bf16_seg_000593_000608"
+  ],
+  "split_rows": {
+    "test": 738,
+    "train": 2469,
+    "validation": 570
+  },
+  "split_sequences": {
+    "test": 16,
+    "train": 53,
+    "validation": 12
+  },
+  "tokenizer_hash": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+}

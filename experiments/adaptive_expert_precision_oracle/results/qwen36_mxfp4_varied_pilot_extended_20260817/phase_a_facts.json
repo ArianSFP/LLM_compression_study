@@ -1,0 +1,767 @@
+{
+  "cuda": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "layers": {
+    "0": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9991137578565812,
+          "max_abs_error": 0.003977775573730469,
+          "relative_rmse": 0.042095288984584284
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9932557693329288,
+          "max_abs_error": 0.015625,
+          "relative_rmse": 0.11631709208671244
+        },
+        "up": {
+          "bf16_q4_cosine": 0.993454998273972,
+          "max_abs_error": 0.01513671875,
+          "relative_rmse": 0.11455121574093366
+        }
+      },
+      "basis": {
+        "down_generalized": {
+          "atoms": 512,
+          "condition_number": 100000.0,
+          "dimension": 512,
+          "retained_rank": 364
+        },
+        "down_learned_s11": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_learned_s29": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_learned_s47": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_native": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_overcomplete_2x": {
+          "atoms": 1024,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_pca": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_random": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "input_generalized": {
+          "atoms": 2048,
+          "condition_number": 100000.0078125,
+          "dimension": 2048,
+          "retained_rank": 659
+        },
+        "input_learned_s11": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_learned_s29": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_learned_s47": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_native": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_overcomplete_2x": {
+          "atoms": 4096,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_pca": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_random": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        }
+      },
+      "binary_storage": {
+        "down": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        },
+        "gate": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        },
+        "up": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        }
+      },
+      "diagnostics": {
+        "expert_114_down_generalized_score_correlation_mean": 0.9907886302857236,
+        "expert_114_gate_generalized_score_correlation_mean": 0.9813940188593298,
+        "expert_114_up_generalized_score_correlation_mean": 0.9647692648078328,
+        "expert_158_down_generalized_score_correlation_mean": 0.9975243737521566,
+        "expert_158_gate_generalized_score_correlation_mean": 0.9948048760075566,
+        "expert_158_up_generalized_score_correlation_mean": 0.9854698020660656,
+        "expert_164_down_generalized_score_correlation_mean": 0.9948576354195099,
+        "expert_164_gate_generalized_score_correlation_mean": 0.8255568719571138,
+        "expert_164_up_generalized_score_correlation_mean": 0.8048700731651461,
+        "expert_17_down_generalized_score_correlation_mean": 0.9939539132311284,
+        "expert_17_gate_generalized_score_correlation_mean": 0.8403958862468682,
+        "expert_17_up_generalized_score_correlation_mean": 0.8094852248832509,
+        "expert_181_down_generalized_score_correlation_mean": 0.9968431076955927,
+        "expert_181_gate_generalized_score_correlation_mean": 0.9894096205323353,
+        "expert_181_up_generalized_score_correlation_mean": 0.983544953121394,
+        "expert_1_down_generalized_score_correlation_mean": 0.9917743153605877,
+        "expert_1_gate_generalized_score_correlation_mean": 0.9929901564302814,
+        "expert_1_up_generalized_score_correlation_mean": 0.9708411223090878,
+        "expert_206_down_generalized_score_correlation_mean": 0.9921120582881995,
+        "expert_206_gate_generalized_score_correlation_mean": 0.9901302739319773,
+        "expert_206_up_generalized_score_correlation_mean": 0.9778013502281035,
+        "expert_22_down_generalized_score_correlation_mean": 0.9948322672030286,
+        "expert_22_gate_generalized_score_correlation_mean": 0.9799964467593009,
+        "expert_22_up_generalized_score_correlation_mean": 0.9814031915530457,
+        "expert_238_down_generalized_score_correlation_mean": 0.9962650647535375,
+        "expert_238_gate_generalized_score_correlation_mean": 0.9838078489932749,
+        "expert_238_up_generalized_score_correlation_mean": 0.9808277517169417,
+        "expert_248_down_generalized_score_correlation_mean": 0.9922718191391624,
+        "expert_248_gate_generalized_score_correlation_mean": 0.9389746638173078,
+        "expert_248_up_generalized_score_correlation_mean": 0.9273461180761682,
+        "expert_252_down_generalized_score_correlation_mean": 0.9592133047048256,
+        "expert_252_gate_generalized_score_correlation_mean": 0.8175553968790085,
+        "expert_252_up_generalized_score_correlation_mean": 0.9568854801319806,
+        "expert_8_down_generalized_score_correlation_mean": 0.9902721668123965,
+        "expert_8_gate_generalized_score_correlation_mean": 0.9718725519138466,
+        "expert_8_up_generalized_score_correlation_mean": 0.9735673520582516
+      },
+      "gguf_storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.0.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      },
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "selected_experts": [
+        1,
+        8,
+        17,
+        22,
+        114,
+        158,
+        164,
+        181,
+        206,
+        238,
+        248,
+        252
+      ],
+      "strata": {
+        "1": "median",
+        "114": "median",
+        "158": "median",
+        "164": "cold",
+        "17": "cold",
+        "181": "hot",
+        "206": "hot",
+        "22": "median",
+        "238": "hot",
+        "248": "cold",
+        "252": "hot",
+        "8": "cold"
+      },
+      "train_frequencies": {
+        "1": 24,
+        "114": 24,
+        "158": 24,
+        "164": 5,
+        "17": 5,
+        "181": 77,
+        "206": 62,
+        "22": 24,
+        "238": 70,
+        "248": 4,
+        "252": 68,
+        "8": 4
+      },
+      "wall_seconds": 246.17952060699463
+    },
+    "20": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9993549807973882,
+          "max_abs_error": 0.002872169017791748,
+          "relative_rmse": 0.03591256635790636
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9932752036672797,
+          "max_abs_error": 0.015380859375,
+          "relative_rmse": 0.1164547288310138
+        },
+        "up": {
+          "bf16_q4_cosine": 0.9934336968817842,
+          "max_abs_error": 0.015625,
+          "relative_rmse": 0.11489496959693818
+        }
+      },
+      "basis": {
+        "down_generalized": {
+          "atoms": 512,
+          "condition_number": 398.1973571777344,
+          "dimension": 512,
+          "retained_rank": 512
+        },
+        "down_learned_s11": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_learned_s29": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_learned_s47": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_native": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_overcomplete_2x": {
+          "atoms": 1024,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_pca": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_random": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "input_generalized": {
+          "atoms": 2048,
+          "condition_number": 100000.0,
+          "dimension": 2048,
+          "retained_rank": 823
+        },
+        "input_learned_s11": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_learned_s29": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_learned_s47": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_native": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_overcomplete_2x": {
+          "atoms": 4096,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_pca": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_random": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        }
+      },
+      "binary_storage": {
+        "down": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        },
+        "gate": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        },
+        "up": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        }
+      },
+      "diagnostics": {
+        "expert_142_down_generalized_score_correlation_mean": 0.9993379787298254,
+        "expert_142_gate_generalized_score_correlation_mean": 0.9972912470641336,
+        "expert_142_up_generalized_score_correlation_mean": 0.9586594463604864,
+        "expert_148_down_generalized_score_correlation_mean": 0.999018603370086,
+        "expert_148_gate_generalized_score_correlation_mean": 0.9969713776752662,
+        "expert_148_up_generalized_score_correlation_mean": 0.9255758927086986,
+        "expert_232_down_generalized_score_correlation_mean": 0.9994380345587386,
+        "expert_232_gate_generalized_score_correlation_mean": 0.9988007240207762,
+        "expert_232_up_generalized_score_correlation_mean": 0.939383222812657,
+        "expert_240_down_generalized_score_correlation_mean": 0.999309957854856,
+        "expert_240_gate_generalized_score_correlation_mean": 0.9966564246638348,
+        "expert_240_up_generalized_score_correlation_mean": 0.9177039566240974,
+        "expert_30_down_generalized_score_correlation_mean": 0.9991681961386757,
+        "expert_30_gate_generalized_score_correlation_mean": 0.9996409905048719,
+        "expert_30_up_generalized_score_correlation_mean": 0.9719232799417346,
+        "expert_44_down_generalized_score_correlation_mean": 0.9992478962368506,
+        "expert_44_gate_generalized_score_correlation_mean": 0.9917665709398337,
+        "expert_44_up_generalized_score_correlation_mean": 0.9713903325292556,
+        "expert_45_down_generalized_score_correlation_mean": 0.9989102485290977,
+        "expert_45_gate_generalized_score_correlation_mean": 0.9939644800140628,
+        "expert_45_up_generalized_score_correlation_mean": 0.9117193963071066,
+        "expert_72_down_generalized_score_correlation_mean": 0.9995229233995947,
+        "expert_72_gate_generalized_score_correlation_mean": 0.9950109331583696,
+        "expert_72_up_generalized_score_correlation_mean": 0.9405969112492214
+      },
+      "gguf_storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.20.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      },
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "selected_experts": [
+        5,
+        30,
+        44,
+        45,
+        46,
+        54,
+        72,
+        142,
+        148,
+        156,
+        232,
+        240
+      ],
+      "strata": {
+        "142": "median",
+        "148": "hot",
+        "156": "median",
+        "232": "hot",
+        "240": "hot",
+        "30": "cold",
+        "44": "median",
+        "45": "median",
+        "46": "cold",
+        "5": "cold",
+        "54": "cold",
+        "72": "hot"
+      },
+      "train_frequencies": {
+        "142": 17,
+        "148": 228,
+        "156": 17,
+        "232": 215,
+        "240": 172,
+        "30": 1,
+        "44": 17,
+        "45": 17,
+        "46": 1,
+        "5": 1,
+        "54": 1,
+        "72": 275
+      },
+      "wall_seconds": 138.10869669914246
+    },
+    "39": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9998299504244206,
+          "max_abs_error": 0.0048828125,
+          "relative_rmse": 0.01845641837380763
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9993299251282431,
+          "max_abs_error": 0.005588531494140625,
+          "relative_rmse": 0.036603530175156565
+        },
+        "up": {
+          "bf16_q4_cosine": 0.999343928113303,
+          "max_abs_error": 0.0039948225021362305,
+          "relative_rmse": 0.03621889507759392
+        }
+      },
+      "basis": {
+        "down_generalized": {
+          "atoms": 512,
+          "condition_number": 56835.125,
+          "dimension": 512,
+          "retained_rank": 512
+        },
+        "down_learned_s11": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_learned_s29": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_learned_s47": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_native": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_overcomplete_2x": {
+          "atoms": 1024,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_pca": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "down_random": {
+          "atoms": 512,
+          "condition_number": null,
+          "dimension": 512,
+          "retained_rank": null
+        },
+        "input_generalized": {
+          "atoms": 2048,
+          "condition_number": 100000.0,
+          "dimension": 2048,
+          "retained_rank": 823
+        },
+        "input_learned_s11": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_learned_s29": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_learned_s47": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_native": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_overcomplete_2x": {
+          "atoms": 4096,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_pca": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        },
+        "input_random": {
+          "atoms": 2048,
+          "condition_number": null,
+          "dimension": 2048,
+          "retained_rank": null
+        }
+      },
+      "binary_storage": {
+        "down": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        },
+        "gate": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        },
+        "up": {
+          "effective_bpw": 1.25048828125,
+          "header_bytes": 64,
+          "payload_bytes": 131072,
+          "scale_bytes": 32768,
+          "total_bytes": 163904
+        }
+      },
+      "diagnostics": {
+        "expert_147_down_generalized_score_correlation_mean": 0.9989895572095393,
+        "expert_147_gate_generalized_score_correlation_mean": 0.9985829059387781,
+        "expert_147_up_generalized_score_correlation_mean": 0.999179546465935,
+        "expert_189_down_generalized_score_correlation_mean": 0.9923757704692577,
+        "expert_189_gate_generalized_score_correlation_mean": 0.9832295103303843,
+        "expert_189_up_generalized_score_correlation_mean": 0.9928447896135273,
+        "expert_193_down_generalized_score_correlation_mean": 0.9989597995777991,
+        "expert_193_gate_generalized_score_correlation_mean": 0.8709897990215607,
+        "expert_193_up_generalized_score_correlation_mean": 0.859656552398146,
+        "expert_22_down_generalized_score_correlation_mean": 0.9995775395530988,
+        "expert_22_gate_generalized_score_correlation_mean": 0.9996249145236273,
+        "expert_22_up_generalized_score_correlation_mean": 0.9650547072658833,
+        "expert_235_down_generalized_score_correlation_mean": 0.9993887868354211,
+        "expert_235_gate_generalized_score_correlation_mean": 0.9795600268575546,
+        "expert_235_up_generalized_score_correlation_mean": 0.901258610787265,
+        "expert_37_down_generalized_score_correlation_mean": 0.9992120487296563,
+        "expert_37_gate_generalized_score_correlation_mean": 0.9969209713910393,
+        "expert_37_up_generalized_score_correlation_mean": 0.9687148757107771,
+        "expert_43_down_generalized_score_correlation_mean": 0.9992258230447758,
+        "expert_43_gate_generalized_score_correlation_mean": 0.9934146023764943,
+        "expert_43_up_generalized_score_correlation_mean": 0.9921648605959494,
+        "expert_55_down_generalized_score_correlation_mean": 0.9991024391298893,
+        "expert_55_gate_generalized_score_correlation_mean": 0.9695526518923429,
+        "expert_55_up_generalized_score_correlation_mean": 0.9855373708524051,
+        "expert_70_down_generalized_score_correlation_mean": 0.9996029368374674,
+        "expert_70_gate_generalized_score_correlation_mean": 0.9996321209574796,
+        "expert_70_up_generalized_score_correlation_mean": 0.9993406017493475
+      },
+      "gguf_storage": {
+        "down": {
+          "bytes_per_expert": 860160,
+          "effective_bpw": 6.5625,
+          "quantization_type": "14",
+          "quantization_type_id": 14,
+          "tensor_name": "blk.39.ffn_down_exps.weight",
+          "tensor_storage_bytes": 220200960
+        },
+        "gate": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "up": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_up_exps.weight",
+          "tensor_storage_bytes": 184549376
+        }
+      },
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "selected_experts": [
+        22,
+        28,
+        37,
+        43,
+        55,
+        70,
+        119,
+        147,
+        153,
+        189,
+        193,
+        235
+      ],
+      "strata": {
+        "119": "cold",
+        "147": "median",
+        "153": "cold",
+        "189": "hot",
+        "193": "median",
+        "22": "hot",
+        "235": "hot",
+        "28": "cold",
+        "37": "median",
+        "43": "cold",
+        "55": "median",
+        "70": "hot"
+      },
+      "train_frequencies": {
+        "119": 1,
+        "147": 23,
+        "153": 1,
+        "189": 104,
+        "193": 22,
+        "22": 115,
+        "235": 178,
+        "28": 1,
+        "37": 23,
+        "43": 1,
+        "55": 23,
+        "70": 122
+      },
+      "wall_seconds": 153.00815725326538
+    }
+  },
+  "rows": 369600,
+  "started_unix": 1787006807.189848,
+  "wall_seconds": 548.9703235626221
+}

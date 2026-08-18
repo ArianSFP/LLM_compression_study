@@ -1,0 +1,95 @@
+{
+  "deployment_h4_selected_support": {
+    "0.0": {
+      "median_correction_accumulation_flops": 0.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.0,
+      "median_selected_row_transform_flops": 0.0,
+      "median_total_extra_flops": 0.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "0.25": {
+      "median_correction_accumulation_flops": 67584.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.029296875,
+      "median_selected_row_transform_flops": 113664.0,
+      "median_total_extra_flops": 184320.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "0.5": {
+      "median_correction_accumulation_flops": 140288.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.05615234375,
+      "median_selected_row_transform_flops": 218112.0,
+      "median_total_extra_flops": 353280.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "0.75": {
+      "median_correction_accumulation_flops": 210944.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.08219401041666667,
+      "median_selected_row_transform_flops": 331776.0,
+      "median_total_extra_flops": 517120.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "1.0": {
+      "median_correction_accumulation_flops": 293888.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.11474609375,
+      "median_selected_row_transform_flops": 453632.0,
+      "median_total_extra_flops": 721920.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "1.25": {
+      "median_correction_accumulation_flops": 386048.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.15462239583333334,
+      "median_selected_row_transform_flops": 630784.0,
+      "median_total_extra_flops": 972800.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "1.5": {
+      "median_correction_accumulation_flops": 493568.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.20100911458333334,
+      "median_selected_row_transform_flops": 824320.0,
+      "median_total_extra_flops": 1264640.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "2.0": {
+      "median_correction_accumulation_flops": 729088.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.3865559895833333,
+      "median_selected_row_transform_flops": 1426432.0,
+      "median_total_extra_flops": 2432000.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "2.5": {
+      "median_correction_accumulation_flops": 909312.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.4947916666666667,
+      "median_selected_row_transform_flops": 2205696.0,
+      "median_total_extra_flops": 3112960.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "3.0": {
+      "median_correction_accumulation_flops": 1227776.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.66162109375,
+      "median_selected_row_transform_flops": 2802688.0,
+      "median_total_extra_flops": 4162560.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    },
+    "4.0": {
+      "median_correction_accumulation_flops": 1711104.0,
+      "median_extra_to_complete_q4_expert_flop_ratio": 0.9391276041666666,
+      "median_selected_row_transform_flops": 4284416.0,
+      "median_total_extra_flops": 5908480.0,
+      "note": "Analytical FLOPs only; no DGX Spark timing. Gate/up union reuse is not credited, so selected-row transform cost is conservative.",
+      "oracle_full_gate_up_transform_flops_per_layer_token": 8388608
+    }
+  },
+  "full_q4_expert_projection_flops": 6291456,
+  "measured_gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (not a DGX Spark)",
+  "resident_binary_base_effective_bpw": 1.25048828125
+}
