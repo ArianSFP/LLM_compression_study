@@ -1,0 +1,44 @@
+{
+  "run_id": "qwen36_q2_rrq_dense_ceiling_20260818_v1",
+  "seed": 20260817,
+  "layers": [0, 4, 20, 39],
+  "capture_segments": 6,
+  "position_stride": 16,
+  "experts_per_frequency_stratum": 4,
+  "search_experts_per_layer": 3,
+  "max_train_invocations_per_expert": 128,
+  "max_validation_invocations_per_expert": 8,
+  "max_test_invocations_per_expert": 4,
+  "base_group_size": 64,
+  "stage_depths": [0, 1, 2, 3],
+  "page_sizes": [512, 1024, 2048, 4096],
+  "actual_correction_bpw_budgets": [0.75, 1.0, 1.25, 1.5, 2.0, 2.25, 3.0, 4.0],
+  "bootstrap_resamples": 1000,
+  "search_beam_width": 2,
+  "search_candidates": [
+    {"name": "midrise_mse", "group_size": 64},
+    {"name": "signed_zero_rtn", "group_size": 64},
+    {"name": "signed_zero_rtn", "group_size": 128},
+    {"name": "signed_zero_mse", "group_size": 64},
+    {"name": "signed_zero_mse", "group_size": 128},
+    {"name": "affine_mse", "group_size": 64},
+    {"name": "affine_mse", "group_size": 128},
+    {"name": "affine_rtn", "group_size": 64},
+    {"name": "affine_rtn", "group_size": 128}
+  ],
+  "diagnostic_quantizers": [
+    {"name": "centroid4", "group_size": 64}
+  ],
+  "scale_storage_primary": "fp16",
+  "scale_storage_controls": ["bf16", "fp32"],
+  "reference_fallback_in_external_cap": true,
+  "resident_base_external_copy": false,
+  "external_storage_cap_reference_multiplier": 5.0,
+  "remote": {
+    "capture_root": "/workspace/LLM_prefetch_study/artifacts/gcrp2/captures/gcrp2r_transformers_bf16_corpus_v1",
+    "hf_model": "/workspace/LLM_prefetch_study/artifacts/j_route_0/hf/Qwen3.6-35B-A3B",
+    "gguf_model": "/workspace/LLM_prefetch_study/models/Qwen3.6-35B-A3B-MXFP4_MOE.gguf",
+    "gguf_python": "/workspace/LLM_prefetch_study/src/llama.cpp/gguf-py",
+    "python": "/workspace/LLM_prefetch_study/artifacts/j_route_0/.venv-jroute0/bin/python"
+  }
+}

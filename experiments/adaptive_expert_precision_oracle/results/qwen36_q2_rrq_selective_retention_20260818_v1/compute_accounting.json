@@ -1,0 +1,62 @@
+{
+  "analysis_basis_resident_bytes_fp16_per_layer": 8388608,
+  "atom_accumulation_flops": "1024 per selected gate/up atom-stage; 4096 per selected down atom-stage",
+  "difficult_layer_frontier": [
+    {
+      "atom_accumulation_flops_median": 589824.0,
+      "budget_bpw": 0.5,
+      "deployment_extra_flops_median": 1335296.0,
+      "invocations": 159,
+      "ratio_to_one_complete_expert_gemv_median": 0.21223958333333334,
+      "selected_row_transform_flops_median": 753664.0
+    },
+    {
+      "atom_accumulation_flops_median": 983040.0,
+      "budget_bpw": 1.0,
+      "deployment_extra_flops_median": 2416640.0,
+      "invocations": 159,
+      "ratio_to_one_complete_expert_gemv_median": 0.3841145833333333,
+      "selected_row_transform_flops_median": 1437696.0
+    },
+    {
+      "atom_accumulation_flops_median": 1572864.0,
+      "budget_bpw": 1.5,
+      "deployment_extra_flops_median": 3321856.0,
+      "invocations": 159,
+      "ratio_to_one_complete_expert_gemv_median": 0.5279947916666666,
+      "selected_row_transform_flops_median": 1589248.0
+    },
+    {
+      "atom_accumulation_flops_median": 1966080.0,
+      "budget_bpw": 2.0,
+      "deployment_extra_flops_median": 4472832.0,
+      "invocations": 159,
+      "ratio_to_one_complete_expert_gemv_median": 0.7109375,
+      "selected_row_transform_flops_median": 2293760.0
+    },
+    {
+      "atom_accumulation_flops_median": 2555904.0,
+      "budget_bpw": 2.5,
+      "deployment_extra_flops_median": 5550080.0,
+      "invocations": 159,
+      "ratio_to_one_complete_expert_gemv_median": 0.8821614583333334,
+      "selected_row_transform_flops_median": 2936832.0
+    },
+    {
+      "atom_accumulation_flops_median": 3145728.0,
+      "budget_bpw": 3.0,
+      "deployment_extra_flops_median": 6598656.0,
+      "invocations": 159,
+      "ratio_to_one_complete_expert_gemv_median": 1.048828125,
+      "selected_row_transform_flops_median": 3534848.0
+    }
+  ],
+  "exact_final_candidates_per_budget": 16,
+  "full_transform_is_oracle_only": true,
+  "full_transform_oracle_flops_per_layer_token": 8388608,
+  "one_complete_expert_gemv_flops": 6291456,
+  "rtx_3090_end_to_end_kernel_timing_measured": false,
+  "selected_row_transform_flops": "4096 per unique gate/up analysis row; row is shared between gate and up for one expert invocation",
+  "selection": "H0 oracle; diagonal scores plus linearized allocation shortlist",
+  "spark_timing_measured": false
+}
