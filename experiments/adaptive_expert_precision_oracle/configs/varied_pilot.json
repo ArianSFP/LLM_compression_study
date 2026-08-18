@@ -1,0 +1,25 @@
+{
+  "run_id": "qwen36_mxfp4_varied_pilot_20260817",
+  "seed": 20260817,
+  "layers": [0, 20, 39],
+  "capture_segments": 6,
+  "position_stride": 16,
+  "future_horizons": [1, 2, 3, 4],
+  "experts_per_frequency_stratum": 4,
+  "max_test_invocations_per_expert": 32,
+  "ideal_bpw_budgets": [0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0],
+  "physical_bpw_budgets": [0.1, 0.2, 0.5, 1.0],
+  "page_sizes": [512, 4096, 16384],
+  "default_page_size": 4096,
+  "bootstrap_resamples": 1000,
+  "learned_seeds": [11, 29, 47],
+  "binary_group_size": 64,
+  "progressive_bits": [0, 2, 4, 8, 16],
+  "remote": {
+    "capture_root": "/workspace/LLM_prefetch_study/artifacts/gcrp2/captures/gcrp2r_transformers_bf16_corpus_v1",
+    "hf_model": "/workspace/LLM_prefetch_study/artifacts/j_route_0/hf/Qwen3.6-35B-A3B",
+    "gguf_model": "/workspace/LLM_prefetch_study/models/Qwen3.6-35B-A3B-MXFP4_MOE.gguf",
+    "gguf_python": "/workspace/LLM_prefetch_study/src/llama.cpp/gguf-py",
+    "python": "/workspace/LLM_prefetch_study/artifacts/j_route_0/.venv-jroute0/bin/python"
+  }
+}

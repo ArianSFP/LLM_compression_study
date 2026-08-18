@@ -1,0 +1,202 @@
+{
+  "layers": {
+    "0": {
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "storage": {
+        "down_16": {
+          "atom_bytes_per_expert": 2102336,
+          "q4_plus_view_multiplier": 2.1456821986607144
+        },
+        "down_2": {
+          "atom_bytes_per_expert": 267328,
+          "q4_plus_view_multiplier": 1.1456821986607142
+        },
+        "down_4": {
+          "atom_bytes_per_expert": 529472,
+          "q4_plus_view_multiplier": 1.2885393415178572
+        },
+        "down_8": {
+          "atom_bytes_per_expert": 1053760,
+          "q4_plus_view_multiplier": 1.5742536272321428
+        },
+        "gate_16": {
+          "atom_bytes_per_expert": 2117696,
+          "q4_plus_view_multiplier": 2.154052734375
+        },
+        "gate_2": {
+          "atom_bytes_per_expert": 282688,
+          "q4_plus_view_multiplier": 1.154052734375
+        },
+        "gate_4": {
+          "atom_bytes_per_expert": 544832,
+          "q4_plus_view_multiplier": 1.2969098772321428
+        },
+        "gate_8": {
+          "atom_bytes_per_expert": 1069120,
+          "q4_plus_view_multiplier": 1.5826241629464286
+        },
+        "up_16": {
+          "atom_bytes_per_expert": 2117696,
+          "q4_plus_view_multiplier": 2.154052734375
+        },
+        "up_2": {
+          "atom_bytes_per_expert": 282688,
+          "q4_plus_view_multiplier": 1.154052734375
+        },
+        "up_4": {
+          "atom_bytes_per_expert": 544832,
+          "q4_plus_view_multiplier": 1.2969098772321428
+        },
+        "up_8": {
+          "atom_bytes_per_expert": 1069120,
+          "q4_plus_view_multiplier": 1.5826241629464286
+        }
+      }
+    },
+    "20": {
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "storage": {
+        "down_16": {
+          "atom_bytes_per_expert": 2102336,
+          "q4_plus_view_multiplier": 2.1456821986607144
+        },
+        "down_2": {
+          "atom_bytes_per_expert": 267328,
+          "q4_plus_view_multiplier": 1.1456821986607142
+        },
+        "down_4": {
+          "atom_bytes_per_expert": 529472,
+          "q4_plus_view_multiplier": 1.2885393415178572
+        },
+        "down_8": {
+          "atom_bytes_per_expert": 1053760,
+          "q4_plus_view_multiplier": 1.5742536272321428
+        },
+        "gate_16": {
+          "atom_bytes_per_expert": 2117696,
+          "q4_plus_view_multiplier": 2.154052734375
+        },
+        "gate_2": {
+          "atom_bytes_per_expert": 282688,
+          "q4_plus_view_multiplier": 1.154052734375
+        },
+        "gate_4": {
+          "atom_bytes_per_expert": 544832,
+          "q4_plus_view_multiplier": 1.2969098772321428
+        },
+        "gate_8": {
+          "atom_bytes_per_expert": 1069120,
+          "q4_plus_view_multiplier": 1.5826241629464286
+        },
+        "up_16": {
+          "atom_bytes_per_expert": 2117696,
+          "q4_plus_view_multiplier": 2.154052734375
+        },
+        "up_2": {
+          "atom_bytes_per_expert": 282688,
+          "q4_plus_view_multiplier": 1.154052734375
+        },
+        "up_4": {
+          "atom_bytes_per_expert": 544832,
+          "q4_plus_view_multiplier": 1.2969098772321428
+        },
+        "up_8": {
+          "atom_bytes_per_expert": 1069120,
+          "q4_plus_view_multiplier": 1.5826241629464286
+        }
+      }
+    },
+    "39": {
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "storage": {
+        "down_16": {
+          "atom_bytes_per_expert": 2102336,
+          "q4_plus_view_multiplier": 1.9132840302491103
+        },
+        "down_2": {
+          "atom_bytes_per_expert": 267328,
+          "q4_plus_view_multiplier": 1.1161310053380782
+        },
+        "down_4": {
+          "atom_bytes_per_expert": 529472,
+          "q4_plus_view_multiplier": 1.2300100088967971
+        },
+        "down_8": {
+          "atom_bytes_per_expert": 1053760,
+          "q4_plus_view_multiplier": 1.4577680160142348
+        },
+        "gate_16": {
+          "atom_bytes_per_expert": 2117696,
+          "q4_plus_view_multiplier": 1.919956628113879
+        },
+        "gate_2": {
+          "atom_bytes_per_expert": 282688,
+          "q4_plus_view_multiplier": 1.122803603202847
+        },
+        "gate_4": {
+          "atom_bytes_per_expert": 544832,
+          "q4_plus_view_multiplier": 1.236682606761566
+        },
+        "gate_8": {
+          "atom_bytes_per_expert": 1069120,
+          "q4_plus_view_multiplier": 1.4644406138790036
+        },
+        "up_16": {
+          "atom_bytes_per_expert": 2117696,
+          "q4_plus_view_multiplier": 1.919956628113879
+        },
+        "up_2": {
+          "atom_bytes_per_expert": 282688,
+          "q4_plus_view_multiplier": 1.122803603202847
+        },
+        "up_4": {
+          "atom_bytes_per_expert": 544832,
+          "q4_plus_view_multiplier": 1.236682606761566
+        },
+        "up_8": {
+          "atom_bytes_per_expert": 1069120,
+          "q4_plus_view_multiplier": 1.4644406138790036
+        }
+      }
+    }
+  },
+  "progressive_representation": "nested two's-complement prefixes of one int16 master atom",
+  "rows": 84000,
+  "wall_seconds": 415.06325006484985
+}

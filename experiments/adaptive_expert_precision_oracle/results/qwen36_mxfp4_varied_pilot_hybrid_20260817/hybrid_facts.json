@@ -1,0 +1,181 @@
+{
+  "allocation_constraint": "(physical_gate_bpw + physical_up_bpw + physical_down_bpw) / 3 <= total average bpw",
+  "description": "H0 progressive-precision projection-specific basis and asymmetric physical-byte oracle",
+  "layers": {
+    "0": {
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "selected_experts": [
+        1,
+        8,
+        17,
+        22,
+        114,
+        158,
+        164,
+        181,
+        206,
+        238,
+        248,
+        252
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.0.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.0.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      },
+      "test_invocations": 67,
+      "wall_seconds": 154.70593285560608
+    },
+    "20": {
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "selected_experts": [
+        5,
+        30,
+        44,
+        45,
+        46,
+        54,
+        72,
+        142,
+        148,
+        156,
+        232,
+        240
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.20.ffn_down_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "gate": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 142606336
+        },
+        "up": {
+          "bytes_per_expert": 557056,
+          "effective_bpw": 4.25,
+          "quantization_type": "39",
+          "quantization_type_id": 39,
+          "tensor_name": "blk.20.ffn_up_exps.weight",
+          "tensor_storage_bytes": 142606336
+        }
+      },
+      "test_invocations": 40,
+      "wall_seconds": 112.18342971801758
+    },
+    "39": {
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "selected_experts": [
+        22,
+        28,
+        37,
+        43,
+        55,
+        70,
+        119,
+        147,
+        153,
+        189,
+        193,
+        235
+      ],
+      "storage": {
+        "down": {
+          "bytes_per_expert": 860160,
+          "effective_bpw": 6.5625,
+          "quantization_type": "14",
+          "quantization_type_id": 14,
+          "tensor_name": "blk.39.ffn_down_exps.weight",
+          "tensor_storage_bytes": 220200960
+        },
+        "gate": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_gate_exps.weight",
+          "tensor_storage_bytes": 184549376
+        },
+        "up": {
+          "bytes_per_expert": 720896,
+          "effective_bpw": 5.5,
+          "quantization_type": "13",
+          "quantization_type_id": 13,
+          "tensor_name": "blk.39.ffn_up_exps.weight",
+          "tensor_storage_bytes": 184549376
+        }
+      },
+      "test_invocations": 60,
+      "wall_seconds": 134.61032581329346
+    }
+  },
+  "rows": 22044,
+  "selection": "training-only bases/layouts; test-invocation atom, precision, and allocation oracle",
+  "started_unix": 1787008225.4439847,
+  "wall_seconds": 402.4505763053894
+}
