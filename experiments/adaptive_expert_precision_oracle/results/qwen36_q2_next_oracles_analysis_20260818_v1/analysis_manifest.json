@@ -1,0 +1,30 @@
+{
+  "baseline_rows": 1197,
+  "run_a_rows": 3969,
+  "run_b_all_rows": 358440,
+  "run_b_selected_test_rows": 1064,
+  "sequence_rows": 17868,
+  "bootstrap_resamples": 1000,
+  "plots_png": [
+    "01_current_vs_corrected_allocator.png",
+    "02_allocator_waterfall.png",
+    "03_logical_vs_physical_bpw.png",
+    "04_page_amplification_vs_page_size.png",
+    "05_recovery_vs_page_size.png",
+    "06_per_atom_precision_distribution.png",
+    "07_projection_bandwidth_allocation.png",
+    "08_layout_replica_bundling.png",
+    "09_bounded_exact_greedy_regret.png",
+    "10_required_rate_cdf.png",
+    "11_layer_specific_curves.png",
+    "12_storage_multiplier_vs_recovery.png",
+    "13_down_recovery_vs_rank.png",
+    "14_complete_expert_vs_low_rank_bytes.png",
+    "15_shared_cluster_per_expert.png",
+    "16_coefficient_precision.png",
+    "17_down_bytes_vs_flops.png",
+    "18_low_rank_spectra.png",
+    "19_native_vs_low_rank_pareto.png",
+    "20_run_a_run_b_frontier.png"
+  ]
+}

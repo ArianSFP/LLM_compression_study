@@ -1,0 +1,216 @@
+{
+  "layers": {
+    "0": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9991137578565812,
+          "max_abs_error": 0.003977775573730469,
+          "relative_rmse": 0.042095288984584284
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9932557693329288,
+          "max_abs_error": 0.015625,
+          "relative_rmse": 0.11631709208671244
+        },
+        "up": {
+          "bf16_q4_cosine": 0.993454998273972,
+          "max_abs_error": 0.01513671875,
+          "relative_rmse": 0.11455121574093366
+        }
+      },
+      "experts": [
+        1,
+        8,
+        17,
+        22,
+        114,
+        158,
+        164,
+        181,
+        206,
+        238,
+        248,
+        252
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.6648488235659899e-06,
+        "train_samples": 823
+      },
+      "skipped_cluster_counts": [
+        16
+      ],
+      "test_invocations": 81,
+      "wall_seconds": 145.06072521209717
+    },
+    "20": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9993549807973882,
+          "max_abs_error": 0.002872169017791748,
+          "relative_rmse": 0.03591256635790636
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9932752036672797,
+          "max_abs_error": 0.015380859375,
+          "relative_rmse": 0.1164547288310138
+        },
+        "up": {
+          "bf16_q4_cosine": 0.9934336968817842,
+          "max_abs_error": 0.015625,
+          "relative_rmse": 0.11489496959693818
+        }
+      },
+      "experts": [
+        5,
+        30,
+        44,
+        45,
+        46,
+        54,
+        72,
+        142,
+        148,
+        156,
+        232,
+        240
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 3.712038043886423e-05,
+        "train_samples": 823
+      },
+      "skipped_cluster_counts": [
+        16
+      ],
+      "test_invocations": 48,
+      "wall_seconds": 88.13900947570801
+    },
+    "39": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9998299504244206,
+          "max_abs_error": 0.0048828125,
+          "relative_rmse": 0.01845641837380763
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9993299251282431,
+          "max_abs_error": 0.005588531494140625,
+          "relative_rmse": 0.036603530175156565
+        },
+        "up": {
+          "bf16_q4_cosine": 0.999343928113303,
+          "max_abs_error": 0.0039948225021362305,
+          "relative_rmse": 0.03621889507759392
+        }
+      },
+      "experts": [
+        22,
+        28,
+        37,
+        43,
+        55,
+        70,
+        119,
+        147,
+        153,
+        189,
+        193,
+        235
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 0.0008685165643692017,
+        "train_samples": 823
+      },
+      "skipped_cluster_counts": [
+        16
+      ],
+      "test_invocations": 65,
+      "wall_seconds": 116.60504961013794
+    },
+    "4": {
+      "alignment": {
+        "down": {
+          "bf16_q4_cosine": 0.9993543755188117,
+          "max_abs_error": 0.0024810433387756348,
+          "relative_rmse": 0.03592927770579052
+        },
+        "gate": {
+          "bf16_q4_cosine": 0.9934279830092924,
+          "max_abs_error": 0.015380859375,
+          "relative_rmse": 0.11499055752015261
+        },
+        "up": {
+          "bf16_q4_cosine": 0.9934903788992079,
+          "max_abs_error": 0.01513671875,
+          "relative_rmse": 0.11433032662732326
+        }
+      },
+      "experts": [
+        28,
+        36,
+        82,
+        111,
+        129,
+        134,
+        143,
+        154,
+        190,
+        193,
+        220,
+        252
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.03125,
+          0.046875,
+          0.03125
+        ],
+        "rank": 4,
+        "ridge": 6.080580642446876e-06,
+        "train_samples": 823
+      },
+      "skipped_cluster_counts": [
+        16
+      ],
+      "test_invocations": 63,
+      "wall_seconds": 133.2204625606537
+    }
+  },
+  "rows": 358440,
+  "split_requests": {
+    "test": 16,
+    "train": 53,
+    "validation": 12
+  },
+  "started_unix": 1787016036.6083806,
+  "wall_seconds": 484.31258940696716
+}
