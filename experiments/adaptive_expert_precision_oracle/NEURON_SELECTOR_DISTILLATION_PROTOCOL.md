@@ -24,7 +24,10 @@ pages; down refinement costs one. Exact marginal-per-page fixed-greedy may
 take `00→10→11` or `00→01→11`. Coefficients are fixed, no least-squares refit
 is performed, and the implementation maintains exact correlations under the
 nonidentity future-proxy qmetric. Each headline physical budget is run as an
-independently constrained path at 0.5, 0.75, and 1.0 bpw.
+independently constrained path at 0.5, 0.75, and 1.0 bpw. A path may traverse
+a negative prerequisite to unlock a profitable complementary transition, but
+the reported state is the best cumulative prefix under the page cap rather
+than blindly applying the last evaluated transition.
 
 The controlled baselines are coherent three-page unit packets from PR #7 and
 the frozen exact nonlinear 64×16 tile validation frontier. Factorized neurons
@@ -93,7 +96,8 @@ overfetch, and metadata gates in the JSON config.
 
 The exact factorized oracle may promote independently of the response
 predictor. A negative predictor result is a valid conclusion and stops its
-held-out expansion.
+held-out expansion. In the executed study both families stopped, so no test or
+cross-reference evaluation was launched.
 
 ## Physical accounting
 
@@ -103,7 +107,30 @@ reported separately from fetched suffix traffic, and the storage multiplier
 is `(4.25 + 2.0 + selector_metadata_bpw) / 4.25`. `selector_bytes_read` is a
 unique-tensor-footprint lower bound, not measured hardware traffic.
 
-## Frozen implementation checkpoint
+## Frozen result
+
+Corrected validation covered 69 routed invocations over all twelve sampled
+experts. The frozen matched comparison uses the same 55 invocations available
+to the PR #7 tile control.
+
+- Factorized G/D fixed-greedy at the one-bpw cap: p10/median
+  `0.869842/0.932810`; exact 64×16 tile: `0.935183/0.966025`. The family
+  stopped. At 0.5 bpw factorization improves coherent packets, but the gain
+  disappears by 0.75 bpw and reverses at 1.0 bpw.
+- Best bank-deployable response candidate under 0.35 metadata bpw: combined-
+  train, separate gate/up, rank 64, row-FP8. With 256 fetched and 192 applied
+  units it reaches p10/median recovery `0.755966/0.888333` and independent-
+  score utility retention `0.916435/0.956179` at `0.184926` metadata bpw.
+  It stopped on recovery; even the sampled per-expert upper bound failed.
+- The exact A/B/C statistic itself needs 3,084 bytes/expert (`0.007843` bpw).
+  The negative result is specifically the proposed h4 response predictor plus
+  independent-unit scoring, not the algebraic identity.
+- Frozen promotion SHA-256:
+  `7430a885d6dfa303ac1a54357fa7a86f54bd9000df46d23f2727fd45fe961bc4`.
+- No activation-top-k/cluster continuation, test run, cross sensitivity, or H4
+  training was performed after the stop.
+
+## Initial pre-run implementation checkpoint (historical)
 
 - config SHA-256: `41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4`
 - selector core: `24c296a0fe3d5390543bedb7847f8d60bcb3b7dfd3ebfce30eaccba7b294a871`
@@ -115,3 +142,16 @@ unique-tensor-footprint lower bound, not measured hardware traffic.
 
 Later corrections and their replacement hashes must be recorded in the
 execution ledger before they are used for scientific evidence.
+
+## Executed implementation checkpoint
+
+- config: `41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4`
+- selector core: `29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94`
+- evaluation runner: `9d3a44cf2e4fa82ee533c482ac52073a9bad7968aa411fdc34dace8450d59e29`
+- final analyzer: `d8d257230a6fc1fe46526b38de790ac5d211b6f1a7d6cd6180edfda6a69a1f20`
+- fit bundle manifest: `73b0285be3e3611fa44ac0995bd69c3b4390cd02b0fa9ac03a9626397c878d60`
+- focused tests: 32 passed;
+- integrated tests: 153 passed in 21.67 seconds, with the inherited
+  pandas/numexpr warning only;
+- final analysis rerun: byte-identical CSV, JSON, Markdown, PNG, SVG, and
+  manifest outputs after fixing Matplotlib's SVG hash salt and date metadata and normalizing SVG trailing whitespace.

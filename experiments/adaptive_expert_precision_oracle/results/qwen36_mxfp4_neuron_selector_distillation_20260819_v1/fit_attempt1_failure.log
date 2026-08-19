@@ -1,0 +1,12 @@
+/workspace/neuron_selector_study/experiments/adaptive_expert_precision_oracle/src/oracle_study/neuron_selector.py:340: RuntimeWarning: divide by zero encountered in divide
+  normalized = matrix / scale.astype(np.float32)
+Traceback (most recent call last):
+  File "/workspace/neuron_selector_study/experiments/adaptive_expert_precision_oracle/scripts/run_neuron_selector_distillation.py", line 1070, in <module>
+    main()
+  File "/workspace/neuron_selector_study/experiments/adaptive_expert_precision_oracle/scripts/run_neuron_selector_distillation.py", line 1062, in main
+    fit_phase(args, config)
+  File "/workspace/neuron_selector_study/experiments/adaptive_expert_precision_oracle/scripts/run_neuron_selector_distillation.py", line 517, in fit_phase
+    encode_array(matrix.astype(np.float32), str(encoding))
+  File "/workspace/neuron_selector_study/experiments/adaptive_expert_precision_oracle/src/oracle_study/neuron_selector.py", line 344, in encode_array
+    raise ValueError("row-scaled FP8 selector metadata overflowed")
+ValueError: row-scaled FP8 selector metadata overflowed

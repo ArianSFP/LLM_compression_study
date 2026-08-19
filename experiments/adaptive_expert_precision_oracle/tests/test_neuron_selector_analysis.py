@@ -1,9 +1,25 @@
 from __future__ import annotations
 
+import importlib.util
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
 from oracle_study.neuron_selector_analysis import choose_validation_promotions, validate_promotion_payload
+
+SCRIPT = Path(__file__).parents[1] / "scripts" / "analyze_neuron_selector_distillation.py"
+SPEC = importlib.util.spec_from_file_location("analyze_neuron_selector_distillation", SCRIPT)
+assert SPEC is not None and SPEC.loader is not None
+analyzer = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(analyzer)
+
+
+def test_save_figure_normalizes_svg_trailing_whitespace(tmp_path: Path) -> None:
+    fig, axis = analyzer.plt.subplots()
+    axis.plot([0.0, 1.0], [1.0, 0.0])
+    _, svg_path = analyzer.save_figure(fig, tmp_path, "fixture")
+    assert all(line == line.rstrip() for line in svg_path.read_text().splitlines())
 
 
 def config() -> dict:
@@ -136,3 +152,17 @@ def test_selection_rejects_any_test_row() -> None:
             factorized=factorized, response=pd.DataFrame(), candidate=pd.DataFrame(),
             tile_comparator=pd.DataFrame(), evidence_sha256={},
         )
+
+
+def test_frontier_summary_keeps_physical_and_logical_accounting() -> None:
+    frame = pd.DataFrame({
+        "family": ["a", "a", "b"],
+        "recovery": [0.8, 1.0, 0.5],
+        "physical_pages": [10, 12, 4],
+        "logical_actions": [6, 8, 3],
+    })
+    summary = analyzer.frontier_summary(frame, ["family"]).set_index("family")
+    assert summary.loc["a", "recovery_n"] == 2
+    assert summary.loc["a", "recovery_median"] == pytest.approx(0.9)
+    assert summary.loc["a", "physical_pages_median"] == pytest.approx(11)
+    assert summary.loc["a", "logical_actions_median"] == pytest.approx(7)

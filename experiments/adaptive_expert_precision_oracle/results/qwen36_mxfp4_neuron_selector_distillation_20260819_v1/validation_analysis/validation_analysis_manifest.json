@@ -1,0 +1,25 @@
+{
+  "inputs": {
+    "/workspace/neuron_selector_study/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint/alternate_tile_shape_validation_frontier.parquet": "898f93a93571c321ae47ab4eda42e39c445de58c0ab600920b4f0eaf387b7543",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/fit/response_fit_bundle_manifest.json": "73b0285be3e3611fa44ac0995bd69c3b4390cd02b0fa9ac03a9626397c878d60",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/fit/response_fit_layer_0.npz": "1aacfc77756ee62e89b0cbddcae1278840cf744379702aeb2733e141e1151c7f",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/fit/response_fit_layer_20.npz": "4e7a5612f6ada0503a4d613b058ffd889f89752171b5ac02a1885cc9bb0eb25b",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/fit/response_fit_layer_39.npz": "31d437a83a36a5faa943df0e9755b8956858db9938581208917f4f50be82cf84",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/fit/response_fit_layer_4.npz": "164f397490f32e6e33101f4ecf17cad25a757996a2570cd726d1047e701d0fc2",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/validation_exact_checkpoint/candidate_rerank_frontier.parquet": "521e4c7073acb1acb3116324cf2679e4ab294391be2f3fd88489020728725a34",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/validation_exact_checkpoint/factorized_neuron_frontier.parquet": "ab33bd5b8102fbac12535120334c321c6b4c03ea9f2c42ba732a4282d31e2d43",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/validation_exact_checkpoint/response_prediction_diagnostics.parquet": "17b6018e4ff57b7553c14b6b93e9b5ff8c348c43f006ec119e6133dbe36792e2",
+    "/workspace/neuron_selector_study/results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/validation_exact_checkpoint/response_predictor_frontier.parquet": "43ecb23d0dc5671dd8cdffff3df7d9cae7a2f32b743cc833bcf08083fee26611",
+    "configs/qwen36_mxfp4_neuron_selector_distillation.json": "41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4"
+  },
+  "outputs": {
+    "NEURON_SELECTOR_VALIDATION_REPORT.md": "0b604adf35ecc52bddcaa82722d9c7fa79bb0f9cc3be9f6e424ce48ac3ccf8a3",
+    "factorized_paired_validation.csv": "80d1a3599c9e052f00ee4f483c9a2a39a9ec4e136b4f0cb540654f2c979b80e0",
+    "neuron_selector_promotions.json": "7430a885d6dfa303ac1a54357fa7a86f54bd9000df46d23f2727fd45fe961bc4",
+    "response_diagnostic_summary.csv": "6c0e654d43abaef5e4f53c98ef819e54ffa3edbfc4db2d136b2c2457f1a81015",
+    "response_validation_summary.csv": "12efd242b0e8746937cb98bb468e78f41e634fbfb2b2678b5f94a7640c449af6"
+  },
+  "schema_version": 1,
+  "stage": "validation_promotion",
+  "test_rows_consulted_for_selection": false
+}
