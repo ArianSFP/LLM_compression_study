@@ -69,7 +69,7 @@ The broader cross-reference capture is secondary sensitivity evidence because it
 
 ## RunPod
 
-RunPod `41rk786odszmk9` (`broken_crimson_buzzard`) is the active execution host. The replacement endpoint supplied by the user is `213.192.2.117:40134`. Hardware inspection reports an NVIDIA RTX 3090 with 24,576 MiB VRAM, driver 595.71.05, 1.0 TiB host RAM, and 256 logical CPUs. The user explicitly authorized keeping this pod running throughout the experiment and requested that it be stopped only after experimentation has ended. Shutdown and post-stop verification are therefore terminal ledger events, not pilot cleanup steps.
+RunPod `41rk786odszmk9` (`broken_crimson_buzzard`) was the execution host. Hardware inspection reported an NVIDIA RTX 3090 with 24,576 MiB VRAM, driver 595.71.05, 1.0 TiB host RAM, and 256 logical CPUs. The user explicitly authorized keeping this pod running throughout the experiment and requested that it be stopped only after experimentation ended. The verified shutdown is recorded as the terminal execution event below. Ephemeral SSH endpoints and local private-key paths are intentionally omitted from the publishable ledger.
 
 ## Commands, failures, and corrections
 
@@ -131,7 +131,7 @@ The first Torch progressive selector broke equal gain/page ties only by lower ac
 
 ### Replacement endpoint and immutable input restoration
 
-The originally supplied endpoint `213.192.2.120:40025` refused the SSH connection. No command was executed and no remote state was changed there. The user supplied the replacement endpoint `213.192.2.117:40134`, which was accepted with the same Ed25519 identity.
+The originally supplied RunPod endpoint refused the SSH connection. No command was executed and no remote state was changed there. The user supplied a replacement endpoint, which was accepted with the same Ed25519 identity.
 
 The remote study root is `/root/sparse_streaming_study`, the isolated Python environment is `/root/allocator_env`, and the checkpoint is `/root/qwen36_mxfp4_candidate`. The installed execution stack includes PyTorch `2.8.0+cu128`, Transformers `5.15.0`, compressed-tensors `0.18.0`, pandas `3.0.5`, PyArrow `25.0.1`, and safetensors `0.8.0`.
 
@@ -150,7 +150,7 @@ The broader capture was regenerated from the immutable aligned raw corpus under 
 
 The first extraction attempt prefixed the command with `/usr/bin/time`, which is absent from the pod image, and failed with exit status 127 before creating output. The command was rerun without that optional timing wrapper and completed successfully. This was an environment-only correction; the final NPZ is accepted solely by its locked content hash.
 
-### Fresh exact-checkpoint recapture (in progress)
+### Fresh exact-checkpoint recapture started
 
 The following CPU-only forward capture was started so GPU memory remains available for the later allocator run:
 
@@ -257,4 +257,324 @@ The final analyzer and analyzer-test SHA-256 identities are:
 | `src/oracle_study/sparse_streaming_analysis.py` | `120d620041fe0f5ce60532611d879b6f7205ab02327f8f6f52d2c5b6e6eb909d` |
 | `tests/test_sparse_streaming_analysis.py` | `5a6a15800c5348121be3f09f483f8f2c5334be4c59d26667c9d3c396263838a9` |
 
-The final local integrated command `PYTHONPATH=src:scripts pytest -q` passed `108` tests with the single pre-existing pandas/numexpr warning in 15.07 seconds. The configuration remains unchanged at SHA-256 `326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326`. The preceding `15441c...`/`465aa35...` analyzer checkpoint remains in the chronology as the tabulate-removal state and is superseded by the hashes above. The required complete remote integrated rerun is still outstanding; no pilot result is claimed.
+The final local integrated command `PYTHONPATH=src:scripts pytest -q` passed `108` tests with the single pre-existing pandas/numexpr warning in 15.07 seconds. The configuration remained unchanged at SHA-256 `326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326`. The preceding `15441c...`/`465aa35...` analyzer checkpoint remains in the chronology as the tabulate-removal state and is superseded by the hashes above. At this chronological checkpoint the required complete remote integrated rerun had not yet occurred; its later successful result is recorded below.
+
+### Fresh exact-checkpoint recapture completed
+
+The CPU-only command recorded above completed after 11,963.609 seconds. The accepted capture has 564 rows: 280 train, 128 validation, and 156 test rows from the locked 6/3/3 request split. Its identities are:
+
+| Artifact | SHA-256 |
+|---|---|
+| `work/qwen36_exact_confirm_captures.npz` | `52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931` |
+| `work/qwen36_exact_confirm_captures.manifest.json` | `a2ccad7962e878fa68831e12ace81cd4266c2a7f35fc82587e1efa3abe19c685` |
+
+The NPZ exactly matched the predeclared locked hash, so no recapture correction or request substitution was made. The broader capture remained pinned at `3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add`.
+
+### Remote pre-pilot verification and source freeze
+
+After capture completion, the complete remote command
+
+```bash
+cd /root/sparse_streaming_study
+PYTHONPATH=src:scripts /root/allocator_env/bin/python -m pytest -q
+```
+
+passed all 108 tests in 25.22 seconds. The pilot was launched from branch commit `37e7bfcd168545d6a44a3e3df45b6eb27d858a3c` with the following executed identities:
+
+| Component | SHA-256 |
+|---|---|
+| Frozen configuration | `326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326` |
+| Pilot runner | `cba776cf5f3dbdd12c7691bea0080877be249940c435fee2638ad03f1939492a` |
+| Analyzer CLI | `1e20c6ba8e577fd74c3bee6f8b25f4721880c1cb0daf2872e5058d53095de353` |
+| Selector core | `eb7b08e4aa2bf490c0edebf5e04a017a6701c56410ab35c61de8cc898f868aeb` |
+| CUDA selector core | `440a492d0af557f2004a97d33578f041cb0a267eead2ff5631be4d726f82819d` |
+| Analyzer core | `120d620041fe0f5ce60532611d879b6f7205ab02327f8f6f52d2c5b6e6eb909d` |
+
+### Bounded exact-checkpoint pilot completed
+
+The executed command was:
+
+```bash
+cd /root/sparse_streaming_study
+PYTHONPATH=src:scripts /root/allocator_env/bin/python scripts/run_sparse_streaming_study.py \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --captures work/qwen36_exact_confirm_captures.npz \
+  --checkpoint /root/qwen36_mxfp4_candidate \
+  --trees locked/selected_trees.json \
+  --output results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint \
+  --source exact_checkpoint \
+  --mode pilot \
+  --device cuda
+```
+
+`run_facts.json` records start `2026-08-19 14:21:05.569949 UTC`, completion `2026-08-19 15:35:38.982792 UTC`, and 4,473.413 seconds elapsed. All 59 expected invocations were observed: 55 validation invocations plus the four predeclared single-invocation test execution checks. The layer/expert work units were validation and sanity-test evaluations for `(0,62)`, `(4,154)`, `(20,191)`, and `(39,108)`. Request separation passed and the failures list is empty. The test sanity rows were not eligible for promotion.
+
+The completed artifact counts and identities are:
+
+| Artifact | Rows | SHA-256 |
+|---|---:|---|
+| `_support_cache.parquet` | internal | `0e7f4eed8aacc9a8e60486409933ab325f14294c2005b7ec461c655b35ecb34d` |
+| `activation_concentration.parquet` | 472 | `f86d68f7efab2c488cfcc339f16537dad4a17d81d65772271174b22fba5459d8` |
+| `activation_shortlist_containment.parquet` | 9,912 | `84ded1873cb5d92cc212203cc428f12ed23a60c4e3b32f7123c1986edd15348e` |
+| `exact_action_labels.parquet` | 483,328 | `c8871ed9c63cd35ab7ce3a0ab5089a4115c0abbf3ae8daf5984346244e9a31f6` |
+| `neuron_major_frontier.parquet` | 3,304 | `cd7626e999fd2618ce7135aa8f21942e778b4c37e165b32ad67f2b13cf80eda2` |
+| `support_stability.parquet` | 2,794 | `239eb85241c73bfc64a318c7f635d99cc0506bcfdcd2d1bf4d85895b9906ae39` |
+| `tile_streaming_frontier.parquet` | 1,416 | `847dd26bb1f34214ad1db59835250d2028f1ebfc26609eb78849661af0a1daa6` |
+| `run_facts.json` | — | `6877fd832a8d2d99c8b7613e3e5f7baba5a52eb10a9411734c779c365b01c998` |
+
+### Initial validation-only decision and conditional trigger
+
+The pilot was first analyzed without writing a report or frozen promotion file:
+
+```bash
+cd /root/sparse_streaming_study
+MPLBACKEND=Agg PYTHONPATH=src /root/allocator_env/bin/python scripts/analyze_sparse_streaming.py \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --validate-only \
+  > results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_validation_only.json
+```
+
+The file SHA-256 is `e4f5956b252dd297d12ec906774f2a8ec6fd76b31b140cb1d10623b944519b24`; its canonical validation-decision digest is `183ee7e353b65e9817c1eefae1872f00ce6b8541173220498479acc173dfdbad`. It records `selection_split=validation`, `selection_capture_source=exact_checkpoint`, and `test_rows_consulted_for_selection=false`. Coverage was 7/16/16/16 validation invocations for layers 0/4/20/39, with at least two validation requests in every layer.
+
+These are validation-only gate facts, not held-out result claims:
+
+- The direct three-page `independent_unit_correction_norm` neuron packet passed the predeclared one-bpw gate on 55 validation invocations (median `0.958289`, p10 `0.915015`).
+- The activation shortlist family had status `stop`; no shortlist configuration was promoted.
+- The exact-refresh-1 32×32 gate/up tile plus neuron-down path activated the predeclared alternate-shape continuation (median `0.964969`, p10 `0.939433`, 768 median pages, and `0.041269` median recovery-point gain over the locked PR #6 H0 hybrid). The frozen analyzer also mechanically recorded `0.75` page reduction against the one-bpw input-coordinate comparator, but that comparator's median recovery was `-14.4413`, below the zero-correction recovery of `0`. The apparent reduction is therefore invalid evidence for page savings and is not counted as a success.
+
+Because the initial 32×32 tile passed its declared trigger, alternate tile shapes were investigated only on validation. No sparse-neighbour Gram, low-bit signature, learned mask, H4 predictor, or resident-Q2 sparsification continuation was activated.
+
+### Validation-only alternate tile-shape continuation
+
+The continuation was implemented as a separate, provenance-bound runner; the locked JSON configuration was not edited. The executed command was:
+
+```bash
+cd /root/sparse_streaming_study
+PYTHONPATH=src:scripts /root/allocator_env/bin/python scripts/run_sparse_streaming_tile_followup.py \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --captures work/qwen36_exact_confirm_captures.npz \
+  --checkpoint /root/qwen36_mxfp4_candidate \
+  --trees locked/selected_trees.json \
+  --parent-pilot results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint \
+  --trigger results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_validation_only.json \
+  --output results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint \
+  --device cuda
+```
+
+The run evaluated the predeclared 16×64, 32×32, and 64×16 shapes with `activation_energy_x_weight`, `cartesian_hidden_input_blocks`, and `exact_dynamic_tile_marginal`. It started at `2026-08-19 17:00:37.863607 UTC`, completed at `2026-08-19 17:07:10.060679 UTC`, and took 392.197 seconds. All 55 expected validation invocations were observed; 2,310 tile rows were written; `test_rows_evaluated=0`; `test_rows_consulted_for_selection=false`; request separation passed; and the failure list is empty.
+
+The continuation binds parent pilot facts SHA-256 `6877fd832a8d2d99c8b7613e3e5f7baba5a52eb10a9411734c779c365b01c998`, parent tile SHA-256 `847dd26bb1f34214ad1db59835250d2028f1ebfc26609eb78849661af0a1daa6`, and trigger decision digest `183ee7e353b65e9817c1eefae1872f00ce6b8541173220498479acc173dfdbad`. Its executed-code snapshot records base runner `614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01`, followup runner `17bdd5ad1377533b4720aeac30c74d30f515c9b89ed7c02650117fcfa2fb551c`, and selector core `8bdfaebdf639d29401c280bfd509c80d84e6c3e440eb72ee21bf3b3fd6fd4b68`.
+
+| Continuation artifact | SHA-256 |
+|---|---|
+| `alternate_tile_shape_validation_frontier.parquet` | `898f93a93571c321ae47ab4eda42e39c445de58c0ab600920b4f0eaf387b7543` |
+| `tile_streaming_frontier.parquet` | `898f93a93571c321ae47ab4eda42e39c445de58c0ab600920b4f0eaf387b7543` |
+| `run_facts.json` | `76e65b64ab72d39f70fead94dc8a30f74cce97555a0b3a344e7e77c65d14c73d` |
+
+### Failure and correction: object-typed empty companion Parquets
+
+The first augmented validate-only analyzer call after the continuation failed before writing a decision with:
+
+```text
+TypeError: ufunc 'isfinite' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule 'safe'
+```
+
+The traceback reached `np.allclose`/`np.isclose` in `sparse_streaming_analysis.py` while checking storage accounting. The continuation's historical zero-row companion Parquets had Arrow null/object schemas and an older subset of columns; after concatenation, those empties contaminated otherwise numeric metadata-byte/bpw, suffix-bpw, and storage-multiplier columns. This was an analysis/schema portability failure after scientific rows were complete, not a selector or recovery failure.
+
+The analyzer now explicitly applies `pd.to_numeric(..., errors="raise").to_numpy(dtype=np.float64)` to those four accounting fields before `np.allclose`. A regression constructs object-typed empty companion Parquets and proves the merged validation succeeds. The continuation writer was also hardened for future reproduction to derive typed zero-row tables from the immutable parent Parquets instead of manufacturing object-typed empties. The executed recovery frontier was not rerun or changed; the exact executed followup source remains preserved under `executed_code/` with SHA-256 `17bdd5...`, while the schema-hardened current followup runner hashes to `a16648a1eb0cf9decc0c458110390023d1192693a0cfe8e8f62302e7a0f3ba63`.
+
+After the correction, the local integrated suite passed 114 tests and the remote focused continuation/analyzer suite passed 21 tests. The corrected analyzer and regression identities are:
+
+| File | SHA-256 |
+|---|---|
+| `src/oracle_study/sparse_streaming_analysis.py` | `46ee27e9da29eee6abe790741011d9e73cc13fb6d5363a423f9629f5b883e2ac` |
+| `tests/test_sparse_streaming_analysis.py` | `a60d857419b7075a8844adf892bc2996f74c0c567d54ee2c2de16ca990ac2e5c` |
+| `scripts/run_sparse_streaming_tile_followup.py` | `a16648a1eb0cf9decc0c458110390023d1192693a0cfe8e8f62302e7a0f3ba63` |
+
+Re-analysis then succeeded from the unchanged pilot and continuation Parquets; no held-out recovery was inspected to make this correction.
+
+### Frozen validation promotion artifact
+
+The successful augmented validation and report-generation commands were:
+
+```bash
+cd /root/sparse_streaming_study
+MPLBACKEND=Agg PYTHONPATH=src /root/allocator_env/bin/python scripts/analyze_sparse_streaming.py \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --validate-only \
+  > results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_augmented_validation_only.json
+
+MPLBACKEND=Agg PYTHONPATH=src /root/allocator_env/bin/python scripts/analyze_sparse_streaming.py \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --output results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_analysis
+```
+
+`pilot_augmented_validation_only.json` hashes to `2b219512b7ff56c60933118df623754531694e1d60ef002549c43ceb685874b2`. The canonical frozen `pilot_analysis/sparse_streaming_promotions.json` hashes to `d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f`. It preserves `selection_split=validation`, `selection_capture_source=exact_checkpoint`, and `test_rows_consulted_for_selection=false`.
+
+The frozen validation-only family decisions are:
+
+- promote the direct neuron `independent_unit_correction_norm` path recorded above;
+- stop activation shortlist expansion;
+- promote `exact_dynamic_tile_marginal_refresh_1` with the validation-selected 64×16 tile (n=55, median `0.966025`, p10 `0.935183`, 768 median physical pages, and `0.042325` median recovery-point gain over the locked PR #6 H0 hybrid). Its mechanically recorded `0.75` page-reduction diagnostic has the same invalid negative comparator described above and supplies no support for promotion.
+
+These are selection facts on validation, not primary test-cohort conclusions. The frozen file is the only promotion input used by both full runs.
+
+The exact dynamic tile-shape validation rows were close: 16×64 p10/median/p90 was `0.937504/0.965927/0.984044`, 32×32 was `0.939433/0.964969/0.982813`, and 64×16 was `0.935183/0.966025/0.981914`. The selected 64×16 median exceeded 16×64 by only `0.000098` absolute recovery (`0.0098` percentage point). This is a scientific near-tie resolved by the deterministic frozen median ordering, not evidence that 64×16 is materially superior.
+
+The static activation-times-weight medians for 16×64, 32×32, and 64×16 were `0.83521/0.82589/0.82812`; the corresponding Cartesian proxy medians were `0.83290/0.80727/0.83358`. The neuron selection was also an H0 oracle. No deployable-H0 selector passed, and the shortlist family stopped. Thus the frozen promotions establish oracle headroom only; they do not establish a deployable streaming policy or justify H4 training.
+
+The negative comparator exposed a defect in the preregistered alternative page-reduction gate after the `d4572236...` promotion bytes had been frozen and used to start held-out execution. Reopening or rewriting the selection artifact at that point would violate the one-way validation-to-test protocol. The bytes are retained as an audit record, while the final report adds an interpretation guard that forces the page-reduction evidence to invalid whenever the comparator is at or below zero-correction recovery. The selected exact tile independently passes the unchanged ≥3-point recovery-gain gate, so no held-out observation is needed to justify retaining its frozen identity.
+
+### Full 85-invocation exact-checkpoint expansion completed
+
+Only the frozen promoted neuron and tile identities were expanded; the stopped shortlist family remained disabled:
+
+```bash
+cd /root/sparse_streaming_study
+PYTHONPATH=src:scripts /root/allocator_env/bin/python scripts/run_sparse_streaming_study.py \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --captures work/qwen36_exact_confirm_captures.npz \
+  --checkpoint /root/qwen36_mxfp4_candidate \
+  --trees locked/selected_trees.json \
+  --output results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_exact_checkpoint \
+  --source exact_checkpoint \
+  --mode full \
+  --promotions results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_analysis/sparse_streaming_promotions.json \
+  --device cuda
+```
+
+`run_facts.json` records start `2026-08-19 17:13:34.611661 UTC`, completion `2026-08-19 17:26:11.453404 UTC`, and 756.842 seconds elapsed. Expected and observed unique invocations are both 85; request separation passed; the failures list is empty; and `validation_promotions_sha256` is the frozen `d4572236...` digest. Artifact row counts are 680 activation-concentration, 2,210 neuron-frontier, and 1,530 tile-frontier rows; stopped-family shortlist/label/stability tables contain zero rows by construction.
+
+| Full exact artifact | SHA-256 |
+|---|---|
+| `activation_concentration.parquet` | `a5b1609e1f39ba01fe5abe84437cd802aa93f8d0d82a89aaaa0c92817f851b77` |
+| `neuron_major_frontier.parquet` | `6e3d95cb09f14617ec79ba7c77167d36a06071366b8e97b1ce63c6b3c1b0465f` |
+| `tile_streaming_frontier.parquet` | `2b13c6b729ab0c774e21cb844631a680627229f354f5688b078f33e8a497f25e` |
+| `run_facts.json` | `9bd93219a7f032b6458ca9ddb66ec24e078b920cf293b4f619859a62df0d38ec` |
+
+At this checkpoint completion/provenance was recorded without inspecting held-out recovery. Held-out statistics were read only after the frozen cross run and four-input validation completed, as recorded below.
+
+### Broader 142-invocation sensitivity run completed
+
+The same frozen validation promotion artifact was supplied unchanged to the broader capture:
+
+```bash
+cd /root/sparse_streaming_study
+PYTHONPATH=src:scripts /root/allocator_env/bin/python scripts/run_sparse_streaming_study.py \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --captures work/captures_seed20260817.npz \
+  --checkpoint /root/qwen36_mxfp4_candidate \
+  --trees locked/selected_trees.json \
+  --output results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_cross_reference \
+  --source cross_reference \
+  --mode full \
+  --promotions results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_analysis/sparse_streaming_promotions.json \
+  --device cuda
+```
+
+`run_facts.json` records start `2026-08-19 17:26:50.015145 UTC`, completion `2026-08-19 17:47:12.183192 UTC`, and 1,222.168 seconds elapsed. Expected and observed unique invocations are both 142 across the 12 fixed `(layer, expert)` transactions; request separation passed; the failures list is empty; and `validation_promotions_sha256` remains `d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f`. Row counts are 1,136 activation-concentration, 3,692 neuron-frontier, and 2,556 tile-frontier rows. The stopped shortlist, exact-label, and stability outputs contain zero scientific rows.
+
+| Full cross-reference artifact | SHA-256 |
+|---|---|
+| `_support_cache.parquet` | `f120a1583efb9ccfe78db1f59d064550e1dcf9711c00132677acc9a2f078db0e` |
+| `activation_concentration.parquet` | `a03e095908c7ee93dab5308c681b92fd35ac0038b9eb44544bea5f832fdbe171` |
+| `activation_shortlist_containment.parquet` | `ee386d61793ebedd02c8754e39ba6904775ba53f065c9413da5276cb8dde32e0` |
+| `exact_action_labels.parquet` | `455a73d5fa7823ce2278e00379a6570dc9c4c712ed70cccbb23b054eb03bf41b` |
+| `neuron_major_frontier.parquet` | `2ad7dbf80f0ed08feaa006b98e2d674dc4669fcc676b85744a55be64bdf23c2e` |
+| `support_stability.parquet` | `f0c2dabc468bfce74e4fae0d43248fae86e00f121d9594675678558ae56b13f3` |
+| `tile_streaming_frontier.parquet` | `85f92a61857212b666c63760b6c636348bb660d5d979e631779cc0a58e7a5533` |
+| `run_facts.json` | `0ed98177f158e17962b14815eaa9a9a3ed36a2239a13ec3cdd1bb42ef01be25a` |
+
+This is secondary sensitivity evidence because the capture comes from the locked aligned BF16-source capture, not a forward pass through the exact MXFP4 checkpoint. It did not select or change any configuration.
+
+### Four-input validation and final analysis
+
+The completed pilot, validation-only tile continuation, fresh full run, and cross-reference full run were jointly validated before report interpretation:
+
+```bash
+MPLBACKEND=Agg PYTHONPATH=src /root/allocator_env/bin/python scripts/analyze_sparse_streaming.py \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_exact_checkpoint \
+  --input results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_cross_reference \
+  --config configs/qwen36_mxfp4_sparse_streaming.json \
+  --validate-only \
+  > results/qwen36_mxfp4_sparse_streaming_20260819_v1/final_validation_only.json
+```
+
+Validation passed. `final_validation_only.json` hashes to `2b219512b7ff56c60933118df623754531694e1d60ef002549c43ceb685874b2`, and independent regeneration still produced frozen promotion SHA-256 `d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f`. The remote final analyzer used analyzer core `ecd4a65ea02d95ab3228214d45488cd75823c1df7f6579b5bf793f5a724302de` to create an interim complete report package. The raw package was then copied before the execution host was stopped.
+
+For the committed artifact, final analysis was intentionally regenerated locally from repository-relative input paths. This removes host-specific absolute paths from the manifest and incorporates the final success-gate and invalid-comparator disclosures without changing any raw evidence. The final executed analysis identities are:
+
+| Component | SHA-256 |
+|---|---|
+| Analyzer core | `64307732198d4664fb396e06a95bf6450132a575eb724646025336c4f99be9c6` |
+| Analyzer tests | `d02f50935c006a0ef30973af8e890e34e24ace0568d0a66fccc627161a64e6ac` |
+| Analyzer CLI wrapper | `1e20c6ba8e577fd74c3bee6f8b25f4721880c1cb0daf2872e5058d53095de353` |
+
+After regeneration, the local integrated suite passed all 126 tests. The analyzer closed 29 hashed scientific inputs and 25 hashed outputs, and direct manifest verification reported no mismatch. Final identities are:
+
+| Final artifact | SHA-256 |
+|---|---|
+| `final_analysis/analysis_manifest.json` | `fc2a4071b032f60d0653fea94f575839e88064f91ccfdd1dc02d610b5264aa2a` |
+| `final_analysis/SPARSE_STREAMING_ALLOCATOR_REPORT.md` | `87f24e7680863911268464f3582c8a973aaede0d1ed42cece35fd7d6eea08f46` |
+| `final_analysis/sparse_streaming_promotions.json` | `d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f` |
+
+The final analysis directory contains 26 files totaling 2,888,524 bytes. Its deterministic inventory digest is `ac74730f8735e37302cc7d28574424268b58d633448258dba47c973b7f63017e`; the complete local result package contains 95 files totaling 59,349,224 bytes with inventory digest `a4d2b58852184ba81a052641bf8f0cf65d50354e1ed5be691c81d01137a45d49`. The cryptographic per-file closure for scientific inputs and report outputs is `analysis_manifest.json`. The final analyzer pins Matplotlib's SVG hash salt to the run ID; an independent second-process rerun reproduced the entire 26-file analysis directory byte-for-byte, including all six SVGs and the manifest.
+
+### Transfer and raw-evidence identity audit
+
+Before local rerendering, the copied remote package contained 95 files totaling 59,359,634 bytes and had inventory digest `0687462b818268e7df23172f67ce794a66e80a88c93fee0aee82a18ba4cfe7c1`. The 10,410-byte aggregate difference in the final local package comes from the deliberate local rerender of generated analysis/report/plot bytes. It is not a raw-result difference.
+
+The four raw execution directories match the execution host byte-for-byte under the transfer audit:
+
+| Raw directory | Remote/local inventory digest |
+|---|---|
+| `pilot_exact_checkpoint` | `2345c675da99757c09e14edf34d44b9f6b0b4e3368d9f6bb079ec4414608045e` |
+| `validation_tile_shapes_exact_checkpoint` | `9259606eb6851029820d9d0f86c9655878b4c8ef0486b84c91e806990b6dd86c` |
+| `full_exact_checkpoint` | `7f41d2821d0c8ccf0d842ee1e286e459ebcdb9d262e0f6fb9a124f2ecce726bd` |
+| `full_cross_reference` | `6f050fe9dbfbb542b557f8652100b4eca2867333b8d00a34582aca6506e5e1f1` |
+
+Thus the scientific Parquets, run facts, continuation source snapshot, and logs are unchanged. Only the derived final-analysis package was regenerated.
+
+### Held-out result and success-gate disposition
+
+All values below are exact sequential complete-expert qenergy recovery at 1.0 physical correction bpw. They are reconstruction metrics, not end-to-end model quality.
+
+| Cohort | Path | n | p10 | Median |
+|---|---|---:|---:|---:|
+| Fresh exact-checkpoint, all audited layers | Neuron-major `independent_unit_correction_norm` | 85 | `0.926808` | `0.966073` |
+| Fresh exact-checkpoint, all audited layers | Exact 64×16 tile | 85 | `0.937530` | `0.968256` |
+| Fresh exact-checkpoint, difficult layers 4/20/39 | Neuron-major `independent_unit_correction_norm` | 72 | `0.922500` | `0.959830` |
+| Fresh exact-checkpoint, difficult layers 4/20/39 | Exact 64×16 tile | 72 | `0.936399` | `0.963195` |
+| Broader cross-reference sensitivity | Neuron-major `independent_unit_correction_norm` | 142 | `0.898880` | `0.966440` |
+| Broader cross-reference sensitivity | Exact 64×16 tile | 142 | `0.930618` | `0.962473` |
+
+The locked PR #6 `success_gates.json` (SHA-256 `3908a82df017399ef7810598354b2f05645e452959a300772abbdc09cc0990f9`) records the controlled n=72 difficult-layer PR #4 p10/median `0.833364894/0.893499343` and PR #6 same-cohort separate-plane p10/median `0.835097846/0.892560229`. On that exact difficult-layer cohort:
+
+| New H0 oracle | Δp10 vs PR #4 | Δmedian vs PR #4 | Δp10 vs PR #6 separate plane | Δmedian vs PR #6 separate plane |
+|---|---:|---:|---:|---:|
+| Neuron-major | `+0.089135106` | `+0.066330657` | `+0.087402154` | `+0.067269771` |
+| Exact 64×16 tile | `+0.103034106` | `+0.069695657` | `+0.101301154` | `+0.070634771` |
+
+These gains are broad H0-oracle headroom across the audited fresh layers, but neither selected method is deployable as measured. The neuron score reads the full suffix, the exact tile allocator refreshes after every selected page—768 global refreshes at one bpw, above the ≤16 target—and no deployable-H0 proxy passed. The activation shortlist stopped. Both selected paths have physical page amplification `1.0` and storage multiplier `1.470588`, so the amplification ≤1.2 and storage <5 limits pass, but the deployable-selector/rank/refresh conjunction fails. The requested overall success conjunction therefore fails.
+
+The validation-selected 64×16 and 16×64 exact tile shapes remain a near-tie: their validation medians differ by only `0.000098`. The frozen apparent 75% page-reduction diagnostic remains invalid because its comparator recovery was below the zero-correction recovery; it is retained only for auditability and is not counted as success. All positive neuron/tile results are labelled `h0_oracle`; no H4 predictor was trained and no router, logit, token-quality, perplexity, task-quality, or deployment claim is made.
+
+### RunPod shutdown completed
+
+After all raw artifacts had been copied and audited, RunPod `41rk786odszmk9` was stopped with `runpodctl pod stop` at `2026-08-19 18:03:11 UTC`. Post-stop inspection reported `desiredStatus=EXITED`, `runtimeStatus=stopped`, and reason `stopped_by_user`. Persistent disk remains available for recovery, while GPU billing has stopped.
+
+The first management-connector attempt returned HTTP 401 because that connector was not authenticated. It made no state change. The already-authenticated local CLI was then used successfully; no credential material is recorded here.
+
+### Publication handoff
+
+- Final Git commit: `TBD at publication`.
+- Push result: `TBD at publication`.
+- Pull request: `TBD at publication`.
+- Intended base/head: `agent/mxfp4-interaction-aware-allocator` ← `agent/mxfp4-sparse-streaming`.

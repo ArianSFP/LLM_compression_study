@@ -1,0 +1,319 @@
+{
+  "activation_concentration_top_k": [
+    64,
+    128,
+    256,
+    384,
+    512,
+    768,
+    1024,
+    2048
+  ],
+  "artifact_row_counts": {
+    "activation_concentration": 680,
+    "activation_shortlist_containment": 0,
+    "exact_action_labels": 0,
+    "neuron_major_frontier": 2210,
+    "support_stability": 0,
+    "tile_streaming_frontier": 1530
+  },
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "codec_locked": true,
+  "completed": true,
+  "completed_unix": 1787160371.4534042,
+  "completed_work_units": [
+    "test:0:160",
+    "test:0:62",
+    "test:0:72",
+    "test:20:191",
+    "test:20:242",
+    "test:20:251",
+    "test:39:108",
+    "test:39:231",
+    "test:39:68",
+    "test:4:110",
+    "test:4:154",
+    "test:4:17"
+  ],
+  "conditional_followup_grids_not_executed": [
+    "tile_shapes",
+    "tile_selectors",
+    "shortlist_refresh_blocks",
+    "candidate_overfetch_factors",
+    "sparse_graph_neighbours",
+    "sparse_graph_base_ranks",
+    "signature_encodings"
+  ],
+  "config_sha256": "326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326",
+  "device": "cuda",
+  "executed_activation_shortlist_unit": "input_coordinates",
+  "executed_refresh_blocks": [
+    1
+  ],
+  "expected_cohort_counts": {
+    "test": 85
+  },
+  "expected_unique_invocations": 85,
+  "failures": [],
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "1f2ff042f50c",
+  "input_hashes": {
+    "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+    "config_file_sha256": "326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+  },
+  "last_completed": {
+    "expert_id": 231,
+    "layer": 39,
+    "split": "test",
+    "unix": 1787160371.2834468
+  },
+  "locked_capture_sha256": {
+    "cross_reference": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add",
+    "exact_checkpoint": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931"
+  },
+  "locked_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "mode": "full",
+  "observed_cohort_counts": {
+    "test": 85
+  },
+  "observed_unique_invocations": 85,
+  "page_size_bytes": 512,
+  "promotion_family_status": {
+    "activation_shortlist": false,
+    "neuron_major": true,
+    "tile_streaming": true
+  },
+  "proxy_facts_by_layer": {
+    "0": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0859375,
+        0.09375,
+        0.09375,
+        0.09375
+      ],
+      "rank": 4,
+      "ridge": 2.5276365340687337e-06,
+      "train_samples": 70
+    },
+    "20": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "rank": 4,
+      "ridge": 0.0006710012257099151,
+      "train_samples": 70
+    },
+    "39": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "rank": 4,
+      "ridge": 0.0008361098170280457,
+      "train_samples": 70
+    },
+    "4": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "rank": 4,
+      "ridge": 1.0406021028757096e-05,
+      "train_samples": 70
+    }
+  },
+  "reference": {
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695"
+  },
+  "request_counts_by_split": {
+    "test": 3,
+    "train": 6,
+    "validation": 3
+  },
+  "request_separation_verified": true,
+  "request_split_policy": "training fits only training; analyzer promotions only validation; test never selects configuration",
+  "run_id": "qwen36_mxfp4_sparse_streaming_20260819_v1",
+  "run_mode": "full",
+  "selection_regime_enums": [
+    "h0_deployable_metadata_late",
+    "h0_oracle_full_suffix",
+    "h0_oracle_full_target_residual",
+    "h0_oracle_suffix_metadata_heavy",
+    "h0_resident_proxy_late"
+  ],
+  "selector_metadata_build_by_expert": {
+    "0:160": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 4.230694930050516e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.0030073318630456924,
+      "relative_l2_quantization_error": 0.00019835990710293303,
+      "scale_fp32": 0.1821063756942749
+    },
+    "0:62": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 4.47810645219926e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.034198896028101444,
+      "relative_l2_quantization_error": 0.00020089737618827057,
+      "scale_fp32": 0.1947852075099945
+    },
+    "0:72": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 3.81548856682179e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.005531512200832367,
+      "relative_l2_quantization_error": 0.00020463662887567737,
+      "scale_fp32": 0.1603577882051468
+    },
+    "20:191": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 4.359759283961706e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.005553154274821281,
+      "relative_l2_quantization_error": 0.00021051408052545132,
+      "scale_fp32": 0.19163155555725098
+    },
+    "20:242": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 3.7485445329943357e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.0034200921654701233,
+      "relative_l2_quantization_error": 0.00020444731170385518,
+      "scale_fp32": 0.1550648957490921
+    },
+    "20:251": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 4.244371592015961e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.0033665914088487625,
+      "relative_l2_quantization_error": 0.00021054123094695813,
+      "scale_fp32": 0.17569716274738312
+    },
+    "39:108": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 6.6785733811775e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.0036011626943945885,
+      "relative_l2_quantization_error": 0.00020383859095496332,
+      "scale_fp32": 0.2811605930328369
+    },
+    "39:231": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 5.188795613120245e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.0030721724033355713,
+      "relative_l2_quantization_error": 0.00020054259311992314,
+      "scale_fp32": 0.3614465296268463
+    },
+    "39:68": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 6.609582821395787e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.003530203364789486,
+      "relative_l2_quantization_error": 0.0001922675477137558,
+      "scale_fp32": 0.37948164343833923
+    },
+    "4:110": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 3.982711304481579e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.005404583178460598,
+      "relative_l2_quantization_error": 0.00021005174630101456,
+      "scale_fp32": 0.16400405764579773
+    },
+    "4:154": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 4.692783743177886e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.004393772222101688,
+      "relative_l2_quantization_error": 0.00020923862880610613,
+      "scale_fp32": 0.19373860955238342
+    },
+    "4:17": {
+      "bytes": 1028,
+      "clipped_values": 0,
+      "encoding": "normalized_fp16_plus_fp32_expert_scale",
+      "fit_split": "none_weight_only",
+      "max_absolute_quantization_error": 3.549655523044093e-05,
+      "method": "qenergy_down_delta_norm",
+      "offline_build_seconds": 0.00660991296172142,
+      "relative_l2_quantization_error": 0.00020252226225175057,
+      "scale_fp32": 0.14562492072582245
+    }
+  },
+  "source": "exact_checkpoint",
+  "started_unix": 1787159614.6116605,
+  "torch": "2.8.0+cu128",
+  "updated_unix": 1787160371.514241,
+  "validation_promotions_sha256": "d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f"
+}

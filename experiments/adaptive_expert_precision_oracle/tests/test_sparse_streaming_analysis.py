@@ -5,12 +5,15 @@ import json
 from pathlib import Path
 import shutil
 
+import matplotlib
 import pandas as pd
 import pytest
 
 from oracle_study.sparse_streaming_analysis import (
     AnalysisValidationError,
+    _legend_if_present,
     _markdown_table,
+    _plot_evidence_scope,
     analyze,
     choose_validation_promotions,
     frozen_json_sha256,
@@ -270,6 +273,40 @@ def test_schema_document_names_every_required_artifact() -> None:
     }
 
 
+def test_merge_accepts_object_typed_empty_companion_parquets(tmp_path: Path) -> None:
+    pilot, config_path = _write_fixture(tmp_path / "fixture")
+    continuation = tmp_path / "continuation"
+    continuation.mkdir()
+    facts = json.loads((pilot / "run_facts.json").read_text())
+    facts.update({
+        "run_id": "validation-only-continuation",
+        "expected_unique_invocations": 2,
+        "observed_unique_invocations": 2,
+    })
+    (continuation / "run_facts.json").write_text(
+        json.dumps(facts, sort_keys=True) + "\n"
+    )
+    filenames = schema_document()["input_files"]
+    for filename in filenames.values():
+        parent = pd.read_parquet(pilot / filename)
+        if filename == "tile_streaming_frontier.parquet":
+            frame = parent[parent["evaluation_split"] == "validation"].copy()
+        else:
+            # This matches the schema-correct empty files emitted by bounded
+            # continuation and stopped-family full runs.
+            frame = pd.DataFrame({
+                column: pd.Series(dtype="object") for column in parent.columns
+            })
+        frame.to_parquet(continuation / filename, index=False)
+
+    tables, _, _, _ = load_and_validate_inputs(
+        [pilot, continuation], config_path,
+    )
+    assert not tables["neuron"].empty
+    assert not tables["shortlist"].empty
+    assert not tables["tile"].empty
+
+
 def test_internal_markdown_renderer_does_not_require_tabulate(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -289,6 +326,45 @@ def test_internal_markdown_renderer_does_not_require_tabulate(
     )
 
 
+def test_markdown_renderer_formats_numeric_objects_without_mangling_ids_or_bools() -> None:
+    rendered = _markdown_table(
+        pd.DataFrame({
+            "request_id": pd.Series(["0007", "0012"], dtype="object"),
+            "recovery": pd.Series(["0.912345678901", "1.0"], dtype="object"),
+            "passes_gate": pd.Series([True, False], dtype="object"),
+        }),
+        ["request_id", "recovery", "passes_gate"],
+    )
+    assert "| 0007 | 0.9123 | True |" in rendered
+    assert "| 0012 | 1.0000 | False |" in rendered
+
+
+def test_legend_helper_skips_empty_axes() -> None:
+    class EmptyAxis:
+        def get_legend_handles_labels(self):
+            return [], []
+
+        def legend(self, **kwargs):
+            raise AssertionError("legend must not be called without labeled artists")
+
+    _legend_if_present(EmptyAxis(), fontsize=6)
+
+
+def test_plot_scope_labels_pilot_sanity_and_full_held_out_rows() -> None:
+    common = {
+        "capture_source": "exact_checkpoint",
+        "evaluation_split": "test",
+        "request_id": "request",
+        "position": 1,
+        "layer": 4,
+        "expert_id": 154,
+    }
+    pilot = pd.DataFrame([{**common, "source_run_mode": "pilot"}])
+    full = pd.DataFrame([{**common, "source_run_mode": "full"}])
+    assert _plot_evidence_scope(pilot) == "fresh pilot test sanity only; n=1 invocations"
+    assert _plot_evidence_scope(full) == "fresh full held-out test; n=1 invocations"
+
+
 def test_promotion_is_validation_only_and_outputs_are_complete(tmp_path: Path) -> None:
     run_dir, config_path = _write_fixture(tmp_path)
     output = tmp_path / "analysis"
@@ -303,6 +379,7 @@ def test_promotion_is_validation_only_and_outputs_are_complete(tmp_path: Path) -
     assert "not task accuracy" in report
     assert "Logical actions" in report
     for name in (
+        "sparse_streaming_promotions.json",
         "neuron_major_summary.csv",
         "neuron_major_by_layer_summary.csv",
         "activation_shortlist_summary.csv",
@@ -312,7 +389,9 @@ def test_promotion_is_validation_only_and_outputs_are_complete(tmp_path: Path) -
         "support_stability_summary.csv",
         "exact_action_label_summary.csv",
         "activation_concentration_summary.csv",
+        "promotion_validation_coverage.csv",
         "sparse_streaming_compute_storage_accounting.json",
+        "SPARSE_STREAMING_ALLOCATOR_REPORT.md",
         "analysis_manifest.json",
     ):
         assert (output / name).is_file()
@@ -323,6 +402,176 @@ def test_promotion_is_validation_only_and_outputs_are_complete(tmp_path: Path) -
     )
     assert len(list((output / "plots").glob("*.png"))) == 6
     assert len(list((output / "plots").glob("*.svg"))) == 6
+    assert matplotlib.rcParams["svg.hashsalt"] == "oracle-study:synthetic_sparse_streaming"
+    manifest = json.loads((output / "analysis_manifest.json").read_text())
+    expected_outputs = {
+        "sparse_streaming_promotions.json",
+        "neuron_major_summary.csv",
+        "neuron_major_by_layer_summary.csv",
+        "activation_shortlist_summary.csv",
+        "activation_shortlist_by_layer_summary.csv",
+        "tile_streaming_summary.csv",
+        "tile_streaming_by_layer_summary.csv",
+        "support_stability_summary.csv",
+        "exact_action_label_summary.csv",
+        "activation_concentration_summary.csv",
+        "promotion_validation_coverage.csv",
+        "sparse_streaming_compute_storage_accounting.json",
+        "SPARSE_STREAMING_ALLOCATOR_REPORT.md",
+        *(f"plots/{index:02d}_{name}.{suffix}" for index, name in (
+            (1, "isolated_vs_complete_qenergy"),
+            (2, "activation_shortlist_containment"),
+            (3, "tile_complete_expert_frontier"),
+            (4, "logical_actions_vs_physical_pages"),
+            (5, "true_adjacent_support_stability"),
+            (6, "activation_concentration"),
+        ) for suffix in ("png", "svg")),
+    }
+    assert set(manifest["outputs"]) == expected_outputs
+    assert "analysis_manifest.json" not in manifest["outputs"]
+
+
+def test_report_never_pools_neuron_recovery_across_physical_budgets(
+    tmp_path: Path,
+) -> None:
+    run_dir, config_path = _write_fixture(tmp_path)
+    path = run_dir / "neuron_major_frontier.parquet"
+    frame = pd.read_parquet(path)
+    extra = frame[
+        (frame.evaluation_split == "test")
+        & (frame.selector == "validation_winner")
+    ].copy()
+    extra["physical_budget_bpw"] = 0.5
+    extra["physical_pages"] = 384
+    extra["physical_bytes"] = 384 * 512
+    extra["logical_actions"] = 128
+    extra["logical_bytes"] = 384 * 512
+    extra["logical_bpw"] = 0.5
+    extra["page_amplification"] = 1.0
+    extra["recovery"] = 0.2
+    pd.concat([frame, extra], ignore_index=True).to_parquet(path, index=False)
+
+    output = tmp_path / "analysis"
+    analyze([run_dir], config_path, output)
+    report = (output / "SPARSE_STREAMING_ALLOCATOR_REPORT.md").read_text()
+    neuron_section = report.split("## Neuron-major progressive refinement", 1)[1].split(
+        "## Activation shortlist containment", 1
+    )[0]
+    assert "| physical_budget_bpw |" in neuron_section
+    assert "| 0.5000 |" in neuron_section
+    assert "| 1.0000 |" in neuron_section
+    assert neuron_section.count("primary_fresh_held_out_test") == 2
+    assert "recovery is never pooled across bpw" in neuron_section
+
+
+def test_success_gate_disposition_scopes_exactly_one_bpw_and_configured_layers(
+    tmp_path: Path,
+) -> None:
+    run_dir, config_path = _write_fixture(tmp_path)
+    path = run_dir / "neuron_major_frontier.parquet"
+    frame = pd.read_parquet(path)
+    selected = frame[
+        frame.evaluation_split.eq("test")
+        & frame.selector.eq("validation_winner")
+        & frame.objective.eq("exact_sequential_complete_expert_qenergy")
+    ].copy()
+    wrong_budget = selected.copy()
+    wrong_budget["physical_budget_bpw"] = 0.5
+    wrong_budget["physical_pages"] = 384
+    wrong_budget["physical_bytes"] = 384 * 512
+    wrong_budget["logical_actions"] = 128
+    wrong_budget["logical_bytes"] = 384 * 512
+    wrong_budget["logical_bpw"] = 0.5
+    wrong_budget["recovery"] = -80.0
+    wrong_layer = selected.copy()
+    wrong_layer["layer"] = 0
+    wrong_layer["position"] += 100
+    wrong_layer["recovery"] = -90.0
+    pd.concat([frame, wrong_budget, wrong_layer], ignore_index=True).to_parquet(
+        path, index=False
+    )
+    facts_path = run_dir / "run_facts.json"
+    facts = json.loads(facts_path.read_text())
+    facts["expected_unique_invocations"] = 6
+    facts["observed_unique_invocations"] = 6
+    facts_path.write_text(json.dumps(facts, sort_keys=True) + "\n")
+
+    output = tmp_path / "analysis"
+    analyze([run_dir], config_path, output)
+    report = (output / "SPARSE_STREAMING_ALLOCATOR_REPORT.md").read_text()
+    section = report.split("## Held-out success-gate disposition", 1)[1].split(
+        "## Promotion protocol", 1
+    )[0]
+    assert "exactly **1.0 physical correction bpw**" in section
+    assert "only configured audited layers `[4]`" in section
+    assert "-80.0000" not in section
+    assert "-90.0000" not in section
+    assert "| neuron_major | validation_winner | 2 | 0.1000 | 0.1000 |" in section
+    assert "| neuron_major | 4 | 2 | 0.1000 | 0.1000 | 0.1000 |" in section
+
+
+def test_success_gate_disposition_is_explicit_about_deployability_failures(
+    tmp_path: Path,
+) -> None:
+    run_dir, config_path = _write_fixture(tmp_path)
+    path = run_dir / "tile_streaming_frontier.parquet"
+    frame = pd.read_parquet(path)
+    winner = frame.selector.eq("validation_winner")
+    frame.loc[winner, "selector"] = "exact_dynamic_tile_marginal_refresh_1"
+    frame.loc[winner, "selection_regime"] = "h0_oracle_full_suffix"
+    frame["refresh_interval"] = 1
+    frame["global_refreshes"] = frame["physical_pages"]
+    frame.to_parquet(path, index=False)
+
+    output = tmp_path / "analysis"
+    analyze([run_dir], config_path, output)
+    report = (output / "SPARSE_STREAMING_ALLOCATOR_REPORT.md").read_text()
+    section = report.split("## Held-out success-gate disposition", 1)[1].split(
+        "## Promotion protocol", 1
+    )[0]
+    assert "configured PR #6 H0-hybrid comparator is p10 **0.8700** and median **0.9000**" in section
+    assert "H0 oracle headroom only" in section
+    assert "**Deployable proxy: FAIL.** No deployable proxy was selected" in section
+    assert "refreshes after every selected page" in section
+    assert "**768 global refreshes**" in section
+    assert "not **<=16**" in section
+    assert "median physical page amplification **1.0**" in section
+    assert "median storage multiplier **1.470588**" in section
+    assert "Rank <= 64 / low-rank gain-retention gate: NOT APPLICABLE and NOT DEMONSTRATED" in section
+    assert "median_selector_runtime_ms" in section
+    assert "median_unique_footprint_bytes_lower_bound" in section
+
+
+def test_report_discloses_invalid_page_gate_and_exact_shape_near_tie(
+    tmp_path: Path,
+) -> None:
+    run_dir, config_path = _write_fixture(tmp_path)
+    path = run_dir / "tile_streaming_frontier.parquet"
+    frame = pd.read_parquet(path)
+    baseline = (
+        (frame.evaluation_split == "validation")
+        & (frame.action_family == "input_coordinate_baseline")
+        & (frame.physical_budget_bpw == 1.0)
+    )
+    frame.loc[baseline, "recovery"] = -14.4413
+    shape_32 = frame.action_family.eq("tile") & frame.tile_shape.eq("32x32")
+    shape_64 = frame.action_family.eq("tile") & frame.tile_shape.eq("64x16")
+    frame.loc[shape_32, "selector"] = "exact_dynamic_tile_marginal_refresh_1"
+    frame.loc[shape_64, "selector"] = "exact_dynamic_tile_marginal_refresh_1"
+    near_tie = shape_64 & frame.evaluation_split.eq("validation") & frame.physical_budget_bpw.eq(1.0)
+    frame.loc[near_tie, "recovery"] = 0.950098
+    pd.DataFrame(frame).to_parquet(path, index=False)
+
+    output = tmp_path / "analysis"
+    analyze([run_dir], config_path, output)
+    report = (output / "SPARSE_STREAMING_ALLOCATOR_REPORT.md").read_text()
+    assert "below the zero-correction recovery of 0" in report
+    assert "invalid evidence for page savings" in report
+    assert "interpreted_passes_page_reduction" in report
+    assert "solely through the independent recovery-gain gate" in report
+    assert "0.000098 absolute recovery" in report
+    assert "scientific near-tie" in report
+    assert "not claimed to be materially superior" in report
 
 
 def test_validate_only_writes_nothing(tmp_path: Path) -> None:

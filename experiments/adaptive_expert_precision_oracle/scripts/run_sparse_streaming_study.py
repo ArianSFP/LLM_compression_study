@@ -52,6 +52,7 @@ from oracle_study.sparse_streaming_cuda import (
     exact_unit_fixed_greedy,
     qenergy as torch_qenergy,
     qinner as torch_qinner,
+    static_cartesian_mixed_page_order,
     static_proxy_mixed_page_order,
 )
 from run_mxfp4_selective_pages import occurrence, tree_from_record
@@ -1111,12 +1112,22 @@ def evaluate_tile_frontier(
             # Report the reproducible unique input footprint lower bound and
             # use measured wall time for the actual refresh cost.
             bytes_read = selector_input_bytes
-        elif selector in {"static_first_order", "static_wina"}:
+        elif selector in {"static_first_order", "static_wina", "activation_energy_x_weight"}:
             method = "first_order" if selector == "static_first_order" else "wina"
             trace = static_proxy_mixed_page_order(
                 matrices["gate"][0], matrices["up"][0], matrices["down"][0],
                 matrices["gate"][2], matrices["up"][2], matrices["down"][2], x,
                 tile_shape=shape, page_budgets=requested, proxy_method=method,
+                proxy=proxy, beta=beta, device=device,
+            )
+            label = selector
+            regime = "h0_oracle_suffix_metadata_heavy"
+            bytes_read = selector_input_bytes
+        elif selector == "cartesian_hidden_input_blocks":
+            trace = static_cartesian_mixed_page_order(
+                matrices["gate"][0], matrices["up"][0], matrices["down"][0],
+                matrices["gate"][2], matrices["up"][2], matrices["down"][2], x,
+                tile_shape=shape, page_budgets=requested,
                 proxy=proxy, beta=beta, device=device,
             )
             label = selector

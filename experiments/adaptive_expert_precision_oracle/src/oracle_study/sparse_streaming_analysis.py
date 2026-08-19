@@ -586,18 +586,32 @@ def load_and_validate_inputs(
     expert_weights = 3 * 2048 * 512
     for name in ("neuron", "shortlist", "tile"):
         frame = merged[name]
-        expected_metadata_bpw = frame["selector_metadata_bytes_per_expert"] * 8.0 / expert_weights
+        # Empty companion Parquets can retain object dtype after concat even
+        # though validate_table has already proved every value numeric.
+        metadata_bytes = pd.to_numeric(
+            frame["selector_metadata_bytes_per_expert"], errors="raise",
+        ).to_numpy(dtype=np.float64)
+        metadata_bpw = pd.to_numeric(
+            frame["selector_metadata_bpw"], errors="raise",
+        ).to_numpy(dtype=np.float64)
+        suffix_bpw = pd.to_numeric(
+            frame["suffix_storage_bpw"], errors="raise",
+        ).to_numpy(dtype=np.float64)
+        multiplier = pd.to_numeric(
+            frame["storage_multiplier"], errors="raise",
+        ).to_numpy(dtype=np.float64)
+        expected_metadata_bpw = metadata_bytes * 8.0 / expert_weights
         if not np.allclose(
-            frame["selector_metadata_bpw"], expected_metadata_bpw, rtol=0, atol=1e-12
+            metadata_bpw, expected_metadata_bpw, rtol=0, atol=1e-12
         ):
             raise AnalysisValidationError(
                 f"{INPUT_FILES[name]} selector_metadata_bpw does not match "
                 "selector_metadata_bytes_per_expert * 8 / expert_weights"
             )
         expected_multiplier = (
-            reference_bpw + frame["suffix_storage_bpw"] + frame["selector_metadata_bpw"]
+            reference_bpw + suffix_bpw + metadata_bpw
         ) / reference_bpw
-        if not np.allclose(frame["storage_multiplier"], expected_multiplier, rtol=0, atol=1e-12):
+        if not np.allclose(multiplier, expected_multiplier, rtol=0, atol=1e-12):
             raise AnalysisValidationError(
                 f"{INPUT_FILES[name]} storage_multiplier must equal "
                 "(reference_bpw + suffix_storage_bpw + selector_metadata_bpw) / reference_bpw; "
@@ -1225,8 +1239,31 @@ def preferred_test_rows(frame: pd.DataFrame) -> pd.DataFrame:
     return values[values.source_run_mode == "pilot"]
 
 
+def _plot_evidence_scope(frame: pd.DataFrame) -> str:
+    if frame.empty:
+        return "no evaluation rows"
+    modes = set(frame["source_run_mode"].astype(str))
+    if modes == {"full"}:
+        role = "fresh full held-out test"
+    elif modes == {"pilot"}:
+        role = "fresh pilot test sanity only"
+    else:
+        role = "+".join(sorted(modes)) + " fresh test"
+    invocations = len(frame[list(COMMON_ID)].drop_duplicates())
+    return f"{role}; n={invocations} invocations"
+
+
+def _legend_if_present(axis: plt.Axes, **kwargs: Any) -> None:
+    handles, _ = axis.get_legend_handles_labels()
+    if handles:
+        axis.legend(**kwargs)
+
+
 def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], directory: Path) -> None:
     directory.mkdir(parents=True, exist_ok=True)
+    # Matplotlib otherwise randomizes SVG element IDs on every process start,
+    # which defeats byte-level reproduction of the manifest-listed figures.
+    matplotlib.rcParams["svg.hashsalt"] = f"oracle-study:{config['run_id']}"
     neuron = tables["neuron"]
     fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.2))
     isolated = preferred_test_rows(tables["shortlist"]).copy()
@@ -1240,7 +1277,9 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
     for method, rows in isolated.groupby("score_method"):
         curve = rows.groupby("fetched_projection_bpw").recovery.median()
         axes[0].plot(curve.index, curve.values, marker="o", label=f"constrained/{method}")
-    axes[0].set_title("isolated projection qenergy recovery")
+    axes[0].set_title(
+        f"isolated projection qenergy recovery\n({_plot_evidence_scope(isolated)})"
+    )
     complete = preferred_test_rows(neuron)
     complete = complete[complete.objective == "exact_sequential_complete_expert_qenergy"]
     for (family, category, selector, regime), rows in complete.groupby(
@@ -1248,12 +1287,15 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
     ):
         curve = rows.groupby("physical_budget_bpw").recovery.median()
         axes[1].plot(curve.index, curve.values, marker="o", label=f"{family}/{category}/{selector}/{regime}")
-    axes[1].set_title("exact sequential complete-expert qenergy recovery")
+    axes[1].set_title(
+        "exact sequential complete-expert qenergy recovery\n"
+        f"({_plot_evidence_scope(complete)})"
+    )
     axes[0].set_xlabel("Fetched physical bpw (one-projection denominator)")
     axes[1].set_xlabel("Fetched physical bpw (complete-expert denominator)")
     for axis in axes:
         axis.grid(alpha=0.25)
-        axis.legend(fontsize=6)
+        _legend_if_present(axis, fontsize=6)
     axes[0].set_ylabel("Median expert-output qenergy recovery")
     _savefig(fig, directory, "01_isolated_vs_complete_qenergy")
 
@@ -1268,8 +1310,9 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
     ax.axhline(float(config["promotion_policy"]["shortlist_min_exact_gain_retention_median"]), color="black", ls="--", lw=1)
     ax.axvline(int(config["promotion_policy"]["shortlist_max_candidates"]), color="black", ls=":", lw=1)
     ax.set(xlabel="Prefetched input coordinates (K)", ylabel="Median exact-over-diagonal gain retained")
+    ax.set_title(_plot_evidence_scope(values))
     ax.grid(alpha=0.25)
-    ax.legend(fontsize=6)
+    _legend_if_present(ax, fontsize=6)
     _savefig(fig, directory, "02_activation_shortlist_containment")
 
     tile = tables["tile"]
@@ -1282,8 +1325,9 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
         curve = rows.groupby("physical_budget_bpw").recovery.median()
         ax.plot(curve.index, curve.values, marker="o", label=f"{family}/{shape}/{category}/{selector}/{regime}")
     ax.set(xlabel="Fetched physical correction bpw", ylabel="Median complete-expert qenergy recovery")
+    ax.set_title(_plot_evidence_scope(values))
     ax.grid(alpha=0.25)
-    ax.legend(fontsize=6)
+    _legend_if_present(ax, fontsize=6)
     _savefig(fig, directory, "03_tile_complete_expert_frontier")
 
     fig, ax = plt.subplots(figsize=(7.4, 4.4))
@@ -1292,7 +1336,7 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
         ax.scatter(values.logical_actions, values.physical_pages, s=9, alpha=0.35, label=label)
     ax.set(xlabel="Logical actions applied", ylabel="Fetched 512-byte physical pages")
     ax.grid(alpha=0.25)
-    ax.legend()
+    _legend_if_present(ax)
     _savefig(fig, directory, "04_logical_actions_vs_physical_pages")
 
     stability = tables["stability"]
@@ -1305,9 +1349,10 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
     ax.set(
         xlabel="Configured support size (proxy K coordinates; exact page budget)",
         ylabel="Median support Jaccard at true token gap 1",
+        title=_plot_evidence_scope(stability),
     )
     ax.grid(alpha=0.25)
-    ax.legend(fontsize=7)
+    _legend_if_present(ax, fontsize=7)
     _savefig(fig, directory, "05_true_adjacent_support_stability")
 
     concentration = preferred_test_rows(tables["concentration"])
@@ -1318,6 +1363,7 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
     axes[0].set(
         xlabel="Largest-magnitude activation coordinates K",
         ylabel="Median activation energy fraction",
+        title=_plot_evidence_scope(concentration),
     )
     by_layer = concentration.groupby("layer").coordinates_for_90pct_energy.median()
     axes[1].bar([str(int(layer)) for layer in by_layer.index], by_layer.values)
@@ -1326,7 +1372,7 @@ def make_plots(tables: Mapping[str, pd.DataFrame], config: Mapping[str, Any], di
     )
     for axis in axes:
         axis.grid(alpha=0.25)
-    axes[0].legend(fontsize=7)
+    _legend_if_present(axes[0], fontsize=7)
     _savefig(fig, directory, "06_activation_concentration")
 
 
@@ -1460,8 +1506,35 @@ def _markdown_table(frame: pd.DataFrame, columns: Sequence[str]) -> str:
     if frame.empty:
         return "No configuration passed the predeclared validation gate."
     shown = frame[list(columns)].copy()
-    for column in shown.select_dtypes(include=[np.number]).columns:
-        shown[column] = shown[column].map(lambda value: f"{float(value):.4f}")
+    for column in shown.columns:
+        values = shown[column]
+        nonmissing = values[~values.isna()]
+        identifier = (
+            column == "id"
+            or column.endswith("_id")
+            or column.endswith("_sha256")
+            or column in {"layer", "layers", "position", "router_rank", "coordinate"}
+        )
+        boolean_values = bool(len(nonmissing)) and bool(
+            nonmissing.map(lambda value: isinstance(value, (bool, np.bool_))).all()
+        )
+        if identifier or pd.api.types.is_bool_dtype(values.dtype) or boolean_values:
+            continue
+        numeric_values = pd.to_numeric(nonmissing, errors="coerce")
+        if len(nonmissing) and numeric_values.notna().all():
+            integer_measure = bool(
+                column == "n"
+                or column.endswith(("_pages", "_actions", "_size", "_count", "_block", "_refreshes"))
+                or "_bytes" in column
+            ) and bool(np.equal(numeric_values, np.floor(numeric_values)).all())
+            if integer_measure:
+                shown[column] = values.map(
+                    lambda value: value if pd.isna(value) else str(int(float(value)))
+                )
+            else:
+                shown[column] = values.map(
+                    lambda value: value if pd.isna(value) else f"{float(value):.4f}"
+                )
 
     def cell(value: Any) -> str:
         if pd.isna(value):
@@ -1478,6 +1551,102 @@ def _markdown_table(frame: pd.DataFrame, columns: Sequence[str]) -> str:
     return "\n".join((header, separator, *body))
 
 
+def _primary_fresh_one_bpw_rows(
+    frame: pd.DataFrame, configured_layers: Sequence[int]
+) -> pd.DataFrame:
+    if frame.empty:
+        return frame.copy()
+    budget = pd.to_numeric(frame["physical_budget_bpw"], errors="coerce")
+    layer = pd.to_numeric(frame["layer"], errors="coerce")
+    values = frame[
+        frame["capture_source"].astype(str).eq("exact_checkpoint")
+        & frame["evaluation_split"].astype(str).eq("test")
+        & budget.eq(1.0)
+        & layer.isin(list(map(int, configured_layers)))
+    ]
+    if (values["source_run_mode"].astype(str) == "full").any():
+        values = values[values["source_run_mode"].astype(str) == "full"]
+    elif (values["source_run_mode"].astype(str) == "pilot").any():
+        values = values[values["source_run_mode"].astype(str) == "pilot"]
+    return values.copy()
+
+
+def _median_if_available(frame: pd.DataFrame, column: str) -> float:
+    if column not in frame:
+        return float("nan")
+    values = pd.to_numeric(frame[column], errors="coerce").dropna()
+    return float(values.median()) if len(values) else float("nan")
+
+
+def _success_gate_summaries(
+    unit_rows: pd.DataFrame,
+    tile_rows: pd.DataFrame,
+    configured_layers: Sequence[int],
+    baseline_p10: float,
+    baseline_median: float,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    path_rows: list[tuple[str, pd.DataFrame]] = []
+    if len(unit_rows):
+        path_rows.append(("neuron_major", unit_rows))
+    if len(tile_rows):
+        shape = str(tile_rows.iloc[0].get("tile_shape", "unknown_shape"))
+        path_rows.append((f"tile_{shape}", tile_rows))
+
+    overall: list[dict[str, Any]] = []
+    by_layer: list[dict[str, Any]] = []
+    difficult: list[dict[str, Any]] = []
+    difficult_layers = {int(value) for value in configured_layers if int(value) != 0}
+    difficult_label = ",".join(map(str, sorted(difficult_layers))) or "none"
+    for path, rows in path_rows:
+        p10 = float(rows["recovery"].quantile(0.1))
+        median = float(rows["recovery"].median())
+        overall.append({
+            "path": path,
+            "selector": str(rows.iloc[0]["selector"]),
+            "n": int(len(rows)),
+            "p10": p10,
+            "median": median,
+            "delta_p10_vs_configured_pr6_h0_hybrid": p10 - baseline_p10,
+            "delta_median_vs_configured_pr6_h0_hybrid": median - baseline_median,
+            "median_selector_runtime_ms": _median_if_available(rows, "selector_runtime_ms"),
+            "median_unique_footprint_bytes_lower_bound": _median_if_available(
+                rows, "selector_bytes_read"
+            ),
+            "median_page_amplification": _median_if_available(rows, "page_amplification"),
+            "median_storage_multiplier": _median_if_available(rows, "storage_multiplier"),
+        })
+        for layer_value, layer_rows in rows.groupby("layer", sort=True):
+            by_layer.append({
+                "path": path,
+                "layer": int(layer_value),
+                "n": int(len(layer_rows)),
+                "p10": float(layer_rows["recovery"].quantile(0.1)),
+                "median": float(layer_rows["recovery"].median()),
+                "p90": float(layer_rows["recovery"].quantile(0.9)),
+            })
+        difficult_rows = rows[rows["layer"].astype(int).isin(difficult_layers)]
+        if len(difficult_rows):
+            difficult_p10 = float(difficult_rows["recovery"].quantile(0.1))
+            difficult_median = float(difficult_rows["recovery"].median())
+            difficult.append({
+                "path": path,
+                "layers": difficult_label,
+                "n": int(len(difficult_rows)),
+                "p10": difficult_p10,
+                "median": difficult_median,
+                "delta_p10_vs_configured_all_layer_pr6_h0_hybrid": (
+                    difficult_p10 - baseline_p10
+                ),
+                "delta_median_vs_configured_all_layer_pr6_h0_hybrid": (
+                    difficult_median - baseline_median
+                ),
+                "improves_both_configured_pr6_statistics": bool(
+                    difficult_p10 > baseline_p10 and difficult_median > baseline_median
+                ),
+            })
+    return pd.DataFrame(overall), pd.DataFrame(by_layer), pd.DataFrame(difficult)
+
+
 def build_report(
     tables: Mapping[str, pd.DataFrame], promotions: Mapping[str, Any], config: Mapping[str, Any]
 ) -> str:
@@ -1487,10 +1656,17 @@ def build_report(
     ]
     unit_test = _promotion_test_rows(tables["neuron"], promotions["neuron_major"]["promoted"], unit_keys)
     unit_test_summary = (
-        unit_test.groupby(["source_run_mode", "capture_source"] + unit_keys, dropna=False).agg(
+        unit_test.groupby(
+            ["source_run_mode", "capture_source"] + unit_keys + ["physical_budget_bpw"],
+            dropna=False,
+        ).agg(
             n=("recovery", "size"), p10=("recovery", _q10), median=("recovery", "median"),
             p90=("recovery", lambda x: float(x.quantile(0.9))),
-            pages=("physical_pages", "median"), actions=("logical_actions", "median"),
+            median_physical_pages=("physical_pages", "median"),
+            median_physical_bytes=("physical_bytes", "median"),
+            median_logical_actions=("logical_actions", "median"),
+            median_logical_bytes=("logical_bytes", "median"),
+            median_page_amplification=("page_amplification", "median"),
         ).reset_index()
     ) if len(unit_test) else pd.DataFrame()
     short_keys = [
@@ -1505,7 +1681,11 @@ def build_report(
             n=("fraction_exact_over_diagonal_gain_retained_matched_fetched_pages", "size"),
             p10=("fraction_exact_over_diagonal_gain_retained_matched_fetched_pages", _q10),
             median=("fraction_exact_over_diagonal_gain_retained_matched_fetched_pages", "median"),
-            fetched_pages=("fetched_pages", "median"),
+            median_fetched_pages=("fetched_pages", "median"),
+            median_physical_bytes=("physical_bytes", "median"),
+            median_logical_actions=("logical_actions", "median"),
+            median_logical_bytes=("logical_bytes", "median"),
+            median_page_amplification=("page_amplification", "median"),
             p10_overfetch=("candidate_overfetch_factor", _q10),
             median_overfetch=("candidate_overfetch_factor", "median"),
             p90_overfetch=("candidate_overfetch_factor", lambda x: float(x.quantile(0.9))),
@@ -1520,10 +1700,195 @@ def build_report(
     tile_summary = (
         tile_test[np.isclose(tile_test.physical_budget_bpw, 1.0)].groupby(["source_run_mode", "capture_source"] + tile_keys, dropna=False).agg(
             n=("recovery", "size"), p10=("recovery", _q10), median=("recovery", "median"),
-            p90=("recovery", lambda x: float(x.quantile(0.9))), pages=("physical_pages", "median"),
+            p90=("recovery", lambda x: float(x.quantile(0.9))),
+            median_physical_pages=("physical_pages", "median"),
+            median_physical_bytes=("physical_bytes", "median"),
+            median_logical_actions=("logical_actions", "median"),
+            median_logical_bytes=("logical_bytes", "median"),
+            median_page_amplification=("page_amplification", "median"),
         ).reset_index()
     ) if len(tile_test) else pd.DataFrame()
+    for frame in (unit_test_summary, short_summary, tile_summary):
+        if len(frame):
+            frame.insert(
+                2,
+                "evidence_role",
+                frame["capture_source"].map({
+                    "exact_checkpoint": "primary_fresh_held_out_test",
+                    "cross_reference": "secondary_cross_reference_sensitivity",
+                }).fillna("unclassified"),
+            )
+
+    unit_validation = pd.DataFrame(promotions["neuron_major"]["all_validation_candidates"])
+    unit_validation_selected = pd.DataFrame(promotions["neuron_major"]["promoted"])
+    shortlist_validation = pd.DataFrame(
+        promotions["activation_shortlist"]["all_validation_candidates"]
+    )
+    shortlist_validation_selected = pd.DataFrame(
+        promotions["activation_shortlist"]["promoted"]
+    )
+    tile_validation = pd.DataFrame(promotions["tile_streaming"]["all_validation_candidates"])
+    tile_validation_selected = pd.DataFrame(promotions["tile_streaming"]["promoted"])
+
+    if len(unit_validation):
+        unit_validation = unit_validation.sort_values(
+            ["selection_category", "median", "p10", "selector"],
+            ascending=[True, False, False, True], kind="mergesort",
+        )
+    if len(tile_validation):
+        tile_validation = tile_validation.sort_values(
+            ["selection_category", "median", "p10", "tile_shape", "selector"],
+            ascending=[True, False, False, True, True], kind="mergesort",
+        )
+    shortlist_validation_best = pd.DataFrame()
+    if len(shortlist_validation):
+        shortlist_validation_best = (
+            shortlist_validation.sort_values(
+                ["projection", "selection_category", "median", "p10", "shortlist_size", "score_method"],
+                ascending=[True, True, False, False, True, True], kind="mergesort",
+            )
+            .groupby(["projection", "selection_category"], dropna=False, sort=True)
+            .head(1)
+            .reset_index(drop=True)
+        )
+
+    input_baseline_median = float(
+        promotions["tile_streaming"]["input_coordinate_baseline_validation_median_at_1bpw"]
+    )
+    page_reduction_interpretable = bool(input_baseline_median > 0.0)
+    if len(tile_validation):
+        tile_validation["page_reduction_evidence_valid"] = page_reduction_interpretable
+        tile_validation["interpreted_passes_page_reduction"] = (
+            tile_validation["passes_page_reduction"].astype(bool)
+            if page_reduction_interpretable else False
+        )
+
+    exact_shapes = tile_validation[
+        tile_validation.get("selector", pd.Series(dtype=str)).astype(str).str.startswith(
+            "exact_dynamic_tile_marginal_refresh_", na=False,
+        )
+    ] if len(tile_validation) else pd.DataFrame()
+    exact_shape_note = "Fewer than two exact tile shapes were present in validation."
+    if len(exact_shapes) >= 2:
+        exact_shapes = exact_shapes.sort_values(
+            ["median", "p10", "tile_shape"], ascending=[False, False, True], kind="mergesort",
+        )
+        winner = exact_shapes.iloc[0]
+        runner_up = exact_shapes.iloc[1]
+        edge = float(winner["median"] - runner_up["median"])
+        tie_label = "a scientific near-tie" if abs(edge) < 0.001 else "a descriptive ordering"
+        exact_shape_note = (
+            f"The deterministic validation ordering selected `{winner['tile_shape']}` over "
+            f"`{runner_up['tile_shape']}` by **{edge:.6f} absolute recovery** "
+            f"({100.0 * edge:.4f} percentage point), {tie_label}. The selected shape is not "
+            "claimed to be materially superior on that difference alone."
+        )
+
+    selected_unit_categories = set(
+        unit_validation_selected.get("selection_category", pd.Series(dtype=str)).astype(str)
+    )
+    selected_tile_categories = set(
+        tile_validation_selected.get("selection_category", pd.Series(dtype=str)).astype(str)
+    )
+    selected_shortlist_categories = set(
+        shortlist_validation_selected.get(
+            "selection_category", pd.Series(dtype=str)
+        ).astype(str)
+    )
+    deployable_selected = "deployable_h0_proxy" in (
+        selected_unit_categories | selected_shortlist_categories | selected_tile_categories
+    )
+    unit_status = str(promotions["neuron_major"]["status"])
+    shortlist_status = str(promotions["activation_shortlist"]["status"])
+    tile_status = str(promotions["tile_streaming"]["status"])
+    isolated_plot_scope = _plot_evidence_scope(preferred_test_rows(tables["shortlist"]))
+    stability_plot_scope = _plot_evidence_scope(
+        preferred_test_rows(tables["stability"])
+    )
     baseline = config.get("locked_pr6_baselines_at_1_physical_bpw", {})
+    pr6_hybrid = baseline.get("h0_hybrid_representation", {})
+    pr6_hybrid_p10 = float(pr6_hybrid.get("p10", float("nan")))
+    pr6_hybrid_median = float(pr6_hybrid.get("median", float("nan")))
+    configured_layers = list(map(int, config["layers"]))
+    unit_primary_one_bpw = _primary_fresh_one_bpw_rows(
+        unit_test, configured_layers
+    )
+    tile_primary_one_bpw = _primary_fresh_one_bpw_rows(
+        tile_test, configured_layers
+    )
+    success_overall, success_by_layer, success_difficult = _success_gate_summaries(
+        unit_primary_one_bpw,
+        tile_primary_one_bpw,
+        configured_layers,
+        pr6_hybrid_p10,
+        pr6_hybrid_median,
+    )
+
+    selected_amplifications = pd.to_numeric(
+        success_overall.get("median_page_amplification", pd.Series(dtype=float)),
+        errors="coerce",
+    ).dropna()
+    selected_storage = pd.to_numeric(
+        success_overall.get("median_storage_multiplier", pd.Series(dtype=float)),
+        errors="coerce",
+    ).dropna()
+    selected_median_amplification = (
+        float(selected_amplifications.max())
+        if len(selected_amplifications) else float("nan")
+    )
+    selected_median_storage = (
+        float(selected_storage.max()) if len(selected_storage) else float("nan")
+    )
+    amplification_limit = 1.2
+    storage_limit = float(config.get("external_storage_cap", 5.0))
+    accounting_limits_pass = bool(
+        np.isfinite(selected_median_amplification)
+        and np.isfinite(selected_median_storage)
+        and selected_median_amplification <= amplification_limit
+        and selected_median_storage < storage_limit
+    )
+    accounting_disposition = (
+        f"**PASS for these accounting limits.** The maximum selected-path median physical "
+        f"page amplification **{selected_median_amplification:.1f}** (limit "
+        f"<={amplification_limit:.1f}) and median storage multiplier "
+        f"**{selected_median_storage:.6f}** (limit <{storage_limit:.1f})."
+        if accounting_limits_pass
+        else "**FAIL or unavailable.** The selected rows do not establish both the physical "
+        "page-amplification and external-storage limits."
+    )
+
+    tile_refresh_interval = _median_if_available(
+        tile_primary_one_bpw, "refresh_interval"
+    )
+    tile_global_refreshes = _median_if_available(
+        tile_primary_one_bpw, "global_refreshes"
+    )
+    selected_tile_selector = (
+        str(tile_primary_one_bpw.iloc[0]["selector"])
+        if len(tile_primary_one_bpw) else ""
+    )
+    exact_tile_refresh_every_page = bool(
+        selected_tile_selector.startswith("exact_dynamic_tile_marginal_refresh_1")
+        and (
+            not np.isfinite(tile_refresh_interval)
+            or int(round(tile_refresh_interval)) == 1
+        )
+    )
+    if exact_tile_refresh_every_page and not np.isfinite(tile_global_refreshes):
+        tile_global_refreshes = _median_if_available(
+            tile_primary_one_bpw, "physical_pages"
+        )
+    if exact_tile_refresh_every_page and np.isfinite(tile_global_refreshes):
+        refresh_disposition = (
+            "**FAIL.** The selected exact tile oracle refreshes after every selected page "
+            f"(`refresh_interval=1`): **{int(round(tile_global_refreshes))} global refreshes** "
+            "at 1.0 bpw, not **<=16**."
+        )
+    else:
+        refresh_disposition = (
+            "**NOT DEMONSTRATED.** The selected tile rows do not establish an exact "
+            "refresh-every-page path within the <=16-global-refresh deployment limit."
+        )
     return f"""# Activation-Dependent Sparse Weight Streaming Study
 
 Run: `{config['run_id']}`
@@ -1533,6 +1898,39 @@ Run: `{config['run_id']}`
 This study measures **expert-output qenergy recovery**, not task accuracy. It does not measure logits, routing quality, token quality, perplexity, or downstream benchmarks. The exact checkpoint, embedded Q2→Q3→Q4 codec, selected trees, and train/validation/test request split remain locked.
 
 Every selector retains a precise `selection_regime`; a derived category groups it as `h0_oracle`, `h0_proxy`, or `deployable_h0_proxy` without erasing whether it reads the full suffix, runs late after resident Q2, or needs deployable metadata. H0 choices may use the current activation or exact suffix corrections and are not H4 prefetch claims. No H4 predictor is trained here. The broader cross-reference capture is a secondary sensitivity check; primary claims use the fresh exact-checkpoint capture.
+
+Router rank and router coefficient are occurrence metadata only. This study does not evaluate router decisions or logit agreement, and qenergy recovery must not be restated as model accuracy.
+
+## Outcome map
+
+The frozen family decisions are neuron-major **`{unit_status}`**, activation shortlist **`{shortlist_status}`**, and tile streaming **`{tile_status}`**. The promoted neuron and tile configurations are H0 oracles. A deployable-H0 selector was **{'selected' if deployable_selected else 'not selected'}**. Consequently, any positive held-out result below establishes allocator headroom, not a deployable streaming policy and not H4 prefetch feasibility.
+
+Fresh exact-checkpoint validation selected configurations; fresh exact-checkpoint test rows provide the primary held-out estimate. The broader capture is reported separately as `secondary_cross_reference_sensitivity` and never pooled with the primary cohort. It cannot change a frozen selection.
+
+## Held-out success-gate disposition
+
+This disposition uses only the frozen selected neuron and tile identities on the primary fresh `exact_checkpoint` test rows at exactly **1.0 physical correction bpw** and only configured audited layers `{configured_layers}`. Full-run rows are preferred over duplicate pilot sanity rows. No cross-reference row or other budget enters these statistics.
+
+The configured PR #6 H0-hybrid comparator is p10 **{pr6_hybrid_p10:.4f}** and median **{pr6_hybrid_median:.4f}** on its all-layer cohort. Overall fresh exact-checkpoint results and descriptive deltas to that configured comparator are:
+
+{_markdown_table(success_overall, ['path', 'selector', 'n', 'p10', 'median', 'delta_p10_vs_configured_pr6_h0_hybrid', 'delta_median_vs_configured_pr6_h0_hybrid', 'median_selector_runtime_ms', 'median_unique_footprint_bytes_lower_bound', 'median_page_amplification', 'median_storage_multiplier']) if len(success_overall) else 'No frozen selected path has a primary fresh exact-checkpoint test row at exactly 1.0 bpw.'}
+
+By-layer primary audit:
+
+{_markdown_table(success_by_layer, ['path', 'layer', 'n', 'p10', 'median', 'p90']) if len(success_by_layer) else 'No by-layer primary rows are available.'}
+
+Difficult-layer pooled audit (configured layers other than layer 0):
+
+{_markdown_table(success_difficult, ['path', 'layers', 'n', 'p10', 'median', 'delta_p10_vs_configured_all_layer_pr6_h0_hybrid', 'delta_median_vs_configured_all_layer_pr6_h0_hybrid', 'improves_both_configured_pr6_statistics']) if len(success_difficult) else 'No configured nonzero-layer primary rows are available.'}
+
+The difficult-layer deltas use the configured **all-layer** PR #6 H0-hybrid control as a descriptive comparator because no layer-matched PR #6 values are present in this configuration. They are not presented as a layer-matched control.
+
+These recovery results are **H0 oracle headroom only**, not a deployable selector result:
+
+- **Deployable proxy: {'PASS' if deployable_selected else 'FAIL'}.** {'A deployable proxy was selected.' if deployable_selected else 'No deployable proxy was selected; the frozen neuron and tile winners inspect the full suffix.'}
+- **Tile refresh limit:** {refresh_disposition}
+- **Physical amplification and storage:** {accounting_disposition}
+- **Rank <= 64 / low-rank gain-retention gate: NOT APPLICABLE and NOT DEMONSTRATED.** These structured H0 oracles do not instantiate a rank-64-or-lower approximation and therefore cannot establish the requested >=90% retained exact-over-diagonal gain with no more than 16 refreshes.
 
 ## Promotion protocol
 
@@ -1563,9 +1961,13 @@ Neuron packets make 512 SwiGLU hidden units the decision axis. Full Q2→Q4 refi
 
 Held-out promoted configurations:
 
-{_markdown_table(unit_test_summary, ['source_run_mode', 'capture_source', 'action_family', 'representation', 'selector', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p90', 'pages', 'actions']) if len(unit_test_summary) else 'No neuron-major configuration passed both validation median and p10 gates.'}
+{_markdown_table(unit_test_summary, ['source_run_mode', 'capture_source', 'evidence_role', 'physical_budget_bpw', 'action_family', 'representation', 'selector', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p90', 'median_physical_pages', 'median_physical_bytes', 'median_logical_actions', 'median_logical_bytes', 'median_page_amplification']) if len(unit_test_summary) else 'No neuron-major configuration passed both validation median and p10 gates.'}
 
-The table reports exact sequential complete-expert recovery separately from isolated projection rows in the CSV and plots. Logical actions are not treated as physical traffic.
+The table reports exact sequential complete-expert recovery separately from isolated projection rows in the CSV and plots. Each physical budget is a separate row; recovery is never pooled across bpw. Logical actions are semantic applications, not traffic. Physical traffic is the fetched 512-byte page count and its byte equivalent.
+
+Fresh exact-checkpoint validation candidates at one physical correction bpw:
+
+{_markdown_table(unit_validation, ['action_family', 'representation', 'selector', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p90', 'passes_p10', 'passes_median']) if len(unit_validation) else 'No neuron-major validation candidates were recorded.'}
 
 ## Activation shortlist containment and exact H0 rescoring
 
@@ -1575,27 +1977,45 @@ The frozen shortlist unit is `{config['activation_shortlist_unit']}`. Both refin
 
 Held-out promoted configurations:
 
-{_markdown_table(short_summary, ['source_run_mode', 'capture_source', 'projection', 'score_method', 'shortlist_size', 'refresh_block', 'selection_category', 'selection_regime', 'physical_budget_bpw', 'n', 'p10', 'median', 'fetched_pages', 'p10_overfetch', 'median_overfetch', 'p90_overfetch', 'max_overfetch']) if len(short_summary) else 'No shortlist configuration passed the predeclared utility, candidate-count, p10-minimum-overfetch, and p90-maximum-overfetch gates.'}
+{_markdown_table(short_summary, ['source_run_mode', 'capture_source', 'evidence_role', 'projection', 'score_method', 'shortlist_size', 'refresh_block', 'selection_category', 'selection_regime', 'physical_budget_bpw', 'n', 'p10', 'median', 'median_fetched_pages', 'median_physical_bytes', 'median_logical_actions', 'median_logical_bytes', 'median_page_amplification', 'p10_overfetch', 'median_overfetch', 'p90_overfetch', 'max_overfetch']) if len(short_summary) else 'No shortlist configuration passed the predeclared utility, candidate-count, p10-minimum-overfetch, and p90-maximum-overfetch gates.'}
 
 Raw support recall is secondary to retained exact-over-diagonal utility at matched fetched-page budgets. To prevent an underfilled candidate set from passing this matched-page metric trivially, promotion additionally requires p10 candidate overfetch to be at least **{config['promotion_policy']['shortlist_min_overfetch']:.2f}**; the bandwidth ceiling requires p90 to be at most **{config['promotion_policy']['shortlist_max_overfetch']:.2f}**. P10, median, p90, and maximum overfetch remain visible in the frozen decision and summaries.
+
+The isolated-projection plots use **{isolated_plot_scope}**. {'Because this family stopped before full expansion, pilot sanity curves are implementation evidence only and are not a broad held-out result.' if shortlist_status == 'stop' else 'The promoted family is evaluated on its frozen full cohort.'}
+
+Best fresh exact-checkpoint validation candidate per projection and selection category at one physical correction bpw (shown even when the family stopped):
+
+{_markdown_table(shortlist_validation_best, ['projection', 'score_method', 'shortlist_size', 'refresh_block', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p10_candidate_overfetch', 'p90_candidate_overfetch', 'passes_p10', 'passes_median', 'passes_candidates', 'passes_min_overfetch', 'passes_max_overfetch', 'passes_overfetch']) if len(shortlist_validation_best) else 'No activation-shortlist validation candidates were recorded.'}
 
 ## Page-aligned tiles and hybrids
 
 The frozen pilot shape is `{config['tile_pilot_shape'][0]}×{config['tile_pilot_shape'][1]}`. One 32×32 paired gate/up Q2→Q4 tile is exactly one 512-byte page. Tile selection is nonlinear and is evaluated through actual SwiGLU reconstruction. The ≥3-point validation gate is measured against the locked PR #6 all-layer one-bpw H0-hybrid median **{config['locked_pr6_baselines_at_1_physical_bpw']['h0_hybrid_representation']['median']:.4f}**. The separately recomputed `input_coordinate_baseline` curve is used only for the alternative 25% matched-recovery page-reduction gate. No test row chooses a shape.
 
+**Frozen-gate disclosure.** The one-bpw input-coordinate validation comparator has median recovery **{input_baseline_median:.4f}**. {'It is above the zero-correction recovery of 0, so the discrete matched-recovery diagnostic is interpretable.' if page_reduction_interpretable else 'It is below the zero-correction recovery of 0. The frozen payload therefore reports a mechanically computed page reduction for a target that even the no-correction baseline already exceeds. That number—including any apparent 75% reduction—is invalid evidence for page savings and is not counted as a success.'} The frozen promotion bytes are preserved for auditability. Tile promotion is interpreted **solely through the independent recovery-gain gate versus the locked PR #6 H0-hybrid median**, not through this defective alternative diagnostic.
+
+Fresh exact-checkpoint validation tile candidates at one physical correction bpw:
+
+{_markdown_table(tile_validation, ['action_family', 'tile_shape', 'selector', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p90', 'recovery_point_gain_vs_locked_pr6_h0_hybrid', 'page_reduction_at_matched_recovery', 'page_reduction_evidence_valid', 'passes_recovery_gain', 'interpreted_passes_page_reduction']) if len(tile_validation) else 'No tile validation candidates were recorded.'}
+
+{exact_shape_note}
+
 Held-out one-bpw promoted configurations:
 
-{_markdown_table(tile_summary, ['source_run_mode', 'capture_source', 'action_family', 'tile_shape', 'selector', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p90', 'pages']) if len(tile_summary) else 'No unrestricted gate/up-tile plus down-column path passed the validation recovery-gain or matched-recovery page-reduction gate.'}
+{_markdown_table(tile_summary, ['source_run_mode', 'capture_source', 'evidence_role', 'action_family', 'tile_shape', 'selector', 'selection_category', 'selection_regime', 'n', 'p10', 'median', 'p90', 'median_physical_pages', 'median_physical_bytes', 'median_logical_actions', 'median_logical_bytes', 'median_page_amplification']) if len(tile_summary) else 'No unrestricted gate/up-tile plus down-column path passed the validation recovery-gain gate.'}
 
 ## Physical accounting
 
 `sparse_streaming_compute_storage_accounting.json` distinguishes logical actions, applied pages, fetched candidate pages, selector bytes, and external representation storage. Complete endpoint storage is accounted from the locked suffix representation; action counts never stand in for physical performance. The configured PR #6 one-bpw controls are preserved in the configuration: `{json.dumps(baseline, sort_keys=True)}`.
+
+One physical correction bpw is 768 fetched pages or 393,216 bytes for this 3×2048×512-weight expert. Every report table names physical pages/bytes and logical actions/bytes explicitly; none infers bandwidth from the action count.
 
 `selector_runtime_ms` is measured for one complete selector path/frontier construction per invocation. `selector_bytes_read` is a reproducible **unique tensor-footprint lower bound**, not a hardware traffic counter: it excludes cache-dependent repeated marginal scans and Gram-column reads. The same values are repeated on each budget snapshot row; rows must not be summed or read as incremental per-budget costs. Regimes `h0_oracle_full_suffix`, `h0_oracle_full_target_residual`, and `h0_oracle_suffix_metadata_heavy` inspect the full decoded suffix or target residual. Exact/dynamic and static tile selectors in those regimes are H0 oracles, not deployable selectors. Late resident-Q2 proxies are separately labeled and may require a second pass before suffix selection.
 
 ## Support stability
 
 `support_stability_summary.csv` separates same-invocation gate/up overlap (`token_gap=0`) from true adjacent-token pairs (`token_gap=1`). Adjacent claims use only the fresh exact-checkpoint capture; the stride-16 broader capture is deliberately excluded from adjacency claims.
+
+The support-stability plot uses **{stability_plot_scope}**. When this is the pilot sanity cohort, it is not treated as evidence of broad temporal predictability.
 
 ## Interpretation rule
 

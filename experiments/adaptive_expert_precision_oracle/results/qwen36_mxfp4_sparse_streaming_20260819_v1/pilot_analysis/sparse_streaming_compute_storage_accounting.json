@@ -1,0 +1,345 @@
+{
+  "analytical_geometry": {
+    "complete_suffix_endpoint_bpw": 2.0,
+    "complete_tile_plus_down_endpoint_pages": 1536,
+    "expert_weights": 3145728,
+    "full_q4_neuron_packet_bytes": 1536,
+    "full_q4_neuron_packet_pages": 3,
+    "gate_up_32x32_q2_to_q4_tile_bytes": 512,
+    "gate_up_32x32_q2_to_q4_tile_pages": 1,
+    "hidden_units_refinable_at_one_bpw_full_packets": 256,
+    "one_representation_multiplier_before_selector_metadata": 1.4705882352941178,
+    "one_representation_suffix_bpw": 2.0,
+    "page_size_bytes": 512,
+    "pages_per_one_physical_bpw": 768,
+    "progressive_neuron_q3_pages": 2,
+    "progressive_neuron_q4_increment_pages": 1,
+    "reference_bpw": 4.25,
+    "resident_parent_bpw_not_used_as_multiplier_denominator": true,
+    "storage_multiplier_convention": "(reference_bpw + suffix_bpw + selector_metadata_bpw) / reference_bpw"
+  },
+  "external_storage_cap": 5.0,
+  "frozen_protocol": {
+    "activation_shortlist_unit": "input_coordinates",
+    "coordinate_score_aggregation": "sum_stage_energy",
+    "primary_metric": "exact sequential complete-expert qenergy recovery under I + beta P P.T; expert-output reconstruction, not task accuracy",
+    "promotion_min_validation_invocations_per_layer": 4,
+    "promotion_min_validation_requests_per_layer": 2,
+    "shortlist_physical_layout": "canonical_paired_planes_four_coordinates_per_projection_page",
+    "tile_pilot_shape": [
+      32,
+      32
+    ]
+  },
+  "maximum_observed_storage_multiplier": 1.471203373927696,
+  "observed_not_inferred": {
+    "activation_concentration": {
+      "coordinates_for_90pct_energy_min_max": [
+        690,
+        891
+      ],
+      "exact_zero_fraction_min_max": [
+        0.0,
+        0.001953125
+      ],
+      "rows": 472,
+      "top_k_values": [
+        64,
+        128,
+        256,
+        384,
+        512,
+        768,
+        1024,
+        2048
+      ]
+    },
+    "activation_shortlist": {
+      "candidate_pages_min_max": [
+        57,
+        497
+      ],
+      "fetched_pages_min_max": [
+        57,
+        497
+      ],
+      "rows": 9912,
+      "selector_bytes_read_min_max": [
+        67117056,
+        77602816
+      ],
+      "selector_runtime_ms_min_max": [
+        32.85280242562294,
+        601.1517238803208
+      ]
+    },
+    "neuron": {
+      "logical_actions_min_max": [
+        16,
+        759
+      ],
+      "logical_bpw_min_max": [
+        0.0625,
+        2.0
+      ],
+      "logical_bytes_min_max": [
+        24576,
+        786432
+      ],
+      "page_amplification_median": 1.0,
+      "physical_bytes_min_max": [
+        24576,
+        786432
+      ],
+      "physical_pages_min_max": [
+        48,
+        1536
+      ],
+      "rows": 3304,
+      "selector_bytes_read_min_max": [
+        4096,
+        25165824
+      ],
+      "selector_metadata_bpw_min_max": [
+        0.0,
+        0.0026143391927083335
+      ],
+      "selector_metadata_bytes_all_40x256_experts_max": 10526720,
+      "selector_metadata_bytes_per_expert_min_max": [
+        0,
+        1028
+      ],
+      "selector_runtime_ms_min_max": [
+        0.052240677177906036,
+        696.8756336718798
+      ],
+      "storage_multiplier_min_max": [
+        1.4705882352941178,
+        1.471203373927696
+      ],
+      "suffix_storage_bpw_min_max": [
+        2.0,
+        2.0
+      ]
+    },
+    "shortlist": {
+      "logical_actions_min_max": [
+        200,
+        3928
+      ],
+      "logical_bpw_min_max": [
+        0.09765625,
+        1.91796875
+      ],
+      "logical_bytes_min_max": [
+        12800,
+        251392
+      ],
+      "page_amplification_median": 1.6084286084286084,
+      "physical_bytes_min_max": [
+        29184,
+        254464
+      ],
+      "physical_pages_min_max": [
+        57,
+        497
+      ],
+      "rows": 9912,
+      "selector_bytes_read_min_max": [
+        67117056,
+        77602816
+      ],
+      "selector_metadata_bpw_min_max": [
+        0.0,
+        0.0
+      ],
+      "selector_metadata_bytes_all_40x256_experts_max": 0,
+      "selector_metadata_bytes_per_expert_min_max": [
+        0,
+        0
+      ],
+      "selector_runtime_ms_min_max": [
+        32.85280242562294,
+        601.1517238803208
+      ],
+      "storage_multiplier_min_max": [
+        1.4705882352941178,
+        1.4705882352941178
+      ],
+      "suffix_storage_bpw_min_max": [
+        2.0,
+        2.0
+      ]
+    },
+    "tile": {
+      "logical_actions_min_max": [
+        192,
+        1152
+      ],
+      "logical_bpw_min_max": [
+        0.25,
+        1.5
+      ],
+      "logical_bytes_min_max": [
+        98304,
+        589824
+      ],
+      "page_amplification_median": 1.0,
+      "physical_bytes_min_max": [
+        98304,
+        589824
+      ],
+      "physical_pages_min_max": [
+        192,
+        1152
+      ],
+      "rows": 3726,
+      "selector_bytes_read_min_max": [
+        25174016,
+        25174016
+      ],
+      "selector_metadata_bpw_min_max": [
+        0.0,
+        0.0
+      ],
+      "selector_metadata_bytes_all_40x256_experts_max": 0,
+      "selector_metadata_bytes_per_expert_min_max": [
+        0,
+        0
+      ],
+      "selector_runtime_ms_min_max": [
+        520.1031677424908,
+        1644.535617902875
+      ],
+      "storage_multiplier_min_max": [
+        1.4705882352941178,
+        1.4705882352941178
+      ],
+      "suffix_storage_bpw_min_max": [
+        2.0,
+        2.0
+      ]
+    }
+  },
+  "passes_external_storage_cap": true,
+  "pilot_full_deduplication": {
+    "concentration": {
+      "duplicate_scientific_key_groups": 0,
+      "kept_rows_by_run_mode": {
+        "pilot": 472
+      },
+      "numeric_evidence_tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      },
+      "post_rows": 472,
+      "pre_rows": 472,
+      "pre_rows_by_run_mode": {
+        "pilot": 472
+      },
+      "preference": "full_over_pilot",
+      "rows_removed": 0
+    },
+    "labels": {
+      "duplicate_scientific_key_groups": 0,
+      "kept_rows_by_run_mode": {
+        "pilot": 483328
+      },
+      "numeric_evidence_tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      },
+      "post_rows": 483328,
+      "pre_rows": 483328,
+      "pre_rows_by_run_mode": {
+        "pilot": 483328
+      },
+      "preference": "full_over_pilot",
+      "rows_removed": 0
+    },
+    "neuron": {
+      "duplicate_scientific_key_groups": 0,
+      "kept_rows_by_run_mode": {
+        "pilot": 3304
+      },
+      "numeric_evidence_tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      },
+      "post_rows": 3304,
+      "pre_rows": 3304,
+      "pre_rows_by_run_mode": {
+        "pilot": 3304
+      },
+      "preference": "full_over_pilot",
+      "rows_removed": 0
+    },
+    "shortlist": {
+      "duplicate_scientific_key_groups": 0,
+      "kept_rows_by_run_mode": {
+        "pilot": 9912
+      },
+      "numeric_evidence_tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      },
+      "post_rows": 9912,
+      "pre_rows": 9912,
+      "pre_rows_by_run_mode": {
+        "pilot": 9912
+      },
+      "preference": "full_over_pilot",
+      "rows_removed": 0
+    },
+    "stability": {
+      "duplicate_scientific_key_groups": 0,
+      "kept_rows_by_run_mode": {
+        "pilot": 2794
+      },
+      "numeric_evidence_tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      },
+      "post_rows": 2794,
+      "pre_rows": 2794,
+      "pre_rows_by_run_mode": {
+        "pilot": 2794
+      },
+      "preference": "full_over_pilot",
+      "rows_removed": 0
+    },
+    "tile": {
+      "duplicate_scientific_key_groups": 0,
+      "kept_rows_by_run_mode": {
+        "pilot": 3726
+      },
+      "numeric_evidence_tolerance": {
+        "atol": 1e-08,
+        "rtol": 1e-06
+      },
+      "post_rows": 3726,
+      "pre_rows": 3726,
+      "pre_rows_by_run_mode": {
+        "pilot": 3726
+      },
+      "preference": "full_over_pilot",
+      "rows_removed": 0
+    }
+  },
+  "run_ids": [
+    "qwen36_mxfp4_sparse_streaming_20260819_v1"
+  ],
+  "schema_version": 1,
+  "selector_measurement_scope": {
+    "budget_rows": "repeat the same full-path/full-frontier cost; do not sum rows or interpret as incremental per-budget latency",
+    "selector_bytes_read": "unique selector tensor footprint lower bound; not a hardware traffic counter and excludes repeated scans/Gram-column reads",
+    "selector_runtime_ms": "one complete selector path/frontier construction for the invocation"
+  },
+  "task_accuracy_measured": false,
+  "test_masks_used_for_promotion_or_layout_training": false,
+  "units": {
+    "budget": "physical correction bpw",
+    "bytes": "bytes",
+    "selector_runtime": "milliseconds"
+  }
+}

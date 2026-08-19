@@ -1,0 +1,176 @@
+{
+  "artifact_row_counts": {
+    "activation_concentration": 0,
+    "activation_shortlist_containment": 0,
+    "exact_action_labels": 0,
+    "neuron_major_frontier": 0,
+    "support_stability": 0,
+    "tile_streaming_frontier": 2310
+  },
+  "base_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "codec_locked": true,
+  "completed": true,
+  "completed_unix": 1787159230.060679,
+  "completed_work_units": [
+    "validation:0:62",
+    "validation:20:191",
+    "validation:39:108",
+    "validation:4:154"
+  ],
+  "conditional_followup_selectors": [
+    "activation_energy_x_weight",
+    "cartesian_hidden_input_blocks",
+    "exact_dynamic_tile_marginal"
+  ],
+  "conditional_followup_shapes": [
+    [
+      16,
+      64
+    ],
+    [
+      32,
+      32
+    ],
+    [
+      64,
+      16
+    ]
+  ],
+  "config_sha256": "326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326",
+  "device": "cuda",
+  "expected_cohort_counts": {
+    "validation": 55
+  },
+  "expected_unique_invocations": 55,
+  "failures": [],
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "1f2ff042f50c",
+  "input_hashes": {
+    "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+    "config_file_sha256": "326edd4c5ae771ff1c29f4c3cac8eace0d2eeb9e498575f8ef355be409eef326",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+  },
+  "last_completed": {
+    "expert_id": 108,
+    "layer": 39,
+    "split": "validation",
+    "unix": 1787159229.8961446
+  },
+  "locked_capture_sha256": {
+    "cross_reference": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add",
+    "exact_checkpoint": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931"
+  },
+  "locked_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "mode": "validation_tile_shape_followup",
+  "observed_cohort_counts": {
+    "validation": 55
+  },
+  "observed_unique_invocations": 55,
+  "page_size_bytes": 512,
+  "parent_pilot_run_facts_sha256": "6877fd832a8d2d99c8b7613e3e5f7baba5a52eb10a9411734c779c365b01c998",
+  "parent_pilot_tile_sha256": "847dd26bb1f34214ad1db59835250d2028f1ebfc26609eb78849661af0a1daa6",
+  "proxy_facts_by_layer": {
+    "0": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0859375,
+        0.09375,
+        0.09375,
+        0.09375
+      ],
+      "rank": 4,
+      "ridge": 2.5276365340687337e-06,
+      "train_samples": 70
+    },
+    "20": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "rank": 4,
+      "ridge": 0.0006710012257099151,
+      "train_samples": 70
+    },
+    "39": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "rank": 4,
+      "ridge": 0.0008361098170280457,
+      "train_samples": 70
+    },
+    "4": {
+      "beta": 512.0,
+      "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+      "margin_medians": [
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "rank": 4,
+      "ridge": 1.0406021028757096e-05,
+      "train_samples": 70
+    }
+  },
+  "reference": {
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695"
+  },
+  "request_counts_by_split": {
+    "test": 3,
+    "train": 6,
+    "validation": 3
+  },
+  "request_separation_verified": true,
+  "request_split_policy": "validation-only conditional continuation; no test rows",
+  "run_id": "qwen36_mxfp4_sparse_streaming_20260819_v1",
+  "run_mode": "pilot",
+  "runner_sha256": "17bdd5ad1377533b4720aeac30c74d30f515c9b89ed7c02650117fcfa2fb551c",
+  "selector_core_sha256": "8bdfaebdf639d29401c280bfd509c80d84e6c3e440eb72ee21bf3b3fd6fd4b68",
+  "source": "exact_checkpoint",
+  "started_unix": 1787158837.8636074,
+  "test_rows_consulted_for_selection": false,
+  "test_rows_evaluated": 0,
+  "torch": "2.8.0+cu128",
+  "trigger_selected_tile": {
+    "refresh_interval": 1,
+    "selector": "exact_dynamic_tile_marginal",
+    "tile_shape": [
+      32,
+      32
+    ]
+  },
+  "trigger_validation_promotions_sha256": "183ee7e353b65e9817c1eefae1872f00ce6b8541173220498479acc173dfdbad",
+  "updated_unix": 1787159230.1315126
+}

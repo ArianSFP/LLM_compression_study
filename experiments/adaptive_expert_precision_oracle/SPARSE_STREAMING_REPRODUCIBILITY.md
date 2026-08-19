@@ -2,7 +2,7 @@
 
 This document is the reviewer-facing execution contract for the activation-dependent sparse-streaming allocator study. It describes how to reproduce the bounded pilot, freeze validation-only promotion decisions, evaluate the promoted configurations on the fresh exact-checkpoint cohort, and run the broader cross-reference sensitivity check.
 
-It does **not** itself report experimental results. Execution began on 2026-08-19 on RunPod `41rk786odszmk9` (RTX 3090). The checkpoint and regenerated broader capture already match their locked hashes; the fresh recapture and allocator stages remain in progress at this protocol update. Results become reviewable only after completed run directories, the final analysis manifest, and the execution ledger have been committed.
+It does **not** itself report experimental results. Execution began on 2026-08-19 on RunPod `41rk786odszmk9` (RTX 3090). The fresh capture, bounded pilot, validation-only tile-shape continuation, frozen promotion decision, 85-invocation exact-checkpoint expansion, 142-invocation broader sensitivity run, four-input validation, local final merge, transfer audit, and manifest closure have completed. The execution pod is stopped. Publication is the only remaining handoff.
 
 ## Scope and immutable controls
 
@@ -56,6 +56,9 @@ export SPARSE_CROSS_CAPTURE="/absolute/path/to/captures_seed20260817.npz"
 export SPARSE_RUN_ROOT="$SPARSE_EXPERIMENT_ROOT/results/qwen36_mxfp4_sparse_streaming_20260819_v1"
 
 export SPARSE_PILOT_EXACT="$SPARSE_RUN_ROOT/pilot_exact_checkpoint"
+export SPARSE_INITIAL_VALIDATION="$SPARSE_RUN_ROOT/pilot_validation_only.json"
+export SPARSE_TILE_VALIDATION="$SPARSE_RUN_ROOT/validation_tile_shapes_exact_checkpoint"
+export SPARSE_AUGMENTED_VALIDATION="$SPARSE_RUN_ROOT/pilot_augmented_validation_only.json"
 export SPARSE_PILOT_ANALYSIS="$SPARSE_RUN_ROOT/pilot_analysis"
 export SPARSE_FULL_EXACT="$SPARSE_RUN_ROOT/full_exact_checkpoint"
 export SPARSE_FULL_CROSS="$SPARSE_RUN_ROOT/full_cross_reference"
@@ -113,7 +116,7 @@ PYTHONPATH=src python scripts/run_sparse_streaming_study.py \
 
 Pilot mode rejects `--promotions`. It executes the frozen 32×32 tile pilot, exact-refresh-1 shortlist path, and configured unit/budget candidates. Keys named `conditional_followup_*` are deliberately not executed in this first bounded stage; they require a separately recorded validation-only continuation if the first oracle/proxy evidence justifies them. Coverage must reach at least 4 validation invocations from at least 2 validation requests in every audited layer; otherwise the pilot fails rather than weakening the gate.
 
-### 2. Validate the pilot and freeze promotions
+### 2. Validate the pilot, run any predeclared validation-only continuation, and freeze promotions
 
 First run validation without writing decisions:
 
@@ -121,10 +124,44 @@ First run validation without writing decisions:
 MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
   --input "$SPARSE_PILOT_EXACT" \
   --config "$SPARSE_CONFIG" \
-  --validate-only
+  --validate-only >"$SPARSE_INITIAL_VALIDATION"
 ```
 
-Then write the frozen decision and pilot report:
+If and only if that validation-only artifact promotes the initial 32×32 tile and therefore activates the predeclared alternate-shape gate, execute the bounded continuation. This continuation reads validation rows only, evaluates no test row, and writes into its own output directory:
+
+```bash
+PYTHONPATH=src:scripts python scripts/run_sparse_streaming_tile_followup.py \
+  --config "$SPARSE_CONFIG" \
+  --captures "$SPARSE_EXACT_CAPTURE" \
+  --checkpoint "$SPARSE_CHECKPOINT" \
+  --trees "$SPARSE_TREES" \
+  --parent-pilot "$SPARSE_PILOT_EXACT" \
+  --trigger "$SPARSE_INITIAL_VALIDATION" \
+  --output "$SPARSE_TILE_VALIDATION" \
+  --device cuda
+```
+
+The continuation evaluates only the already-declared 16×64, 32×32, and 64×16 tile shapes with `activation_energy_x_weight`, `cartesian_hidden_input_blocks`, and `exact_dynamic_tile_marginal`. It cannot alter the frozen experiment configuration or the neuron/shortlist evidence. Its facts must say `test_rows_evaluated=0` and `test_rows_consulted_for_selection=false`, and must bind the parent pilot facts/table hashes and the initial validation-decision digest.
+
+When the continuation ran, create the augmented validation-only record and then write the frozen decision and pilot report from the same two inputs:
+
+```bash
+MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
+  --input "$SPARSE_PILOT_EXACT" \
+  --input "$SPARSE_TILE_VALIDATION" \
+  --config "$SPARSE_CONFIG" \
+  --validate-only >"$SPARSE_AUGMENTED_VALIDATION"
+
+MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
+  --input "$SPARSE_PILOT_EXACT" \
+  --input "$SPARSE_TILE_VALIDATION" \
+  --config "$SPARSE_CONFIG" \
+  --output "$SPARSE_PILOT_ANALYSIS"
+
+sha256sum "$SPARSE_PROMOTIONS"
+```
+
+If the initial validation artifact does not activate the continuation gate, skip the continuation and use the original one-input report command instead:
 
 ```bash
 MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
@@ -136,6 +173,8 @@ sha256sum "$SPARSE_PROMOTIONS"
 ```
 
 `sparse_streaming_promotions.json` is the only legal promotion source for both full runs. It records the config/checkpoint/tree/capture provenance, `selection_split=validation`, `selection_capture_source=exact_checkpoint`, and `test_rows_consulted_for_selection=false`. The analyzer refuses to replace an existing frozen promotion file with different decisions. Its canonical SHA-256 is computed from sorted, indented, finite-only JSON with one terminal newline; this is the digest each full runner records as `validation_promotions_sha256`.
+
+The recorded run exposed one interpretation defect only after that artifact was frozen: the alternative matched-recovery page calculation compared tile curves with an input-coordinate median below the zero-correction recovery of zero. The frozen JSON therefore retains a mechanically computed `0.75` page-reduction field for auditability, but the final report marks that field invalid, forces its interpreted pass flag to false, and makes no page-savings claim from it. The selected exact tile independently passes the separate ≥3-point validation recovery-gain gate. Do not regenerate, edit, or replace the frozen decision after held-out execution; preserving the defect and disclosing it is part of this reproduction contract.
 
 Promotion is based only on fresh exact-checkpoint validation rows. Training requests may fit the already-defined future-proxy metric; validation chooses configurations; test evaluates the frozen choice. If a family misses its predeclared gate, its status is `stop` and full mode leaves that family disabled. A stop is a negative result, not permission to tune a threshold, shape, shortlist size, or selector on test. The broader capture never creates or changes promotions.
 
@@ -179,9 +218,12 @@ A completed broader run must report 142 expected and 142 observed unique invocat
 
 The final analyzer accepts only completed run directories with exact expected/observed invocation equality and mutually consistent duplicate scientific rows. When pilot and full rows duplicate the same invocation and configuration, the values must agree; the full row is retained and the pilot copy is not double-weighted. It regenerates the promotion payload solely from the pilot's exact-checkpoint validation evidence, computes its canonical digest, and requires every full-run fact to carry that exact digest. Missing, malformed, differing, or merely self-consistent-but-wrong full-run promotion hashes fail analysis.
 
+Because the recorded execution activated the validation-only tile-shape continuation, that directory is an input to both final analyzer calls. It contributes validation evidence only; its facts reject test rows.
+
 ```bash
 MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
   --input "$SPARSE_PILOT_EXACT" \
+  --input "$SPARSE_TILE_VALIDATION" \
   --input "$SPARSE_FULL_EXACT" \
   --input "$SPARSE_FULL_CROSS" \
   --config "$SPARSE_CONFIG" \
@@ -189,6 +231,7 @@ MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
 
 MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
   --input "$SPARSE_PILOT_EXACT" \
+  --input "$SPARSE_TILE_VALIDATION" \
   --input "$SPARSE_FULL_EXACT" \
   --input "$SPARSE_FULL_CROSS" \
   --config "$SPARSE_CONFIG" \
@@ -196,6 +239,8 @@ MPLBACKEND=Agg PYTHONPATH=src python scripts/analyze_sparse_streaming.py \
 ```
 
 Primary claims must use the fresh exact-checkpoint held-out cohort. Cross-reference rows must remain visibly labelled as sensitivity evidence. H0 oracle, late H0 proxy, and deployable-H0 proxy regimes must remain separate in tables and prose.
+
+The recorded execution completed all four input directories with expected/observed counts `59/59` pilot, `55/55` validation-only continuation, `85/85` fresh full, and `142/142` broader full. The four-input `--validate-only` command passed and wrote `final_validation_only.json` with SHA-256 `2b219512b7ff56c60933118df623754531694e1d60ef002549c43ceb685874b2`. It independently regenerated the unchanged frozen promotion digest `d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f`.
 
 ## Resume and failure semantics
 
@@ -239,6 +284,8 @@ Every runner directory contains these scientific inputs to analysis:
 
 `_support_cache.parquet` is an internal atomic-resume input used to rebuild overlap rows; preserve it with the raw run directory, but do not treat it as a reported frontier.
 
+The validation-only continuation additionally contains `alternate_tile_shape_validation_frontier.parquet` and an `executed_code/` snapshot of the exact followup runner, base runner, and selector core used to produce it. The executed continuation's empty companion Parquets are historical null/object-typed zero-row files with an older subset of columns. The analyzer normalizes those empties without treating them as neuron, shortlist, label, stability, or concentration observations, and the current continuation writer derives typed empty schemas from the parent for future reruns. Do not rewrite the raw historical files. Preserve `pilot_validation_only.json` and `pilot_augmented_validation_only.json` beside the run directories as the pre-continuation trigger and post-continuation validation audit respectively; neither is a replacement for the canonical frozen `sparse_streaming_promotions.json`.
+
 The final analysis directory contains:
 
 - `sparse_streaming_promotions.json`
@@ -270,6 +317,7 @@ Inspect every run fact before accepting analysis:
 
 ```bash
 python -m json.tool "$SPARSE_PILOT_EXACT/run_facts.json"
+python -m json.tool "$SPARSE_TILE_VALIDATION/run_facts.json"
 python -m json.tool "$SPARSE_FULL_EXACT/run_facts.json"
 python -m json.tool "$SPARSE_FULL_CROSS/run_facts.json"
 python -m json.tool "$SPARSE_FINAL_ANALYSIS/analysis_manifest.json"
@@ -316,17 +364,28 @@ print(f"verified {len(manifest['input_sha256'])} inputs and {len(manifest['outpu
 PY
 ```
 
-The manifest deliberately hashes the analysis outputs but not itself. Commit the raw run artifacts, final analysis artifacts, report, plots, configuration, tests, code, this protocol, and the completed execution ledger together. Record the final Git commit and manifest SHA-256 in the ledger.
+The manifest deliberately hashes the analysis outputs but not itself. The committed final analysis was regenerated locally from repository-relative inputs so the manifest contains portable paths. The final analyzer core SHA-256 is `64307732198d4664fb396e06a95bf6450132a575eb724646025336c4f99be9c6`; the analyzer-test SHA-256 is `d02f50935c006a0ef30973af8e890e34e24ace0568d0a66fccc627161a64e6ac`; and the CLI-wrapper SHA-256 is `1e20c6ba8e577fd74c3bee6f8b25f4721880c1cb0daf2872e5058d53095de353`. The analyzer pins Matplotlib's SVG hash salt to the run ID; an independent second-process run reproduced every final-analysis file byte-for-byte. The local integrated suite passed all 126 tests after the final regeneration.
 
-## RunPod shutdown requirement
+The recorded manifest closes 29 scientific inputs and 25 outputs. Its verification passed with these identities:
 
-The active study pod is `41rk786odszmk9`. Keep it running while justified staged experimentation remains. At the end of the study—or immediately after a terminal failure—stop that exact pod and verify its runtime state:
+| Artifact | SHA-256 |
+|---|---|
+| `final_analysis/analysis_manifest.json` | `fc2a4071b032f60d0653fea94f575839e88064f91ccfdd1dc02d610b5264aa2a` |
+| `final_analysis/SPARSE_STREAMING_ALLOCATOR_REPORT.md` | `87f24e7680863911268464f3582c8a973aaede0d1ed42cece35fd7d6eea08f46` |
+| `final_analysis/sparse_streaming_promotions.json` | `d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f` |
+
+The final analysis directory contains 26 files and 2,888,524 bytes with inventory digest `ac74730f8735e37302cc7d28574424268b58d633448258dba47c973b7f63017e`; the whole result package contains 95 files and 59,349,224 bytes with inventory digest `a4d2b58852184ba81a052641bf8f0cf65d50354e1ed5be691c81d01137a45d49`. The copied pre-rerender package contained 95 files and 59,359,634 bytes with inventory digest `0687462b818268e7df23172f67ce794a66e80a88c93fee0aee82a18ba4cfe7c1`. The four copied raw execution directories match their execution-host counterparts byte-for-byte. The only package-level size change after transfer is the intentional relative-path report/plot/manifest rerender; no raw Parquet, run fact, continuation source snapshot, or log changed. Commit the raw run artifacts, final analysis artifacts, report, plots, configuration, tests, code, this protocol, and the completed execution ledger together. Record the final Git commit and pull request in the publication handoff.
+
+## Recorded RunPod shutdown
+
+The study pod `41rk786odszmk9` was stopped after artifact transfer and verification at `2026-08-19 18:03:11 UTC`. Verification returned `desiredStatus=EXITED`, `runtimeStatus=stopped`, and reason `stopped_by_user`; persistent disk remains, while GPU billing has stopped. The first management-connector attempt returned HTTP 401 without changing state, so the already-authenticated local CLI performed the stop. No authentication material is part of this record.
+
+For a future reproduction, stop and verify the exact allocated pod using its own identifier:
 
 ```bash
-export SPARSE_POD_ID="the-provided-runpod-id"
-runpodctl pod stop "$SPARSE_POD_ID"
-runpodctl pod get "$SPARSE_POD_ID"
+runpodctl pod stop <study-pod-id>
+runpodctl pod get <study-pod-id>
 runpodctl pod list
 ```
 
-The final `pod get` evidence must show a stopped runtime state (or an explicitly terminated/deleted state if the owner chose deletion), and the list must show no accidentally running replacement study pod. Record the shutdown command, UTC timestamp, returned state, and any correction in the execution ledger. Do not claim the study is complete while its paid pod is still running.
+The final `pod get` evidence must show a stopped runtime state (or an explicitly terminated/deleted state if the owner chose deletion), and the list must show no accidentally running replacement study pod. Record the shutdown command, UTC timestamp, returned state, and any correction in the execution ledger.

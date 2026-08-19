@@ -767,6 +767,76 @@ def static_proxy_mixed_page_order(
     )
 
 
+def static_cartesian_mixed_page_order(
+    base_gate: torch.Tensor,
+    base_up: torch.Tensor,
+    base_down: torch.Tensor,
+    refined_gate: torch.Tensor,
+    refined_up: torch.Tensor,
+    refined_down: torch.Tensor,
+    activation: torch.Tensor,
+    *,
+    tile_shape: tuple[int, int] = (32, 32),
+    page_budgets: Iterable[int] | None = None,
+    proxy: torch.Tensor | Sequence[float] | None = None,
+    beta: float = 0.0,
+    device: torch.device | str | None = None,
+) -> SelectionTrace:
+    """Static separable hidden-block x input-block tile ordering.
+
+    The joint WINA-style tile utilities are first aggregated along each axis.
+    Their normalized outer product then supplies a rank-one, Cartesian score
+    for every gate/up page.  This explicitly tests whether useful support can
+    be localized by independently important hidden and input blocks instead
+    of relying on unrestricted page scores.  The normalization preserves the
+    total tile-score mass, so the unchanged down-column scores remain in the
+    same units.  The chosen fixed order is replayed with exact nonlinear
+    SwiGLU and down-projection updates.
+    """
+    values = _mixed_inputs(
+        base_gate, base_up, base_down, refined_gate, refined_up, refined_down,
+        activation, tile_shape, proxy, float(beta), device,
+    )
+    requested = _budgets(page_budgets, values.geometry.total_pages)
+    maximum = max(requested, default=0)
+    state = _initial_state(values)
+    tile_gate_effect, tile_up_effect = _tile_activation_deltas(values)
+    joint = _wina_proxy_scores(values, state)
+    tile = torch.clamp(joint[:values.geometry.tile_pages], min=0.0).reshape(
+        values.geometry.row_blocks, values.geometry.column_blocks,
+    )
+    row_utility = tile.sum(dim=1)
+    column_utility = tile.sum(dim=0)
+    total = tile.sum()
+    if float(total.item()) > 0.0:
+        cartesian = torch.outer(row_utility, column_utility) / total
+    else:
+        cartesian = torch.zeros_like(tile)
+    score = torch.cat((cartesian.reshape(-1), joint[values.geometry.tile_pages:]), dim=0)
+    ranking = torch.argsort(score, descending=True, stable=True)[:maximum]
+
+    snapshots: dict[int, torch.Tensor] = {}
+    if 0 in requested:
+        snapshots[0] = _cpu_snapshot(state.output)
+    order: list[int] = []
+    gains: list[float] = []
+    for page_tensor in ranking:
+        page = int(page_tensor.item())
+        old_residual = state.target - state.output
+        _apply_page(page, values, state, tile_gate_effect, tile_up_effect)
+        new_residual = state.target - state.output
+        order.append(page)
+        gains.append(_actual_gain(old_residual, new_residual, values))
+        if len(order) in requested:
+            snapshots[len(order)] = _cpu_snapshot(state.output)
+
+    return SelectionTrace(
+        order=torch.tensor(order, dtype=torch.int64),
+        gains=torch.tensor(gains, dtype=torch.float64),
+        snapshots=snapshots,
+    )
+
+
 __all__ = [
     "MixedPageGeometry",
     "ProgressiveNeuronTrace",
@@ -777,5 +847,6 @@ __all__ = [
     "exact_unit_fixed_greedy",
     "qenergy",
     "qinner",
+    "static_cartesian_mixed_page_order",
     "static_proxy_mixed_page_order",
 ]
