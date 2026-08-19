@@ -233,3 +233,11 @@ def test_row_scaled_encoding_handles_fp16_scale_underflow(encoding: str) -> None
     assert encoded.storage_bytes == value.size + value.shape[0] * 2
     assert np.all(np.isfinite(encoded.decoded))
     assert np.array_equal(encoded.decoded[1], np.zeros(3, dtype=np.float32))
+
+
+@pytest.mark.skipif(not hasattr(torch, "float8_e4m3fn"), reason="Torch has no float8")
+def test_fp8_row_scales_never_round_past_finite_range() -> None:
+    maximum = np.geomspace(1e-8, 1e6, 4096, dtype=np.float32)
+    value = np.stack((maximum, -maximum), axis=1)
+    encoded = encode_array(value, "fp8_e4m3fn_per_row")
+    assert np.all(np.isfinite(encoded.decoded))

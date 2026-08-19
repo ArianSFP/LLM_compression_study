@@ -314,6 +314,20 @@ class EncodedArray:
     encoding: str
 
 
+def _stored_fp16_row_scale(matrix: np.ndarray, divisor: float, label: str) -> np.ndarray:
+    raw_scale = np.max(np.abs(matrix), axis=1, keepdims=True) / divisor
+    minimum_scale = np.float32(np.nextafter(np.float16(0.0), np.float16(1.0)))
+    scale = np.where(raw_scale > 0.0, np.maximum(raw_scale, minimum_scale), 1.0)
+    if np.any(scale > np.finfo(np.float16).max):
+        raise ValueError(f"row-scaled {label} selector scale overflowed FP16")
+    stored = scale.astype(np.float16)
+    rounds_down = stored.astype(np.float32) < scale
+    stored[rounds_down] = np.nextafter(stored[rounds_down], np.float16(np.inf))
+    if not np.all(np.isfinite(stored)):
+        raise ValueError(f"row-scaled {label} selector scale overflowed FP16")
+    return stored
+
+
 def encode_array(value: np.ndarray, encoding: str) -> EncodedArray:
     """Quantize selector metadata and return its decoded runtime value."""
     array = np.asarray(value, dtype=np.float32)
@@ -326,12 +340,7 @@ def encode_array(value: np.ndarray, encoding: str) -> EncodedArray:
         return EncodedArray(decoded, 2 * array.size, encoding)
     if encoding == "int8_per_row":
         matrix = array.reshape(1, -1) if array.ndim == 1 else array
-        raw_scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 127.0
-        minimum_scale = np.float32(np.nextafter(np.float16(0.0), np.float16(1.0)))
-        scale = np.where(raw_scale > 0.0, np.maximum(raw_scale, minimum_scale), 1.0)
-        if np.any(scale > np.finfo(np.float16).max):
-            raise ValueError("row-scaled INT8 selector scale overflowed FP16")
-        scale = scale.astype(np.float16)
+        scale = _stored_fp16_row_scale(matrix, 127.0, "INT8")
         quantized = np.clip(np.rint(matrix / scale.astype(np.float32)), -127, 127).astype(np.int8)
         decoded = quantized.astype(np.float32) * scale.astype(np.float32)
         if not np.all(np.isfinite(decoded)):
@@ -341,16 +350,9 @@ def encode_array(value: np.ndarray, encoding: str) -> EncodedArray:
         if not hasattr(torch, "float8_e4m3fn"):
             raise RuntimeError("this Torch build does not provide float8_e4m3fn")
         matrix = array.reshape(1, -1) if array.ndim == 1 else array
-        raw_scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 448.0
-        # The scale itself is stored in FP16. Clamp nonzero rows to the
-        # smallest representable positive value before casting so tiny fitted
-        # response rows quantize to zero instead of dividing by an underflowed
-        # zero scale. True zero rows retain the exact zero payload.
-        minimum_scale = np.float32(np.nextafter(np.float16(0.0), np.float16(1.0)))
-        scale = np.where(raw_scale > 0.0, np.maximum(raw_scale, minimum_scale), 1.0)
-        if np.any(scale > np.finfo(np.float16).max):
-            raise ValueError("row-scaled FP8 selector scale overflowed FP16")
-        scale = scale.astype(np.float16)
+        # A downward FP16 scale round can otherwise put the normalized
+        # maximum just beyond finite E4M3.
+        scale = _stored_fp16_row_scale(matrix, 448.0, "FP8")
         normalized = matrix / scale.astype(np.float32)
         tensor = torch.as_tensor(normalized).to(torch.float8_e4m3fn)
         decoded = tensor.to(torch.float32).cpu().numpy() * scale.astype(np.float32)
