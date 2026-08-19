@@ -1,0 +1,23 @@
+[
+  "baseline_pr4_2p25",
+  "learned_16_leaf_scalar_global",
+  "A_vector_functional",
+  "A_vector_functional_shrunk",
+  "B16_g32_global_weight",
+  "B16_g32_global_activation",
+  "B16_g32_global_functional",
+  "B16_g32_layer_functional",
+  "B16_g32_cluster_functional",
+  "B16_g32_expert_functional",
+  "C8_g32_layer_functional",
+  "D4_g16_layer_functional",
+  "E16_g64_layer_functional",
+  "E32_g64_layer_functional",
+  "E64_g64_layer_functional",
+  "B16_g32_global_functional_eps_0p0",
+  "B16_g32_global_functional_eps_0p001",
+  "B16_g32_global_functional_eps_0p0025",
+  "B16_g32_global_functional_eps_0p01",
+  "B16_g32_global_functional_eps_0p02",
+  "B16_g32_global_functional_eps_0p05"
+]

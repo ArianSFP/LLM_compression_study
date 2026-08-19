@@ -1,0 +1,178 @@
+{
+  "book_scopes": {
+    "global/down": "global__down",
+    "global/gate": "global__gate",
+    "global/up": "global__up"
+  },
+  "design": "baseline",
+  "design_id": 0,
+  "exact_mxfp4": true,
+  "experts": [
+    [
+      0,
+      62
+    ],
+    [
+      0,
+      234
+    ],
+    [
+      0,
+      238
+    ],
+    [
+      4,
+      122
+    ],
+    [
+      4,
+      123
+    ],
+    [
+      4,
+      154
+    ],
+    [
+      8,
+      16
+    ],
+    [
+      8,
+      17
+    ],
+    [
+      8,
+      123
+    ],
+    [
+      12,
+      9
+    ],
+    [
+      12,
+      166
+    ],
+    [
+      12,
+      221
+    ],
+    [
+      16,
+      75
+    ],
+    [
+      16,
+      130
+    ],
+    [
+      16,
+      152
+    ],
+    [
+      20,
+      159
+    ],
+    [
+      20,
+      172
+    ],
+    [
+      20,
+      176
+    ],
+    [
+      24,
+      1
+    ],
+    [
+      24,
+      53
+    ],
+    [
+      24,
+      216
+    ],
+    [
+      28,
+      18
+    ],
+    [
+      28,
+      93
+    ],
+    [
+      28,
+      130
+    ],
+    [
+      32,
+      68
+    ],
+    [
+      32,
+      112
+    ],
+    [
+      32,
+      237
+    ],
+    [
+      36,
+      55
+    ],
+    [
+      36,
+      73
+    ],
+    [
+      36,
+      235
+    ],
+    [
+      39,
+      9
+    ],
+    [
+      39,
+      108
+    ],
+    [
+      39,
+      116
+    ]
+  ],
+  "families": 1,
+  "group_size": 32,
+  "metadata_files": [],
+  "name": "baseline_pr4_2p25",
+  "objective": "activation_projection",
+  "q2_tolerance": 0.001,
+  "selector_bits": 0,
+  "sharing": "baseline_global",
+  "table_files": [
+    {
+      "books": 1,
+      "bytes": 32,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/baseline_pr4_2p25/serialized_tables/global__gate.bin",
+      "scope": "global/gate",
+      "sha256": "3dd56074b88a35ae3f46669252c49ba5b6a4b50f5b9667d2b9d21ee89bda1fc1"
+    },
+    {
+      "books": 1,
+      "bytes": 32,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/baseline_pr4_2p25/serialized_tables/global__up.bin",
+      "scope": "global/up",
+      "sha256": "58403e18ca20073e1ebdb3a85d4ce57b98a0f360c912c2f931a446eb50bc8fa5"
+    },
+    {
+      "books": 1,
+      "bytes": 32,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/baseline_pr4_2p25/serialized_tables/global__down.bin",
+      "scope": "global/down",
+      "sha256": "57ac8c48ebb38774b55fa22767bd0464236421549805563469a3ec3430efa6bf"
+    }
+  ]
+}

@@ -1,0 +1,531 @@
+{
+  "book_scopes": {
+    "cluster_cold/down": "cluster_cold__down",
+    "cluster_cold/gate": "cluster_cold__gate",
+    "cluster_cold/up": "cluster_cold__up",
+    "cluster_hot/down": "cluster_hot__down",
+    "cluster_hot/gate": "cluster_hot__gate",
+    "cluster_hot/up": "cluster_hot__up",
+    "cluster_median/down": "cluster_median__down",
+    "cluster_median/gate": "cluster_median__gate",
+    "cluster_median/up": "cluster_median__up"
+  },
+  "design": "B",
+  "design_id": 2,
+  "exact_mxfp4": true,
+  "experts": [
+    [
+      0,
+      62
+    ],
+    [
+      0,
+      234
+    ],
+    [
+      0,
+      238
+    ],
+    [
+      4,
+      122
+    ],
+    [
+      4,
+      123
+    ],
+    [
+      4,
+      154
+    ],
+    [
+      8,
+      16
+    ],
+    [
+      8,
+      17
+    ],
+    [
+      8,
+      123
+    ],
+    [
+      12,
+      9
+    ],
+    [
+      12,
+      166
+    ],
+    [
+      12,
+      221
+    ],
+    [
+      16,
+      75
+    ],
+    [
+      16,
+      130
+    ],
+    [
+      16,
+      152
+    ],
+    [
+      20,
+      159
+    ],
+    [
+      20,
+      172
+    ],
+    [
+      20,
+      176
+    ],
+    [
+      24,
+      1
+    ],
+    [
+      24,
+      53
+    ],
+    [
+      24,
+      216
+    ],
+    [
+      28,
+      18
+    ],
+    [
+      28,
+      93
+    ],
+    [
+      28,
+      130
+    ],
+    [
+      32,
+      68
+    ],
+    [
+      32,
+      112
+    ],
+    [
+      32,
+      237
+    ],
+    [
+      36,
+      55
+    ],
+    [
+      36,
+      73
+    ],
+    [
+      36,
+      235
+    ],
+    [
+      39,
+      9
+    ],
+    [
+      39,
+      108
+    ],
+    [
+      39,
+      116
+    ]
+  ],
+  "families": 16,
+  "group_size": 32,
+  "metadata_files": [
+    {
+      "bytes": 49216,
+      "expert": 62,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_00_expert_062.cgb",
+      "sha256": "6d60c15931ecbb0923ca9af30e4af2688a79687403245947d7c3520d7f92df60"
+    },
+    {
+      "bytes": 49216,
+      "expert": 234,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_00_expert_234.cgb",
+      "sha256": "6eca4ffe907f50454f652c31f3f102f9a3c1a4fc18745917346cfd8d11fb458f"
+    },
+    {
+      "bytes": 49216,
+      "expert": 238,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_00_expert_238.cgb",
+      "sha256": "9a93db52d5400ed28a0db4411a5638cf13b3856cafaa994a89ac3810e1309ff0"
+    },
+    {
+      "bytes": 49216,
+      "expert": 122,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_04_expert_122.cgb",
+      "sha256": "c9a8bfecc9ac9fae4658ad6db84422d048d5fe30e8ef4c6663af56b7e8b0cdbf"
+    },
+    {
+      "bytes": 49216,
+      "expert": 123,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_04_expert_123.cgb",
+      "sha256": "0dcbd6f794c527bade4eada0add4f6132908ae63e882ece39725eb1d07652399"
+    },
+    {
+      "bytes": 49216,
+      "expert": 154,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_04_expert_154.cgb",
+      "sha256": "75b0d471cd66acbcb2608f35eee4399d5f739740f64b1072848ddc8fa09b6bb8"
+    },
+    {
+      "bytes": 49216,
+      "expert": 16,
+      "header_bytes": 64,
+      "layer": 8,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_08_expert_016.cgb",
+      "sha256": "1ee98d959a712b81b119848ce5aa222977ba9e27af7e08110936e33cb719774f"
+    },
+    {
+      "bytes": 49216,
+      "expert": 17,
+      "header_bytes": 64,
+      "layer": 8,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_08_expert_017.cgb",
+      "sha256": "f92f486586589ebe7cf69cca743587977c417f6bc6adbabd89515dd042221e19"
+    },
+    {
+      "bytes": 49216,
+      "expert": 123,
+      "header_bytes": 64,
+      "layer": 8,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_08_expert_123.cgb",
+      "sha256": "33d41e53fdbe6c7f48ecf0caf231339c70f92315cb51cbf2828e715aaa2f0c75"
+    },
+    {
+      "bytes": 49216,
+      "expert": 9,
+      "header_bytes": 64,
+      "layer": 12,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_12_expert_009.cgb",
+      "sha256": "82beebb4872ce1f744d38b6622c775370008e94ea719152c60ffff8e970ed25e"
+    },
+    {
+      "bytes": 49216,
+      "expert": 166,
+      "header_bytes": 64,
+      "layer": 12,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_12_expert_166.cgb",
+      "sha256": "0c2c18ee1a7ecd60012733ca5ec9c8551393777c2aa727c312f50867f20b9496"
+    },
+    {
+      "bytes": 49216,
+      "expert": 221,
+      "header_bytes": 64,
+      "layer": 12,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_12_expert_221.cgb",
+      "sha256": "c088ef1f29db10bcedbf15b314571de04207eb866254831c472efbdec7dd4c48"
+    },
+    {
+      "bytes": 49216,
+      "expert": 75,
+      "header_bytes": 64,
+      "layer": 16,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_16_expert_075.cgb",
+      "sha256": "713c0826dff978cd4c3b7d571f4dc1e631aa1e97c5bb83b84a20e130deea1dbd"
+    },
+    {
+      "bytes": 49216,
+      "expert": 130,
+      "header_bytes": 64,
+      "layer": 16,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_16_expert_130.cgb",
+      "sha256": "b16913b4a66dbcc499e44c5b9e2cd374660a0641e4e89e552ea9cf07ac8f3e37"
+    },
+    {
+      "bytes": 49216,
+      "expert": 152,
+      "header_bytes": 64,
+      "layer": 16,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_16_expert_152.cgb",
+      "sha256": "6ee3196f2c539c14bad57725b2e64b66adc90f9b48fd5417dc838ee3d340244a"
+    },
+    {
+      "bytes": 49216,
+      "expert": 159,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_20_expert_159.cgb",
+      "sha256": "cc8274eb49e7fb7b503751d6786fb7da6ac5f342c741a2e4195308dd8f267615"
+    },
+    {
+      "bytes": 49216,
+      "expert": 172,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_20_expert_172.cgb",
+      "sha256": "5d09fb032a98a107ee056b0e74127dcfb26d05a63d0ba6e45bf26e7b88f03796"
+    },
+    {
+      "bytes": 49216,
+      "expert": 176,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_20_expert_176.cgb",
+      "sha256": "ec2c69c67e0a5e57fc7e0d484de8803d64c4e01630f4dc49af16edb2fd14e16b"
+    },
+    {
+      "bytes": 49216,
+      "expert": 1,
+      "header_bytes": 64,
+      "layer": 24,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_24_expert_001.cgb",
+      "sha256": "97b046bb4f65c626d0b0f3e15ca095e73b3e38e38ea7795e7ad6a6343b8759cb"
+    },
+    {
+      "bytes": 49216,
+      "expert": 53,
+      "header_bytes": 64,
+      "layer": 24,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_24_expert_053.cgb",
+      "sha256": "222bf7479c75f0ea931886de1852e3bf18aae193d7b6336b4e378a99216f71c2"
+    },
+    {
+      "bytes": 49216,
+      "expert": 216,
+      "header_bytes": 64,
+      "layer": 24,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_24_expert_216.cgb",
+      "sha256": "a6316577787d80c4feae2e65ce0adc407a1ac2ed6fb23f09fc154836d00b9675"
+    },
+    {
+      "bytes": 49216,
+      "expert": 18,
+      "header_bytes": 64,
+      "layer": 28,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_28_expert_018.cgb",
+      "sha256": "258ed25e54b97649153551fd1e39f50f7cba113d259d12ec0f2c6048436d9ebc"
+    },
+    {
+      "bytes": 49216,
+      "expert": 93,
+      "header_bytes": 64,
+      "layer": 28,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_28_expert_093.cgb",
+      "sha256": "3119a96b92cd41a2e10a09ff13e78dea401408dfdfb9be89260d7326deeacac9"
+    },
+    {
+      "bytes": 49216,
+      "expert": 130,
+      "header_bytes": 64,
+      "layer": 28,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_28_expert_130.cgb",
+      "sha256": "15f1db1c97dde08ff6ea9080aa04406c11dcaa390f1272896b3c38aea2f296ce"
+    },
+    {
+      "bytes": 49216,
+      "expert": 68,
+      "header_bytes": 64,
+      "layer": 32,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_32_expert_068.cgb",
+      "sha256": "b3bf278133c005875ef6e0226e6369281b56ec1e0c60eb9e6d5b289926930682"
+    },
+    {
+      "bytes": 49216,
+      "expert": 112,
+      "header_bytes": 64,
+      "layer": 32,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_32_expert_112.cgb",
+      "sha256": "9f535bd15a151491a8f9530c1a9c235e54f94788e7293631e2dd7b8b08e53897"
+    },
+    {
+      "bytes": 49216,
+      "expert": 237,
+      "header_bytes": 64,
+      "layer": 32,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_32_expert_237.cgb",
+      "sha256": "2b0447d818c36d6b82bb184ea30fdd24bafa433bfda1de5e81f0307662ac460b"
+    },
+    {
+      "bytes": 49216,
+      "expert": 55,
+      "header_bytes": 64,
+      "layer": 36,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_36_expert_055.cgb",
+      "sha256": "9e3caf77d2a42de269007a27a6a8917161eb2d58e68558bafbfda3a800527de1"
+    },
+    {
+      "bytes": 49216,
+      "expert": 73,
+      "header_bytes": 64,
+      "layer": 36,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_36_expert_073.cgb",
+      "sha256": "d65ac28ea21d0354cf2f9ff1fcda38c65aacad6dd6dfe49e46e73126ec26f89d"
+    },
+    {
+      "bytes": 49216,
+      "expert": 235,
+      "header_bytes": 64,
+      "layer": 36,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_36_expert_235.cgb",
+      "sha256": "4b6086c6d7616ea18ed18572275622648d4e560ca4cd5f7d87b7ff23d9efd5aa"
+    },
+    {
+      "bytes": 49216,
+      "expert": 9,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_39_expert_009.cgb",
+      "sha256": "3443b1a20963864673b62a03b98d265e3af3c3a80527186326d9050d3a6d248f"
+    },
+    {
+      "bytes": 49216,
+      "expert": 108,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_39_expert_108.cgb",
+      "sha256": "f04a65e2935730da79cac7e798db1b97977e3c8d367376c3c6035c954462e09c"
+    },
+    {
+      "bytes": 49216,
+      "expert": 116,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_metadata/layer_39_expert_116.cgb",
+      "sha256": "8c682a9db427f8b36a36a508320e58753bee4144554a83b1d1c2f499e5d878d6"
+    }
+  ],
+  "name": "B16_g32_cluster_functional",
+  "objective": "expert_functional_proxy",
+  "q2_tolerance": 0.005,
+  "selector_bits": 4,
+  "sharing": "cluster_projection",
+  "table_files": [
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_hot__gate.bin",
+      "scope": "cluster_hot/gate",
+      "sha256": "6c3128c5930e41dc07b547121b4056be315c6b7f18bc0f082cc31afd060cc22c"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_hot__up.bin",
+      "scope": "cluster_hot/up",
+      "sha256": "f30bc435108f40207355648fdc3764a6541797b3264e8adedb7d3eee0f0b53da"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_hot__down.bin",
+      "scope": "cluster_hot/down",
+      "sha256": "b2c78e642598f47e68e649e2332c3b7774dce9862c6746d4b1979d3b6c45f92a"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_cold__gate.bin",
+      "scope": "cluster_cold/gate",
+      "sha256": "645b3613f83b846c6f342c05464cc905d3def4e40d70a0bffa6e8f9a5ea35357"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_cold__up.bin",
+      "scope": "cluster_cold/up",
+      "sha256": "1106c8e0712789b6d1f35c91f1791d6fafcc2468be9c3ce21f9418a2560e0bed"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_cold__down.bin",
+      "scope": "cluster_cold/down",
+      "sha256": "967c6819a5a7b37e6c7dead60973deb1203bdb1b1f6f165bb9d4f5bfc6e70da0"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_median__gate.bin",
+      "scope": "cluster_median/gate",
+      "sha256": "e1686475c643cfdfdc69ccb3f41804c52915ce073c76b6f17d9d2bc3387ae39a"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_median__up.bin",
+      "scope": "cluster_median/up",
+      "sha256": "60de981ec5665e020c7bb21d6f9c276d5cd516969546abcc57b1a47e319e6af5"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/serialized_manifests/codecs/B16_g32_cluster_functional/serialized_tables/cluster_median__down.bin",
+      "scope": "cluster_median/down",
+      "sha256": "a102f0e10bcf1a6a0e7beb068c952a2f06622c778ea51f894dd4bc35edbe06ba"
+    }
+  ],
+  "vector_shrinkage_strength": 0.0
+}

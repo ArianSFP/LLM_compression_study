@@ -1,0 +1,61 @@
+{
+  "capture_bytes": 38591171,
+  "capture_sha256": "da786a99209f03515e68bc21f1849f8613dbe5251d4eebff7e3537e157a0d56f",
+  "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+  "completed_unix": 1787168759.0,
+  "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "device_map": "CPU resident",
+  "gpu": null,
+  "host": "a0f688dc9e9d",
+  "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    39
+  ],
+  "loader": "Transformers compressed-tensors dequantize=True; exact packed leaf decode, no requantization",
+  "manifest_synthesis": {
+    "fixed_script_sha256": "b999d0706d04d74544fc84ecc305f9bf3e259f1885a863eb33f92a6199307f18",
+    "npz_validated_after_save": true,
+    "reason": "original CPU-only run saved NPZ, then failed querying torch.cuda.get_device_name(0)",
+    "timing_basis": "start inferred from live process elapsed observation; completion is NPZ mtime"
+  },
+  "requests": 12,
+  "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+  "rows": 1551,
+  "rows_per_layer": {
+    "0": 141,
+    "12": 141,
+    "16": 141,
+    "20": 141,
+    "24": 141,
+    "28": 141,
+    "32": 141,
+    "36": 141,
+    "39": 141,
+    "4": 141,
+    "8": 141
+  },
+  "schema": "exact_mxfp4_transformers_confirm_v1",
+  "split_requests": {
+    "test": 3,
+    "train": 6,
+    "validation": 3
+  },
+  "split_rows": {
+    "test": 429,
+    "train": 770,
+    "validation": 352
+  },
+  "started_unix": 1787165917.0,
+  "torch": "2.8.0+cu128",
+  "wall_seconds": 2842.0
+}

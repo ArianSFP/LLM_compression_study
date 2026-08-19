@@ -1,0 +1,484 @@
+{
+  "candidates": [
+    "baseline_pr4_2p25",
+    "B16_g32_cluster_functional"
+  ],
+  "capture_requests": {
+    "test": 3,
+    "train": 6,
+    "validation": 3
+  },
+  "capture_sha256": "da786a99209f03515e68bc21f1849f8613dbe5251d4eebff7e3537e157a0d56f",
+  "checkpoint_hashes": {
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb"
+  },
+  "completed_unix": 1787169098.9407814,
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "a0f688dc9e9d",
+  "layers": {
+    "0": {
+      "counts": {
+        "62": {
+          "test": 11,
+          "train": 8,
+          "validation": 7
+        },
+        "234": {
+          "test": 3,
+          "train": 3,
+          "validation": 3
+        },
+        "238": {
+          "test": 4,
+          "train": 8,
+          "validation": 3
+        }
+      },
+      "experts": [
+        62,
+        234,
+        238
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0859375,
+          0.09375,
+          0.09375,
+          0.09375
+        ],
+        "rank": 4,
+        "ridge": 2.5276365340687337e-06,
+        "train_samples": 70
+      },
+      "strata": {
+        "62": "hot",
+        "234": "cold",
+        "238": "median"
+      }
+    },
+    "12": {
+      "counts": {
+        "9": {
+          "test": 3,
+          "train": 3,
+          "validation": 3
+        },
+        "166": {
+          "test": 5,
+          "train": 11,
+          "validation": 3
+        },
+        "221": {
+          "test": 17,
+          "train": 29,
+          "validation": 24
+        }
+      },
+      "experts": [
+        9,
+        166,
+        221
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0006494654715061188,
+        "train_samples": 70
+      },
+      "strata": {
+        "9": "cold",
+        "166": "median",
+        "221": "hot"
+      }
+    },
+    "16": {
+      "counts": {
+        "75": {
+          "test": 4,
+          "train": 4,
+          "validation": 3
+        },
+        "130": {
+          "test": 35,
+          "train": 55,
+          "validation": 28
+        },
+        "152": {
+          "test": 10,
+          "train": 7,
+          "validation": 3
+        }
+      },
+      "experts": [
+        75,
+        130,
+        152
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0390625,
+          0.0625,
+          0.03125,
+          0.046875
+        ],
+        "rank": 4,
+        "ridge": 0.0006606478989124298,
+        "train_samples": 70
+      },
+      "strata": {
+        "75": "cold",
+        "130": "hot",
+        "152": "median"
+      }
+    },
+    "20": {
+      "counts": {
+        "159": {
+          "test": 4,
+          "train": 3,
+          "validation": 3
+        },
+        "172": {
+          "test": 15,
+          "train": 34,
+          "validation": 15
+        },
+        "176": {
+          "test": 7,
+          "train": 6,
+          "validation": 3
+        }
+      },
+      "experts": [
+        159,
+        172,
+        176
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0006710012257099151,
+        "train_samples": 70
+      },
+      "strata": {
+        "159": "cold",
+        "172": "hot",
+        "176": "median"
+      }
+    },
+    "24": {
+      "counts": {
+        "1": {
+          "test": 32,
+          "train": 51,
+          "validation": 29
+        },
+        "53": {
+          "test": 3,
+          "train": 6,
+          "validation": 3
+        },
+        "216": {
+          "test": 5,
+          "train": 13,
+          "validation": 4
+        }
+      },
+      "experts": [
+        1,
+        53,
+        216
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0006867244839668274,
+        "train_samples": 70
+      },
+      "strata": {
+        "1": "hot",
+        "53": "cold",
+        "216": "median"
+      }
+    },
+    "28": {
+      "counts": {
+        "18": {
+          "test": 5,
+          "train": 8,
+          "validation": 7
+        },
+        "93": {
+          "test": 3,
+          "train": 6,
+          "validation": 3
+        },
+        "130": {
+          "test": 35,
+          "train": 62,
+          "validation": 29
+        }
+      },
+      "experts": [
+        18,
+        93,
+        130
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0006935017555952072,
+        "train_samples": 70
+      },
+      "strata": {
+        "18": "median",
+        "93": "cold",
+        "130": "hot"
+      }
+    },
+    "32": {
+      "counts": {
+        "68": {
+          "test": 16,
+          "train": 36,
+          "validation": 23
+        },
+        "112": {
+          "test": 4,
+          "train": 8,
+          "validation": 6
+        },
+        "237": {
+          "test": 3,
+          "train": 4,
+          "validation": 3
+        }
+      },
+      "experts": [
+        68,
+        112,
+        237
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.00013220323249697687,
+        "train_samples": 70
+      },
+      "strata": {
+        "68": "hot",
+        "112": "median",
+        "237": "cold"
+      }
+    },
+    "36": {
+      "counts": {
+        "55": {
+          "test": 4,
+          "train": 4,
+          "validation": 3
+        },
+        "73": {
+          "test": 14,
+          "train": 39,
+          "validation": 20
+        },
+        "235": {
+          "test": 6,
+          "train": 5,
+          "validation": 7
+        }
+      },
+      "experts": [
+        55,
+        73,
+        235
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.03125,
+          0.03125,
+          0.03125,
+          0.046875
+        ],
+        "rank": 4,
+        "ridge": 0.0003039023280143738,
+        "train_samples": 70
+      },
+      "strata": {
+        "55": "cold",
+        "73": "hot",
+        "235": "median"
+      }
+    },
+    "39": {
+      "counts": {
+        "9": {
+          "test": 4,
+          "train": 4,
+          "validation": 3
+        },
+        "108": {
+          "test": 17,
+          "train": 26,
+          "validation": 18
+        },
+        "116": {
+          "test": 9,
+          "train": 13,
+          "validation": 3
+        }
+      },
+      "experts": [
+        9,
+        108,
+        116
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0008361098170280457,
+        "train_samples": 70
+      },
+      "strata": {
+        "9": "cold",
+        "108": "hot",
+        "116": "median"
+      }
+    },
+    "4": {
+      "counts": {
+        "122": {
+          "test": 3,
+          "train": 3,
+          "validation": 3
+        },
+        "123": {
+          "test": 5,
+          "train": 9,
+          "validation": 7
+        },
+        "154": {
+          "test": 23,
+          "train": 41,
+          "validation": 23
+        }
+      },
+      "experts": [
+        122,
+        123,
+        154
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.0406021028757096e-05,
+        "train_samples": 70
+      },
+      "strata": {
+        "122": "cold",
+        "123": "median",
+        "154": "hot"
+      }
+    },
+    "8": {
+      "counts": {
+        "16": {
+          "test": 6,
+          "train": 8,
+          "validation": 10
+        },
+        "17": {
+          "test": 3,
+          "train": 6,
+          "validation": 3
+        },
+        "123": {
+          "test": 22,
+          "train": 35,
+          "validation": 25
+        }
+      },
+      "experts": [
+        16,
+        17,
+        123
+      ],
+      "proxy": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.09375,
+          0.09375,
+          0.09375,
+          0.09375
+        ],
+        "rank": 4,
+        "ridge": 3.062048694118857e-05,
+        "train_samples": 70
+      },
+      "strata": {
+        "16": "median",
+        "17": "cold",
+        "123": "hot"
+      }
+    }
+  },
+  "stage": "fit"
+}
