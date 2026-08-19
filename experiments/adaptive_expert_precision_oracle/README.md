@@ -4,6 +4,34 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## Neuron-selector distillation (stacked on PR #7)
+
+This bounded continuation is stacked on [PR #7](https://github.com/ArianSFP/LLM_compression_study/pull/7)
+at commit `9ef21d519a4f2cd844e9fa75d04cd601e37d5a11`. It tests factorized
+gate/up-versus-down neuron states and rank-8/16/32/64/128 predictors of the
+Q4 hidden response. The codec, selected trees, checkpoint revision, and
+request split are unchanged.
+
+Reviewer entry points:
+
+- [Final report](results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/final_analysis/NEURON_SELECTOR_DISTILLATION_REPORT.md)
+  and [analysis manifest](results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/final_analysis/analysis_manifest.json).
+- [Frozen validation decision](results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/validation_analysis/neuron_selector_promotions.json),
+  [raw validation tables](results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/validation_exact_checkpoint/),
+  and [training-only response factors](results/qwen36_mxfp4_neuron_selector_distillation_20260819_v1/fit/).
+- [Protocol](NEURON_SELECTOR_DISTILLATION_PROTOCOL.md) and
+  [execution ledger](EXECUTION_LEDGER_NEURON_SELECTOR_20260819.md).
+
+Both workstreams stop on exact-checkpoint validation. At one physical bpw,
+factorized G/D fixed-greedy reaches p10/median `0.8698/0.9328` on the 55-row
+matched cohort, versus `0.9352/0.9660` for the frozen exact 64×16 tile. The
+best deployable response model (rank-64 separate gate/up, row-FP8) reaches
+only `0.7560/0.8883` after fetching 256 candidates and applying 192, despite
+retaining `0.9164/0.9562` p10/median independent-score utility at 0.1849
+metadata bpw. No conditional expansion or held-out run was launched, so test
+blindness is preserved. These are H0-late qenergy results, not accuracy,
+logit, routing, token-quality, or H4-training claims.
+
 ## Sparse-streaming allocator study (stacked on PR #6)
 
 This continuation is stacked on [PR #6](https://github.com/ArianSFP/LLM_compression_study/pull/6) at commit `1f01edf74ce754fea1615b26a97e4465a829671f`. It preserves that branch's locked embedded Q2→Q3→Q4 codec, selected trees, exact checkpoint revision, and request separation. The evidence must be read in one direction: exact-checkpoint **validation only** selected the bounded configurations and produced the immutable promotion artifact; those frozen choices were then evaluated on the fresh held-out exact-checkpoint cohort; the broader capture is a sensitivity check and never a selection source.

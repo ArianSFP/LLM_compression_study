@@ -1,0 +1,31 @@
+{
+  "config_sha256": "41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4",
+  "layers": {
+    "0": {
+      "array_count": 216,
+      "bytes": 39902944,
+      "path": "response_fit_layer_0.npz",
+      "sha256": "1aacfc77756ee62e89b0cbddcae1278840cf744379702aeb2733e141e1151c7f"
+    },
+    "20": {
+      "array_count": 216,
+      "bytes": 49460454,
+      "path": "response_fit_layer_20.npz",
+      "sha256": "4e7a5612f6ada0503a4d613b058ffd889f89752171b5ac02a1885cc9bb0eb25b"
+    },
+    "39": {
+      "array_count": 216,
+      "bytes": 49129069,
+      "path": "response_fit_layer_39.npz",
+      "sha256": "31d437a83a36a5faa943df0e9755b8956858db9938581208917f4f50be82cf84"
+    },
+    "4": {
+      "array_count": 216,
+      "bytes": 49529334,
+      "path": "response_fit_layer_4.npz",
+      "sha256": "164f397490f32e6e33101f4ecf17cad25a757996a2570cd726d1047e701d0fc2"
+    }
+  },
+  "run_id": "qwen36_mxfp4_neuron_selector_distillation_20260819_v1",
+  "schema_version": 1
+}

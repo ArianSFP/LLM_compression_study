@@ -1,0 +1,91 @@
+{
+  "base_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "bundle_manifest_sha256": "73b0285be3e3611fa44ac0995bd69c3b4390cd02b0fa9ac03a9626397c878d60",
+  "bundle_sha256": "73b0285be3e3611fa44ac0995bd69c3b4390cd02b0fa9ac03a9626397c878d60",
+  "bundle_shards": {
+    "0": {
+      "array_count": 216,
+      "bytes": 39902944,
+      "path": "response_fit_layer_0.npz",
+      "sha256": "1aacfc77756ee62e89b0cbddcae1278840cf744379702aeb2733e141e1151c7f"
+    },
+    "20": {
+      "array_count": 216,
+      "bytes": 49460454,
+      "path": "response_fit_layer_20.npz",
+      "sha256": "4e7a5612f6ada0503a4d613b058ffd889f89752171b5ac02a1885cc9bb0eb25b"
+    },
+    "39": {
+      "array_count": 216,
+      "bytes": 49129069,
+      "path": "response_fit_layer_39.npz",
+      "sha256": "31d437a83a36a5faa943df0e9755b8956858db9938581208917f4f50be82cf84"
+    },
+    "4": {
+      "array_count": 216,
+      "bytes": 49529334,
+      "path": "response_fit_layer_4.npz",
+      "sha256": "164f397490f32e6e33101f4ecf17cad25a757996a2570cd726d1047e701d0fc2"
+    }
+  },
+  "checkpoint_audit_cross": {
+    "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_audit_exact": {
+    "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "config_sha256": "41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4",
+  "cross_capture_sha256": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add",
+  "device": "cuda",
+  "exact_capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "fit_split": "train",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "da37716932cb",
+  "index_sha256": "11ca3065d03d5c77c3fea80860b9e23e13d2d33d01e1cead382888e31b77f47e",
+  "model_entries": 252,
+  "phase": "fit",
+  "pr7_comparator_sha256": {
+    "analysis_manifest": "fc2a4071b032f60d0653fea94f575839e88064f91ccfdd1dc02d610b5264aa2a",
+    "frozen_promotions": "d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f",
+    "test_neuron_frontier": "6e3d95cb09f14617ec79ba7c77167d36a06071366b8e97b1ce63c6b3c1b0465f",
+    "test_tile_frontier": "2b13c6b729ab0c774e21cb844631a680627229f354f5688b078f33e8a497f25e",
+    "validation_neuron_frontier": "cd7626e999fd2618ce7135aa8f21942e778b4c37e165b32ad67f2b13cf80eda2",
+    "validation_tile_frontier": "898f93a93571c321ae47ab4eda42e39c445de58c0ab600920b4f0eaf387b7543"
+  },
+  "run_id": "qwen36_mxfp4_neuron_selector_distillation_20260819_v1",
+  "runner_sha256": "0a8cbf20d2e46777af2853087bfcacf48eae9ade3298b5168b27d3a94d3b78de",
+  "selector_core_sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94",
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_or_test_rows_used": false
+}
