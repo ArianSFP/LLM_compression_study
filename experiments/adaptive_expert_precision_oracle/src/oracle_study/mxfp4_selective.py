@@ -92,7 +92,14 @@ def select_under_page_budget(
 
 
 def exact_marginal_order(contributions: np.ndarray) -> list[BitAction]:
-    """Exact projection-residual OMP ordering with nested stage eligibility."""
+    """Compatibility wrapper for fixed-coefficient exact marginal greedy.
+
+    This historical entry point was called ``exact_marginal_omp`` in some
+    serialized PR #4 artifacts. It is not standard OMP: coefficients are
+    fixed and no least-squares refit is performed. New code and reports use
+    ``exact_marginal_fixed_greedy`` while retaining this function and the old
+    serialized label for compatibility.
+    """
     values = np.asarray(contributions, dtype=np.float32)
     if values.ndim != 3 or values.shape[0] != 2:
         raise ValueError("expected [2, coordinates, output] contributions")
@@ -120,6 +127,24 @@ def exact_marginal_order(contributions: np.ndarray) -> list[BitAction]:
         result.append(BitAction(coordinate, stage, float(marginal[chosen])))
         correlation -= gram[:, chosen]
     return result
+
+
+# Canonical public name. Keep the original function object so old imports and
+# pickled references remain readable without maintaining two implementations.
+exact_marginal_fixed_greedy = exact_marginal_order
+
+
+SELECTOR_LABEL_ALIASES = {
+    "exact_marginal_omp": "exact_marginal_fixed_greedy",
+    "exact_omp": "exact_marginal_fixed_greedy",
+    "exact_greedy": "exact_marginal_fixed_greedy",
+    "exact_marginal_fixed_greedy": "exact_marginal_fixed_greedy",
+}
+
+
+def canonical_selector_label(label: str) -> str:
+    """Return the canonical code/report label while accepting old artifacts."""
+    return SELECTOR_LABEL_ALIASES.get(str(label), str(label))
 
 
 def backward_elimination_order(contributions: np.ndarray) -> list[BitAction]:

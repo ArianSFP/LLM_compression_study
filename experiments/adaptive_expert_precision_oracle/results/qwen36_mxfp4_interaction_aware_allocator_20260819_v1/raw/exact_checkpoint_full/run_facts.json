@@ -1,0 +1,41 @@
+{
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_hashes": {
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb"
+  },
+  "checkpoint_revision_locked": "7eceff3a9f7e6f916c824d197266d86676bce695",
+  "completed_unix": 1787110450.171858,
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "b33e336b8c18",
+  "last_completed": {
+    "expert": 231,
+    "layer": 39,
+    "unix": 1787110450.1714172
+  },
+  "mode": "full",
+  "request_split_policy": "read unchanged from capture; expert fitting uses train, hyperparameter rows use validation, scientific rows use test",
+  "run_id": "qwen36_mxfp4_interaction_aware_allocator_20260819_v1",
+  "source": "exact_checkpoint",
+  "started_unix": 1787108305.7176845,
+  "torch": "2.8.0+cu128",
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "wall_seconds": 2144.454173564911
+}

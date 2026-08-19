@@ -1,0 +1,18 @@
+{
+  "selection_split": "validation",
+  "low_rank": {
+    "gate": [],
+    "up": [],
+    "down": []
+  },
+  "promoted_refresh_selectors": [
+    "block_refresh_4",
+    "block_refresh_8",
+    "block_refresh_16"
+  ],
+  "oracle_controls": [
+    "diagonal",
+    "exact_marginal_fixed_greedy"
+  ],
+  "reason": "At matched 512-byte physical budgets, no rank <= 64 candidate retained a positive, reproducible fraction of exact-over-diagonal gate/up gain in the validation-first held-out pilot. The best repeated primary-point median was -5.306; rows where exact was not above diagonal were treated as undefined, never as positive retention."
+}

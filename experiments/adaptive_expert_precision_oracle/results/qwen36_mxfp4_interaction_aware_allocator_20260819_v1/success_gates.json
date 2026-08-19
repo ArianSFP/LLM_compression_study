@@ -1,0 +1,43 @@
+{
+  "best_rank_le_64_gain_retention": {
+    "configuration": "fixed_jl/64/int8",
+    "median": -5.306393736214224
+  },
+  "broad_gate_up_layers_with_exact_gain": 8,
+  "fresh_difficult_improves_pr4_median_and_p10": false,
+  "pr4_reported_fresh_difficult_1bpw": {
+    "artifact": "results/qwen36_full_mxfp4_embedded_hierarchy_20260818_v1/exact_checkpoint_confirmation/selective/selective_metrics.parquet",
+    "median": 0.8934993429800473,
+    "n": 72,
+    "p10": 0.8333648940212325
+  },
+  "reconstructed_pr4_control_fresh_difficult_1bpw": {
+    "median": 0.8837104701320075,
+    "n": 72,
+    "p10": 0.8203747487149128
+  },
+  "storage_below_5x": true,
+  "training_selected_exact_oracle_fresh_difficult_1bpw": {
+    "layout": "exact_greedy_training_masks",
+    "median": 0.8925602293607318,
+    "n": 72,
+    "p10": 0.8350978459663017
+  },
+  "training_selected_layout_page_amplification_by_selector": {
+    "exact_action_path_repriced_to_pages": {
+      "median": 1.0,
+      "n": 12,
+      "passes_le_1p2": true
+    },
+    "page_level_residual_aware_mask_oracle": {
+      "median": 1.3217854763491006,
+      "n": 12,
+      "passes_le_1p2": false
+    },
+    "paired_page_level_residual_aware_mask_oracle": {
+      "median": 1.2457494672034097,
+      "n": 8,
+      "passes_le_1p2": false
+    }
+  }
+}

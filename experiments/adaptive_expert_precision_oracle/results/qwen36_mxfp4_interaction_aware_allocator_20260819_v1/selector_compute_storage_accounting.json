@@ -1,0 +1,53 @@
+{
+  "exact_reference_bpw": 4.25,
+  "external_storage_cap": 5.0,
+  "external_storage_multiplier_hybrid": 1.9411764705882353,
+  "external_storage_multiplier_paired": 1.4705882352941178,
+  "external_storage_multiplier_separate": 1.4705882352941178,
+  "hybrid_suffix_bpw": 4.0,
+  "maximum_extrapolated_metadata_bytes_40x256_projection": 10905190400,
+  "maximum_extrapolated_metadata_bytes_all_40x256_experts": 24536678400,
+  "maximum_metadata_bytes_expert_all_three_projections": 2396160,
+  "maximum_metadata_bytes_projection": 1064960,
+  "page_size_bytes": 512,
+  "paired_suffix_bpw": 2.0,
+  "resident_parent_bpw": 2.25,
+  "separate_suffix_bpw": 2.0,
+  "sources": [
+    {
+      "all_below_5x": true,
+      "completed_unix": 1787116482.5563796,
+      "external_storage_multipliers": {
+        "reference_plus_hybrid": 1.9411764705882353,
+        "reference_plus_paired": 1.4705882352941178,
+        "reference_plus_separate": 1.4705882352941178
+      },
+      "hybrid_suffix_bpw": 4.0,
+      "page_size_bytes": 512,
+      "paired_suffix_bpw": 2.0,
+      "reference_bpw": 4.25,
+      "resident_parent_bpw": 2.25,
+      "separate_suffix_bpw": 2.0,
+      "started_unix": 1787114977.353107,
+      "test_masks_used_for_layouts": false
+    },
+    {
+      "all_below_5x": true,
+      "completed_unix": 1787106275.9686184,
+      "external_storage_multipliers": {
+        "reference_plus_hybrid": 1.9411764705882353,
+        "reference_plus_paired": 1.4705882352941178,
+        "reference_plus_separate": 1.4705882352941178
+      },
+      "hybrid_suffix_bpw": 4.0,
+      "page_size_bytes": 512,
+      "paired_suffix_bpw": 2.0,
+      "reference_bpw": 4.25,
+      "resident_parent_bpw": 2.25,
+      "separate_suffix_bpw": 2.0,
+      "started_unix": 1787105215.8812203,
+      "test_masks_used_for_layouts": false
+    }
+  ],
+  "test_masks_used_for_layouts": false
+}
