@@ -1,0 +1,10 @@
+projection,description,train_functional_leaf_distortion,centroid_mode
+gate,a,113.78902618550126,e2m1
+gate,b,240.44929087319366,e2m1
+gate,q,281.2114198725918,e2m1
+up,a,50.01651296670533,free_fp16
+up,b,154.15122496087352,free_fp16
+up,q,161.59224037396405,free_fp16
+down,a,15.209432124570167,free_fp16
+down,b,42.687437468993124,free_fp16
+down,q,43.350694944183594,free_fp16

@@ -1,0 +1,10 @@
+policy,replicas,reference_fallback_bpw,suffix_bpw,external_storage_multiplier,within_5x
+ordered_a,1,4.25,2.0,1.4705882352941178,True
+ordered_a,2,4.25,4.0,1.9411764705882353,True
+ordered_a,4,4.25,8.0,2.8823529411764706,True
+bidirectional_ab,1,4.25,2.0,1.4705882352941178,True
+bidirectional_ab,2,4.25,4.0,1.9411764705882353,True
+bidirectional_ab,4,4.25,8.0,2.8823529411764706,True
+parity_abq,1,4.25,3.0,1.7058823529411764,True
+parity_abq,2,4.25,6.0,2.411764705882353,True
+parity_abq,4,4.25,12.0,3.823529411764706,True

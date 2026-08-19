@@ -1,0 +1,32 @@
+{
+  "checkpoint": "/root/qwen36_mxfp4_candidate",
+  "completed_unix": 1787093073.910855,
+  "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "host": "b3bcd9044643",
+  "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "loader": "Transformers compressed-tensors dequantize=True; exact packed leaf decode, no requantization",
+  "requests": 24,
+  "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+  "rows": 1360,
+  "schema": "exact_mxfp4_transformers_confirm_v1",
+  "split_requests": {
+    "test": 6,
+    "train": 12,
+    "validation": 6
+  },
+  "split_rows": {
+    "test": 336,
+    "train": 692,
+    "validation": 332
+  },
+  "started_unix": 1787093034.6107028,
+  "torch": "2.8.0+cu128",
+  "wall_seconds": 39.30015230178833
+}

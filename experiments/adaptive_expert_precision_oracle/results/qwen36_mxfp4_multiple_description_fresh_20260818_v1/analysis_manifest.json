@@ -1,0 +1,8 @@
+{
+  "action_rows": 4410,
+  "baseline_path": null,
+  "bootstrap_resamples": 1000,
+  "full_support_rows": 630,
+  "metrics_rows": 1470,
+  "note": "All method comparisons are paired on invocation IDs. Reused exact-capture results are exploratory for this post-hoc hypothesis."
+}
