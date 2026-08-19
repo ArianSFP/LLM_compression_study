@@ -107,11 +107,11 @@ unique-tensor-footprint lower bound, not measured hardware traffic.
 
 - config SHA-256: `41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4`
 - selector core: `24c296a0fe3d5390543bedb7847f8d60bcb3b7dfd3ebfce30eaccba7b294a871`
-- runner: `e796d5c2bb0a03676bc3b6631811a7b2810755edb0da789684e35cd7cc7ae2f5`
+- runner: `0a8cbf20d2e46777af2853087bfcacf48eae9ade3298b5168b27d3a94d3b78de`
 - analyzer wrapper: `af3bc8158b4da891f16b56051e3ccac2672c635876d26f5a6980215c8f6aa82c`
 - promotion analyzer: `d346cc367107969d36dca256ebc606a088a9ebc5e0542e80466c7a799febfdb7`
-- focused tests: 22 passed
-- integrated tests: 143 passed with one pre-existing numexpr warning
+- focused tests: 26 passed
+- integrated tests: 147 passed with one pre-existing numexpr warning
 
 Later corrections and their replacement hashes must be recorded in the
 execution ledger before they are used for scientific evidence.

@@ -215,3 +215,51 @@ def test_layer_bundle_loader_verifies_hash_size_count_and_layer(tmp_path: Path) 
     }
     with pytest.raises(RuntimeError, match="foreign layer"):
         runner.load_bundle_layer(tmp_path, {"layers": {"0": foreign_record}}, 0)
+
+
+def test_gpu_canonical_subspace_matches_reference_projection() -> None:
+    rng = np.random.default_rng(81)
+    responses = [rng.normal(size=(13, 7)), rng.normal(size=(13, 5))]
+    actual = runner.canonical_subspace(responses, 4, runner.torch.device("cpu"))
+    gram = sum(value @ value.T for value in responses)
+    _, vectors = np.linalg.eigh(gram)
+    expected = vectors[:, -4:]
+    np.testing.assert_allclose(
+        actual @ actual.T, expected @ expected.T, rtol=2e-5, atol=2e-5,
+    )
+
+
+@pytest.mark.parametrize("samples,inputs", [(7, 11), (14, 6)])
+def test_shared_ridge_factorization_matches_independent_reference(
+    samples: int, inputs: int,
+) -> None:
+    rng = np.random.default_rng(samples + inputs)
+    x = rng.normal(size=(samples, inputs)).astype(np.float32)
+    first = rng.normal(size=(samples, 3)).astype(np.float32)
+    second = rng.normal(size=(samples, 2)).astype(np.float32)
+    actual = runner.analyses_from_subspaces(
+        x, {"first": first, "second": second}, 1e-3, runner.torch.device("cpu"),
+    )
+    np.testing.assert_allclose(
+        actual["first"], runner.analysis_from_subspace(x, first, 1e-3),
+        rtol=2e-3, atol=2e-3,
+    )
+    np.testing.assert_allclose(
+        actual["second"], runner.analysis_from_subspace(x, second, 1e-3),
+        rtol=2e-3, atol=2e-3,
+    )
+
+
+def test_batched_syntheses_match_independent_least_squares() -> None:
+    rng = np.random.default_rng(118)
+    latent = rng.normal(size=(31, 5)).astype(np.float32)
+    responses = {
+        "gate": rng.normal(size=(31, 7)).astype(np.float32),
+        "up": rng.normal(size=(31, 4)).astype(np.float32),
+    }
+    actual = runner.syntheses(latent, responses, runner.torch.device("cpu"))
+    for name, response in responses.items():
+        np.testing.assert_allclose(
+            actual[name], runner.synthesis(latent, response),
+            rtol=2e-4, atol=2e-4,
+        )

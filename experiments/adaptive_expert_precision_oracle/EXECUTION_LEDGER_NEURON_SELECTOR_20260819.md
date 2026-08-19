@@ -36,7 +36,8 @@ record.
    families and an end-to-end invocation/accounting regression.
 7. Replaced the projected 250–300 MB monolithic fit bundle with four independently hashed layer shards plus a canonical manifest. Evaluation verifies hash, byte count, array count, and layer ownership, then keeps only one decoded layer in memory.
 8. Hardened FP8 synthesis metadata with one FP16 scale per row so large fitted factors cannot silently overflow E4M3FN; non-finite FP16/FP8 inputs or decodes now fail closed.
-9. The repository patch helper repeatedly failed before reading files because
+9. Replaced the unbounded CPU fitting path before execution: response sample Grams now use the GPU eigensolver, all max-rank B transforms share one dual/primal ridge factorization per cohort, and response matrices sharing a latent basis reuse one GPU pseudoinverse. Numerical projection, ridge, and synthesis parity tests were added.
+10. The repository patch helper repeatedly failed before reading files because
    its sandbox could not create a loopback interface. Narrow patches were then
    applied with `git apply --recount`; a few exact mechanical substitutions
    used Perl after both the patch helper and an initial patch transport failed.
@@ -59,8 +60,8 @@ PYTHONPATH=src:scripts python -m pytest -q \
 PYTHONPATH=src:scripts python -m pytest -q
 ```
 
-Latest pre-run result: 22 focused tests passed; 143 integrated tests passed in
-37.56 seconds. The only warning is the inherited pandas/numexpr version
+Latest pre-run result: 26 focused tests passed; 147 integrated tests passed in
+26.84 seconds. The only warning is the inherited pandas/numexpr version
 warning.
 
 ## Remote execution
@@ -68,8 +69,7 @@ warning.
 The supplied 3090 endpoint was attempted eight times with a 15-second
 connection timeout. Every attempt failed before authentication with `No route
 to host`. No remote command ran, no pod state changed, and no validation or
-held-out scientific row was read. Execution remains pending endpoint
-availability.
+held-out scientific row was read. The original endpoint remained unavailable. A replacement endpoint exposed a verified RTX 3090. Its checkpoint metadata, exact capture, selected tree, synced runner/core/config, and six PR #7 comparator hashes matched the frozen protocol. The locked cross capture was absent, but its immutable raw corpus and audited extractor were present, so deterministic regeneration was started. Two full-history clone attempts were stopped and only their incomplete task-owned directories removed; a 786 KiB checksummed source archive and a 151 KiB checksummed comparator archive were used instead. The first archive extraction failed only while restoring local UID/GID ownership; rerunning with `--no-same-owner` succeeded and all execution hashes matched. The regeneration remained I/O-bound at this checkpoint; no validation or held-out row had been evaluated.
 
 ## Pending chronological entries
 

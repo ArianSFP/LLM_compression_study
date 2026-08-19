@@ -201,19 +201,23 @@ def gpu_responses(
     return gate, up
 
 
-def canonical_subspace(responses: Sequence[np.ndarray], rank: int) -> np.ndarray:
+def canonical_subspace(
+    responses: Sequence[np.ndarray], rank: int, device: torch.device,
+) -> np.ndarray:
     samples = int(np.asarray(responses[0]).shape[0])
-    gram = np.zeros((samples, samples), dtype=np.float64)
+    gram = torch.zeros((samples, samples), dtype=torch.float32, device=device)
     for response in responses:
-        value = np.asarray(response, np.float64)
-        gram += value @ value.T
-    values, vectors = np.linalg.eigh(gram)
-    order = np.argsort(values)[::-1][:rank]
-    result = vectors[:, order]
+        value = torch.as_tensor(response, dtype=torch.float32, device=device)
+        gram.addmm_(value, value.T)
+    _, vectors = torch.linalg.eigh(gram)
+    result = vectors[:, -int(rank):].flip(1).cpu().numpy()
     for column in range(result.shape[1]):
         pivot = int(np.argmax(np.abs(result[:, column])))
         if result[pivot, column] < 0:
             result[:, column] *= -1
+    del gram, vectors
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
     return result
 
 
@@ -225,11 +229,62 @@ def analysis_from_subspace(x: np.ndarray, desired: np.ndarray, ridge_relative: f
     return (coefficient.T @ samples).astype(np.float32)
 
 
+def analyses_from_subspaces(
+    x: np.ndarray,
+    desired: Mapping[str, np.ndarray],
+    ridge_relative: float,
+    device: torch.device,
+) -> dict[str, np.ndarray]:
+    """Fit every B transform with one shared ridge factorization."""
+    activation = torch.as_tensor(x, dtype=torch.float32, device=device)
+    names = list(desired)
+    widths = [int(np.asarray(desired[name]).shape[1]) for name in names]
+    targets = torch.as_tensor(
+        np.concatenate([np.asarray(desired[name], np.float32) for name in names], axis=1),
+        dtype=torch.float32, device=device,
+    )
+    if activation.shape[0] <= activation.shape[1]:
+        kernel = activation @ activation.T
+        ridge = float(ridge_relative) * max(float(torch.trace(kernel).item()) / max(len(kernel), 1), 1e-30)
+        factor = torch.linalg.cholesky(kernel + ridge * torch.eye(len(kernel), device=device))
+        coefficients = torch.cholesky_solve(targets, factor)
+        combined = coefficients.T @ activation
+    else:
+        kernel = activation.T @ activation
+        ridge = float(ridge_relative) * max(float(torch.trace(kernel).item()) / max(activation.shape[0], 1), 1e-30)
+        factor = torch.linalg.cholesky(kernel + ridge * torch.eye(kernel.shape[0], device=device))
+        combined = torch.cholesky_solve(activation.T @ targets, factor).T
+    chunks = torch.split(combined, widths, dim=0)
+    result = {name: chunk.cpu().numpy() for name, chunk in zip(names, chunks)}
+    del activation, targets, kernel, factor, combined
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+    return result
+
+
 def synthesis(latent: np.ndarray, response: np.ndarray) -> np.ndarray:
     coefficient, *_ = np.linalg.lstsq(
         np.asarray(latent, np.float64), np.asarray(response, np.float64), rcond=None,
     )
     return coefficient.T.astype(np.float32)
+
+
+def syntheses(
+    latent: np.ndarray,
+    responses: Mapping[str, np.ndarray],
+    device: torch.device,
+) -> dict[str, np.ndarray]:
+    """Reuse one pseudoinverse for every response sharing a latent basis."""
+    design = torch.as_tensor(latent, dtype=torch.float32, device=device)
+    inverse = torch.linalg.pinv(design)
+    result = {
+        name: (inverse @ torch.as_tensor(value, dtype=torch.float32, device=device)).T.cpu().numpy()
+        for name, value in responses.items()
+    }
+    del design, inverse
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+    return result
 
 
 def relative_mse(
@@ -289,13 +344,19 @@ def fit_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
             gate_response, up_response = gpu_responses(x, residuals, device)
             max_identifiable = min(x.shape)
             max_rank = min(max(ranks), max_identifiable)
-            shared_joint = canonical_subspace([*gate_response.values(), *up_response.values()], max_rank)
-            shared_gate = canonical_subspace(list(gate_response.values()), max_rank)
-            shared_up = canonical_subspace(list(up_response.values()), max_rank)
-            per_expert = {
-                expert: canonical_subspace([gate_response[expert], up_response[expert]], max_rank)
-                for expert in sorted(residuals)
+            subspaces = {
+                "shared_joint": canonical_subspace(
+                    [*gate_response.values(), *up_response.values()], max_rank, device,
+                ),
+                "shared_gate": canonical_subspace(list(gate_response.values()), max_rank, device),
+                "shared_up": canonical_subspace(list(up_response.values()), max_rank, device),
             }
+            subspaces.update({
+                f"expert_{expert}": canonical_subspace(
+                    [gate_response[expert], up_response[expert]], max_rank, device,
+                ) for expert in sorted(residuals)
+            })
+            fitted_analysis = analyses_from_subspaces(x, subspaces, ridge_relative, device)
             for rank in ranks:
                 if rank > max_identifiable:
                     diagnostics.append({
@@ -308,11 +369,15 @@ def fit_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
                     key = f"l{layer}__{cohort_name}__{variant}__r{rank}"
                     experts = sorted(residuals)
                     if variant == "layer_shared_joint_gate_up":
-                        bg = analysis_from_subspace(x, shared_joint[:, :rank], ridge_relative)
+                        bg = fitted_analysis["shared_joint"][:rank]
                         bu = bg
                         zg = zu = x @ bg.T
-                        ag = {expert: synthesis(zg, gate_response[expert]) for expert in experts}
-                        au = {expert: synthesis(zu, up_response[expert]) for expert in experts}
+                        fitted = syntheses(zg, {
+                            **{f"gate_{expert}": gate_response[expert] for expert in experts},
+                            **{f"up_{expert}": up_response[expert] for expert in experts},
+                        }, device)
+                        ag = {expert: fitted[f"gate_{expert}"] for expert in experts}
+                        au = {expert: fitted[f"up_{expert}"] for expert in experts}
                         bg_encoded = encode_array(bg, "fp16")
                         ag_encoded = {expert: encode_array(value, "fp16") for expert, value in ag.items()}
                         au_encoded = {expert: encode_array(value, "fp16") for expert, value in au.items()}
@@ -332,11 +397,17 @@ def fit_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
                         arrays[f"{key}__bg"] = bg.astype(np.float16)
                         shared = True
                     elif variant == "layer_shared_separate_gate_up":
-                        bg = analysis_from_subspace(x, shared_gate[:, :rank], ridge_relative)
-                        bu = analysis_from_subspace(x, shared_up[:, :rank], ridge_relative)
+                        bg = fitted_analysis["shared_gate"][:rank]
+                        bu = fitted_analysis["shared_up"][:rank]
                         zg, zu = x @ bg.T, x @ bu.T
-                        ag = {expert: synthesis(zg, gate_response[expert]) for expert in experts}
-                        au = {expert: synthesis(zu, up_response[expert]) for expert in experts}
+                        fitted_gate = syntheses(
+                            zg, {str(expert): gate_response[expert] for expert in experts}, device,
+                        )
+                        fitted_up = syntheses(
+                            zu, {str(expert): up_response[expert] for expert in experts}, device,
+                        )
+                        ag = {expert: fitted_gate[str(expert)] for expert in experts}
+                        au = {expert: fitted_up[str(expert)] for expert in experts}
                         bg_encoded = encode_array(bg, "fp16")
                         bu_encoded = encode_array(bu, "fp16")
                         ag_encoded = {expert: encode_array(value, "fp16") for expert, value in ag.items()}
@@ -361,10 +432,12 @@ def fit_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
                         bg_list, ag_list, au_list = [], [], []
                         numerator = denominator = 0.0
                         for expert in experts:
-                            bg_e = analysis_from_subspace(x, per_expert[expert][:, :rank], ridge_relative)
+                            bg_e = fitted_analysis[f"expert_{expert}"][:rank]
                             z_e = x @ bg_e.T
-                            ag_e = synthesis(z_e, gate_response[expert])
-                            au_e = synthesis(z_e, up_response[expert])
+                            fitted = syntheses(
+                                z_e, {"gate": gate_response[expert], "up": up_response[expert]}, device,
+                            )
+                            ag_e, au_e = fitted["gate"], fitted["up"]
                             for actual, predicted in (
                                 (gate_response[expert], z_e @ ag_e.T),
                                 (up_response[expert], z_e @ au_e.T),
