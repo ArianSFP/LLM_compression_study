@@ -1,0 +1,114 @@
+{
+  "run_id": "qwen36_mxfp4_neuron_selector_distillation_20260819_v1",
+  "base_pr7_commit": "9ef21d519a4f2cd844e9fa75d04cd601e37d5a11",
+  "seed": 20260819,
+  "layers": [0, 4, 20, 39],
+  "page_size_bytes": 512,
+  "expert_weights": 3145728,
+  "resident_parent_bpw": 2.25,
+  "reference_bpw": 4.25,
+  "suffix_bpw_per_complete_representation": 2.0,
+  "factorized_physical_budgets_bpw": [0.5, 0.75, 1.0],
+  "coherent_unit_counts": [128, 192, 256],
+  "response_ranks": [8, 16, 32, 64, 128],
+  "response_basis_variants": [
+    "layer_shared_joint_gate_up",
+    "layer_shared_separate_gate_up",
+    "per_expert_joint_gate_up_upper_bound"
+  ],
+  "training_cohorts": [
+    "exact_checkpoint_train_only",
+    "combined_exact_and_cross_train"
+  ],
+  "ridge_relative": 0.0001,
+  "synthesis_encodings": ["fp16", "fp8_e4m3fn", "int8_per_row"],
+  "candidate_applied_units": 192,
+  "candidate_unit_counts": [192, 224, 240, 256],
+  "candidate_physical_bpw": [0.75, 0.875, 0.9375, 1.0],
+  "conditional_activation_top_k": [128, 256, 512, 768, 1024, 2048],
+  "conditional_cluster_basis_counts": [4, 8],
+  "conditional_policy": "evaluate FP16/FP8/INT8 synthesis metadata in the bounded validation grid; run activation-top-k only for validation-Pareto shared-basis ranks; run 4/8 cluster bases only if a sampled per-expert upper bound passes while every layer-shared model fails",
+  "metric": "exact sequential complete-expert qenergy recovery under I + beta P P.T; expert-output reconstruction, not task accuracy",
+  "training_fit_policy": "fit linear residual-response models on complete training requests only; never use validation or test activations, labels, masks or metrics for fitting",
+  "selection_policy": "select ranks, basis sharing, training cohort and encodings on exact-checkpoint validation only; held-out test and cross-reference rows cannot change the frozen decision",
+  "evaluation_policy": "factorized and predictor validation covers every available routed occurrence for the locked sampled experts up to 16 per expert; held-out confirmation uses the same 85 exact-checkpoint test invocations as PR7",
+  "max_validation_invocations_per_expert": 16,
+  "max_test_invocations_per_expert": 24,
+  "promotion_policy": {
+    "selection_split": "validation",
+    "minimum_validation_invocations_per_layer": 4,
+    "minimum_validation_requests_per_layer": 2,
+    "factorized_max_median_gap_to_tile_at_1bpw": 0.01,
+    "factorized_max_p10_gap_to_tile_at_1bpw": 0.015,
+    "direct_predictor_min_median_recovery_at_1bpw": 0.95,
+    "direct_predictor_min_p10_recovery_at_1bpw": 0.90,
+    "candidate_min_median_utility_retention": 0.95,
+    "candidate_min_p10_utility_retention": 0.90,
+    "candidate_min_median_recovery": 0.92,
+    "candidate_min_p10_recovery": 0.85,
+    "candidate_max_units": 256,
+    "candidate_max_overfetch": 1.3333333333333333,
+    "max_selector_metadata_bpw": 0.35,
+    "no_test_tuning": true
+  },
+  "pr7_comparators": {
+    "validation_tile_frontier": {
+      "path": "results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint/alternate_tile_shape_validation_frontier.parquet",
+      "sha256": "898f93a93571c321ae47ab4eda42e39c445de58c0ab600920b4f0eaf387b7543",
+      "selector": "exact_dynamic_tile_marginal_refresh_1",
+      "tile_shape": "64x16"
+    },
+    "validation_neuron_frontier": {
+      "path": "results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint/neuron_major_frontier.parquet",
+      "sha256": "cd7626e999fd2618ce7135aa8f21942e778b4c37e165b32ad67f2b13cf80eda2",
+      "selector": "independent_unit_correction_norm"
+    },
+    "test_tile_frontier": {
+      "path": "results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_exact_checkpoint/tile_streaming_frontier.parquet",
+      "sha256": "2b13c6b729ab0c774e21cb844631a680627229f354f5688b078f33e8a497f25e",
+      "selector": "exact_dynamic_tile_marginal_refresh_1",
+      "tile_shape": "64x16"
+    },
+    "test_neuron_frontier": {
+      "path": "results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_exact_checkpoint/neuron_major_frontier.parquet",
+      "sha256": "6e3d95cb09f14617ec79ba7c77167d36a06071366b8e97b1ce63c6b3c1b0465f",
+      "selector": "independent_unit_correction_norm"
+    },
+    "analysis_manifest": {
+      "path": "results/qwen36_mxfp4_sparse_streaming_20260819_v1/final_analysis/analysis_manifest.json",
+      "sha256": "fc2a4071b032f60d0653fea94f575839e88064f91ccfdd1dc02d610b5264aa2a"
+    },
+    "frozen_promotions": {
+      "path": "results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_analysis/sparse_streaming_promotions.json",
+      "sha256": "d457223630cf3ca595e0e164600f2419996304f8f409128f614be875106b044f"
+    }
+  },
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0"
+  },
+  "locked_tree_source": "results/qwen36_full_mxfp4_embedded_hierarchy_20260818_v1/dense/selected_trees.json",
+  "locked_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "locked_capture_sha256": {
+    "exact_checkpoint": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+    "cross_reference": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add"
+  },
+  "locked_exact_sampled_experts": {
+    "0": {"72": "cold", "160": "median", "62": "hot"},
+    "4": {"17": "cold", "110": "median", "154": "hot"},
+    "20": {"242": "cold", "251": "median", "191": "hot"},
+    "39": {"68": "cold", "231": "median", "108": "hot"}
+  },
+  "locked_cross_sampled_experts": {
+    "0": {"71": "cold", "207": "median", "238": "hot"},
+    "4": {"156": "cold", "176": "median", "134": "hot"},
+    "20": {"129": "cold", "225": "median", "72": "hot"},
+    "39": {"180": "cold", "155": "median", "235": "hot"}
+  }
+}
