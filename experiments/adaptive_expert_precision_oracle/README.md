@@ -4,6 +4,22 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## Sparse-streaming allocator study (stacked on PR #6)
+
+This continuation is stacked on [PR #6](https://github.com/ArianSFP/LLM_compression_study/pull/6) at commit `1f01edf74ce754fea1615b26a97e4465a829671f`. It preserves that branch's locked embedded Q2→Q3→Q4 codec, selected trees, exact checkpoint revision, and request separation. The evidence must be read in one direction: exact-checkpoint **validation only** selected the bounded configurations and produced the immutable promotion artifact; those frozen choices were then evaluated on the fresh held-out exact-checkpoint cohort; the broader capture is a sensitivity check and never a selection source.
+
+Reviewer entry points:
+
+- [Final sparse-streaming report](results/qwen36_mxfp4_sparse_streaming_20260819_v1/final_analysis/SPARSE_STREAMING_ALLOCATOR_REPORT.md) and [analysis manifest](results/qwen36_mxfp4_sparse_streaming_20260819_v1/final_analysis/analysis_manifest.json).
+- [Frozen validation promotions](results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_analysis/sparse_streaming_promotions.json).
+- Raw evidence: [bounded pilot](results/qwen36_mxfp4_sparse_streaming_20260819_v1/pilot_exact_checkpoint/), [validation-only tile-shape follow-up](results/qwen36_mxfp4_sparse_streaming_20260819_v1/validation_tile_shapes_exact_checkpoint/), [fresh held-out expansion](results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_exact_checkpoint/), and [cross-reference sensitivity run](results/qwen36_mxfp4_sparse_streaming_20260819_v1/full_cross_reference/).
+- [Execution ledger](EXECUTION_LEDGER_SPARSE_STREAMING_20260819.md) and [reproducibility guide](SPARSE_STREAMING_REPRODUCIBILITY.md).
+- [PR #6 interaction-aware allocator report](results/qwen36_mxfp4_interaction_aware_allocator_20260819_v1/INTERACTION_AWARE_ALLOCATOR_REPORT.md), the controlled baseline for this stacked study.
+
+The promoted neuron-major and exact tile selectors are **H0 oracles only**. The activation-derived shortlist and scalable/static tile proxies stopped at validation, so this study does not establish a deployable streaming selector. It makes no task-accuracy, router, logit, token-quality, or H4-prediction/training claim.
+
+At 1.0 physical correction bpw, the frozen 64×16 tile oracle reaches fresh held-out p10/median recovery `0.9375/0.9683` over 85 invocations. On the 72 difficult-layer invocations it reaches `0.9364/0.9632`, versus PR #4's reported `0.8334/0.8935` in the prior [success-gate artifact](results/qwen36_mxfp4_interaction_aware_allocator_20260819_v1/success_gates.json). This is expert-output qenergy recovery: it establishes a substantially better sparse action space, while the final deployment verdict remains negative because no scalable proxy passed and the exact tile oracle requires 768 global refreshes at one bpw.
+
 ## Layout
 
 - `configs/`: exact JSON configurations.
