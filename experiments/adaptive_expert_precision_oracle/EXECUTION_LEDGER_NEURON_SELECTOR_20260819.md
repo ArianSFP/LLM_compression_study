@@ -173,7 +173,16 @@ sort -z | xargs -0 sha256sum | sha256sum`, run from the package root) is
 
 ## Publication and shutdown
 
-- Evidence/results commit, final push, draft PR URL, base/head verification:
-  pending the final repository review.
-- The pod remains running until the evidence is committed, pushed, and the PR
-  is verified. Stop and post-stop verification will be appended afterward.
+- Evidence/results commit: `454ac8afa667723ece5a19c9a461ea9259f1534b`
+  (`Add neuron selector distillation results`). The branch push succeeded.
+- Draft PR: https://github.com/ArianSFP/LLM_compression_study/pull/9
+- Verified GitHub base/head:
+  `agent/mxfp4-sparse-streaming at commit 9ef21d519a4f2cd844e9fa75d04cd601e37d5a11`
+  → `agent/mxfp4-neuron-selector-distillation at commit 454ac8afa667723ece5a19c9a461ea9259f1534b`.
+  GitHub reported draft/open, 62 changed files, and a clean merge state.
+- After the evidence push and PR verification, study pod `osfs2vbk08exds` was
+  stopped with `runpodctl pod stop` at `2026-08-19 22:07:37 UTC`. Post-stop
+  inspection reported `desiredStatus=EXITED`, `runtimeStatus=stopped`, and
+  reason `stopped_by_user`; GPU billing has stopped. The account list no
+  longer showed this study pod as running. One pre-existing two-GPU pod was
+  left untouched because it was not the supplied study endpoint.
