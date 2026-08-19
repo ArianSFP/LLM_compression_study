@@ -116,6 +116,27 @@ def load_checkpoint_state(
     return state, completed, history
 
 
+def load_bundle_layer(
+    fit_dir: Path, manifest: Mapping[str, Any], layer: int,
+) -> dict[str, np.ndarray]:
+    record = manifest["layers"][str(int(layer))]
+    relative = Path(str(record["path"]))
+    if relative.name != str(relative) or relative.is_absolute():
+        raise RuntimeError("fit bundle shard path is not a local basename")
+    path = fit_dir / relative
+    if sha256(path) != str(record["sha256"]):
+        raise RuntimeError(f"fit bundle shard {layer} changed")
+    if path.stat().st_size != int(record["bytes"]):
+        raise RuntimeError(f"fit bundle shard {layer} byte count changed")
+    with np.load(path, allow_pickle=False) as shard:
+        values = {name: np.asarray(shard[name]) for name in shard.files}
+    if len(values) != int(record["array_count"]):
+        raise RuntimeError(f"fit bundle shard {layer} array count changed")
+    if any(not name.startswith(f"l{int(layer)}__") for name in values):
+        raise RuntimeError(f"fit bundle shard {layer} contains a foreign layer")
+    return values
+
+
 def load_capture(path: Path) -> dict[str, np.ndarray]:
     loaded = np.load(path, allow_pickle=False)
     result = {name: loaded[name] for name in loaded.files}
@@ -442,17 +463,33 @@ def fit_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
             entries.append(entry)
             diagnostics.append({**entry, "status": "encoded_from_frozen_fp16_fit"})
 
-    bundle_path = args.output / "response_fit_bundle.npz"
-    temporary = bundle_path.with_suffix(".npz.tmp")
-    with temporary.open("wb") as handle:
-        np.savez_compressed(handle, **arrays)
-    temporary.replace(bundle_path)
+    shard_records: dict[str, dict[str, Any]] = {}
+    for layer in map(int, config["layers"]):
+        prefix = f"l{layer}__"
+        layer_arrays = {name: value for name, value in arrays.items() if name.startswith(prefix)}
+        shard_path = args.output / f"response_fit_layer_{layer}.npz"
+        temporary = shard_path.with_suffix(".npz.tmp")
+        with temporary.open("wb") as handle:
+            np.savez_compressed(handle, **layer_arrays)
+        temporary.replace(shard_path)
+        shard_records[str(layer)] = {
+            "path": shard_path.name,
+            "sha256": sha256(shard_path),
+            "bytes": shard_path.stat().st_size,
+            "array_count": len(layer_arrays),
+        }
+    bundle_manifest_path = args.output / "response_fit_bundle_manifest.json"
+    atomic_json(bundle_manifest_path, {
+        "schema_version": 1, "run_id": config["run_id"],
+        "config_sha256": sha256(args.config), "layers": shard_records,
+    })
     index_payload = {
         "schema_version": 1,
         "run_id": config["run_id"],
         "config_sha256": sha256(args.config),
         "fit_split": "train",
         "validation_or_test_rows_used": False,
+        "bundle_manifest_sha256": sha256(bundle_manifest_path),
         "entries": entries,
     }
     index_path = args.output / "response_fit_index.json"
@@ -473,7 +510,9 @@ def fit_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
         "checkpoint_audit_exact": audit_exact,
         "checkpoint_audit_cross": audit_cross,
         "pr7_comparator_sha256": comparator_hashes,
-        "bundle_sha256": sha256(bundle_path),
+        "bundle_sha256": sha256(bundle_manifest_path),
+        "bundle_manifest_sha256": sha256(bundle_manifest_path),
+        "bundle_shards": shard_records,
         "index_sha256": sha256(index_path),
         "model_entries": len(entries),
         "device": str(device),
@@ -782,14 +821,20 @@ def evaluate_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
     )
     comparator_hashes = verify_pr7_comparators(config)
     data = load_capture(args.captures)
-    bundle_path = args.fit_dir / "response_fit_bundle.npz"
+    bundle_manifest_path = args.fit_dir / "response_fit_bundle_manifest.json"
     index_path = args.fit_dir / "response_fit_index.json"
     fit_facts_path = args.fit_dir / "fit_facts.json"
     fit_facts = json.loads(fit_facts_path.read_text())
     if not fit_facts.get("completed") or fit_facts.get("validation_or_test_rows_used") is not False:
         raise RuntimeError("fit facts are incomplete or permit non-training fit rows")
-    if fit_facts.get("bundle_sha256") != sha256(bundle_path) or fit_facts.get("index_sha256") != sha256(index_path):
-        raise RuntimeError("fit bundle/index hash differs from fit facts")
+    bundle_digest = sha256(bundle_manifest_path)
+    if fit_facts.get("bundle_sha256") != bundle_digest or fit_facts.get("index_sha256") != sha256(index_path):
+        raise RuntimeError("fit bundle manifest/index hash differs from fit facts")
+    bundle_manifest = json.loads(bundle_manifest_path.read_text())
+    if bundle_manifest.get("config_sha256") != sha256(args.config):
+        raise RuntimeError("fit bundle manifest config changed")
+    if set(bundle_manifest.get("layers", {})) != set(map(str, config["layers"])):
+        raise RuntimeError("fit bundle manifest does not contain every configured layer")
     fit_index = json.loads(index_path.read_text())
     if fit_index.get("fit_split") != "train" or fit_index.get("validation_or_test_rows_used") is not False:
         raise RuntimeError("fit index is not training-only")
@@ -799,13 +844,14 @@ def evaluate_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
     if args.promotions is not None:
         config["_config_path"] = str(args.config)
         selected_ids, promote_factorized = promotion_config_ids(
-            args.promotions, config, sha256(bundle_path),
+            args.promotions, config, bundle_digest,
         )
         entries = [entry for entry in entries if str(entry["config_id"]) in selected_ids]
         if not entries and selected_ids:
             raise RuntimeError("promoted response configurations are absent from fit index")
         promotion_sha = sha256(args.promotions)
-    bundle = np.load(bundle_path, allow_pickle=False)
+    loaded_layer: int | None = None
+    bundle: dict[str, np.ndarray] = {}
     index = json.loads((args.checkpoint / "model.safetensors.index.json").read_text())["weight_map"]
     tree_records = json.loads(args.trees.read_text())
     trees = {projection: tree_from_record(tree_records[projection]) for projection in PROJECTIONS}
@@ -824,7 +870,7 @@ def evaluate_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
         "checkpoint_config_sha256": hashes["config_sha256"],
         "checkpoint_index_sha256": hashes["index_sha256"],
         "checkpoint_audit": audit,
-        "fit_bundle_sha256": sha256(bundle_path),
+        "fit_bundle_sha256": bundle_digest,
         "fit_index_sha256": sha256(index_path),
         "validation_promotions_sha256": promotion_sha,
         "pr7_comparator_sha256": comparator_hashes,
@@ -851,6 +897,9 @@ def evaluate_phase(args: argparse.Namespace, config: dict[str, Any]) -> None:
             work_unit = f"{args.split}:{layer}:{expert}"
             if work_unit in set(completed):
                 continue
+            if loaded_layer != layer:
+                bundle = load_bundle_layer(args.fit_dir, bundle_manifest, layer)
+                loaded_layer = layer
             local_data = layer_view(data, layer)
             proxy, proxy_facts = base.proxy_gradients(
                 local_data["xplus"], [local_data[f"h{h}_router_logits"] for h in range(1, 5)],

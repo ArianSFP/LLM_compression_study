@@ -191,3 +191,27 @@ def test_evaluate_invocation_emits_factorized_predictor_and_fetched_accounting()
     assert candidate["logical_bytes"] == 2 * runner.UNIT_PACKET_BYTES
     assert candidate["page_amplification"] == pytest.approx(1.5)
     assert np.isfinite(candidate["recovery"])
+
+
+def test_layer_bundle_loader_verifies_hash_size_count_and_layer(tmp_path: Path) -> None:
+    path = tmp_path / "response_fit_layer_0.npz"
+    np.savez_compressed(path, l0__weights=np.arange(6, dtype=np.float16))
+    record = {
+        "path": path.name,
+        "sha256": runner.sha256(path),
+        "bytes": path.stat().st_size,
+        "array_count": 1,
+    }
+    values = runner.load_bundle_layer(tmp_path, {"layers": {"0": record}}, 0)
+    np.testing.assert_array_equal(values["l0__weights"], np.arange(6, dtype=np.float16))
+    bad = {"layers": {"0": {**record, "sha256": "0" * 64}}}
+    with pytest.raises(RuntimeError, match="changed"):
+        runner.load_bundle_layer(tmp_path, bad, 0)
+    foreign = tmp_path / "foreign.npz"
+    np.savez_compressed(foreign, l4__weights=np.ones(2, dtype=np.float16))
+    foreign_record = {
+        "path": foreign.name, "sha256": runner.sha256(foreign),
+        "bytes": foreign.stat().st_size, "array_count": 1,
+    }
+    with pytest.raises(RuntimeError, match="foreign layer"):
+        runner.load_bundle_layer(tmp_path, {"layers": {"0": foreign_record}}, 0)

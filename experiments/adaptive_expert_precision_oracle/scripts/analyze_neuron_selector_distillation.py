@@ -68,7 +68,16 @@ def promote(args: argparse.Namespace) -> None:
     config = json.loads(args.config.read_text())
     fit_facts = json.loads((args.fit_dir / "fit_facts.json").read_text())
     validation_facts = validate_facts(args.validation_dir / "run_facts.json", split="validation")
-    bundle_path = args.fit_dir / "response_fit_bundle.npz"
+    bundle_path = args.fit_dir / "response_fit_bundle_manifest.json"
+    bundle_manifest = json.loads(bundle_path.read_text())
+    if set(bundle_manifest.get("layers", {})) != set(map(str, config["layers"])):
+        raise RuntimeError("fit bundle manifest does not contain every configured layer")
+    bundle_shards = []
+    for record in bundle_manifest["layers"].values():
+        path = args.fit_dir / str(record["path"])
+        if sha256(path) != str(record["sha256"]) or path.stat().st_size != int(record["bytes"]):
+            raise RuntimeError("fit bundle shard changed")
+        bundle_shards.append(path)
     if fit_facts.get("bundle_sha256") != sha256(bundle_path):
         raise RuntimeError("fit bundle differs from fit facts")
     if validation_facts.get("fit_bundle_sha256") != sha256(bundle_path):
@@ -163,7 +172,7 @@ bank-wide deployable selector from this small expert sample.
 ## Provenance
 
 - config SHA-256: `{sha256(args.config)}`
-- fit bundle SHA-256: `{sha256(bundle_path)}`
+- fit bundle-manifest SHA-256: `{sha256(bundle_path)}`
 - promotions SHA-256: `{sha256(promotion_path)}`
 - test rows consulted for selection: `false`
 """
@@ -176,6 +185,7 @@ bank-wide deployable selector from this small expert sample.
         "inputs": {
             str(args.config): sha256(args.config),
             str(bundle_path): sha256(bundle_path),
+            **{str(path): sha256(path) for path in bundle_shards},
             **{str(path): sha256(path) for path in paths.values()},
             str(comparator_path): sha256(comparator_path),
         },

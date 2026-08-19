@@ -34,7 +34,8 @@ record.
    tree, fit bundle, and frozen-promotion hashes.
 6. Added minimum named schemas for legitimately stopped/empty artifact
    families and an end-to-end invocation/accounting regression.
-7. The repository patch helper repeatedly failed before reading files because
+7. Replaced the projected 250–300 MB monolithic fit bundle with four independently hashed layer shards plus a canonical manifest. Evaluation verifies hash, byte count, array count, and layer ownership, then keeps only one decoded layer in memory.
+8. The repository patch helper repeatedly failed before reading files because
    its sandbox could not create a loopback interface. Narrow patches were then
    applied with `git apply --recount`; a few exact mechanical substitutions
    used Perl after both the patch helper and an initial patch transport failed.
@@ -57,13 +58,13 @@ PYTHONPATH=src:scripts python -m pytest -q \
 PYTHONPATH=src:scripts python -m pytest -q
 ```
 
-Latest pre-run result: 21 focused tests passed; 141 integrated tests passed in
-27.86 seconds. The only warning is the inherited pandas/numexpr version
+Latest pre-run result: 22 focused tests passed; 143 integrated tests passed in
+30.10 seconds. The only warning is the inherited pandas/numexpr version
 warning.
 
 ## Remote execution
 
-The supplied 3090 endpoint was attempted four times with a 15-second
+The supplied 3090 endpoint was attempted seven times with a 15-second
 connection timeout. Every attempt failed before authentication with `No route
 to host`. No remote command ran, no pod state changed, and no validation or
 held-out scientific row was read. Execution remains pending endpoint
