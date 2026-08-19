@@ -680,6 +680,31 @@ def output_for_units(base_output: np.ndarray, corrections: np.ndarray, order: np
     return np.asarray(base_output, np.float64) + np.asarray(corrections, np.float64)[chosen].sum(axis=0)
 
 
+def best_factorized_prefix(
+    factorized: Any, trace: Any, budget_pages: int,
+) -> tuple[np.ndarray, int, int, np.ndarray, int]:
+    """Return the highest-qenergy prefix whose paid pages fit the budget.
+
+    The greedy path may traverse a locally negative prerequisite to unlock a
+    jointly profitable complementary transition. We therefore construct the
+    whole budget-constrained path, then choose its best cumulative prefix
+    (including the empty prefix) rather than blindly applying its last state.
+    """
+    cumulative_pages = np.asarray(trace.cumulative_pages, np.int64)
+    evaluated = int(np.sum(cumulative_pages <= int(budget_pages)))
+    cumulative_gain = np.cumsum(np.asarray(trace.gains, np.float64)[:evaluated])
+    best_actions = int(np.argmax(np.concatenate(([0.0], cumulative_gain))))
+    chosen = np.asarray(trace.order, np.int64)[:best_actions]
+    paid = int(cumulative_pages[best_actions - 1]) if best_actions else 0
+    vectors = np.asarray(factorized.transitions, np.float64).reshape(
+        4 * int(factorized.units), -1,
+    )
+    output = np.asarray(factorized.base_output, np.float64).copy()
+    if best_actions:
+        output += vectors[chosen].sum(axis=0)
+    return output, best_actions, paid, chosen, evaluated
+
+
 def evaluate_invocation(
     *,
     matrices: Mapping[str, list[np.ndarray]],
@@ -740,10 +765,9 @@ def evaluate_invocation(
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         runtime = time.perf_counter() - started
-        cumulative = trace.cumulative_pages.numpy()
-        actions = int(np.sum(cumulative <= budget_pages))
-        paid = int(cumulative[actions - 1]) if actions else 0
-        chosen = trace.order[:actions].numpy()
+        output, actions, paid, chosen, evaluated = best_factorized_prefix(
+            factorized, trace, budget_pages,
+        )
         blocks = chosen // factorized.units
         gate_actions = int(np.sum(np.isin(blocks, [0, 3])))
         down_actions = int(np.sum(np.isin(blocks, [1, 2])))
@@ -758,10 +782,12 @@ def evaluate_invocation(
             "physical_budget_bpw": budget_bpw,
             "gate_up_actions": gate_actions,
             "down_actions": down_actions,
+            "path_actions_evaluated": evaluated,
+            "prefix_policy": "best_exact_qenergy_prefix_under_budget",
             "transition_order": json.dumps([TRANSITION_NAMES[int(block)] for block in blocks]),
             **frontier_fields(
                 config, pages=paid, logical_actions=actions, logical_bytes=paid * PAGE_BYTES,
-                recovery=base.recovery(target, base_output, trace.snapshots[budget_pages].numpy(), proxy, beta),
+                recovery=base.recovery(target, base_output, output, proxy, beta),
                 runtime_seconds=runtime,
                 selector_bytes_read=int(factorized.transitions.size * 4 + (4 * factorized.units) ** 2 * 4),
                 metadata_bytes=0,

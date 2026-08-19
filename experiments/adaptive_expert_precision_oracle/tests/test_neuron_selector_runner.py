@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -50,6 +51,27 @@ def test_frontier_accounting_distinguishes_fetched_and_applied_bytes() -> None:
     assert fields["page_amplification"] == pytest.approx(4 / 3)
     assert fields["selector_metadata_bpw"] == pytest.approx(8 * 130_000 / runner.EXPERT_WEIGHTS)
     assert fields["storage_multiplier"] < 1.6
+
+
+def test_factorized_frontier_uses_best_profitable_prefix_under_budget() -> None:
+    transitions = np.zeros((4, 2, 1), dtype=np.float64)
+    transitions.reshape(8, 1)[:3, 0] = [2.0, -3.0, 1.0]
+    factorized = SimpleNamespace(
+        transitions=transitions, units=2, base_output=np.array([5.0]),
+    )
+    trace = SimpleNamespace(
+        order=runner.torch.tensor([0, 1, 2]),
+        gains=runner.torch.tensor([4.0, -7.0, 1.0]),
+        cumulative_pages=runner.torch.tensor([2, 3, 4]),
+    )
+    output, actions, paid, chosen, evaluated = runner.best_factorized_prefix(
+        factorized, trace, 4,
+    )
+    assert actions == 1
+    assert paid == 2
+    assert evaluated == 3
+    assert chosen.tolist() == [0]
+    np.testing.assert_array_equal(output, np.array([7.0]))
 
 
 def test_model_arrays_support_shared_and_per_expert_analysis() -> None:
