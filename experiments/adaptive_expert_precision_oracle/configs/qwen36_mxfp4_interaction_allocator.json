@@ -1,0 +1,44 @@
+{
+  "run_id": "qwen36_mxfp4_interaction_aware_allocator_20260819_v1",
+  "seed": 20260818,
+  "layers": [0, 4, 20, 39],
+  "experts_per_stratum": 1,
+  "minimum_split_occurrences": 1,
+  "max_train_invocations_per_expert": 48,
+  "max_validation_invocations_per_expert": 16,
+  "max_test_invocations_per_expert": 24,
+  "layout_training_invocations_per_expert": 8,
+  "page_size": 512,
+  "physical_budgets_bpw": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+  "projection_rates_bpw": [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0],
+  "crossing_targets": [0.8, 0.9, 0.95, 0.99],
+  "block_refresh_sizes": [32, 16, 8, 4],
+  "shortlist_size": 128,
+  "low_rank_ranks": [8, 16, 32, 64, 128],
+  "low_rank_methods": ["truncated_svd", "fixed_jl", "activation_weighted_svd"],
+  "metadata_encodings": ["fp16", "int8"],
+  "hybrid_forward_fractions": [0.0, 0.125, 0.25, 0.5, 1.0],
+  "pilot_policy": "one previously audited held-out invocation in every layer; all combinations only in pilot",
+  "promotion_policy": "validation-selected Pareto configurations only; no test-mask layout fitting",
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0"
+  },
+  "locked_tree_source": "results/qwen36_full_mxfp4_embedded_hierarchy_20260818_v1/dense/selected_trees.json",
+  "locked_capture_splits": {
+    "exact_checkpoint": "6 train / 3 validation / 3 test complete requests; 85 selected test invocations",
+    "cross_reference": "53 train / 12 validation / 16 test complete requests; 142 selected test invocations"
+  },
+  "locked_exact_sampled_experts_from_pr4": {
+    "0": {"72": "cold", "160": "median", "62": "hot"},
+    "4": {"17": "cold", "110": "median", "154": "hot"},
+    "20": {"242": "cold", "251": "median", "191": "hot"},
+    "39": {"68": "cold", "231": "median", "108": "hot"}
+  }
+}

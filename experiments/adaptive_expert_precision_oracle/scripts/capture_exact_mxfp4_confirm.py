@@ -58,6 +58,15 @@ def main() -> None:
     parser.add_argument("--layers", nargs="+", type=int, default=[0, 4, 20, 39])
     parser.add_argument("--max-length", type=int, default=64)
     parser.add_argument("--revision", required=True)
+    parser.add_argument(
+        "--cpu-offload", action="store_true",
+        help="dispatch overflow layers to CPU while preserving prompts, hooks, and split",
+    )
+    parser.add_argument(
+        "--cpu-only", action="store_true",
+        help="load the dequantized graph wholly on CPU (avoids Accelerate offload hooks)",
+    )
+    parser.add_argument("--max-gpu-memory", default="20GiB")
     args = parser.parse_args()
     started = time.time()
     full_config = AutoConfig.from_pretrained(args.checkpoint, local_files_only=True)
@@ -65,9 +74,16 @@ def main() -> None:
     quantization.dequantize = True
     full_config.text_config._attn_implementation = "eager"
     full_config.text_config._experts_implementation = "eager"
+    device_map: Any = {"": 0}
+    maximum_memory = None
+    if args.cpu_only:
+        device_map = {"": "cpu"}
+    elif args.cpu_offload:
+        device_map = "auto"
+        maximum_memory = {0: args.max_gpu_memory, "cpu": "256GiB"}
     model = Qwen3_5MoeForConditionalGeneration.from_pretrained(
         args.checkpoint, config=full_config, dtype=torch.bfloat16, local_files_only=True,
-        low_cpu_mem_usage=True, device_map={"": 0},
+        low_cpu_mem_usage=True, device_map=device_map, max_memory=maximum_memory,
         quantization_config=quantization,
     )
     model.eval().requires_grad_(False)
@@ -95,7 +111,8 @@ def main() -> None:
     with torch.inference_mode():
         for request_index, prompt in enumerate(PROMPTS):
             encoded = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=args.max_length, add_special_tokens=True)
-            encoded = {key: value.cuda() for key, value in encoded.items()}
+            input_device = model.get_input_embeddings().weight.device
+            encoded = {key: value.to(input_device) for key, value in encoded.items()}
             captured = {layer: {} for layer in selected_layers}
             outputs = model(**encoded, use_cache=False, return_dict=True)
             tokens = encoded["input_ids"][0].cpu().numpy()
@@ -138,6 +155,10 @@ def main() -> None:
         "schema": "exact_mxfp4_transformers_confirm_v1", "checkpoint": str(args.checkpoint), "revision": args.revision,
         "config_sha256": sha256(args.checkpoint / "config.json"), "index_sha256": sha256(args.checkpoint / "model.safetensors.index.json"),
         "loader": "Transformers compressed-tensors dequantize=True; exact packed leaf decode, no requantization",
+        "device_map": (
+            "CPU resident" if args.cpu_only
+            else ("auto CPU offload" if args.cpu_offload else "single CUDA device")
+        ),
         "torch": torch.__version__, "gpu": torch.cuda.get_device_name(0), "host": platform.node(),
         "layers": sorted(selected_layers), "requests": len(PROMPTS), "rows": len(rows),
         "split_requests": {name: sum(split_for(i) == name for i in range(len(PROMPTS))) for name in ("train", "validation", "test")},
