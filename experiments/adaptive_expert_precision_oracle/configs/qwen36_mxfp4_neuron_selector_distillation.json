@@ -21,7 +21,7 @@
     "combined_exact_and_cross_train"
   ],
   "ridge_relative": 0.0001,
-  "synthesis_encodings": ["fp16", "fp8_e4m3fn", "int8_per_row"],
+  "synthesis_encodings": ["fp16", "fp8_e4m3fn_per_row", "int8_per_row"],
   "candidate_applied_units": 192,
   "candidate_unit_counts": [192, 224, 240, 256],
   "candidate_physical_bpw": [0.75, 0.875, 0.9375, 1.0],

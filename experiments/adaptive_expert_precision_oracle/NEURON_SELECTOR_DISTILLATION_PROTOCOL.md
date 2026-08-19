@@ -61,7 +61,7 @@ activations, masks, scores, and recoveries are excluded. Both exact-checkpoint
 training-only and combined exact-plus-cross training-only fits are evaluated.
 
 Layer transforms are FP16. Expert synthesis factors are evaluated in FP16,
-FP8 E4M3FN, and per-row INT8. Metadata bpw includes amortized layer transforms,
+row-scaled FP8 E4M3FN, and per-row INT8. Metadata bpw includes amortized layer transforms,
 expert synthesis factors, and the A/B/C statistic. Runtime is a late H0
 second-pass selector because it consumes the true resident Q2 responses; no H4
 claim is made.
@@ -105,8 +105,8 @@ unique-tensor-footprint lower bound, not measured hardware traffic.
 
 ## Frozen implementation checkpoint
 
-- config SHA-256: `7c19d1994d91492e921aad4e214c9f3421db4c970b1f6eddacef49d503a90fd1`
-- selector core: `26ce5de7f6b3f28eb77b4119964c9f911fecfe3232d7e5171c17040671283a11`
+- config SHA-256: `41eb0e21cdb016017d8f3b4a48bcdd4425323c463d96afedd0bf585cfbedf3d4`
+- selector core: `24c296a0fe3d5390543bedb7847f8d60bcb3b7dfd3ebfce30eaccba7b294a871`
 - runner: `e796d5c2bb0a03676bc3b6631811a7b2810755edb0da789684e35cd7cc7ae2f5`
 - analyzer wrapper: `af3bc8158b4da891f16b56051e3ccac2672c635876d26f5a6980215c8f6aa82c`
 - promotion analyzer: `d346cc367107969d36dca256ebc606a088a9ebc5e0542e80466c7a799febfdb7`

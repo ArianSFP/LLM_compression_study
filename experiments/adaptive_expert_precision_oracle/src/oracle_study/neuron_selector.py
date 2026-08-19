@@ -317,8 +317,13 @@ class EncodedArray:
 def encode_array(value: np.ndarray, encoding: str) -> EncodedArray:
     """Quantize selector metadata and return its decoded runtime value."""
     array = np.asarray(value, dtype=np.float32)
+    if not np.all(np.isfinite(array)):
+        raise ValueError("selector metadata contains a non-finite input")
     if encoding == "fp16":
-        return EncodedArray(array.astype(np.float16).astype(np.float32), 2 * array.size, encoding)
+        decoded = array.astype(np.float16).astype(np.float32)
+        if not np.all(np.isfinite(decoded)):
+            raise ValueError("FP16 selector metadata overflowed")
+        return EncodedArray(decoded, 2 * array.size, encoding)
     if encoding == "int8_per_row":
         matrix = array.reshape(1, -1) if array.ndim == 1 else array
         scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 127.0
@@ -326,12 +331,18 @@ def encode_array(value: np.ndarray, encoding: str) -> EncodedArray:
         quantized = np.clip(np.rint(matrix / scale.astype(np.float32)), -127, 127).astype(np.int8)
         decoded = quantized.astype(np.float32) * scale.astype(np.float32)
         return EncodedArray(decoded.reshape(array.shape), quantized.size + scale.size * 2, encoding)
-    if encoding == "fp8_e4m3fn":
+    if encoding in {"fp8_e4m3fn", "fp8_e4m3fn_per_row"}:
         if not hasattr(torch, "float8_e4m3fn"):
             raise RuntimeError("this Torch build does not provide float8_e4m3fn")
-        tensor = torch.as_tensor(array).to(torch.float8_e4m3fn)
-        decoded = tensor.to(torch.float32).cpu().numpy().reshape(array.shape)
-        return EncodedArray(decoded, array.size, encoding)
+        matrix = array.reshape(1, -1) if array.ndim == 1 else array
+        scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 448.0
+        scale = np.where(scale > 0.0, scale, 1.0).astype(np.float16)
+        normalized = matrix / scale.astype(np.float32)
+        tensor = torch.as_tensor(normalized).to(torch.float8_e4m3fn)
+        decoded = tensor.to(torch.float32).cpu().numpy() * scale.astype(np.float32)
+        if not np.all(np.isfinite(decoded)):
+            raise ValueError("row-scaled FP8 selector metadata overflowed")
+        return EncodedArray(decoded.reshape(array.shape), array.size + scale.size * 2, encoding)
     raise ValueError(f"unsupported encoding: {encoding}")
 
 

@@ -219,6 +219,6 @@ def test_ranking_metrics_are_exact_for_perfect_and_worse_orders() -> None:
 @pytest.mark.skipif(not hasattr(torch, "float8_e4m3fn"), reason="Torch has no float8")
 def test_fp8_encoding_uses_one_byte_per_value() -> None:
     value = np.array([[0.1, -2.0, 5.5]], np.float32)
-    encoded = encode_array(value, "fp8_e4m3fn")
-    assert encoded.storage_bytes == value.size
+    encoded = encode_array(value, "fp8_e4m3fn_per_row")
+    assert encoded.storage_bytes == value.size + 2
     assert np.all(np.isfinite(encoded.decoded))
