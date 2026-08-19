@@ -1,0 +1,137 @@
+{
+  "candidates": [
+    {
+      "exact_q4_code_equality": true,
+      "manifest": "baseline_pr4_2p25/manifest.json",
+      "manifest_sha256": "4d63205c2eb65156243835a73ae761edcd021c469c62a74eea359cefc966e657",
+      "name": "baseline_pr4_2p25",
+      "rate_accounting": {
+        "all_suffix_streamed_bpw": 2.0,
+        "all_suffix_streamed_bytes": 9437184,
+        "codec_stat_bytes": 20072832,
+        "manifest_bytes_excluded_control_plane": 86037,
+        "q3_streamed_bpw": 1.0,
+        "q3_streamed_bytes": 4718592,
+        "q4_streamed_bpw": 1.0,
+        "q4_streamed_bytes": 4718592,
+        "resident_bpw": 2.2539876302083335,
+        "resident_bytes": 10635648,
+        "resident_metadata_bytes": 384,
+        "total_effective_bpw": 4.253987630208333,
+        "weight_resident_bytes": 10635264,
+        "weights": 37748736
+      }
+    },
+    {
+      "exact_q4_code_equality": true,
+      "manifest": "B16_g32_cluster_functional/manifest.json",
+      "manifest_sha256": "0620c0614da8f191b08904725d263a688d58a3b06669b6d5c914734c7792f45c",
+      "name": "B16_g32_cluster_functional",
+      "rate_accounting": {
+        "all_suffix_streamed_bpw": 2.0,
+        "all_suffix_streamed_bytes": 9437184,
+        "codec_stat_bytes": 20668224,
+        "manifest_bytes_excluded_control_plane": 92809,
+        "q3_streamed_bpw": 1.0,
+        "q3_streamed_bytes": 4718592,
+        "q4_streamed_bpw": 1.0,
+        "q4_streamed_bytes": 4718592,
+        "resident_bpw": 2.3801676432291665,
+        "resident_bytes": 11231040,
+        "resident_metadata_bytes": 595776,
+        "total_effective_bpw": 4.380167643229167,
+        "weight_resident_bytes": 10635264,
+        "weights": 37748736
+      }
+    }
+  ],
+  "checkpoint": {
+    "audit": {
+      "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+      "errors": [],
+      "experts_per_layer": 256,
+      "format": "mxfp4-pack-quantized",
+      "group_size": 32,
+      "layers": [
+        0,
+        4,
+        20,
+        39
+      ],
+      "missing_count": 0,
+      "missing_sample": [],
+      "passed": true,
+      "required_tensor_entries": 6144
+    },
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "path": "/workspace/qwen36_mxfp4_candidate"
+  },
+  "experts": [
+    {
+      "expert": 52,
+      "layer": 0,
+      "stratum": "cold"
+    },
+    {
+      "expert": 62,
+      "layer": 0,
+      "stratum": "hot"
+    },
+    {
+      "expert": 207,
+      "layer": 0,
+      "stratum": "median"
+    },
+    {
+      "expert": 12,
+      "layer": 4,
+      "stratum": "cold"
+    },
+    {
+      "expert": 36,
+      "layer": 4,
+      "stratum": "median"
+    },
+    {
+      "expert": 154,
+      "layer": 4,
+      "stratum": "hot"
+    },
+    {
+      "expert": 8,
+      "layer": 20,
+      "stratum": "median"
+    },
+    {
+      "expert": 172,
+      "layer": 20,
+      "stratum": "hot"
+    },
+    {
+      "expert": 226,
+      "layer": 20,
+      "stratum": "cold"
+    },
+    {
+      "expert": 70,
+      "layer": 39,
+      "stratum": "hot"
+    },
+    {
+      "expert": 127,
+      "layer": 39,
+      "stratum": "cold"
+    },
+    {
+      "expert": 251,
+      "layer": 39,
+      "stratum": "median"
+    }
+  ],
+  "fit_run_facts": {
+    "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/fit_run_facts.json",
+    "sha256": "a47f28b6ce2333055553b1a9db6c87f10853a1d8e13ca5ecdf221b301eda0a3b"
+  },
+  "format": "bounded_exact_mxfp4_codebook_winners"
+}

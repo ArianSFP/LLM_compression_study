@@ -159,7 +159,9 @@ def main() -> None:
             "CPU resident" if args.cpu_only
             else ("auto CPU offload" if args.cpu_offload else "single CUDA device")
         ),
-        "torch": torch.__version__, "gpu": torch.cuda.get_device_name(0), "host": platform.node(),
+        "torch": torch.__version__,
+        "gpu": None if args.cpu_only else torch.cuda.get_device_name(0),
+        "host": platform.node(),
         "layers": sorted(selected_layers), "requests": len(PROMPTS), "rows": len(rows),
         "split_requests": {name: sum(split_for(i) == name for i in range(len(PROMPTS))) for name in ("train", "validation", "test")},
         "split_rows": {name: sum(row["split"] == name for row in rows) for name in ("train", "validation", "test")},

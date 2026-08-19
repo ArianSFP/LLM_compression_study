@@ -1,0 +1,53 @@
+{
+  "action_shards": [
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_A_vector_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_A_vector_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_B16_g32_cluster_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_B16_g32_cluster_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_B16_g32_expert_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_B16_g32_expert_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_B16_g32_global_functional_eps_0p01_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_B16_g32_global_functional_eps_0p01_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_C8_g32_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_C8_g32_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_D4_g16_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_D4_g16_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_E16_g64_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_E16_g64_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_E64_g64_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_E64_g64_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_baseline_pr4_2p25_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/actions_baseline_pr4_2p25_layers_20_39.parquet"
+  ],
+  "completed_unix": 1787169457.3954225,
+  "dense_shards": [
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/dense_shards/dense_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/dense_shards/dense_layers_0_4_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/dense_shards/dense_layers_20_39.parquet"
+  ],
+  "projection_shards": [
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/dense_shards/projection_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/dense_shards/projection_layers_0_4_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/dense_shards/projection_layers_20_39.parquet"
+  ],
+  "selective_shards": [
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_A_vector_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_A_vector_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_B16_g32_cluster_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_B16_g32_cluster_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_B16_g32_expert_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_B16_g32_expert_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_B16_g32_global_functional_eps_0p01_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_B16_g32_global_functional_eps_0p01_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_C8_g32_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_C8_g32_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_D4_g16_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_D4_g16_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_E16_g64_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_E16_g64_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_E64_g64_layer_functional_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_E64_g64_layer_functional_layers_20_39.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_baseline_pr4_2p25_layers_0_4.parquet",
+    "results/qwen36_mxfp4_codebook_granularity_20260819_v2/metrics/selective_shards/selective_baseline_pr4_2p25_layers_20_39.parquet"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "run_id": "qwen36_mxfp4_codebook_promotion_11layer_20260819_v1",
+  "seed": 20260819,
+  "layers": [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 39],
+  "experts_per_stratum": 1,
+  "minimum_split_occurrences": 3,
+  "max_train_invocations_per_expert": 48,
+  "max_validation_invocations_per_expert": 24,
+  "max_test_invocations_per_expert": 32,
+  "family_order_candidates": 64,
+  "independent_order_candidates": 32,
+  "vector_shrinkage_strength": 8.0,
+  "alternating_iterations": 6,
+  "q2_tolerance_sweep": [0.0, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.05],
+  "selective_projection_rates_bpw": [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0],
+  "physical_budgets_bpw": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+  "page_size": 512,
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb"
+  },
+  "primary_capture": {
+    "schema": "exact_mxfp4_transformers_confirm_v1",
+    "sha256": "da786a99209f03515e68bc21f1849f8613dbe5251d4eebff7e3537e157a0d56f",
+    "manifest_sha256": "a0105bdcd223a2d3eee117ff87dda02341378ba926050852e9034484c487dcec",
+    "requests": 12,
+    "rows": 1551,
+    "split_requests": {"train": 6, "validation": 3, "test": 3},
+    "status": "validated exact-checkpoint 11-layer CPU capture; manifest synthesized after post-save CUDA-name bug"
+  }
+}

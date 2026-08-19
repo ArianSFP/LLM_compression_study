@@ -1,0 +1,284 @@
+{
+  "book_scopes": {
+    "layer_00/down": "layer_00__down",
+    "layer_00/gate": "layer_00__gate",
+    "layer_00/up": "layer_00__up",
+    "layer_04/down": "layer_04__down",
+    "layer_04/gate": "layer_04__gate",
+    "layer_04/up": "layer_04__up",
+    "layer_20/down": "layer_20__down",
+    "layer_20/gate": "layer_20__gate",
+    "layer_20/up": "layer_20__up",
+    "layer_39/down": "layer_39__down",
+    "layer_39/gate": "layer_39__gate",
+    "layer_39/up": "layer_39__up"
+  },
+  "design": "E",
+  "design_id": 5,
+  "exact_mxfp4": true,
+  "experts": [
+    [
+      0,
+      52
+    ],
+    [
+      0,
+      62
+    ],
+    [
+      0,
+      207
+    ],
+    [
+      4,
+      12
+    ],
+    [
+      4,
+      36
+    ],
+    [
+      4,
+      154
+    ],
+    [
+      20,
+      8
+    ],
+    [
+      20,
+      172
+    ],
+    [
+      20,
+      226
+    ],
+    [
+      39,
+      70
+    ],
+    [
+      39,
+      127
+    ],
+    [
+      39,
+      251
+    ]
+  ],
+  "families": 16,
+  "group_size": 64,
+  "metadata_files": [
+    {
+      "bytes": 49216,
+      "expert": 52,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_00_expert_052.cgb",
+      "sha256": "5a57812808800005fb926d75bb872e4e60d6c695b62a7da62f816aba05539f76"
+    },
+    {
+      "bytes": 49216,
+      "expert": 62,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_00_expert_062.cgb",
+      "sha256": "6371ed9e98a1d945a42ea186dd5635fc4b5d2e25665b7bf8bfefe9c2f98835dc"
+    },
+    {
+      "bytes": 49216,
+      "expert": 207,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_00_expert_207.cgb",
+      "sha256": "eb3b5c4905857aae9a8b54e209c8a98c57a9220a8202a8ade1522bfda23498fc"
+    },
+    {
+      "bytes": 49216,
+      "expert": 12,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_04_expert_012.cgb",
+      "sha256": "9fa1369d6bdfed77663f9178db15a91d9e35a71af5f375d89b35425fbeef01c3"
+    },
+    {
+      "bytes": 49216,
+      "expert": 36,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_04_expert_036.cgb",
+      "sha256": "6f459d59030a90eed27dff5a7a5f496e54afe79d330051ab63c3356073d66218"
+    },
+    {
+      "bytes": 49216,
+      "expert": 154,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_04_expert_154.cgb",
+      "sha256": "805823f44126cc03a906699636a857b37e8f885df684beb23c16e59551d9a7ec"
+    },
+    {
+      "bytes": 49216,
+      "expert": 8,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_20_expert_008.cgb",
+      "sha256": "086c45e346e90f9912d6a0f5dd10630fb11f6bc1aef25c8b58989e8d03064942"
+    },
+    {
+      "bytes": 49216,
+      "expert": 172,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_20_expert_172.cgb",
+      "sha256": "5990a360671496c5c68701ef4bdcd7f04ecfcb3b366305eef84af9428ae50af4"
+    },
+    {
+      "bytes": 49216,
+      "expert": 226,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_20_expert_226.cgb",
+      "sha256": "0ad1c3ae8b6a7b84f8cfc4af66d69bec2194e7cec89c2339c6c015e5d5bdd791"
+    },
+    {
+      "bytes": 49216,
+      "expert": 70,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_39_expert_070.cgb",
+      "sha256": "13c1e45e5a01e91bbd1ec6acd1ea82b1c2f344eb439c8292d9675031b9b03b40"
+    },
+    {
+      "bytes": 49216,
+      "expert": 127,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_39_expert_127.cgb",
+      "sha256": "78cc53280958da98fd2685a77f6b1ef963968fd8dead9972229cb974408003dc"
+    },
+    {
+      "bytes": 49216,
+      "expert": 251,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_metadata/layer_39_expert_251.cgb",
+      "sha256": "f193ccbc49ae9f7d18c821a74e893789fd7752018d7a12b1915683e299651fb7"
+    }
+  ],
+  "name": "E16_g64_layer_functional",
+  "objective": "expert_functional_proxy",
+  "q2_tolerance": 0.005,
+  "selector_bits": 8,
+  "sharing": "layer_projection",
+  "table_files": [
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_00__gate.bin",
+      "scope": "layer_00/gate",
+      "sha256": "f41db5de470b8960920a5868ad8305bb5e8f4c2405ad7ed6c0619ac3d4956252"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_00__up.bin",
+      "scope": "layer_00/up",
+      "sha256": "6b7811082b5ce7bfafefabb5af2baa23b4cc178be254011e5553beae0d6683c4"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_00__down.bin",
+      "scope": "layer_00/down",
+      "sha256": "a7c0d1e05d602557e16dde5bce01651d94a55e09664b6bdbcca9de9aeab7358b"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_04__gate.bin",
+      "scope": "layer_04/gate",
+      "sha256": "0e84ab477aef4dcd374dacdcb6c20b98adcbcbf0111e507b2dce114549193f6c"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_04__up.bin",
+      "scope": "layer_04/up",
+      "sha256": "1a2aa359918fa1f42731babfe08d370fa5b45a9fa972cfcb7a9d43c84e142478"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_04__down.bin",
+      "scope": "layer_04/down",
+      "sha256": "ed7ad44c0d96d659af1474ba23c4ec865bd4d8f402009566dfbb02f0b2191ded"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_20__gate.bin",
+      "scope": "layer_20/gate",
+      "sha256": "52a9cf3edaaccb3884e03724b27d488d29788a2a1ad4fc973e8445034362903e"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_20__up.bin",
+      "scope": "layer_20/up",
+      "sha256": "9dd4bab2b78bbe90b05b2085b27f292968dcb3a56314ff9446688da1a4c2c37d"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_20__down.bin",
+      "scope": "layer_20/down",
+      "sha256": "1377360348927e2411bb3956a1bb111c3230c85a31cf021ac79886d0692e5f45"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_39__gate.bin",
+      "scope": "layer_39/gate",
+      "sha256": "e991ae802ed89af42cab31b2b30b00c654d9a6bc82ab0f29d598d338236023ff"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_39__up.bin",
+      "scope": "layer_39/up",
+      "sha256": "f6786337454b7314c4468d9ccc60e62aa6ea9629a421f6a25af5fd4296220f4d"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/E16_g64_layer_functional/serialized_tables/layer_39__down.bin",
+      "scope": "layer_39/down",
+      "sha256": "34021a81e4a11bc9309fb83135eea120f2758af607869364edd8f6633dbe54a8"
+    }
+  ]
+}

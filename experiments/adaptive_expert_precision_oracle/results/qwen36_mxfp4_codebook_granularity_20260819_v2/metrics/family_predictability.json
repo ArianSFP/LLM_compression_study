@@ -1,0 +1,40 @@
+{
+  "candidate": "B16_g32_global_functional_eps_0p01",
+  "features": [
+    "zero_fraction",
+    "half_fraction",
+    "sign_imbalance",
+    "abs_mean",
+    "variance",
+    "max_rms_ratio",
+    "scale_exponent",
+    "activation_weighted_importance",
+    "distinct_leaf_count"
+  ],
+  "majority_accuracy": 0.15752003718357122,
+  "nearest_centroid_accuracy": 0.19629071204271575,
+  "scope_results": [
+    {
+      "majority_accuracy": 0.13867294053464266,
+      "nearest_centroid_accuracy": 0.14743589743589744,
+      "scope": "global/down",
+      "test_blocks": 29328,
+      "train_blocks": 68976
+    },
+    {
+      "majority_accuracy": 0.18644299429430455,
+      "nearest_centroid_accuracy": 0.22040384024052753,
+      "scope": "global/gate",
+      "test_blocks": 29269,
+      "train_blocks": 69035
+    },
+    {
+      "majority_accuracy": 0.14759910852974945,
+      "nearest_centroid_accuracy": 0.22084149388802593,
+      "scope": "global/up",
+      "test_blocks": 29614,
+      "train_blocks": 68690
+    }
+  ],
+  "test_blocks": 88211
+}

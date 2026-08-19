@@ -1,0 +1,23 @@
+{
+  "action_shards": [
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/actions_B16_g32_cluster_functional_layers_0_8_16_24_32_39.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/actions_B16_g32_cluster_functional_layers_4_12_20_28_36.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/actions_baseline_pr4_2p25_layers_0_8_16_24_32_39.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/actions_baseline_pr4_2p25_layers_4_12_20_28_36.parquet"
+  ],
+  "completed_unix": 1787170570.3027408,
+  "dense_shards": [
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/dense_shards/dense_layers_0_8_16_24_32_39.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/dense_shards/dense_layers_4_12_20_28_36.parquet"
+  ],
+  "projection_shards": [
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/dense_shards/projection_layers_0_8_16_24_32_39.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/dense_shards/projection_layers_4_12_20_28_36.parquet"
+  ],
+  "selective_shards": [
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/selective_B16_g32_cluster_functional_layers_0_8_16_24_32_39.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/selective_B16_g32_cluster_functional_layers_4_12_20_28_36.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/selective_baseline_pr4_2p25_layers_0_8_16_24_32_39.parquet",
+    "results/qwen36_mxfp4_codebook_promotion_11layer_20260819_v1/metrics/selective_shards/selective_baseline_pr4_2p25_layers_4_12_20_28_36.parquet"
+  ]
+}

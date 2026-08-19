@@ -1,0 +1,17 @@
+{
+  "all_below_5x": true,
+  "completed_unix": 1787171011.5022354,
+  "external_storage_multipliers": {
+    "reference_plus_hybrid": 1.9411764705882353,
+    "reference_plus_paired": 1.4705882352941178,
+    "reference_plus_separate": 1.4705882352941178
+  },
+  "hybrid_suffix_bpw": 4.0,
+  "page_size_bytes": 512,
+  "paired_suffix_bpw": 2.0,
+  "reference_bpw": 4.25,
+  "resident_parent_bpw": 2.25,
+  "separate_suffix_bpw": 2.0,
+  "started_unix": 1787168783.3527114,
+  "test_masks_used_for_layouts": false
+}

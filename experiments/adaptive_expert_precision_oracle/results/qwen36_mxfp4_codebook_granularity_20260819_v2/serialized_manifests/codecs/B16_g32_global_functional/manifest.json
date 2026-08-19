@@ -1,0 +1,203 @@
+{
+  "book_scopes": {
+    "global/down": "global__down",
+    "global/gate": "global__gate",
+    "global/up": "global__up"
+  },
+  "design": "B",
+  "design_id": 2,
+  "exact_mxfp4": true,
+  "experts": [
+    [
+      0,
+      52
+    ],
+    [
+      0,
+      62
+    ],
+    [
+      0,
+      207
+    ],
+    [
+      4,
+      12
+    ],
+    [
+      4,
+      36
+    ],
+    [
+      4,
+      154
+    ],
+    [
+      20,
+      8
+    ],
+    [
+      20,
+      172
+    ],
+    [
+      20,
+      226
+    ],
+    [
+      39,
+      70
+    ],
+    [
+      39,
+      127
+    ],
+    [
+      39,
+      251
+    ]
+  ],
+  "families": 16,
+  "group_size": 32,
+  "metadata_files": [
+    {
+      "bytes": 49216,
+      "expert": 52,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_00_expert_052.cgb",
+      "sha256": "31288638428131cbafe11823377fb63049de0a2419fbb85bcdf410d09b5a11f8"
+    },
+    {
+      "bytes": 49216,
+      "expert": 62,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_00_expert_062.cgb",
+      "sha256": "3326d950333e7257ef1a12de5f6000e57fb3f57eec3f3e302164530737ecdc1d"
+    },
+    {
+      "bytes": 49216,
+      "expert": 207,
+      "header_bytes": 64,
+      "layer": 0,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_00_expert_207.cgb",
+      "sha256": "f64f0fe517e3faf38549723771ffa3fc77b74049564eb62c0b10190b8c3c51da"
+    },
+    {
+      "bytes": 49216,
+      "expert": 12,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_04_expert_012.cgb",
+      "sha256": "b40291cee609ee0726007aca68940bd4892349463ba274911ee48f48eeb302a3"
+    },
+    {
+      "bytes": 49216,
+      "expert": 36,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_04_expert_036.cgb",
+      "sha256": "604f44773e4301e6d6db4c3c03fdfd55a96b5c3519ffe2ccd06543f5eb8aa908"
+    },
+    {
+      "bytes": 49216,
+      "expert": 154,
+      "header_bytes": 64,
+      "layer": 4,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_04_expert_154.cgb",
+      "sha256": "2880ad50e017474e6631d2bc9b872d3c134c093ba32c76d10da7c0419d252eb8"
+    },
+    {
+      "bytes": 49216,
+      "expert": 8,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_20_expert_008.cgb",
+      "sha256": "497b4a77cf09fd7811072954438956403d8f7f1454b6a7edc3e312f619f1ed80"
+    },
+    {
+      "bytes": 49216,
+      "expert": 172,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_20_expert_172.cgb",
+      "sha256": "2b8159398d55ea4e2099854bf3441488542644a620581395ad7673c1b76c0a0c"
+    },
+    {
+      "bytes": 49216,
+      "expert": 226,
+      "header_bytes": 64,
+      "layer": 20,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_20_expert_226.cgb",
+      "sha256": "a04da6b271ed3843da8bb6c75d21f056b52d7dcefa98e6d4c2347913e1a3e19e"
+    },
+    {
+      "bytes": 49216,
+      "expert": 70,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_39_expert_070.cgb",
+      "sha256": "16096e43ab8debbcf84f3f31918e413d6bf54c7dcdc640c70853ae4a8b011e63"
+    },
+    {
+      "bytes": 49216,
+      "expert": 127,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_39_expert_127.cgb",
+      "sha256": "76b78081f71b489b1333e970cd565e78f62aaaee1a708f0d7941980ca0287a07"
+    },
+    {
+      "bytes": 49216,
+      "expert": 251,
+      "header_bytes": 64,
+      "layer": 39,
+      "padding_bytes": 0,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_metadata/layer_39_expert_251.cgb",
+      "sha256": "cba6e2c816880cb371c815efe927712dc65cb837c379d938bf5bc9c4400e77b4"
+    }
+  ],
+  "name": "B16_g32_global_functional",
+  "objective": "expert_functional_proxy",
+  "q2_tolerance": 0.005,
+  "selector_bits": 4,
+  "sharing": "global_projection",
+  "table_files": [
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_tables/global__gate.bin",
+      "scope": "global/gate",
+      "sha256": "ae6950f0633c252d0828cdb659099a6a5a00edeac170d3efb0e8f48c26605980"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_tables/global__up.bin",
+      "scope": "global/up",
+      "sha256": "336a49bd348c9e68ed1423879e3d3d186869f76814dfb8719016c2f6543e9ce8"
+    },
+    {
+      "books": 16,
+      "bytes": 512,
+      "bytes_per_book": 32,
+      "path": "results/qwen36_mxfp4_codebook_granularity_20260819_v2/serialized_manifests/codecs/B16_g32_global_functional/serialized_tables/global__down.bin",
+      "scope": "global/down",
+      "sha256": "06c0fb300c2fc50e78af5e4c9269604a6bf4e015b43e8205665e43a00b3b1499"
+    }
+  ]
+}
