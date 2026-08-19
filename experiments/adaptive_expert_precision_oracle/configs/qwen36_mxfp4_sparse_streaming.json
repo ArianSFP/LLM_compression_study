@@ -1,0 +1,114 @@
+{
+  "run_id": "qwen36_mxfp4_sparse_streaming_20260819_v1",
+  "base_pr6_commit": "1f01edf74ce754fea1615b26a97e4465a829671f",
+  "seed": 20260819,
+  "layers": [0, 4, 20, 39],
+  "page_size_bytes": 512,
+  "resident_parent_bpw": 2.25,
+  "reference_bpw": 4.25,
+  "suffix_bpw_per_complete_representation": 2.0,
+  "physical_budgets_bpw": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5],
+  "unit_counts": [16, 32, 64, 96, 128, 192, 256, 320, 384, 512],
+  "unit_selectors": [
+    "exact_unit_output_marginal_fixed_greedy",
+    "independent_unit_correction_norm",
+    "q2_hidden_magnitude",
+    "weight_aware_down_delta",
+    "first_order_gate_up_down_sensitivity"
+  ],
+  "primary_metric": "exact sequential complete-expert qenergy recovery under I + beta P P.T; expert-output reconstruction, not task accuracy",
+  "conditional_followup_tile_shapes": [[16, 64], [32, 32], [64, 16]],
+  "tile_pilot_shape": [32, 32],
+  "conditional_followup_tile_selectors": [
+    "exact_dynamic_tile_marginal",
+    "activation_energy_x_weight",
+    "cartesian_hidden_input_blocks"
+  ],
+  "activation_shortlist_sizes": [64, 128, 256, 384, 512, 768, 1024],
+  "activation_shortlist_unit": "input_coordinates",
+  "coordinate_score_aggregation": "sum_stage_energy",
+  "shortlist_physical_layout": "canonical_paired_planes_four_coordinates_per_projection_page",
+  "conditional_followup_shortlist_refresh_blocks": [1, 4, 8, 16, 32],
+  "conditional_followup_candidate_overfetch_factors": [1.0, 1.2, 1.5, 2.0],
+  "support_prefix_bpw": [0.25, 0.5, 0.75, 1.0],
+  "conditional_followup_sparse_graph_neighbours": [4, 8, 16, 32, 64],
+  "conditional_followup_sparse_graph_base_ranks": [0, 16, 32, 64],
+  "conditional_followup_signature_encodings": [
+    "sign_norm",
+    "sign_16_block_scales",
+    "ternary",
+    "two_bit_16_block_scales"
+  ],
+  "max_train_invocations_per_expert": 48,
+  "max_validation_invocations_per_expert": 16,
+  "max_test_invocations_per_expert": 24,
+  "pilot_validation_invocations_per_expert": 16,
+  "pilot_test_invocations_per_expert": 1,
+  "pilot_expert_per_layer": {
+    "0": 62,
+    "4": 154,
+    "20": 191,
+    "39": 108
+  },
+  "promotion_policy": {
+    "selection_split": "validation",
+    "promotion_min_validation_invocations_per_layer": 4,
+    "promotion_min_validation_requests_per_layer": 2,
+    "unit_go_at_1bpw_median": 0.9237,
+    "unit_go_at_1bpw_p10": 0.8724,
+    "unit_stretch_goal_median": 0.95,
+    "unit_stretch_goal_p10": 0.9,
+    "tile_min_recovery_point_gain": 0.03,
+    "tile_min_page_reduction_at_matched_recovery": 0.25,
+    "tile_baseline_action_family": "input_coordinate_baseline",
+    "shortlist_min_overfetch": 1.0,
+    "shortlist_min_exact_gain_retention_median": 0.95,
+    "shortlist_min_exact_gain_retention_p10": 0.9,
+    "shortlist_max_candidates": 512,
+    "shortlist_max_overfetch": 1.25,
+    "shortlist_overfetch_statistic": "p90",
+    "no_test_tuning": true
+  },
+  "locked_pr6_baselines_at_1_physical_bpw": {
+    "cohort": "85 exact-checkpoint held-out invocations over layers 0,4,20,39",
+    "current_diagonal_layout": {"p10": 0.8250, "median": 0.8915},
+    "exact_training_layout_separate_planes": {"p10": 0.8385, "median": 0.8973},
+    "paired_packets": {"p10": 0.8553, "median": 0.9200},
+    "h0_hybrid_representation": {"p10": 0.8724, "median": 0.9237},
+    "metric": "exact sequential complete-expert qenergy recovery; not task accuracy"
+  },
+  "pilot_policy": "one predeclared hot expert per audited layer; use every available validation occurrence up to 16, plus exactly one held-out test sanity invocation that is never used for promotion; promote only validation-Pareto action families and shapes",
+  "expansion_policy": "promote only action families that improve the controlled PR6 physical frontier or materially localize exact support; do not run a full Cartesian product",
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0"
+  },
+  "locked_tree_source": "results/qwen36_full_mxfp4_embedded_hierarchy_20260818_v1/dense/selected_trees.json",
+  "locked_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "locked_capture_splits": {
+    "exact_checkpoint": "6 train / 3 validation / 3 test complete requests; 85 selected test invocations",
+    "cross_reference": "53 train / 12 validation / 16 test complete requests; 142 selected test invocations"
+  },
+  "locked_capture_sha256": {
+    "exact_checkpoint": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+    "cross_reference": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add"
+  },
+  "locked_exact_sampled_experts_from_pr4": {
+    "0": {"72": "cold", "160": "median", "62": "hot"},
+    "4": {"17": "cold", "110": "median", "154": "hot"},
+    "20": {"242": "cold", "251": "median", "191": "hot"},
+    "39": {"68": "cold", "231": "median", "108": "hot"}
+  },
+  "locked_cross_sampled_experts_from_pr6": {
+    "0": {"71": "cold", "207": "median", "238": "hot"},
+    "4": {"156": "cold", "176": "median", "134": "hot"},
+    "20": {"129": "cold", "225": "median", "72": "hot"},
+    "39": {"180": "cold", "155": "median", "235": "hot"}
+  }
+}
