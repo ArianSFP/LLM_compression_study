@@ -326,17 +326,31 @@ def encode_array(value: np.ndarray, encoding: str) -> EncodedArray:
         return EncodedArray(decoded, 2 * array.size, encoding)
     if encoding == "int8_per_row":
         matrix = array.reshape(1, -1) if array.ndim == 1 else array
-        scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 127.0
-        scale = np.where(scale > 0.0, scale, 1.0).astype(np.float16)
+        raw_scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 127.0
+        minimum_scale = np.float32(np.nextafter(np.float16(0.0), np.float16(1.0)))
+        scale = np.where(raw_scale > 0.0, np.maximum(raw_scale, minimum_scale), 1.0)
+        if np.any(scale > np.finfo(np.float16).max):
+            raise ValueError("row-scaled INT8 selector scale overflowed FP16")
+        scale = scale.astype(np.float16)
         quantized = np.clip(np.rint(matrix / scale.astype(np.float32)), -127, 127).astype(np.int8)
         decoded = quantized.astype(np.float32) * scale.astype(np.float32)
+        if not np.all(np.isfinite(decoded)):
+            raise ValueError("row-scaled INT8 selector metadata overflowed")
         return EncodedArray(decoded.reshape(array.shape), quantized.size + scale.size * 2, encoding)
     if encoding in {"fp8_e4m3fn", "fp8_e4m3fn_per_row"}:
         if not hasattr(torch, "float8_e4m3fn"):
             raise RuntimeError("this Torch build does not provide float8_e4m3fn")
         matrix = array.reshape(1, -1) if array.ndim == 1 else array
-        scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 448.0
-        scale = np.where(scale > 0.0, scale, 1.0).astype(np.float16)
+        raw_scale = np.max(np.abs(matrix), axis=1, keepdims=True) / 448.0
+        # The scale itself is stored in FP16. Clamp nonzero rows to the
+        # smallest representable positive value before casting so tiny fitted
+        # response rows quantize to zero instead of dividing by an underflowed
+        # zero scale. True zero rows retain the exact zero payload.
+        minimum_scale = np.float32(np.nextafter(np.float16(0.0), np.float16(1.0)))
+        scale = np.where(raw_scale > 0.0, np.maximum(raw_scale, minimum_scale), 1.0)
+        if np.any(scale > np.finfo(np.float16).max):
+            raise ValueError("row-scaled FP8 selector scale overflowed FP16")
+        scale = scale.astype(np.float16)
         normalized = matrix / scale.astype(np.float32)
         tensor = torch.as_tensor(normalized).to(torch.float8_e4m3fn)
         decoded = tensor.to(torch.float32).cpu().numpy() * scale.astype(np.float32)

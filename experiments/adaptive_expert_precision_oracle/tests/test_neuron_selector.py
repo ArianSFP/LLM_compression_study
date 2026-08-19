@@ -222,3 +222,14 @@ def test_fp8_encoding_uses_one_byte_per_value() -> None:
     encoded = encode_array(value, "fp8_e4m3fn_per_row")
     assert encoded.storage_bytes == value.size + 2
     assert np.all(np.isfinite(encoded.decoded))
+
+
+@pytest.mark.parametrize("encoding", ["int8_per_row", "fp8_e4m3fn_per_row"])
+def test_row_scaled_encoding_handles_fp16_scale_underflow(encoding: str) -> None:
+    if encoding.startswith("fp8") and not hasattr(torch, "float8_e4m3fn"):
+        pytest.skip("Torch has no float8")
+    value = np.array([[1e-9, -2e-9, 0.0], [0.0, 0.0, 0.0]], dtype=np.float32)
+    encoded = encode_array(value, encoding)
+    assert encoded.storage_bytes == value.size + value.shape[0] * 2
+    assert np.all(np.isfinite(encoded.decoded))
+    assert np.array_equal(encoded.decoded[1], np.zeros(3, dtype=np.float32))
