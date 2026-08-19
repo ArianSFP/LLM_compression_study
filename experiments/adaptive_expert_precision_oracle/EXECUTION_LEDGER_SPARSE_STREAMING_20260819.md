@@ -574,7 +574,7 @@ The first management-connector attempt returned HTTP 401 because that connector 
 
 ### Publication handoff
 
-- Final Git commit: `TBD at publication`.
-- Push result: `TBD at publication`.
-- Pull request: `TBD at publication`.
-- Intended base/head: `agent/mxfp4-interaction-aware-allocator` ← `agent/mxfp4-sparse-streaming`.
+- Experiment/evidence commit: `63ae9cf4317bde20217d3b0ad459f51912b24ca2`.
+- Push result: successfully pushed to `origin/agent/mxfp4-sparse-streaming`.
+- Pull request: draft PR [#7](https://github.com/ArianSFP/LLM_compression_study/pull/7), verified open.
+- Verified base/head: `agent/mxfp4-interaction-aware-allocator` ← `agent/mxfp4-sparse-streaming`. This ledger edit is a documentation-only follow-up; the authoritative final head is the commit recorded in PR metadata.
