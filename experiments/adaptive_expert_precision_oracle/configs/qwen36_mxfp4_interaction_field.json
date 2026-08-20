@@ -1,0 +1,65 @@
+{
+  "run_id": "qwen36_mxfp4_interaction_field_20260820_v1",
+  "base_pr10_commit": "54ebf5b64ec04c4605222a8f96d04d0f61e1dcdd",
+  "seed": 20260820,
+  "pr10_config_sha256": "ef5308f7f684dca31a98fb81ecc8c49feded78ce4f201617fa847b4e9b5d09f1",
+  "pr10_validation_hybrid_sha256": "5fab3125c4bad9329ebbe9a566a7a4ef41cfba14b823a588f3fac9904c083a34",
+  "pr10_validation_facts_sha256": "5699f45b3983b0e189aebaaf83351e62ce991c1f4af9b74db496388dc68c2e7e",
+  "fit_split": "train",
+  "selection_split": "validation",
+  "no_test_rows_admitted": true,
+  "no_test_scientific_values_used": true,
+  "expected_validation_unique_invocations": 69,
+  "expected_validation_layer_expert_cells": 12,
+  "page_budgets": [384, 576, 768],
+  "tail_ranks": [4, 8, 16, 32],
+  "exact_proxy_tail_ranks": [0, 4, 8, 16, 32],
+  "geometry_factor_families": [
+    "joint_eigh",
+    "joint_pivoted_cholesky",
+    "exact_proxy_plus_eigh_tail"
+  ],
+  "quantized_factor_specs": [
+    {"source": "joint_eigh", "tail_rank": 8, "encoding": "int8_per_row", "hadamard": false},
+    {"source": "joint_eigh", "tail_rank": 16, "encoding": "int8_per_row", "hadamard": false},
+    {"source": "joint_eigh", "tail_rank": 32, "encoding": "int8_per_row", "hadamard": false},
+    {"source": "joint_eigh", "tail_rank": 8, "encoding": "int4_per_row", "hadamard": true},
+    {"source": "joint_eigh", "tail_rank": 16, "encoding": "int4_per_row", "hadamard": true},
+    {"source": "joint_eigh", "tail_rank": 32, "encoding": "int4_per_row", "hadamard": true},
+    {"source": "joint_eigh", "tail_rank": 16, "encoding": "int4_per_row", "hadamard": false}
+  ],
+  "solver_control_factor_ids": [
+    "joint_eigh_tail16_exact0_fp32",
+    "exact_proxy_plus_eigh_tail_tail16_exact4_fp32",
+    "joint_eigh_tail16_exact0_int4_per_row_hadamard"
+  ],
+  "evaluation_workers": 24,
+  "worker_start_method": "fork",
+  "worker_blas_threads": 1,
+  "coordinate_sweeps": 8,
+  "relaxation_iterations": 128,
+  "relaxation_tolerance": 1e-8,
+  "local_shortlist": 8,
+  "local_swap_units": 3,
+  "local_max_passes": 12,
+  "abc_metadata_bytes_per_expert": 3084,
+  "expert_weights": 3145728,
+  "metadata_gate_bpw": 0.35,
+  "selector_compute_gate_macs": 1572864,
+  "primary_gate_p10_set_gain_retention": 0.97,
+  "primary_gate_median_recovery_gap_vs_exact_hybrid": 0.005,
+  "study_scope": "exact-H4 compressed-interaction ceiling; no candidate predictor, H4 prefetch, downstream, routing, logit, or token claim",
+  "primary_solver": "two_seed_coordinate_then_compressed_1_2_3_unit_local_repair",
+  "primary_solver_id": "two_seed_coordinate_plus_local_repair",
+  "geometry_solver_id": "four_seed_coordinate_plus_local_repair",
+  "deployment_seed_basins": [
+    "all_00",
+    "independent_abc"
+  ],
+  "geometry_seed_basins": [
+    "all_00",
+    "independent_abc",
+    "compressed_residual_forward",
+    "continuous_relaxation_round"
+  ]
+}

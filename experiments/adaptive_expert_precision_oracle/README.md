@@ -4,6 +4,34 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## Low-rank signed interaction field (stacked on PR #10)
+
+This exact-H4 continuation compresses the static Q2/Q4 down-column interaction
+Gram into signed rank-4/8/16/32 fields while retaining exact per-unit A/B/C
+self damage. It evaluates four-state residual-aware coordinate descent,
+continuous relaxation, and bounded 1/2/3-unit repair on the immutable PR #10
+69-invocation validation cohort.
+
+Reviewer entry points:
+
+- [Canonical report](results/qwen36_mxfp4_interaction_field_20260820_v1/analysis/INTERACTION_FIELD_REPORT.md),
+  [conclusion](results/qwen36_mxfp4_interaction_field_20260820_v1/analysis/interaction_field_conclusion.json),
+  and [analysis manifest](results/qwen36_mxfp4_interaction_field_20260820_v1/analysis/analysis_manifest.json).
+- [Raw frontier and factor artifacts](results/qwen36_mxfp4_interaction_field_20260820_v1/)
+  and [reproducibility protocol](INTERACTION_FIELD_REPRODUCIBILITY.md).
+
+At one physical bpw, rank-8 row-INT8 passes every frozen gate with p10/median
+recovery `96.14%/98.07%`, p10 set-gain retention `99.93%`, `0.03389` metadata
+bpw, and `834,560` conservative MACs. Hadamard-rotated packed rank-8 INT4 also
+passes at `0.02348` metadata bpw. The full 69-invocation grid completed in about
+15.5 minutes using 24 single-thread workers under a measured 27.2-core cgroup
+quota.
+
+This is a positive compressed-geometry ceiling, not yet a deployable candidate
+policy: exact validation-time H4 remains supplied. The next decisive experiment
+must predict the prefetch field, substitute exact fetched responses, and retain
+an approximate residual for unfetched units.
+
 ## Set-utility distillation (stacked on PR #9)
 
 This final validation-only study runs on branch
