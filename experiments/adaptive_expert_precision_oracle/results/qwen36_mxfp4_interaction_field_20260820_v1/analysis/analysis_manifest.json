@@ -1,0 +1,123 @@
+{
+  "conclusion": {
+    "any_geometry_gate_pass": true,
+    "any_quantized_full_compute_and_metadata_pass": true,
+    "any_quantized_geometry_gate_pass": true,
+    "any_quantized_two_seed_geometry_gate_pass": true,
+    "any_two_seed_geometry_gate_pass": true,
+    "best_exact_h4_geometry_configuration": "exact_proxy_plus_eigh_tail_tail32_exact4_fp32",
+    "best_exact_h4_geometry_metrics": {
+      "combined_metadata_bpw": 0.382843017578125,
+      "gap_median": 0.0004295422014983785,
+      "recovery_median": 0.9815955984048443,
+      "recovery_p10": 0.9626682676049125,
+      "retention_median": 1.0004329265712393,
+      "retention_p10": 0.9996928634465191
+    },
+    "best_quantized_configuration": "joint_eigh_tail16_exact0_int8_per_row",
+    "best_quantized_full_gate_configuration": "joint_eigh_tail8_exact0_int8_per_row",
+    "best_quantized_full_gate_metrics": {
+      "combined_metadata_bpw": 0.033894856770833336,
+      "gap_median": 0.00030312163635226597,
+      "recovery_median": 0.9806779886731154,
+      "recovery_p10": 0.9613538636712696,
+      "retention_median": 1.000306610037302,
+      "retention_p10": 0.9993133867997147,
+      "selector_compute_macs_max": 834560.0
+    },
+    "best_quantized_metrics": {
+      "combined_metadata_bpw": 0.054728190104166664,
+      "gap_median": 0.0003597632323030231,
+      "recovery_median": 0.9806392171878738,
+      "recovery_p10": 0.9621485475732452,
+      "retention_median": 1.0003670006862342,
+      "retention_p10": 0.999515587754936
+    },
+    "best_quantized_two_seed_configuration": "joint_eigh_tail16_exact0_int8_per_row",
+    "best_quantized_two_seed_metrics": {
+      "combined_metadata_bpw": 0.054728190104166664,
+      "gap_median": 0.0003730904540414359,
+      "recovery_median": 0.9806392171878738,
+      "recovery_p10": 0.9621485475732452,
+      "retention_median": 1.0003811809643524,
+      "retention_p10": 0.9996568837765846,
+      "selector_compute_macs_max": 1594368.0
+    },
+    "best_two_seed_configuration": "exact_proxy_plus_eigh_tail_tail32_exact4_fp32",
+    "best_two_seed_metrics": {
+      "combined_metadata_bpw": 0.382843017578125,
+      "gap_median": 0.0004295422014983785,
+      "recovery_median": 0.9815955984048443,
+      "recovery_p10": 0.9626682676049125,
+      "retention_median": 1.0004329265712393,
+      "retention_p10": 0.9996928634465191,
+      "selector_compute_macs_max": 3493888.0
+    },
+    "deployment_status": "diagnostic_only_exact_h4_no_candidate_or_horizon_claim",
+    "study_scope": "exact-H4 compressed-interaction ceiling; no candidate predictor, H4 prefetch, downstream, routing, logit, or token claim"
+  },
+  "inputs": {
+    "config": {
+      "path": "qwen36_mxfp4_interaction_field.json",
+      "sha256": "32c8c3178cf277ed2b066f31f6993f2c9cd7204c0003258e1b6883e04f10ec95"
+    },
+    "factor_manifest": {
+      "path": "interaction_field_factor_manifest.json",
+      "sha256": "d9c2974927a5bf26b7258ddc493217c472cf3ebbe0b23b9e77571e406a4ff280"
+    },
+    "frontier": {
+      "path": "interaction_field_frontier.parquet",
+      "sha256": "2f251a9d92a12de448712d96a0de87d59f2e596733a04df5070e8b5326f71b47"
+    },
+    "run_facts": {
+      "path": "run_facts.json",
+      "sha256": "835ac98e495566cb1f2aab181d5be3871174c859dcdf77de74470a751872396e"
+    }
+  },
+  "outputs": {
+    "conclusion": {
+      "bytes": 2491,
+      "path": "interaction_field_conclusion.json",
+      "sha256": "c8b76e699b1c05681698a609a88872b489640d98c2f719c84d205663e678af70"
+    },
+    "factor_summary": {
+      "bytes": 42808,
+      "path": "interaction_factor_summary.csv",
+      "sha256": "2461b0fefc7797d78f3c1f52777f29e7e2485ae136d132dc66074cea732e135b"
+    },
+    "layer_summary": {
+      "bytes": 37394,
+      "path": "interaction_layer_summary.csv",
+      "sha256": "207318ad9a0a50e9884b181bf5acedc680dcb08fcc081a39638c88dbde12f2aa"
+    },
+    "report": {
+      "bytes": 1806,
+      "path": "INTERACTION_FIELD_REPORT.md",
+      "sha256": "1f0660fd7fbd75341428edb941c58e33daa16aa53c6c91441eb6c5a6963ed8fc"
+    },
+    "solver_summary": {
+      "bytes": 9066,
+      "path": "interaction_solver_summary.csv",
+      "sha256": "238cbb1325a8b218b1e8cf95a02af48fa31981c2bac7385017ec9dd9114dc26a"
+    }
+  },
+  "schema_version": 1,
+  "sources": {
+    "analysis_core": {
+      "path": "src/oracle_study/interaction_field_analysis.py",
+      "sha256": "00ca76c33272e4c8df31846e4fe1e33c21a618e5f0dbcbd14948afdee606e074"
+    },
+    "interaction_core": {
+      "path": "src/oracle_study/interaction_field.py",
+      "sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab"
+    },
+    "runner": {
+      "path": "scripts/run_interaction_field_study.py",
+      "sha256": "177ed93a2ce1c8859c3e9d12fe68d189f3aca229511e975c9f990865b27151da"
+    },
+    "wrapper": {
+      "path": "scripts/analyze_interaction_field_study.py",
+      "sha256": "339ffc8d75a4272942f98635c4bbdb10767b6a336acc5cdb27b13839f287b093"
+    }
+  }
+}
