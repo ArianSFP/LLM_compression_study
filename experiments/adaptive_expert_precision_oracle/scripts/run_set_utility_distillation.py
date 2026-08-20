@@ -2683,6 +2683,7 @@ def evaluate_invocation(
                                 "logical_bytes": int(config["applied_units"]) * UNIT_PACKET_BYTES,
                                 "logical_bpw": 3 * int(config["applied_units"]) / PAGES_PER_BPW,
                                 "page_amplification": len(ids) / int(config["applied_units"]),
+                                "candidate_overfetch": len(ids) / int(config["applied_units"]),
                                 "template_bank_metadata_bytes": template_bank_metadata_bytes,
                                 "template_classifier_metadata_bytes": 0,
                                 "selector_metadata_bytes_per_expert": template_bank_metadata_bytes,

@@ -48,8 +48,8 @@ commit `56fe7764ec28c92947c83cb3d7dbd16e5630311b`.
 | Exact-checkpoint capture SHA-256 | `52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931` |
 | Cross-reference capture SHA-256 | `3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add` |
 | Study configuration SHA-256 | `ef5308f7f684dca31a98fb81ecc8c49feded78ce4f201617fa847b4e9b5d09f1` |
-| Fit/validation runner SHA-256 | `bb39b8ba26beaeb9e99f0b20d0524ec58f64ace1efbea23bff27265c0b0ceda3` |
-| Runner tests SHA-256 | `6e5c5ceda99d6fb45ad0897ad939d5bd3f0ae22379d0ad8c7694923077f0a646` |
+| Fit/validation runner SHA-256 | `90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73` |
+| Runner tests SHA-256 | `39b5935bb9415cd7281109c10e5c6b400b6baa081d7cc33f41f31a589c674fe2` |
 | Direct predictor core SHA-256 | `82b1b85b01b00658121613776fc8ddcb61352e3b13e7704835c656a6d6ae204c` |
 | Direct predictor tests SHA-256 | `10dac8fcfe2faaa2f8b5a424fc875429a2316fc5c826d1ea9d33e76300c5546e` |
 | Analyzer core SHA-256 | `66c2a123e078997f1e7d349e161fcce18a3ac6600b0e36294330b74573a79ac4` |
@@ -146,9 +146,9 @@ PYTHONPATH=src:scripts "$SETUTIL_PYTHON" -m pytest -q \
 PYTHONPATH=src:scripts "$SETUTIL_PYTHON" -m pytest -q
 ```
 
-Final local verification against the frozen hashes above recorded 36 runner
-tests passing, 41 analyzer tests passing, and 280 tests passing with 1 skipped
-in 68.63 s in the full integrated suite. The full suite emitted one NumExpr
+Final local verification against the frozen hashes above recorded 37 runner
+tests passing, 41 analyzer tests passing, and 282 tests passing with 1 skipped
+in 79.662 s in the full integrated suite. The full suite emitted one NumExpr
 warning and no failures. Record execution-host package/GPU facts and staged
 hash parity in `EXECUTION_LEDGER_SET_UTILITY_20260820.md` before the fit begins.
 
@@ -303,7 +303,7 @@ execution ledger for component timings. These are not cohort results.
 
 ### Quarantined attempts before the replacement fit
 
-Never resume any of the three preserved invalid directories:
+Never resume any of the four preserved invalid execution bundles:
 
 - `fit_invalid_pre_nested_coverage_fix` is incomplete, with layers 0, 4, and
   20 only, no layer 39, no canonical manifest, `completed=false`, and empty
@@ -318,6 +318,16 @@ Never resume any of the three preserved invalid directories:
   pre-layer-0 when the standalone 512-unit A/B/C score path was found to omit
   its 3,072 analytical MACs. It has no shard, sidecar, or manifest,
   `completed_layers=[]`, and an empty failure list.
+- `fit_invalid_pre_candidate_overfetch_fix` completed all four fit layers,
+  and the paired `validation_invalid_pre_candidate_overfetch_fix` completed
+  exactly 69 exact-checkpoint validation invocations. Both recorded empty
+  failure/history lists. The strict analyzer failed closed before any report
+  or promotion decision because support-template candidate rows omitted a
+  finite `candidate_overfetch` value. Preserve these raw artifacts only as
+  correction evidence: no recovery metric from them was summarized, selected,
+  or used. The replacement emits finite
+  `candidate_overfetch = candidate_units / applied_units`, with a real-path
+  regression covering all four rerank semantics.
 
 The replacement must use a fresh absent canonical `fit/` path. Quarantine
 artifacts are correction history only and must never enter validation.

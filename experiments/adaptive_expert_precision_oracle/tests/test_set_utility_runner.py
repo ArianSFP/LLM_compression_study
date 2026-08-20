@@ -168,6 +168,84 @@ def test_template_fit_never_aligns_unit_ids_across_experts(monkeypatch: pytest.M
             assert not unpacked[:, :3].any()
 
 
+def test_support_template_candidate_rows_emit_finite_overfetch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(runner, "UNITS", 4)
+    monkeypatch.setattr(runner, "INPUTS", 3)
+    q2_gate = np.zeros((4, 3), np.float32)
+    q2_up = np.zeros((4, 3), np.float32)
+    q2_down = np.zeros((3, 4), np.float32)
+    q4_gate = np.array([
+        [1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
+        [1.0, 1.0, 0.0],
+    ], np.float32)
+    q4_up = np.ones((4, 3), np.float32)
+    q4_down = np.array([
+        [1.0, 0.0, 0.0, 1.0],
+        [0.0, 1.0, 0.0, 1.0],
+        [0.0, 0.0, 1.0, 1.0],
+    ], np.float32)
+    matrices = {
+        "gate": [q2_gate, q2_gate, q4_gate],
+        "up": [q2_up, q2_up, q4_up],
+        "down": [q2_down, q2_down, q4_down],
+    }
+    encoded, abc_bytes = runner.encode_unit_score_metadata(
+        runner.unit_score_metadata(q2_down, q4_down), "fp16",
+    )
+    arrays = {
+        "bank": np.packbits(
+            np.array([[1, 1, 1, 0]], np.uint8), axis=1, bitorder="little",
+        ),
+    }
+    layer_record = {
+        "template_entries": [{
+            "expert_id": 7,
+            "requested_template_counts": [1],
+            "array_key": "bank",
+            "cohort": runner.FIT_COHORTS[0],
+            "pairing_semantics": "actual_routed_occurrences",
+        }],
+        "selector_entries": [],
+    }
+    config = {
+        "teacher_path_length": 4,
+        "applied_units": 2,
+        "candidate_units": 3,
+        "template_repair_counts": [0],
+        "reference_bpw": 4.25,
+        "suffix_bpw_per_complete_representation": 2.0,
+    }
+
+    result = runner.evaluate_invocation(
+        matrices, np.array([1.0, 0.5, -0.25], np.float32),
+        np.ones(3, np.float32), 0.0,
+        runner.down_metric_gram(q2_down, q4_down), encoded, abc_bytes,
+        {"expert_id": 7, "layer": 0}, arrays, layer_record, config,
+        run_hybrid_oracle=False, hybrid_device="cpu",
+    )
+    support_rows = [
+        row for row in result["candidate_frontier"]
+        if row["selector_family"] == "support_template"
+    ]
+    assert support_rows
+    assert {row["rerank_semantics"] for row in support_rows} == {
+        "predicted_direct_no_rerank",
+        "exact_independent_abc_within_fetched_candidates",
+        "contained_fetched_target_exact_h0",
+        "full_target_restricted_teacher_oracle",
+    }
+    for row in support_rows:
+        assert np.isfinite(row["candidate_overfetch"])
+        assert row["candidate_overfetch"] == pytest.approx(
+            row["candidate_units"] / row["applied_units"]
+        )
+        assert row["candidate_overfetch"] == pytest.approx(row["page_amplification"])
+
+
 def test_full_target_and_contained_candidate_reranks_are_not_conflated() -> None:
     corrections = np.array([[1.0, 0.0], [0.0, 0.6], [0.0, 8.0]])
     gram = corrections @ corrections.T
