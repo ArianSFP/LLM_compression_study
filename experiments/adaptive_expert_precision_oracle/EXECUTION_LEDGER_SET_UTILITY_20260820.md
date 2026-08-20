@@ -546,13 +546,23 @@ copy pilot-only benchmark values into cohort summary tables.
   because all predicted/independent rows fail the frozen scientific gates.
   Templates establish a secondary support regime and PQ is secondary synopsis
   evidence, not a passing selector. No sealed holdout was run.
-- **EVIDENCE COMMIT PLACEHOLDER:** `[commit SHA and subject]`.
-- **PUSH PLACEHOLDER:** `[remote branch and verified head SHA]`.
-- **PR PLACEHOLDER:** `[URL, base/head, draft/open state, changed-file count,
-  mergeability/check status]`.
-- **TRANSFER AUDIT PLACEHOLDER:** `[remote/local package digest and file count]`.
-- **POD SHUTDOWN PLACEHOLDER:** `[stop time, task-owned pod identity, verified
-  exited/stopped state]`.
+- **Evidence commit:** `b45ef83a6cf44be6926f73023523f521f4173322`,
+  subject `Publish set-utility distillation evidence`.
+- **Pre-shutdown push:** `origin/agent/mxfp4-set-utility-distillation` verified
+  at `b45ef83a6cf44be6926f73023523f521f4173322`.
+- **Pull request:** [PR #10](https://github.com/ArianSFP/LLM_compression_study/pull/10),
+  base `agent/mxfp4-neuron-selector-distillation`, head
+  `agent/mxfp4-set-utility-distillation`; OPEN DRAFT; 62 changed files;
+  MERGEABLE/CLEAN; no status checks reported at verification.
+- **Transfer audit:** canonical payload 42 files / 217,266,883 bytes plus the
+  4,802-byte `artifact_hashes.sha256`, totaling 43 files / 217,271,685 bytes.
+  The manifest SHA-256 is
+  `68cc3f54ba346fbb3632ec50b5813da3817e46cd8867375540b5342fec95f3c5`;
+  `sha256sum -c` passed all 42 entries. Final remote fit facts, fit manifest,
+  validation facts, and candidate hashes matched local exactly.
+- **Pod shutdown:** task pod `5q953zel99ydtw` was stopped, not terminated, at
+  `2026-08-20 09:04:14 UTC`; `desiredStatus=EXITED`,
+  `runtimeStatus=stopped`, reason `stopped_by_user`. SSH refused after stop.
 
 The compute pod must remain running while experiments or artifact transfer are
 still active. It may be stopped only after every required artifact has been
