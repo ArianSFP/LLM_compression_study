@@ -1,0 +1,17 @@
+artifact,layer,rows,unique_invocations,unique_requests,experts,split,capture_source
+hybrid,0,165,11,3,3,validation,exact_checkpoint
+hybrid,4,285,19,3,3,validation,exact_checkpoint
+hybrid,20,300,20,3,3,validation,exact_checkpoint
+hybrid,39,285,19,3,3,validation,exact_checkpoint
+template,0,1408,11,3,3,validation,exact_checkpoint
+template,4,2432,19,3,3,validation,exact_checkpoint
+template,20,2560,20,3,3,validation,exact_checkpoint
+template,39,2432,19,3,3,validation,exact_checkpoint
+selector,0,187,11,3,3,validation,exact_checkpoint
+selector,4,323,19,3,3,validation,exact_checkpoint
+selector,20,340,20,3,3,validation,exact_checkpoint
+selector,39,323,19,3,3,validation,exact_checkpoint
+candidate,0,6380,11,3,3,validation,exact_checkpoint
+candidate,4,11020,19,3,3,validation,exact_checkpoint
+candidate,20,11600,20,3,3,validation,exact_checkpoint
+candidate,39,11020,19,3,3,validation,exact_checkpoint

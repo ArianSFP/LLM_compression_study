@@ -1,0 +1,195 @@
+{
+  "run_id": "qwen36_mxfp4_set_utility_distillation_20260820_v1",
+  "base_pr9_commit": "56fe7764ec28c92947c83cb3d7dbd16e5630311b",
+  "seed": 20260820,
+  "layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "page_size_bytes": 512,
+  "expert_weights": 3145728,
+  "experts_per_layer": 256,
+  "resident_parent_bpw": 2.25,
+  "reference_bpw": 4.25,
+  "suffix_bpw_per_complete_representation": 2.0,
+  "selection_split": "validation",
+  "evaluation_splits": [
+    "validation"
+  ],
+  "fit_splits": [
+    "train"
+  ],
+  "no_test_rows_admitted": true,
+  "no_test_rows_used": true,
+  "no_test_tuning": true,
+  "candidate_units": 256,
+  "applied_units": 192,
+  "teacher_path_length": 512,
+  "max_validation_invocations_per_expert": 16,
+  "expected_validation_unique_invocations": 69,
+  "expected_validation_layer_expert_cells": 12,
+  "expected_cross_capture_shared_request_ids": 0,
+  "max_routed_train_rows_per_expert": 32,
+  "max_exact_teacher_rows_per_layer": 70,
+  "max_cross_teacher_rows_per_layer": 64,
+  "max_exact_train_rows_per_layer": 70,
+  "max_cross_train_rows_per_layer": 384,
+  "template_training_cohorts": [
+    "routed_exact_train_primary",
+    "exact_train_all_x_augmentation",
+    "combined_exact_cross_train_all_x_augmentation"
+  ],
+  "template_counts_primary": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "template_counts_augmented": [
+    4,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  "template_repair_counts": [
+    0,
+    16,
+    32,
+    64
+  ],
+  "pq_additive_stages": [
+    1,
+    2
+  ],
+  "pq_codebook_size": 16,
+  "pq_block_size": 32,
+  "pq_max_iterations": 12,
+  "high_rank_low_bit_controls": [
+    {
+      "rank": 64,
+      "encoding": "fp8_e4m3fn_per_row",
+      "control_role": "inherited_pr9_baseline"
+    },
+    {
+      "rank": 64,
+      "encoding": "int8_per_row",
+      "control_role": "inherited_pr9_baseline"
+    },
+    {
+      "rank": 128,
+      "encoding": "int2",
+      "control_role": "matched_storage_high_rank_low_bit"
+    },
+    {
+      "rank": 128,
+      "encoding": "ternary",
+      "control_role": "matched_storage_high_rank_low_bit"
+    },
+    {
+      "rank": 256,
+      "encoding": "ternary",
+      "control_role": "high_rank_low_bit_primary_diagnostic"
+    }
+  ],
+  "direct_predictor_training_cohorts": [
+    "exact_train_all_x_augmentation",
+    "combined_exact_cross_train_all_x_augmentation"
+  ],
+  "direct_predictor_hidden_dim": 16,
+  "direct_predictor_epochs": 24,
+  "direct_predictor_learning_rate": 0.003,
+  "direct_predictor_weight_decay": 0.0,
+  "direct_predictor_boundary_width": 16,
+  "direct_predictor_temperature": 1.0,
+  "direct_predictor_set_weight": 0.5,
+  "direct_predictor_candidate_set_weight": 0.0,
+  "ridge_relative": 0.0001,
+  "hybrid_budgets_bpw": [
+    0.5,
+    0.75,
+    1.0
+  ],
+  "hybrid_local_shortlist": 8,
+  "hybrid_local_swap_units": 3,
+  "hybrid_local_max_passes": 12,
+  "metric": "exact sequential complete-expert qenergy under I + beta P P.T; expert-output reconstruction only",
+  "training_fit_policy": "per-expert routed exact-train templates are primary; exact all-x and combined exact/cross all-x pairings are separately-labelled augmentation; PQ and high-rank metadata use train rows only",
+  "selection_policy": "all decisions use exact-checkpoint validation only; monolithic sources contain test rows, but test rows are never admitted, used, or inspected for metrics; this bounded runner has no test mode",
+  "candidate_interface": "fetch 256 coherent three-page units at one physical bpw and apply 192; report four distinct policies: predicted direct/no rerank, primary realistic decoded-FP16 ABC independent-score rerank within fetched candidates, contained-target interaction H0 systems oracle with charged Gram compute, and full-target restricted teacher-information fixed-greedy control",
+  "promotion_gates": {
+    "candidate_median_recovery": 0.94,
+    "candidate_p10_recovery": 0.88,
+    "candidate_p10_set_gain_retention": 0.97,
+    "max_selector_metadata_bpw": 0.35,
+    "max_selector_compute_macs": 1572864,
+    "max_storage_multiplier": 5.0
+  },
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "format": "compressed-tensors mxfp4-pack-quantized",
+    "block_size": 32,
+    "leaf_type": "E2M1",
+    "scale_type": "E8M0"
+  },
+  "locked_tree_source": "results/qwen36_full_mxfp4_embedded_hierarchy_20260818_v1/dense/selected_trees.json",
+  "locked_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "locked_capture_sha256": {
+    "exact_checkpoint": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+    "cross_reference": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add"
+  },
+  "locked_exact_sampled_experts": {
+    "0": {
+      "72": "cold",
+      "160": "median",
+      "62": "hot"
+    },
+    "4": {
+      "17": "cold",
+      "110": "median",
+      "154": "hot"
+    },
+    "20": {
+      "242": "cold",
+      "251": "median",
+      "191": "hot"
+    },
+    "39": {
+      "68": "cold",
+      "231": "median",
+      "108": "hot"
+    }
+  },
+  "locked_cross_sampled_experts": {
+    "0": {
+      "71": "cold",
+      "207": "median",
+      "238": "hot"
+    },
+    "4": {
+      "156": "cold",
+      "176": "median",
+      "134": "hot"
+    },
+    "20": {
+      "129": "cold",
+      "225": "median",
+      "72": "hot"
+    },
+    "39": {
+      "180": "cold",
+      "155": "median",
+      "235": "hot"
+    }
+  },
+  "max_hybrid_oracle_invocations_per_expert": 16,
+  "direct_candidate_head_supervision": "hard_forward_top192_apply_head_union_top64_candidate_head_excluding_apply_supervised_for_teacher_top192_coverage",
+  "hybrid_oracle_scope": "every admitted exact-validation routed occurrence for every locked sampled expert, using one shared GPU primitive-Gram correlation-update path across all budgets",
+  "direct_predictor_candidate_coverage_weight": 1.0
+}
