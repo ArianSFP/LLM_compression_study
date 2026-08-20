@@ -4,6 +4,46 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## Split gate/up/down interaction field (stacked on PR #11)
+
+This follow-on separates the physically distinct gate and up refinement pages.
+Its state encoding is 4*gate_high + 2*up_high + down_high, with page costs
+[0,1,1,2,1,2,2,3]. The inherited four states map exactly to [0,6,1,7], so the
+new action set contains every PR #11 decision while reusing the same A/B/C
+self terms and signed L4/L2 interaction factors.
+
+Reviewer entry points:
+
+- [Canonical report](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/SPLIT_INTERACTION_FIELD_REPORT.md),
+  [frozen continuation decision](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/split_interaction_field_promotions.json),
+  and [analysis manifest](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/analysis_manifest.json).
+- [Immutable 2,898-row frontier](results/qwen36_mxfp4_split_interaction_field_20260820_v1/split_interaction_field_frontier.parquet),
+  [run facts](results/qwen36_mxfp4_split_interaction_field_20260820_v1/run_facts.json),
+  and [reproducibility protocol](SPLIT_INTERACTION_FIELD_REPRODUCIBILITY.md).
+
+At one physical bpw, the two-seed rank-8 Hadamard INT4 solver reaches
+99.065% p10 / 99.476% median recovery, versus 96.107% / 98.022% for its
+recomputed PR #11 four-state reference. The paired median gain is +1.430
+percentage points. Rank-8 INT8 reaches 99.094% / 99.488% with a paired median
+gain of +1.386 points. Both pass the predeclared retention, gain, metadata,
+and strict 1.573M-MAC gates; the protocol did not predeclare a tie-break, so
+both advance and no single validation winner is selected.
+
+The training-only exact-Gram same-solver control reaches 99.168% p10 /
+99.512% median at one bpw, with a +0.735-point paired median gain over its
+restricted four-state solution. Split-only states are structural rather than
+rare: the INT4 primary uses a median 239 such units at one bpw. The inherited
+four-state warm start changes none of 828 primary solutions, showing that the
+all-00 plus exact-self dynamic-program seeds already reach the same compressed
+basin without paying the inherited selector cost.
+
+The run used 24 single-thread workers on a host exposing 256 logical CPUs but
+limited by a measured 27.2-core cgroup quota; a single RTX 3090 was sufficient.
+This remains an exact mixed-H4 geometry ceiling. The next experiment must
+predict h42/h24/h44 (or their residual signatures) before it can make a
+candidate-prefetch or downstream-quality claim.
+
+
 ## Low-rank signed interaction field (stacked on PR #10)
 
 This exact-H4 continuation compresses the static Q2/Q4 down-column interaction

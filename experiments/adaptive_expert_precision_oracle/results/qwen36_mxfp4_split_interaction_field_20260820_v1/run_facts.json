@@ -1,0 +1,214 @@
+{
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_audit": {
+    "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "completed_unix": 1787262514.8858445,
+  "completed_work_units": [
+    "validation:0:62",
+    "validation:0:72",
+    "validation:0:160",
+    "validation:4:17",
+    "validation:4:110",
+    "validation:4:154",
+    "validation:20:191",
+    "validation:20:242",
+    "validation:20:251",
+    "validation:39:68",
+    "validation:39:108",
+    "validation:39:231"
+  ],
+  "config_sha256": "e62fdc4d3ffdc45482342736215433e443e59d9037e597f4cb72df39bbfa17f3",
+  "cpu_capacity": {
+    "affinity_logical_cpus": 256,
+    "cpu_quota_raw": "2720000 100000",
+    "os_cpu_count": 256,
+    "quota_cores": 27.2
+  },
+  "effective_evaluation_workers": 24,
+  "evaluation_workers": 24,
+  "failures": [],
+  "frontier_rows": 2898,
+  "frontier_sha256": "f46ee5ee8caeb35f7cc1bf97de483e26d1270c987c98a497b2f5d6631c4ebe71",
+  "inherited_four_state_map": [
+    0,
+    6,
+    1,
+    7
+  ],
+  "parallel_task_count": 69,
+  "pr11_factor_manifest_sha256": "d9c2974927a5bf26b7258ddc493217c472cf3ebbe0b23b9e77571e406a4ff280",
+  "pr11_frontier_sha256": "2f251a9d92a12de448712d96a0de87d59f2e596733a04df5070e8b5326f71b47",
+  "pr11_run_facts_sha256": "835ac98e495566cb1f2aab181d5be3871174c859dcdf77de74470a751872396e",
+  "run_id": "qwen36_mxfp4_split_interaction_field_20260820_v1",
+  "runner_sha256": "3528d3a865f6089ea189ab339fea5285a00fad140b3f5270912a1079c31d81f6",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "ab7e9d182ee6",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "selection_split": "validation",
+  "split_core_sha256": "3f977a67293b53d6919b18b6322305e03b6e7bfd1ea3102af0b5bda469932760",
+  "state_page_costs": [
+    0,
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    3
+  ],
+  "study_scope": "exact mixed-H4 eight-state geometry ceiling; separate gate/up/down action test only; no candidate predictor, prefetch, downstream, routing, logit, or token claim",
+  "test_rows_admitted": false,
+  "test_scientific_values_used": false,
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_scope_audit": {
+    "expected_layer_expert_cells": 12,
+    "expected_unique_invocations": 69,
+    "locked_layer_expert_cells": [
+      [
+        0,
+        62
+      ],
+      [
+        0,
+        72
+      ],
+      [
+        0,
+        160
+      ],
+      [
+        4,
+        17
+      ],
+      [
+        4,
+        110
+      ],
+      [
+        4,
+        154
+      ],
+      [
+        20,
+        191
+      ],
+      [
+        20,
+        242
+      ],
+      [
+        20,
+        251
+      ],
+      [
+        39,
+        68
+      ],
+      [
+        39,
+        108
+      ],
+      [
+        39,
+        231
+      ]
+    ],
+    "observed_layer_expert_cell_records": [
+      {
+        "expert_id": 62,
+        "invocations": 7,
+        "layer": 0
+      },
+      {
+        "expert_id": 72,
+        "invocations": 1,
+        "layer": 0
+      },
+      {
+        "expert_id": 160,
+        "invocations": 3,
+        "layer": 0
+      },
+      {
+        "expert_id": 17,
+        "invocations": 1,
+        "layer": 4
+      },
+      {
+        "expert_id": 110,
+        "invocations": 2,
+        "layer": 4
+      },
+      {
+        "expert_id": 154,
+        "invocations": 16,
+        "layer": 4
+      },
+      {
+        "expert_id": 191,
+        "invocations": 16,
+        "layer": 20
+      },
+      {
+        "expert_id": 242,
+        "invocations": 1,
+        "layer": 20
+      },
+      {
+        "expert_id": 251,
+        "invocations": 3,
+        "layer": 20
+      },
+      {
+        "expert_id": 68,
+        "invocations": 1,
+        "layer": 39
+      },
+      {
+        "expert_id": 108,
+        "invocations": 16,
+        "layer": 39
+      },
+      {
+        "expert_id": 231,
+        "invocations": 2,
+        "layer": 39
+      }
+    ],
+    "observed_layer_expert_cells": 12,
+    "observed_unique_invocations": 69,
+    "validation_scope_complete": true
+  },
+  "worker_start_method": "fork",
+  "worker_thread_environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  }
+}

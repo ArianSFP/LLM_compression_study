@@ -1,0 +1,92 @@
+{
+  "inputs": [
+    {
+      "bytes": 2515,
+      "path": "configs/qwen36_mxfp4_split_interaction_field.json",
+      "sha256": "e62fdc4d3ffdc45482342736215433e443e59d9037e597f4cb72df39bbfa17f3"
+    },
+    {
+      "bytes": 4840,
+      "path": "results/qwen36_mxfp4_split_interaction_field_20260820_v1/run_facts.json",
+      "sha256": "c4bbfab4cc69216e8015a6d97ff2befbcb04499646c4ade98630fc9ea526a1e1"
+    },
+    {
+      "bytes": 1056897,
+      "path": "results/qwen36_mxfp4_split_interaction_field_20260820_v1/split_interaction_field_frontier.parquet",
+      "sha256": "f46ee5ee8caeb35f7cc1bf97de483e26d1270c987c98a497b2f5d6631c4ebe71"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 2360,
+      "path": "SPLIT_INTERACTION_FIELD_REPORT.md",
+      "sha256": "3d1a9a7cce1a6b0f341f2c8cb6f7fbef5b74a428fe9ce6506af5c11ea419d7bb"
+    },
+    {
+      "bytes": 32237,
+      "path": "split_interaction_field_analysis.json",
+      "sha256": "592ebfab651ea8fa823ed5c0133190da2dc7a79674348f37328a10d2edcb3d0a"
+    },
+    {
+      "bytes": 214938,
+      "path": "split_interaction_field_frontier.png",
+      "sha256": "03660ac39fa45fa8c9e007884c676ae2f7f2f2b477340726b3c11066bf83da0e"
+    },
+    {
+      "bytes": 72375,
+      "path": "split_interaction_field_frontier.svg",
+      "sha256": "7227539d839ad4b78cece2006a6997a8ca8af47bf6596514a47fb83ee7e31799"
+    },
+    {
+      "bytes": 9975,
+      "path": "split_interaction_field_layer_summary.csv",
+      "sha256": "3a0f11f5d22696779840c7998e322ed83c0d890059032f4c2095c5c61624c70e"
+    },
+    {
+      "bytes": 480564,
+      "path": "split_interaction_field_paired_invocations.csv",
+      "sha256": "00b096bb5d5122dc7b6d0b2cb8bcc3cfc526f299ce65790a4812d951b9d59757"
+    },
+    {
+      "bytes": 3152,
+      "path": "split_interaction_field_promotions.json",
+      "sha256": "1a0a5181ddeae343c3db4fc4c285864ebc0d0f8eb1ecdb7400238029f2542966"
+    },
+    {
+      "bytes": 8075,
+      "path": "split_interaction_field_state_usage.csv",
+      "sha256": "fbcc305f5d4191ef2ea997b9ed75eb53bf6c78aeaf02e1cd01ff4e22a36a6c30"
+    },
+    {
+      "bytes": 11197,
+      "path": "split_interaction_field_summary.csv",
+      "sha256": "7a5e6bf893965e08372339d4ac57c0b3089fea2216aa6c220c07fad1960b8321"
+    }
+  ],
+  "run_id": "qwen36_mxfp4_split_interaction_field_20260820_v1",
+  "schema_version": 1,
+  "sources": [
+    {
+      "bytes": 33669,
+      "path": "scripts/run_split_interaction_field_study.py",
+      "sha256": "3528d3a865f6089ea189ab339fea5285a00fad140b3f5270912a1079c31d81f6"
+    },
+    {
+      "bytes": 31380,
+      "path": "src/oracle_study/split_interaction_field.py",
+      "sha256": "3f977a67293b53d6919b18b6322305e03b6e7bfd1ea3102af0b5bda469932760"
+    },
+    {
+      "bytes": 15394,
+      "path": "src/oracle_study/split_interaction_field_analysis.py",
+      "sha256": "d47f00b4c8eb7effbe9fcc478069ead7543711b0d26fc81152d5b73ce9ef5210"
+    },
+    {
+      "bytes": 11048,
+      "path": "scripts/analyze_split_interaction_field_study.py",
+      "sha256": "c0af815eb3bfcbf3216e6747af0c126db60e84d174d52cc93968c18185aee957"
+    }
+  ],
+  "test_scientific_values_used": false,
+  "validation_only": true
+}
