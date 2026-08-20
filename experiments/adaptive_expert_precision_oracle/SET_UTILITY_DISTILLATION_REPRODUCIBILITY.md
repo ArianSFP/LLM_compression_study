@@ -3,12 +3,12 @@
 This is the reviewer-facing execution contract for the bounded
 coherent-unit set-utility study built on PR #9. It explains how to reproduce
 the train-only fit, exact-checkpoint validation, frozen stop/promote decision,
-and—only if validation succeeds—a newly sealed holdout evaluation.
+and immutable STOP result. No sealed holdout was captured or evaluated.
 
-This document does not report cohort scientific results. Single-invocation
-benchmark values are implementation preflights and are labelled as such. The
-canonical scientific report will be generated as
-`validation_analysis/SET_UTILITY_DISTILLATION_REPORT.md`.
+The canonical scientific report is
+`validation_analysis/SET_UTILITY_DISTILLATION_REPORT.md`. Single-invocation
+benchmark values remain implementation preflights and are labelled as such;
+only the 69-invocation exact-checkpoint validation is cohort evidence.
 
 ## Question and controlled scope
 
@@ -27,6 +27,33 @@ The embedded Q2→Q3→Q4 code, selected trees, checkpoint, layer/expert sample,
 and request split remain locked. The study does not train H4, modify the
 resident Q2 model, optimize kernels, evaluate all layers, or make routing,
 logit, perplexity, token-agreement, or downstream-quality claims.
+
+## Immutable validation outcome
+
+Fit completed `2026-08-20T07:27:30Z` with layers `[0,4,20,39]`, no failures,
+facts SHA-256 `9aa5f692bbebbf94871cb110e3c40a49ed7d9be93220b655241a67ee87904759`,
+and manifest SHA-256 `afb87ff360e38d191c77abd543f41a8c686afe0e4b0f0bbda4209880db968387`.
+Validation completed `2026-08-20T08:01:22Z` with exactly 69/69 invocations
+and all 12 cells. Raw row counts are hybrid 1,035, template 8,832, selector
+1,173, and candidate 40,020; failures/history are empty.
+
+At one physical bpw, hybrid local search reaches p10/median recovery
+`96.05%/97.89%` and passes its continuation gate. Paired improvements are
+`+2.261/+5.439` percentage points over coherent exact and `+0.031/+2.123`
+points over the PR #9 independent control. The `K=128` plus 64-repair template
+oracle retains p10/median utility `96.89%/98.77%` at 256 candidates, but only
+establishes a support regime; no classifier was trained or evaluated.
+The best promotable PQ-stage-2 plus independent-ABC path reaches recovery
+`78.72%/88.63%`, p10 set-gain retention `90.45%`, `0.1771` metadata bpw,
+`1.184M` MACs, and `1.512x` storage. It fails recovery and set-retention;
+all 34 predicted/independent rows fail the scientific gates, and direct set
+models perform worse.
+
+The frozen decision is **STOP**, with no sealed holdout. The next primary
+direction is distillation of the successful hybrid action/local-search path;
+templates and PQ remain secondary candidate features. This result is H0-late
+qenergy evidence only: it makes no H4, latency, accuracy, router, logit, or
+token-quality claim.
 
 ## Immutable controls
 
@@ -53,9 +80,9 @@ commit `56fe7764ec28c92947c83cb3d7dbd16e5630311b`.
 | Direct predictor core SHA-256 | `82b1b85b01b00658121613776fc8ddcb61352e3b13e7704835c656a6d6ae204c` |
 | Direct predictor tests SHA-256 | `10dac8fcfe2faaa2f8b5a424fc875429a2316fc5c826d1ea9d33e76300c5546e` |
 | Analyzer core SHA-256 | `66c2a123e078997f1e7d349e161fcce18a3ac6600b0e36294330b74573a79ac4` |
-| Analyzer wrapper SHA-256 | `7dff3d084089cf0819703d7d715baa0fa0567734cf2fb1434b7be6b5616410ae` |
+| Analyzer wrapper SHA-256 | `277b43b9cbecafd427b4bef32fcec1d6f628d228c75f95f95946779f18c76ac9` |
 | Analyzer tests SHA-256 | `8e277f72ecd8e3acde49b1acef85878a20f9a35a5e6c0730842745c7c10f2247` |
-| Analyzer end-to-end tests SHA-256 | `c7c53c6a0ca20e2090c801322e932c25951bb7dd5e110bbc66e353dba4bb4349` |
+| Analyzer end-to-end tests SHA-256 | `eeb0152e2d4b4c729f1a6be3d39d18f81505355ee194105755ecb0b2aef6b456` |
 
 This table is the authoritative final local pre-launch freeze. Recompute every
 digest on the staged execution checkout immediately before launch and require
@@ -147,10 +174,11 @@ PYTHONPATH=src:scripts "$SETUTIL_PYTHON" -m pytest -q
 ```
 
 Final local verification against the frozen hashes above recorded 37 runner
-tests passing, 41 analyzer tests passing, and 282 tests passing with 1 skipped
+tests passing, 42 analyzer tests passing, and 282 tests passing with 1 skipped
 in 79.662 s in the full integrated suite. The full suite emitted one NumExpr
-warning and no failures. Record execution-host package/GPU facts and staged
-hash parity in `EXECUTION_LEDGER_SET_UTILITY_20260820.md` before the fit begins.
+warning and no failures. The staged remote runner-plus-analyzer gate recorded
+78/78 passing in 60.518 s. Execution-host package/GPU facts and staged hash
+parity are recorded in `EXECUTION_LEDGER_SET_UTILITY_20260820.md`.
 
 ## Method reference
 
@@ -398,6 +426,12 @@ The analyzer independently recomputes physical/storage/compute arithmetic and
 creates a canonical `set_utility_promotions.json`. It rejects incomplete
 facts, test consultation, source/config/hash mismatch, malformed selector
 regimes, missing coverage, or accounting inconsistency.
+Support-template selector additions and scale multiplications are
+family-inapplicable, so accounting schema v5 encodes only those cells as
+explicit JSON `null`; any unexpected missing or infinite value fails closed.
+Two partial analysis attempts made while hardening this contract are preserved
+in quarantined directories. Neither attempt produced or informed a scientific
+decision; canonical analysis was regenerated from unchanged raw evidence.
 
 Frozen gates are:
 
@@ -426,7 +460,8 @@ sealed hash. Add a separate evaluation entry point that accepts only that
 promotion digest. Review and freeze that protocol before capture or test
 execution. Do not infer or invent a holdout command from the validation CLI.
 
-If no family passes, this step is intentionally absent.
+No deployable family passed. This step is therefore absent: no sealed holdout
+was captured or evaluated, and no test scientific value was consulted.
 
 ## Resume and failure semantics
 
@@ -479,6 +514,22 @@ Analysis must contain:
   `candidate_rerank_accounting.csv`;
 - four PNG/SVG plot pairs;
 - analyzer-recomputed selector accounting.
+
+### Immutable artifact closure
+
+- Fit facts: `9aa5f692bbebbf94871cb110e3c40a49ed7d9be93220b655241a67ee87904759`.
+- Fit manifest: `afb87ff360e38d191c77abd543f41a8c686afe0e4b0f0bbda4209880db968387`.
+- Validation run facts: `5699f45b3983b0e189aebaaf83351e62ce991c1f4af9b74db496388dc68c2e7e`.
+- Hybrid Parquet: `5fab3125c4bad9329ebbe9a566a7a4ef41cfba14b823a588f3fac9904c083a34`.
+- Template Parquet: `c62c1bbfcdbe4bf91d625ce7e34bf8f6b4eab9cc413a6bf463946ebaa45f02bd`.
+- Selector Parquet: `108fd14313fb0a16a42171d46558d5ab8dffdab1e943cf9b7f4083f6a743d7bc`.
+- Candidate Parquet: `d8b8699cae7c7ffc7bf04d798504e4f6944fe92ff509a797a7c9321e66f2df3f`.
+- Raw accounting JSON: `cceadc876a6b347cc5a73479a1142093631064b5fa04d32f3007c01e9555b8f7`.
+- Frozen STOP artifact: `5e9928ee2ba0c72f4b34cd5e270d2f47e169cf1078bf6fcf0520347fc4fc0ebd`.
+- Final report: `3fef9cfe4b8fb8dcc50421bc5847312d686d876275cad12c358991c5643f6964`.
+- Analysis manifest: `e6a9894a630c8a7d81d4da064f295d56cd64cd7016b7a1d4e672c213ff4cf869`.
+- Analyzer accounting JSON: `35831588074bca7a89b1634c1f530fd33d0d56d05bb48f4b71be42917af51960`.
+- Forty-two-file `artifact_hashes.sha256`: `68cc3f54ba346fbb3632ec50b5813da3817e46cd8867375540b5342fec95f3c5`.
 
 Before publication:
 

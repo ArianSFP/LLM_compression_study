@@ -4,6 +4,38 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## Set-utility distillation (stacked on PR #9)
+
+This final validation-only study runs on branch
+`agent/mxfp4-set-utility-distillation`, based on PR #9 commit
+`56fe7764ec28c92947c83cb3d7dbd16e5630311b`. It preserves the locked codec,
+checkpoint revision, selected trees, and request split.
+
+Reviewer entry points:
+
+- [Final report](results/qwen36_mxfp4_set_utility_distillation_20260820_v1/validation_analysis/SET_UTILITY_DISTILLATION_REPORT.md) and [analysis manifest](results/qwen36_mxfp4_set_utility_distillation_20260820_v1/validation_analysis/analysis_manifest.json).
+- [Frozen STOP decision](results/qwen36_mxfp4_set_utility_distillation_20260820_v1/validation_analysis/set_utility_promotions.json), [train-only fit](results/qwen36_mxfp4_set_utility_distillation_20260820_v1/fit/), and
+  [exact-checkpoint validation evidence](results/qwen36_mxfp4_set_utility_distillation_20260820_v1/validation_exact_checkpoint/).
+- [Execution ledger](EXECUTION_LEDGER_SET_UTILITY_20260820.md) and
+  [reproducibility protocol](SET_UTILITY_DISTILLATION_REPRODUCIBILITY.md).
+
+The exact one-bpw hybrid local-search oracle reaches p10/median recovery
+`96.05%/97.89%` and passes its continuation gate, improving by
+`+2.261/+5.439` percentage points over coherent exact and by
+`+0.031/+2.123` points over the PR #9 independent control. `K=128` plus 64
+oracle repair units retains p10/median template utility `96.89%/98.77%` at
+256 candidates, but is a regime-existence oracle; no classifier was evaluated.
+The best promotable PQ2 plus independent-ABC path reaches only
+`78.72%/88.63%` recovery and `90.45%` p10 set-gain retention at `0.1771`
+metadata bpw, `1.184M` MACs, and `1.512x` storage. It fails the frozen recovery
+and set-retention gates; all 34 predicted/independent rows fail the scientific gates, and the direct
+set models are worse.
+
+The frozen decision is **STOP**, with no sealed holdout. The strongest next
+direction is distillation of the successful hybrid action/local-search policy,
+with support templates and PQ retained as secondary candidate features.
+No H4, latency, model-accuracy, router, logit, or token-quality claim is made.
+
 ## Neuron-selector distillation (stacked on PR #7)
 
 This bounded continuation is stacked on [PR #7](https://github.com/ArianSFP/LLM_compression_study/pull/7)

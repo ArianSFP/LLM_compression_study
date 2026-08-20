@@ -5,9 +5,9 @@ Ephemeral access addresses, private-key paths, service credentials, and host
 secrets are intentionally excluded from this committed record.
 
 This ledger records implementation and execution provenance. The validation
-result, publication, and shutdown sections remain deliberately incomplete
-until the corresponding events have happened and their artifacts have been
-rehash-verified locally.
+fit, exact-checkpoint validation, analysis, and STOP decision are recorded
+below. Repository publication, transfer verification, and shutdown remain
+deliberately incomplete until those events happen.
 
 ## Scope and branch
 
@@ -46,9 +46,9 @@ an allocator/selector study, not a codec study.
 | Direct predictor core SHA-256 | `82b1b85b01b00658121613776fc8ddcb61352e3b13e7704835c656a6d6ae204c` |
 | Direct predictor tests SHA-256 | `10dac8fcfe2faaa2f8b5a424fc875429a2316fc5c826d1ea9d33e76300c5546e` |
 | Analyzer core SHA-256 | `66c2a123e078997f1e7d349e161fcce18a3ac6600b0e36294330b74573a79ac4` |
-| Analyzer wrapper SHA-256 | `7dff3d084089cf0819703d7d715baa0fa0567734cf2fb1434b7be6b5616410ae` |
+| Analyzer wrapper SHA-256 | `277b43b9cbecafd427b4bef32fcec1d6f628d228c75f95f95946779f18c76ac9` |
 | Analyzer tests SHA-256 | `8e277f72ecd8e3acde49b1acef85878a20f9a35a5e6c0730842745c7c10f2247` |
-| Analyzer end-to-end tests SHA-256 | `c7c53c6a0ca20e2090c801322e932c25951bb7dd5e110bbc66e353dba4bb4349` |
+| Analyzer end-to-end tests SHA-256 | `eeb0152e2d4b4c729f1a6be3d39d18f81505355ee194105755ecb0b2aef6b456` |
 
 The supplied compute host exposed two NVIDIA GeForce RTX 3090 GPUs. The study
 fits and evaluates layers 0, 4, 20, and 39 and uses the locked hot/median/cold
@@ -150,6 +150,13 @@ fit or validation facts.
     NumPy, Python, and host. Cross-hardware resume is prohibited for this run.
     Empty checkpoint Parquets retain the declared schema for all four raw
     artifact families.
+14. Hardened analyzer accounting serialization after two fail-closed partial
+    analysis attempts. Support-template selector additions and scale
+    multiplications are family-inapplicable and are encoded only as explicit
+    JSON `null`; accounting schema v5 rejects every unexpected missing or
+    infinite value. Both partial output directories remain quarantined, and
+    neither emitted nor informed a scientific decision. Canonical analysis
+    was regenerated from the unchanged immutable validation evidence.
 
 ## Physical candidate interface
 
@@ -244,9 +251,11 @@ PYTHONPATH=src:scripts python -m pytest -q
 The authoritative final local verification against the hashes above is:
 
 - runner-focused suite: 37 passed;
-- analyzer-focused suite: 41 passed;
+- analyzer-focused suite: 42 passed;
 - full integrated suite: 282 passed and 1 skipped in 79.662 s, with one NumExpr
   warning and no failures.
+- staged remote runner-plus-analyzer gate: 78 passed in 60.518 s, with no
+  failures.
 
 These results supersede intermediate test counts produced while the source
 freeze was still changing. The staged execution checkout must reproduce the
@@ -344,10 +353,10 @@ the corrections, not resume inputs.
 
 ## Train-only fit launch
 
-The successful replacement fit remains pending. It may launch only after the
-staged checkout exactly matches the frozen configuration/source hashes above
-and its focused tests pass. The literal access command is omitted. Within the
-scoped experiment checkout the frozen command semantics are:
+The successful replacement fit launched only after the staged checkout
+matched the frozen configuration/source hashes and focused tests passed. The
+literal access command remains omitted. Within the scoped experiment checkout,
+the executed command semantics were:
 
 ```bash
 env CUBLAS_WORKSPACE_CONFIG=:4096:8 PYTHONPATH=src:scripts \
@@ -363,8 +372,8 @@ env CUBLAS_WORKSPACE_CONFIG=:4096:8 PYTHONPATH=src:scripts \
   --device cuda:0
 ```
 
-The process will be detached by the job launcher and its stdout/stderr sent to
-a task-owned log. The runner admits only `train` scientific rows from both
+The process was detached by the job launcher and its stdout/stderr sent to a
+task-owned log. The runner admitted only `train` scientific rows from both
 monolithic capture files. Those files physically contain test rows, so this
 ledger does not claim the bytes were absent or that the archive was never
 opened. Split labels and request-ID metadata for train, validation, and test
@@ -373,7 +382,7 @@ split compatibility. Same-split sharing is generally compatible, while a
 cross-source split mismatch fails closed; this locked capture pair freezes and
 observes zero shared IDs. No test scientific tensor is admitted into a fit or
 validation cohort, evaluated for a metric, used for tuning, or reported.
-Initial replacement `fit_facts.json` must record:
+The successful replacement `fit_facts.json` records:
 
 - `fit_split=train`;
 - `validation_or_test_rows_used=false`;
@@ -387,8 +396,21 @@ Initial replacement `fit_facts.json` must record:
 - both capture hashes, checkpoint hashes, tree hash, and all linked source
   hashes bound before layer fitting.
 
-**FIT COMPLETION PLACEHOLDER:** `[completed time, layer shards, manifest hash,
-failure/correction history, train-row cohort counts]`.
+Fit completed at `2026-08-20T07:27:30Z` with exactly layers `[0,4,20,39]`,
+`completed=true`, and empty failure/history lists. `fit_facts.json` SHA-256 is
+`9aa5f692bbebbf94871cb110e3c40a49ed7d9be93220b655241a67ee87904759`;
+the manifest SHA-256 is `afb87ff360e38d191c77abd543f41a8c686afe0e4b0f0bbda4209880db968387`.
+
+| Layer | JSON sidecar SHA-256 | NPZ shard SHA-256 |
+|---:|---|---|
+| 0 | `87a65751b82c051edfc315f497f2a96ee04e8b53a8adb37747e8ecd512563f38` | `4c9a7ae2554bf366f74454451c7aac2ec2597417318b0cd04e8732bd36511524` |
+| 4 | `c866dbe2026e53147321d80111aac2a9311999b59a019d71e72c5521d9587395` | `2572b4ef1195ae923ed6f7ffd3a8d0b090f16beab1ae9a5f0ef8311c53ec3ace` |
+| 20 | `068466e61380efc34d9ea435793c9f8c6801ed22312381b0471e34b6d7fc4342` | `145bf96562d86965dafec9d6f6ea9ae5d81b424fcdc771a2be25b6a01055dba3` |
+| 39 | `7cae024be153a084150e0f80bf73c5db0f2d2ddf459dfc27ee12e6a1b6db4d34` | `06a6ddc578858b376c81a9e05083c417ef8eb92dccc962fe8d4078303c3b7815` |
+
+Every shard and sidecar rehashed into the manifest with identical runtime
+provenance. Routed and synthetic train-only cohort counts remain distinct in
+the manifest; no validation or test scientific row was used for fitting.
 
 ## Validation-only execution and stop/promote contract
 
@@ -447,49 +469,71 @@ deployable policy passes, stop and publish the validation-only negative result.
 If a policy passes, freeze exactly one Pareto-relevant configuration in
 `set_utility_promotions.json` before any new holdout is captured or evaluated.
 
-The PR #7/#9 test split has already informed this research direction. It is
-not a fresh holdout and must remain unconsulted in this bounded runner. A
+The PR #7/#9 test split scientific values have already informed this research
+direction, so they are not a fresh holdout and must remain unconsulted in this
+bounded runner. A
 promoted method requires a newly captured, sealed holdout under a separately
 frozen protocol. This runner deliberately exposes no test phase.
 
-**VALIDATION COMPLETION PLACEHOLDER:** `[command time, expected/observed
-invocations, failures, run-facts hash]`.
+Validation completed at `2026-08-20T08:01:22Z`: exactly 69/69 unique
+exact-checkpoint validation invocations and all 12 locked layer/expert cells,
+with empty failure/history lists. Raw row counts are 1,035 hybrid, 8,832
+template, 1,173 selector, and 40,020 candidate-interface rows. The completed
+`run_facts.json` SHA-256 is
+`5699f45b3983b0e189aebaaf83351e62ce991c1f4af9b74db496388dc68c2e7e`.
 
-**PROMOTION/STOP PLACEHOLDER:** `[promotion digest and frozen config, or
-explicit stopped families and reason]`.
+The frozen decision is **STOP**. `set_utility_promotions.json` SHA-256 is
+`5e9928ee2ba0c72f4b34cd5e270d2f47e169cf1078bf6fcf0520347fc4fc0ebd`.
+The exact one-bpw hybrid local-search oracle reaches complete-expert recovery
+p10/median `96.05%/97.89%` and passes the oracle continuation gate.
+It improves paired recovery by `+2.261/+5.439` percentage points in p10/median
+over coherent exact, and by `+0.031/+2.123` points over the PR #9 independent
+control. The `K=128` template plus 64 oracle repair units retains
+p10/median utility `96.89%/98.77%` at 256 candidates, but is a support-regime
+existence oracle only; no template classifier was trained or evaluated.
+The best promotable PQ-stage-2 plus independent-ABC candidate/rerank path
+reaches recovery p10/median `78.72%/88.63%`, p10 exact-set-gain retention
+`90.45%`, `0.1771` metadata bpw, `1.184M` total selector MACs, and `1.512x`
+storage. It fails the frozen recovery and set-retention gates. All 34
+predicted/independent rows fail the scientific gates, and direct set models
+perform worse. The authoritative report SHA-256 is
+`3fef9cfe4b8fb8dcc50421bc5847312d686d876275cad12c358991c5643f6964`;
+analysis-manifest SHA-256 is
+`e6a9894a630c8a7d81d4da064f295d56cd64cd7016b7a1d4e672c213ff4cf869`;
+analyzer accounting JSON SHA-256 is
+`35831588074bca7a89b1634c1f530fd33d0d56d05bb48f4b71be42917af51960`.
 
-**NEW SEALED HOLDOUT PLACEHOLDER:** `[only if promoted: capture protocol,
-request IDs sealed status, capture hash, evaluation command and facts]`.
+No sealed holdout was captured or evaluated because no deployable selector
+passed every validation gate. The bounded study stopped exactly as frozen.
 
 ## Artifact inventory
 
 Train-only fit artifacts:
 
-- `fit/fit_facts.json` — **status:** `[in progress/complete]`;
-- `fit/set_utility_fit_layer_{0,4,20,39}.npz` — **hashes:** `[fill]`;
-- `fit/set_utility_fit_layer_{0,4,20,39}.json` — **hashes:** `[fill]`;
-- `fit/set_utility_fit_manifest.json` — **hash:** `[fill]`;
-- `logs/fit.log` and preserved failure logs — **inventory/hash:** `[fill]`.
+- `fit/fit_facts.json` — complete; SHA-256 `9aa5f692bbebbf94871cb110e3c40a49ed7d9be93220b655241a67ee87904759`;
+- `fit/set_utility_fit_layer_{0,4,20,39}.npz` — four verified hashes in the completion table above;
+- `fit/set_utility_fit_layer_{0,4,20,39}.json` — four verified hashes in the completion table above;
+- `fit/set_utility_fit_manifest.json` — SHA-256 `afb87ff360e38d191c77abd543f41a8c686afe0e4b0f0bbda4209880db968387`;
+- successful-run failures/history are empty; preserved correction bundles are enumerated under quarantined attempts.
 
 Validation raw artifacts:
 
-- `validation_exact_checkpoint/run_facts.json` — **status/hash:** `[fill]`;
-- `validation_exact_checkpoint/hybrid_oracle_frontier.parquet` — **rows/hash:** `[fill]`;
-- `validation_exact_checkpoint/support_template_frontier.parquet` — **rows/hash:** `[fill]`;
-- `validation_exact_checkpoint/pq_high_rank_selector_frontier.parquet` — **rows/hash:** `[fill]`;
-- `validation_exact_checkpoint/candidate_set_rerank_frontier.parquet` — **rows/hash:** `[fill]`;
-- `validation_exact_checkpoint/selector_compute_storage_accounting.json` — **hash:** `[fill]`.
+- `validation_exact_checkpoint/run_facts.json` — complete; SHA-256 `5699f45b3983b0e189aebaaf83351e62ce991c1f4af9b74db496388dc68c2e7e`;
+- `validation_exact_checkpoint/hybrid_oracle_frontier.parquet` — 1,035 rows; SHA-256 `5fab3125c4bad9329ebbe9a566a7a4ef41cfba14b823a588f3fac9904c083a34`;
+- `validation_exact_checkpoint/support_template_frontier.parquet` — 8,832 rows; SHA-256 `c62c1bbfcdbe4bf91d625ce7e34bf8f6b4eab9cc413a6bf463946ebaa45f02bd`;
+- `validation_exact_checkpoint/pq_high_rank_selector_frontier.parquet` — 1,173 rows; SHA-256 `108fd14313fb0a16a42171d46558d5ab8dffdab1e943cf9b7f4083f6a743d7bc`;
+- `validation_exact_checkpoint/candidate_set_rerank_frontier.parquet` — 40,020 rows; SHA-256 `d8b8699cae7c7ffc7bf04d798504e4f6944fe92ff509a797a7c9321e66f2df3f`;
+- `validation_exact_checkpoint/selector_compute_storage_accounting.json` — SHA-256 `cceadc876a6b347cc5a73479a1142093631064b5fa04d32f3007c01e9555b8f7`.
 
 Validation-analysis artifacts:
 
-- `validation_analysis/SET_UTILITY_DISTILLATION_REPORT.md` — **hash:** `[fill]`;
-- `validation_analysis/set_utility_promotions.json` — **status/hash:** `[fill]`;
-- `validation_analysis/analysis_manifest.json` — **hash:** `[fill]`;
-- exactly 14 CSVs, including `candidate_rerank_accounting.csv` with the exact
-  rerank component and lower-bound declarations — **inventory/hash:** `[fill]`;
-- analyzer-recomputed `selector_compute_storage_accounting.json` — **hash:** `[fill]`;
-- four deterministic PNG/SVG plot pairs — **inventory/hash:** `[fill]`;
-- package-level `artifact_hashes.sha256` — **hash:** `[fill]`.
+- `validation_analysis/SET_UTILITY_DISTILLATION_REPORT.md` — SHA-256 `3fef9cfe4b8fb8dcc50421bc5847312d686d876275cad12c358991c5643f6964`;
+- `validation_analysis/set_utility_promotions.json` — STOP; SHA-256 `5e9928ee2ba0c72f4b34cd5e270d2f47e169cf1078bf6fcf0520347fc4fc0ebd`;
+- `validation_analysis/analysis_manifest.json` — SHA-256 `e6a9894a630c8a7d81d4da064f295d56cd64cd7016b7a1d4e672c213ff4cf869`;
+- exactly 14 CSVs, including `candidate_rerank_accounting.csv`, are hash-bound in the analysis manifest;
+- four deterministic PNG/SVG plot pairs are hash-bound in the analysis manifest;
+- analyzer-recomputed `selector_compute_storage_accounting.json` — SHA-256 `35831588074bca7a89b1634c1f530fd33d0d56d05bb48f4b71be42917af51960`;
+- package-level `artifact_hashes.sha256` binds 42 files; SHA-256 `68cc3f54ba346fbb3632ec50b5813da3817e46cd8867375540b5342fec95f3c5`.
 
 Publication must preserve train-fit, exact validation, any newly sealed
 holdout, and analysis directories as distinct evidence planes. It must not
@@ -497,8 +541,11 @@ copy pilot-only benchmark values into cohort summary tables.
 
 ## Publication and shutdown
 
-- **RESULT INTERPRETATION PLACEHOLDER:** `[fill only after immutable validation
-  artifacts and manifest are local]`.
+- **Result interpretation:** hybrid action/local-search structure is the only
+  continuation-positive result; the deployable coherent-unit selectors stop
+  because all predicted/independent rows fail the frozen scientific gates.
+  Templates establish a secondary support regime and PQ is secondary synopsis
+  evidence, not a passing selector. No sealed holdout was run.
 - **EVIDENCE COMMIT PLACEHOLDER:** `[commit SHA and subject]`.
 - **PUSH PLACEHOLDER:** `[remote branch and verified head SHA]`.
 - **PR PLACEHOLDER:** `[URL, base/head, draft/open state, changed-file count,

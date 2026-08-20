@@ -1,0 +1,111 @@
+{
+  "base_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "checkpoint_audit_cross": {
+    "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_audit_exact": {
+    "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "codec_locked": true,
+  "completed": true,
+  "completed_layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "completed_unix": 1787210850.887216,
+  "config_sha256": "ef5308f7f684dca31a98fb81ecc8c49feded78ce4f201617fa847b4e9b5d09f1",
+  "cross_capture_request_id_audit": {
+    "cross_source_train_to_nontrain_overlap_count": 0,
+    "cross_source_train_to_nontrain_overlaps": [],
+    "cross_unique_request_ids": 81,
+    "exact_unique_request_ids": 12,
+    "expected_shared_request_id_count": 0,
+    "expected_shared_request_ids_match": true,
+    "incompatible_overlap_count": 0,
+    "incompatible_overlaps": [],
+    "shared_request_id_count": 0,
+    "shared_same_split_request_id_counts": {
+      "test": 0,
+      "train": 0,
+      "validation": 0
+    },
+    "shared_same_split_request_ids": {
+      "test": [],
+      "train": [],
+      "validation": []
+    },
+    "split_compatible": true
+  },
+  "cross_capture_sha256": "3307216e92a7c9fae24ad0f213f064a325f403685f0e97952862b70b86b91add",
+  "device": "cuda:0",
+  "direct_candidate_head_supervision": "hard_forward_top192_apply_head_union_top64_candidate_head_excluding_apply_supervised_for_teacher_top192_coverage",
+  "direct_predictor_core_sha256": "82b1b85b01b00658121613776fc8ddcb61352e3b13e7704835c656a6d6ae204c",
+  "exact_capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "failure_history": [],
+  "failures": [],
+  "fit_split": "train",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "host": "a0f688dc9e9d",
+  "manifest_sha256": "afb87ff360e38d191c77abd543f41a8c686afe0e4b0f0bbda4209880db968387",
+  "monolithic_source_contains_test_rows": true,
+  "mxfp4_embed_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "neuron_selector_core_sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94",
+  "oracle_core_sha256": "f852d57b5e1d874d1649ca48067276ad6503cf5a3133b22169ae16abab6253b4",
+  "phase": "fit",
+  "phase_a_runner_sha256": "f4b039fb5b271867762f7eafaa57d558f6a9b333f6e45c73f9ba8fab32f4e0fe",
+  "prior_runner_sha256": "9d3a44cf2e4fa82ee533c482ac52073a9bad7968aa411fdc34dace8450d59e29",
+  "request_separation_verified": true,
+  "run_id": "qwen36_mxfp4_set_utility_distillation_20260820_v1",
+  "runner_sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "a0f688dc9e9d",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "selective_pages_runner_sha256": "4d963cd851e7bc636a0967a48c4a039cd1a590d1b6ff7b42992ee5519d0d15da",
+  "selector_core_sha256": "604935fb9c90f04c67cabe3ff6c3dfe272c4abd72ca74179b4a99f53c3b5e6c0",
+  "sparse_streaming_core_sha256": "eb7b08e4aa2bf490c0edebf5e04a017a6701c56410ab35c61de8cc898f868aeb",
+  "teacher_core_sha256": "fc5128159287a4811d0fc1c9b4af3ec1fa86083748f5eb535b9936776d299afe",
+  "test_rows_admitted": false,
+  "test_rows_used": false,
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_or_test_rows_used": false
+}

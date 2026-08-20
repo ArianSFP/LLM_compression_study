@@ -43,6 +43,13 @@ from oracle_study.set_utility_analysis import (  # noqa: E402
 
 matplotlib.rcParams["svg.hashsalt"] = "set-utility-distillation-20260820"
 REPORT_NAME = "SET_UTILITY_DISTILLATION_REPORT.md"
+SUPPORT_TEMPLATE_NULL_ACCOUNTING_FIELDS = (
+    "selector_compute_additions",
+    "selector_scale_multiplications",
+)
+SUPPORT_TEMPLATE_NULL_ACCOUNTING_REASON = (
+    "not_applicable_validation_oracle_has_no_deployable_selector"
+)
 
 
 def _json_default(value: Any) -> Any:
@@ -204,6 +211,49 @@ def candidate_rerank_accounting(frame: pd.DataFrame) -> pd.DataFrame:
         "selector_family", "selector_config_id", "layer", "expert_id",
         "rerank_semantics", "candidate_units",
     ])
+
+
+def candidate_rerank_json_records(frame: pd.DataFrame) -> list[dict[str, Any]]:
+    """Encode only declared support-template omissions as JSON null.
+
+    The support-template branch is a validation-oracle existence control and
+    has no deployable base selector.  Its raw evidence therefore omits the two
+    base-selector operation breakdowns below; Parquet/CSV preserve those cells
+    as missing.  JSON has no NaN representation, so encode exactly those
+    family-inapplicable cells as null while leaving every other non-finite
+    value for ``allow_nan=False`` to reject.
+    """
+
+    required = {"selector_family", *SUPPORT_TEMPLATE_NULL_ACCOUNTING_FIELDS}
+    missing_columns = sorted(required - set(frame.columns))
+    if missing_columns:
+        raise RuntimeError(
+            "candidate rerank accounting lacks JSON-null contract fields: "
+            + ", ".join(missing_columns)
+        )
+    support_template = frame["selector_family"].astype(str).eq("support_template").to_numpy()
+    encoded = frame.astype(object).copy()
+    for column in SUPPORT_TEMPLATE_NULL_ACCOUNTING_FIELDS:
+        missing = frame[column].isna().to_numpy()
+        invalid_missing = missing & ~support_template
+        if invalid_missing.any():
+            index = int(np.flatnonzero(invalid_missing)[0])
+            raise RuntimeError(
+                f"{column} is missing outside a support-template accounting row at {index}"
+            )
+        present = ~missing
+        if present.any():
+            try:
+                numeric = pd.to_numeric(frame.loc[present, column], errors="raise").to_numpy(
+                    np.float64,
+                )
+            except (TypeError, ValueError) as error:
+                raise RuntimeError(f"{column} contains a non-numeric value") from error
+            if not np.isfinite(numeric).all():
+                index = int(np.flatnonzero(present)[np.flatnonzero(~np.isfinite(numeric))[0]])
+                raise RuntimeError(f"{column} is non-finite at accounting row {index}")
+        encoded.loc[missing, column] = None
+    return encoded.to_dict("records")
 
 
 def _frontier_tables(accounted: Mapping[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
@@ -548,7 +598,10 @@ analytical linear/algebraic contract; nonlinear SiLU/log/sqrt, elementwise and c
 top-k/sort, and runtime overhead are excluded from it and disclosed separately. Every read-byte
 column is logical unique payload plus explicitly declared LUT reads, not measured DRAM, cache, or
 PCIe traffic. The precise candidate components and bound strings are preserved in
-`candidate_rerank_accounting.csv`. The explicitly disclosed diagnostic accounting caveats above
+`candidate_rerank_accounting.csv`. Support-template existence-oracle rows have no deployable base
+selector, so their raw base-selector addition and scale-multiplication cells remain empty in that
+CSV and are represented as explicit `null` values in the accounting JSON; their rerank and total
+charges remain finite and explicit. The explicitly disclosed diagnostic accounting caveats above
 are never used for promotion. The analyzer refuses evidence if a reported value differs.
 
 ## H0, deployable approximation, and H4 boundary
@@ -601,6 +654,7 @@ def analyze(args: argparse.Namespace) -> None:
     coverage = coverage_summary(accounted)
     accounting = selector_accounting(accounted["selector"])
     rerank_accounting = candidate_rerank_accounting(accounted["candidate"])
+    rerank_json_rows = candidate_rerank_json_records(rerank_accounting)
 
     generated: list[Path] = []
     csvs = {
@@ -626,7 +680,7 @@ def analyze(args: argparse.Namespace) -> None:
 
     accounting_json = args.output / "selector_compute_storage_accounting.json"
     atomic_json(accounting_json, {
-        "schema_version": 4,
+        "schema_version": 5,
         "arithmetic_recomputed_by_analyzer": True,
         "physical_interface": {
             "candidate_units": 256, "applied_units": 192,
@@ -635,7 +689,14 @@ def analyze(args: argparse.Namespace) -> None:
             "page_amplification": 4 / 3,
         },
         "rows": accounting.to_dict("records"),
-        "candidate_rerank_rows": rerank_accounting.to_dict("records"),
+        "candidate_rerank_rows": rerank_json_rows,
+        "candidate_rerank_optional_null_contract": {
+            "selector_family": "support_template",
+            "fields": list(SUPPORT_TEMPLATE_NULL_ACCOUNTING_FIELDS),
+            "reason": SUPPORT_TEMPLATE_NULL_ACCOUNTING_REASON,
+            "csv_encoding": "empty_cell_preserving_raw_missing_value",
+            "json_encoding": "null",
+        },
         "q4_response_resident_payload_contract": {
             "q2_parent_code_bytes_per_unit": 1_024,
             "q2_scale_bytes_per_unit": 128,

@@ -5,7 +5,9 @@ import importlib.util
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+import pytest
 
 from oracle_study.set_utility_analysis import (
     CONTAINED,
@@ -35,6 +37,41 @@ ANALYZER_SPEC = importlib.util.spec_from_file_location(
 assert ANALYZER_SPEC is not None and ANALYZER_SPEC.loader is not None
 analyzer = importlib.util.module_from_spec(ANALYZER_SPEC)
 ANALYZER_SPEC.loader.exec_module(analyzer)
+
+
+def test_candidate_rerank_json_nulls_only_declared_support_template_fields() -> None:
+    frame = pd.DataFrame([
+        {
+            "selector_family": "support_template",
+            "selector_compute_additions": np.nan,
+            "selector_scale_multiplications": np.nan,
+            "rerank_incremental_compute_macs": 17,
+        },
+        {
+            "selector_family": "block_pq_residual_synopsis",
+            "selector_compute_additions": 23,
+            "selector_scale_multiplications": 29,
+            "rerank_incremental_compute_macs": 31,
+        },
+    ])
+    records = analyzer.candidate_rerank_json_records(frame)
+    assert pd.isna(frame.loc[0, "selector_compute_additions"])
+    assert pd.isna(frame.loc[0, "selector_scale_multiplications"])
+    assert records[0]["selector_compute_additions"] is None
+    assert records[0]["selector_scale_multiplications"] is None
+    assert records[0]["rerank_incremental_compute_macs"] == 17
+    assert records[1]["selector_compute_additions"] == 23
+    assert records[1]["selector_scale_multiplications"] == 29
+
+    outside_family = frame.copy()
+    outside_family.loc[1, "selector_compute_additions"] = np.nan
+    with pytest.raises(RuntimeError, match="missing outside a support-template"):
+        analyzer.candidate_rerank_json_records(outside_family)
+
+    non_finite_present = frame.copy()
+    non_finite_present.loc[0, "selector_compute_additions"] = np.inf
+    with pytest.raises(RuntimeError, match="non-finite"):
+        analyzer.candidate_rerank_json_records(non_finite_present)
 
 
 def test_synthetic_fit_validation_accounting_freeze_and_report_end_to_end(tmp_path: Path) -> None:
@@ -224,6 +261,8 @@ def test_synthetic_fit_validation_accounting_freeze_and_report_end_to_end(tmp_pa
                         "selector_abc_score_units": 0,
                         "selector_abc_score_compute_macs": 0,
                         "selector_abc_score_macs_per_unit": 0,
+                        "selector_compute_additions": np.nan,
+                        "selector_scale_multiplications": np.nan,
                         "selector_bytes_read": 512 + 393_216,
                         "promotable": False,
                     }
@@ -379,6 +418,9 @@ def test_synthetic_fit_validation_accounting_freeze_and_report_end_to_end(tmp_pa
         "sha256": sha256(rerank_csv),
     }
     rerank = pd.read_csv(rerank_csv)
+    support = rerank[rerank["selector_family"] == "support_template"]
+    assert support["selector_compute_additions"].isna().all()
+    assert support["selector_scale_multiplications"].isna().all()
     pq = rerank[rerank["selector_family"] == "block_pq_residual_synopsis"]
     by_semantics = {
         semantic: pq[pq["rerank_semantics"] == semantic].iloc[0]
@@ -407,7 +449,22 @@ def test_synthetic_fit_validation_accounting_freeze_and_report_end_to_end(tmp_pa
         EXPERIMENT / "scripts/analyze_set_utility_distillation.py"
     )
     accounting = json.loads((output / "selector_compute_storage_accounting.json").read_text())
-    assert accounting["schema_version"] == 4
+    assert accounting["schema_version"] == 5
+    assert accounting["candidate_rerank_optional_null_contract"] == {
+        "csv_encoding": "empty_cell_preserving_raw_missing_value",
+        "fields": ["selector_compute_additions", "selector_scale_multiplications"],
+        "json_encoding": "null",
+        "reason": "not_applicable_validation_oracle_has_no_deployable_selector",
+        "selector_family": "support_template",
+    }
+    support_json = [
+        row for row in accounting["candidate_rerank_rows"]
+        if row["selector_family"] == "support_template"
+    ]
+    assert support_json
+    assert all(row["selector_compute_additions"] is None for row in support_json)
+    assert all(row["selector_scale_multiplications"] is None for row in support_json)
+    assert all(row["rerank_incremental_compute_macs"] is not None for row in support_json)
     assert accounting["q4_response_resident_payload_contract"] == {
         "candidate_packet_bytes_per_unit": 1_536,
         "candidate_packet_is_suffix_only": True,
