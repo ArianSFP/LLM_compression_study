@@ -538,6 +538,99 @@ def _merge_rebased_frontiers(
     return merged
 
 
+def _merge_literal_rebased_frontiers(
+    field: Q3InteractionField, layout: Q3PageLayout,
+    native: Sequence[RateOption], injections: Sequence[tuple[str, Sequence[RateOption]]],
+    *, maximum_quanta: int,
+) -> tuple[RateOption, ...]:
+    """Union exact state witnesses without Pareto-pruning them away.
+
+    This is used only after column generation.  The allocator must see every
+    inherited Q2/Q4 state literally: domination by a different compressed
+    state is not a reproducible baseline witness.
+    """
+    candidates = [option for option in native if int(option.pages) <= int(maximum_quanta)]
+    witnesses: list[RateOption] = []
+    for label, frontier in injections:
+        for option in frontier:
+            states = np.asarray(option.states, np.int64)
+            cost = int(layout.cost_quanta(states))
+            if cost > int(maximum_quanta):
+                continue
+            witness = RateOption(
+                cost, float(field.damage(states)), states.copy(),
+                f"literal_{label}:{option.source}", float(option.page_price),
+                int(option.coordinate_sweeps), int(option.local_passes),
+            )
+            candidates.append(witness)
+            witnesses.append(witness)
+
+    unique: dict[tuple[int, bytes], RateOption] = {}
+    for option in candidates:
+        key = (int(option.pages), np.asarray(option.states, np.int64).tobytes())
+        previous = unique.get(key)
+        if previous is None or (
+            float(option.damage), str(option.source)
+        ) < (float(previous.damage), str(previous.source)):
+            unique[key] = option
+    merged = tuple(sorted(
+        unique.values(),
+        key=lambda option: (
+            int(option.pages), float(option.damage), str(option.source),
+            tuple(np.asarray(option.states, np.int64).tolist()),
+        ),
+    ))
+    for witness in witnesses:
+        if not any(
+            int(candidate.pages) == int(witness.pages)
+            and np.array_equal(candidate.states, witness.states)
+            for candidate in merged
+        ):
+            raise RuntimeError("Q3 frontier lost a literal injected state witness")
+    return merged
+
+
+def _rebased_allocation_witness(
+    candidate_frontiers: Sequence[Sequence[RateOption]],
+    reference_frontiers: Sequence[Sequence[RateOption]],
+    reference: AllocationTrace, weights: np.ndarray,
+) -> AllocationTrace:
+    """Map one allocation to identical states in another charged layout."""
+    importance = np.asarray(weights, np.float64).reshape(-1)
+    if importance.shape != (len(candidate_frontiers),):
+        raise ValueError("allocation witness weights do not match frontiers")
+    selected = []
+    for expert, reference_index in enumerate(reference.option_indices.tolist()):
+        reference_option = reference_frontiers[expert][int(reference_index)]
+        matches = [
+            index for index, option in enumerate(candidate_frontiers[expert])
+            if np.array_equal(option.states, reference_option.states)
+        ]
+        if not matches:
+            raise RuntimeError("Q3 frontier lacks a literal group-allocation witness")
+        selected.append(min(matches, key=lambda index: (
+            int(candidate_frontiers[expert][index].pages),
+            float(candidate_frontiers[expert][index].damage), index,
+        )))
+    pages = sum(
+        int(candidate_frontiers[expert][index].pages)
+        for expert, index in enumerate(selected)
+    )
+    objective = sum(
+        float(importance[expert]) * float(candidate_frontiers[expert][index].damage)
+        for expert, index in enumerate(selected)
+    )
+    return AllocationTrace(np.asarray(selected, np.int64), int(pages), float(objective))
+
+
+def _prefer_allocation(candidate: AllocationTrace, witness: AllocationTrace) -> AllocationTrace:
+    return witness if (
+        float(witness.objective), int(witness.pages), tuple(witness.option_indices.tolist())
+    ) < (
+        float(candidate.objective), int(candidate.pages), tuple(candidate.option_indices.tolist())
+    ) else candidate
+
+
 def _assert_allocation_objective_dominates(
     candidate: AllocationTrace, reference: AllocationTrace, label: str,
 ) -> None:
@@ -797,6 +890,44 @@ def _evaluate_group(task: int):
         data["runtime"] += time.perf_counter() - started
         data["work"]["refinement_rounds"] = refinement_rounds
 
+    final_baseline_frontiers = layout_data[baseline_id]["frontiers"]
+    # Column generation Pareto-prunes aggressively.  Reinsert every inherited
+    # state literally after refinement, then place every final physical state
+    # in the ideal control.  Recompute exact option arrays for the expanded
+    # frontiers so row indices remain a closed evidence contract.
+    for physical_id in config["primary_physical_layouts"]:
+        data = layout_data[physical_id]
+        data["frontiers"] = tuple(
+            _merge_literal_rebased_frontiers(
+                fields[expert], data["layout"], data["frontiers"][expert],
+                (("reproduced_pr13_q2q4", final_baseline_frontiers[expert]),),
+                maximum_quanta=maximum,
+            )
+            for expert in range(8)
+        )
+    ideal = layout_data[ideal_id]
+    ideal["frontiers"] = tuple(
+        _merge_literal_rebased_frontiers(
+            fields[expert], ideal["layout"], ideal["frontiers"][expert],
+            tuple(
+                (physical_id, layout_data[physical_id]["frontiers"][expert])
+                for physical_id in config["primary_physical_layouts"]
+            ),
+            maximum_quanta=maximum,
+        )
+        for expert in range(8)
+    )
+    for data in layout_data.values():
+        features, exact = [], []
+        for expert in range(8):
+            values, damage = _option_data(
+                responses[expert], data["frontiers"][expert],
+                _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"],
+            )
+            features.append(values); exact.append(damage)
+        data["features"] = tuple(features)
+        data["exact"] = tuple(exact)
+
     router_cache = {}
     for mean in map(int, config["mean_correction_quanta"]):
         for layout_id, data in layout_data.items():
@@ -807,15 +938,33 @@ def _evaluate_group(task: int):
             data["allocation_runtime"] += time.perf_counter() - started
         baseline_allocation = router_cache[(baseline_id, mean)]
         for physical_id in config["primary_physical_layouts"]:
+            witness = _rebased_allocation_witness(
+                layout_data[physical_id]["frontiers"], final_baseline_frontiers,
+                baseline_allocation, weights * weights,
+            )
+            if int(witness.pages) > 8 * mean:
+                raise RuntimeError("inherited Q2/Q4 allocation witness exceeds Q3 budget")
+            router_cache[(physical_id, mean)] = _prefer_allocation(
+                router_cache[(physical_id, mean)], witness,
+            )
             _assert_allocation_objective_dominates(
                 router_cache[(physical_id, mean)], baseline_allocation,
                 f"{physical_id} Q3 at {mean} quanta",
             )
 
-        ideal_allocation = router_cache[(ideal_id, mean)]
         for physical_id in config["primary_physical_layouts"]:
+            physical = router_cache[(physical_id, mean)]
+            witness = _rebased_allocation_witness(
+                layout_data[ideal_id]["frontiers"],
+                layout_data[physical_id]["frontiers"], physical, weights * weights,
+            )
+            if int(witness.pages) > 8 * mean:
+                raise RuntimeError("physical allocation witness exceeds ideal Q3 budget")
+            router_cache[(ideal_id, mean)] = _prefer_allocation(
+                router_cache[(ideal_id, mean)], witness,
+            )
             _assert_allocation_objective_dominates(
-                ideal_allocation, router_cache[(physical_id, mean)],
+                router_cache[(ideal_id, mean)], physical,
                 f"ideal Q3 versus {physical_id} at {mean} quanta",
             )
 

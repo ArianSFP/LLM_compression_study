@@ -11,7 +11,8 @@ from oracle_study.q3_gate_up_field import (
 )
 from run_q3_gate_up_layout import (
     GROUP_IDENTITY, _allocation_rows, _assert_allocation_objective_dominates,
-    _layout_descriptor_bytes, _layouts, _merge_rebased_frontiers,
+    _layout_descriptor_bytes, _layouts, _merge_literal_rebased_frontiers,
+    _merge_rebased_frontiers, _rebased_allocation_witness,
     _validate_contract,
 )
 
@@ -75,6 +76,48 @@ def test_injected_frontier_witnesses_and_objective_dominance_are_fail_closed():
     _assert_allocation_objective_dominates(better, worse, "synthetic")
     with pytest.raises(RuntimeError, match="compressed-objective dominance"):
         _assert_allocation_objective_dominates(worse, better, "synthetic")
+
+
+def test_literal_frontier_and_group_allocation_preserve_exact_inherited_states():
+    units, rank = 2, 1
+    factor = JointInteractionFactor(
+        np.zeros((units, rank)), np.zeros((units, rank)),
+        "synthetic", rank, 0, "fp64",
+    )
+    local = np.full((units, 18), 10.0)
+    local[:, 0] = 5.0
+    local[:, 17] = 0.0
+    field = Q3InteractionField(
+        np.zeros((units, 18, rank)), np.zeros((units, 18, 2)),
+        local.copy(), local, factor,
+    )
+    fixed = fixed_gate_up_layout(units)
+    legacy = monolithic_q2q4_layout(units)
+    layout = Q3PageLayout(
+        "fixed_plus_legacy", units,
+        np.concatenate((fixed.action_pages, legacy.action_pages)),
+    )
+    zero = np.zeros(units, np.int64)
+    inherited = np.asarray([17, 0], np.int64)
+    native_better_same_cost = np.asarray([0, 17], np.int64)
+    native = (RateOption(
+        layout.cost_quanta(native_better_same_cost), -1.0,
+        native_better_same_cost, "native_dominator", 0.0, 0, 0,
+    ),)
+    reference = (
+        RateOption(0, field.damage(zero), zero, "zero", 0.0, 0, 0),
+        RateOption(6, field.damage(inherited), inherited, "pr13", 0.0, 2, 1),
+    )
+    merged = _merge_literal_rebased_frontiers(
+        field, layout, native, (("pr13", reference),), maximum_quanta=12,
+    )
+    assert any(np.array_equal(option.states, inherited) for option in merged)
+    allocation = AllocationTrace(np.asarray([1]), 6, field.damage(inherited))
+    witness = _rebased_allocation_witness(
+        (merged,), (reference,), allocation, np.ones(1),
+    )
+    assert witness.pages == layout.cost_quanta(inherited)
+    assert np.array_equal(merged[int(witness.option_indices[0])].states, inherited)
 
 
 
