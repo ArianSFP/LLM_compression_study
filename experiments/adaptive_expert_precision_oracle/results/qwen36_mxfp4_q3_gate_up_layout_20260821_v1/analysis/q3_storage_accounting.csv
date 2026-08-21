@@ -1,0 +1,6 @@
+layout_id,metadata_bpw,external_storage_multiplier,layout_replicas,layout_is_physical
+q2q4_monolithic_same_solver_reference,0.018269856770833332,1.0042987898284315,1,True
+q3_ideal_logical_256_byte_plane_ceiling,0.018269856770833332,1.0042987898284315,0,False
+q3_physical_fixed_gate_up_pairing,0.018269856770833332,1.0042987898284315,1,True
+q3_physical_training_coselection_replicated2,0.018351236979166668,1.3180434283088236,2,True
+q3_physical_training_coselection_single,0.018310546875,1.0043083639705883,1,True

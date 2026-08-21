@@ -1,0 +1,23 @@
+{
+  "fit_split": "train",
+  "incidence_rows": 2526,
+  "incidence_sha256": "57d3cf4c52d37c6f77b26ed648e4a6880ef86fba48ce03539753365c7354a32c",
+  "layer": 4,
+  "routed_experts": 122,
+  "routed_train_invocations": 421,
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "8a266243a04b",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "shard": "q3_layout_layer_4.npz",
+  "shard_bytes": 11512,
+  "shard_sha256": "d5c6ce63bd681cd50c9930726cc71cbfc9bf4dd0b97cb5c64633890c88e95899",
+  "validation_or_test_values_used": false
+}

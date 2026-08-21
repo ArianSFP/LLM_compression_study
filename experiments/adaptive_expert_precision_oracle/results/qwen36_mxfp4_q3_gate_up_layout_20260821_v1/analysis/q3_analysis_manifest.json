@@ -1,0 +1,123 @@
+{
+  "completed": true,
+  "inputs": [
+    {
+      "bytes": 4519,
+      "path": "configs/qwen36_mxfp4_q3_gate_up_layout.json",
+      "sha256": "f3eabd1ae59a1d6521ca95b8341b54ed03629e151a141595df662bb29aa7b2c0"
+    },
+    {
+      "bytes": 3401,
+      "path": "results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/layout_fit/q3_layout_fit_facts.json",
+      "sha256": "55430e92635d5f109e2a6dcbf84b47e42cbf0f7d57023327a696ba8a765b59e5"
+    },
+    {
+      "bytes": 6237,
+      "path": "results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/layout_fit/q3_layout_manifest.json",
+      "sha256": "c4edd13a53c300761afc91ef042ae28f2f90b5f854fa7cb267830a4b693698ac"
+    },
+    {
+      "bytes": 258571,
+      "path": "results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/validation_exact_h4/q3_gate_up_run_facts.json",
+      "sha256": "7ad889e4b484d6a2b4963fa1f6b6bce593645d4208c19308e8521faca69505be"
+    },
+    {
+      "bytes": 1377,
+      "path": "results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/validation_exact_h4/q3_gate_up_accounting.json",
+      "sha256": "b460d8e7a6358f745f83a261322bc55f5b8e1e19fcc1938de15106508a3f5058"
+    },
+    {
+      "bytes": 4028398,
+      "path": "results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/validation_exact_h4/q3_gate_up_group_frontier.parquet",
+      "sha256": "667419eef36b5c57aea7ddf25984b09774f92eb052f8c4208e57a1e4edce5153"
+    },
+    {
+      "bytes": 38508606,
+      "path": "results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/validation_exact_h4/q3_gate_up_expert_allocation.parquet",
+      "sha256": "b69e8f6116ebda71e3607a4338a3f498731eca4cefc7427d10b00b56264c993a"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 8216,
+      "path": "Q3_GATE_UP_LAYOUT_REPORT.md",
+      "sha256": "d326548a4efa3b512536fde28bb0c9def25496c2a22e249006236fa6c9cae4bb"
+    },
+    {
+      "bytes": 185535,
+      "path": "q3_accuracy_by_bpw.csv",
+      "sha256": "f9c529434de5ba58b2f744bd728047506bea7a25ec23877ae7be3a90022648cf"
+    },
+    {
+      "bytes": 3217,
+      "path": "q3_gate_up_promotions.json",
+      "sha256": "98c471bd03a800000c1edc75b647e738421517a31006e008f33b74247e011b88"
+    },
+    {
+      "bytes": 91298,
+      "path": "q3_layer_accuracy.csv",
+      "sha256": "815554c281c1412855c5a800a7fe6aa4e99f3703c8d961595858d340e20d2a7a"
+    },
+    {
+      "bytes": 1604,
+      "path": "q3_minimum_bpw_thresholds.csv",
+      "sha256": "d14777d08c13625dea9666abae1d7b9e143ff8218aae2db1dffd37ef1552499f"
+    },
+    {
+      "bytes": 161799,
+      "path": "q3_rate_curve.png",
+      "sha256": "63633d0f82abafa7f8e576f3175bc3fc1b7d5c4f4e34db9baf140531a84af083"
+    },
+    {
+      "bytes": 60174,
+      "path": "q3_rate_curve.svg",
+      "sha256": "9da8d646db9d69440eab48317621ed70d0f037b07b32dec8bed5623efdaf8f9e"
+    },
+    {
+      "bytes": 698,
+      "path": "q3_runtime.csv",
+      "sha256": "289790e3c29400cc64ba4c99e6acd11f4732966afd6428dedf159afc27a76493"
+    },
+    {
+      "bytes": 27280,
+      "path": "q3_state_usage.csv",
+      "sha256": "ad564add92a5c1062aabe3cbfcb60e9d5ea91f03264b1bebfaeac80a22e9c86d"
+    },
+    {
+      "bytes": 513,
+      "path": "q3_storage_accounting.csv",
+      "sha256": "fea38bd88cefa29fcb502cd4af8e7916c7bc5a412105e6d0de06b410dee453b6"
+    }
+  ],
+  "promotion_status": "continue_to_predictive_q3_study",
+  "schema_version": 1,
+  "selected_physical_layout": "q3_physical_fixed_gate_up_pairing",
+  "sources": [
+    {
+      "bytes": 11830,
+      "path": "scripts/analyze_q3_gate_up_layout.py",
+      "sha256": "3ffe8417861a03ad1d2893b23322c69b5c1acbf0d783ed42182aafcc0a4503ef"
+    },
+    {
+      "bytes": 32405,
+      "path": "src/oracle_study/q3_gate_up_analysis.py",
+      "sha256": "d46f453201b1940008a0dcbab32bfcd0f9e17bef3444d4478ea2c535df6e55fb"
+    },
+    {
+      "bytes": 47532,
+      "path": "scripts/run_q3_gate_up_layout.py",
+      "sha256": "dd1646325205656d4debcd8cac9d4e8ab96305366d70401edbfadb98ed6cc7bd"
+    },
+    {
+      "bytes": 32738,
+      "path": "src/oracle_study/q3_gate_up_field.py",
+      "sha256": "35bf2a69b1350e1f85da793b23721834a8479abf9acea8d68b31ec61e5b92535"
+    },
+    {
+      "bytes": 11660,
+      "path": "src/oracle_study/q3_rate_allocator.py",
+      "sha256": "b50c98486c5b08a5644f33098189d09d30f75547dc27bcd9e98173aaa7c0b1ae"
+    }
+  ],
+  "test_scientific_values_admitted_or_used": false
+}
