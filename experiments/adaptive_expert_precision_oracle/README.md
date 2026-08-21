@@ -4,6 +4,56 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## Split gate/up/down interaction field (stacked on PR #11)
+
+This follow-on separates the physically distinct gate and up refinement pages.
+Its state encoding is `4*gate_high + 2*up_high + down_high`, with page costs
+`[0,1,1,2,1,2,2,3]`. The inherited four states map exactly to `[0,6,1,7]`,
+so the eight-state action set contains every PR #11 decision while reusing the
+same exact A/B/C self terms and signed L4/L2 interaction factors.
+
+Reviewer entry points:
+
+- [Canonical report](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/SPLIT_INTERACTION_FIELD_REPORT.md),
+  [frozen continuation decision](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/split_interaction_field_promotions.json),
+  and [analysis manifest](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/analysis_manifest.json).
+- [Immutable 4,278-row frontier](results/qwen36_mxfp4_split_interaction_field_20260820_v1/split_interaction_field_frontier.parquet),
+  [run facts](results/qwen36_mxfp4_split_interaction_field_20260820_v1/run_facts.json),
+  and [reproducibility protocol](SPLIT_INTERACTION_FIELD_REPRODUCIBILITY.md).
+
+The attribution caveat is now resolved. At a fixed one-correction-bpw budget,
+rank-8 Hadamard INT4 progresses from 96.107% p10 / 98.022% median for the
+legacy PR #11 solver, to 97.270% / 98.504% for compressed four-state search
+with the exact-self DP seed and the same coordinate/local solver, to 99.065% /
+99.476% for eight states. The paired median components are +0.5753 percentage
+points of seed/optimizer headroom and +0.8443 points from the action space.
+The old headline gain versus PR #11 remains +1.4304 points, but is no longer
+attributed solely to split gate/up states. The independent exact-Gram
+same-solver action-space control remains +0.7353 points.
+
+Under a strict all-in one-bpw budget including A/B/C, factor metadata, and
+correction pages, INT4 is the default at a 749-page cap, 98.916% p10 / 99.408% median
+recovery, versus INT8 at 741 pages and 98.887% / 99.388%. The paired median
+advantage reverses in INT4's favour by +0.0129 points while INT4 also uses less
+metadata. The rank-4 exact-proxy control retains 729 pages and reaches 98.822% /
+99.337% with 736,256 charged MACs instead of 1,329,152.
+
+The implementation now updates coordinate damage incrementally and performs a
+full objective calculation only at initialization and for terminal parity. For
+the all-in INT4 path, actual coordinate sweeps are median/p90 12/16 and local
+passes are 12/12. A median 12 repair bundles are accepted, so the local search
+exhausts its frozen cap; this is a bounded-search result, not a convergence
+claim. The actual quota-contended Python reference wall-time is p10/median/p90
+3.581/4.214/4.304 seconds per selector invocation, including the measured
+field build. These timings are not optimized-kernel latency.
+
+The run closed all 69 validation invocations and 12 cells in about 9 minutes
+14 seconds with 24 single-thread workers. The rented host exposed 256 logical /
+128 physical CPUs but only 27.2 cgroup cores, so more workers would
+oversubscribe the available CPU time. One RTX 3090 was sufficient; a Pro 6000
+is not required. The result remains an exact mixed-H4 geometry ceiling.
+
+
 ## Low-rank signed interaction field (stacked on PR #10)
 
 This exact-H4 continuation compresses the static Q2/Q4 down-column interaction
