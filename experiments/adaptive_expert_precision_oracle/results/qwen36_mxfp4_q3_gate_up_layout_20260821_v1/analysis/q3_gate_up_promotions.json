@@ -1,0 +1,63 @@
+{
+  "baseline_strict_all_in": {
+    "mean_quanta": 1507,
+    "recovery_median": 0.9811148729972374,
+    "recovery_p10": 0.9599110028923697,
+    "total_bpw": 0.9993896484375
+  },
+  "down_q3_status": "eligible_for_separate_followup",
+  "gate_up_q3_status": "continue_to_predictive_q3_study",
+  "ideal_logical_solver_diagnostic": {
+    "interpretation": "every physical-layout state is feasible at equal-or-lower cost in the ideal plane space; a lower ideal solver result is optimization headroom, not a representation bound",
+    "reported_ideal_control_is_certified_global_ceiling": false,
+    "solver_median_recovery_gap_to_feasible_witness": 0.0018360917760338324,
+    "solver_p10_recovery_gap_to_feasible_witness": 0.004438256232312643,
+    "strict_feasible_witness_layout": "q3_physical_fixed_gate_up_pairing",
+    "strict_feasible_witness_recovery_median": 0.9858068804862719,
+    "strict_feasible_witness_recovery_p10": 0.9639753595490963,
+    "strict_solver_recovery_median": 0.983970788710238,
+    "strict_solver_recovery_p10": 0.9595371033167837
+  },
+  "physical_layout_comparisons": [
+    {
+      "layout_id": "q3_physical_fixed_gate_up_pairing",
+      "matched_baseline_p10_and_median_minimum_total_bpw": 0.7682698567708334,
+      "matched_quality_rate_shift_gate_pass": true,
+      "matched_quality_total_bpw_delta": -0.23111979166666663,
+      "passes": true,
+      "same_rate_remaining_damage_gate_pass": true,
+      "strict_median_remaining_damage_ratio_vs_baseline": 0.7515501225727493,
+      "strict_p10_remaining_damage_ratio_vs_baseline": 0.8986166541952986,
+      "strict_recovery_median": 0.9858068804862719,
+      "strict_recovery_p10": 0.9639753595490963
+    },
+    {
+      "layout_id": "q3_physical_training_coselection_single",
+      "matched_baseline_p10_and_median_minimum_total_bpw": 0.768310546875,
+      "matched_quality_rate_shift_gate_pass": true,
+      "matched_quality_total_bpw_delta": -0.2310791015625,
+      "passes": true,
+      "same_rate_remaining_damage_gate_pass": false,
+      "strict_median_remaining_damage_ratio_vs_baseline": 0.8177214056490395,
+      "strict_p10_remaining_damage_ratio_vs_baseline": 0.8553862156984952,
+      "strict_recovery_median": 0.9845572274014404,
+      "strict_recovery_p10": 0.9657084244729562
+    },
+    {
+      "layout_id": "q3_physical_training_coselection_replicated2",
+      "matched_baseline_p10_and_median_minimum_total_bpw": 0.7891845703125,
+      "matched_quality_rate_shift_gate_pass": true,
+      "matched_quality_total_bpw_delta": -0.210205078125,
+      "passes": true,
+      "same_rate_remaining_damage_gate_pass": false,
+      "strict_median_remaining_damage_ratio_vs_baseline": 0.8100831479263491,
+      "strict_p10_remaining_damage_ratio_vs_baseline": 0.8672177875315581,
+      "strict_recovery_median": 0.9847014768686132,
+      "strict_recovery_p10": 0.9652341086239619
+    }
+  ],
+  "schema_version": 2,
+  "scope": "exact_h4_rank4_hadamard_gate_up_q3_geometry_and_physical_page_layout_ceiling; no Q3 down signature, prediction, prefetch, latency, downstream, routing, logit, token, or deployability claim",
+  "selected_physical_layout": "q3_physical_fixed_gate_up_pairing",
+  "test_scientific_values_admitted_or_used": false
+}

@@ -385,3 +385,62 @@ python experiments/adaptive_expert_precision_oracle/scripts/analyze_average_rate
 
 See `AVERAGE_RATE_ALLOCATION_REPRODUCIBILITY.md` for the complete execution,
 hash, accounting, worker, and scientific-boundary contract.
+
+## Rank-4 gate/up Q3 physical-layout study
+
+This continuation is stacked on PR #13 commit
+`dfba3748e51d6916dc1f28cb1d3b3250188adbbe`. It keeps the selected
+rank-4 exact-proxy Hadamard INT4 interaction field and expands each unit from
+the inherited eight Q2/Q4 states to 18 states:
+
+`G,U in {Q2,Q3,Q4}` and `D in {Q2,Q4}`.
+
+No new down Gram, A/B/C stream, or `L3` factor is needed. Exact A/B/C self
+terms and the existing `L2/L4` signed field score all 18 states. The study
+compares the inherited eight-state solver, ideal independent 256-byte planes,
+fixed 512-byte gate/up pairing, one training-only co-selection layout, and two
+replicated training-only layouts. Every physical result charges the exact
+union of 512-byte page IDs.
+
+At strict all-in one bpw, the primary router-weight-squared pooled allocator
+reports:
+
+| Layout | p10 | Median | p90 | Median remaining damage vs eight-state |
+| :--- | ---: | ---: | ---: | ---: |
+| Eight-state same solver | 95.9911% | 98.1115% | 99.3830% | 1.0000 |
+| Ideal 256-byte heuristic | 95.9537% | 98.3971% | 99.4673% | 0.8488 |
+| Fixed gate/up pairing | 96.3975% | 98.5807% | 99.4980% | 0.7516 |
+| Training co-selection, one layout | 96.5708% | 98.4557% | 99.5544% | 0.8177 |
+| Training co-selection, two replicas | 96.5234% | 98.4701% | 99.5493% | 0.8101 |
+
+The selected fixed pairing clears both frozen continuation criteria. It reduces
+strict-rate median remaining damage by 24.85% and matches or exceeds the
+eight-state strict p10 and median at 0.768270 total bpw, a -0.231120-bpw rate
+shift. The full selected-layout curve contains 43 overall-average-rate points
+from 0.268270 to 1.101603 bpw.
+
+One attribution caveat is explicit in the promotion artifact: the ideal-plane
+coordinate/local result is not a certified global ceiling. Fixed-pairing state
+vectors are feasible in the ideal action space at equal-or-lower cost, yet the
+heuristic ideal solve trails that witness by 0.1836 median percentage points
+and 0.4438 p10 points at strict rate. This is discrete optimizer headroom, not
+evidence that physical pairing has a superior representation.
+
+All outcomes are exact-H4, exact-checkpoint validation geometry results. They
+are not deployable prediction, latency, downstream, routing, logit, token, or
+model-quality claims. Gate/up Q3 advances to a separate predictive study;
+down-Q3 is eligible for a separately frozen follow-up and was not evaluated
+here.
+
+The rented pod exposed 256 logical CPUs but was cgroup-limited to 27.2 cores.
+Evaluation used 32 fork workers with one BLAS thread each; a single RTX 3090
+was sufficient. The vectorized page-cost and local-move implementations made
+32 workers useful without pretending the host had 256 schedulable cores.
+
+Canonical artifacts are under
+`results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/`. Reviewer entry points
+are the [report](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/Q3_GATE_UP_LAYOUT_REPORT.md),
+[full accuracy table](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/q3_accuracy_by_bpw.csv),
+[promotion decision](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/q3_gate_up_promotions.json),
+[analysis manifest](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/q3_analysis_manifest.json),
+and [reproducibility contract](Q3_GATE_UP_LAYOUT_REPRODUCIBILITY.md).
