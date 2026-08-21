@@ -43,6 +43,7 @@ __all__ = [
     "SPLIT_ONLY_STATES",
     "SplitProjectionResponses",
     "SplitInteractionField",
+    "SplitDiagonalDPTable",
     "SplitCoordinateTrace",
     "SplitLocalSearchTrace",
     "SplitGramField",
@@ -53,6 +54,7 @@ __all__ = [
     "split_exact_damage",
     "build_split_interaction_field",
     "map_four_state_to_split",
+    "build_split_diagonal_dp_table",
     "split_diagonal_dp_seed",
     "split_coordinate_descent",
     "split_local_search",
@@ -263,54 +265,91 @@ def build_split_interaction_field(
     )
 
 
+@dataclass(frozen=True)
+class SplitDiagonalDPTable:
+    """One shared exact-self DP table for all budgets and page prices."""
+
+    choices: np.ndarray
+    final_damage: np.ndarray
+
+    @property
+    def units(self) -> int:
+        return int(self.choices.shape[0])
+
+    @property
+    def maximum_pages(self) -> int:
+        return int(self.choices.shape[1] - 1)
+
+    def seed(self, budget_pages: int, *, page_price: float = 0.0) -> np.ndarray:
+        budget = int(budget_pages)
+        price = float(page_price)
+        if budget < 0 or budget > self.maximum_pages:
+            raise ValueError("page budget lies outside the DP table")
+        if not np.isfinite(price) or price < 0.0:
+            raise ValueError("page_price must be finite and nonnegative")
+        objective = self.final_damage[: budget + 1] + price * np.arange(budget + 1)
+        pages = int(np.argmin(objective))
+        if not np.isfinite(objective[pages]):
+            raise RuntimeError("diagonal allocation has no feasible state")
+        states = np.empty(self.units, np.int64)
+        for unit in range(self.units - 1, -1, -1):
+            state = int(self.choices[unit, pages])
+            if state < 0:
+                raise RuntimeError("diagonal allocation backtrack failed")
+            states[unit] = state
+            pages -= int(SPLIT_STATE_PAGE_COSTS[state])
+        return states
+
+
+def build_split_diagonal_dp_table(
+    field: SplitInteractionField,
+    maximum_pages: int,
+    allowed_states: Sequence[int] = tuple(range(8)),
+) -> SplitDiagonalDPTable:
+    """Vectorize the exact-self DP once, then reuse it across rates."""
+    maximum = int(maximum_pages)
+    if maximum < 0 or maximum > 3 * field.units:
+        raise ValueError("page budget lies outside [0,3*units]")
+    allowed = _allowed_states(allowed_states)
+    dynamic = np.full(maximum + 1, np.inf, np.float64)
+    dynamic[0] = 0.0
+    choices = np.full((field.units, maximum + 1), -1, np.int8)
+    local = np.asarray(field.local_damage, np.float64)
+    for unit in range(field.units):
+        updated = np.full(maximum + 1, np.inf, np.float64)
+        unit_choice = choices[unit]
+        for state in allowed:
+            cost = int(SPLIT_STATE_PAGE_COSTS[state])
+            candidate = dynamic[: maximum + 1 - cost] + local[unit, state]
+            current = updated[cost:]
+            previous_state = unit_choice[cost:]
+            better = candidate < current - 1e-15
+            tied = np.isfinite(candidate) & np.isfinite(current)
+            difference = np.zeros_like(candidate)
+            np.subtract(candidate, current, out=difference, where=tied)
+            tied &= np.abs(difference) <= 1e-15
+            better |= tied & (
+                (previous_state < 0) | (state < previous_state)
+            )
+            current[better] = candidate[better]
+            previous_state[better] = state
+        dynamic = updated
+    return SplitDiagonalDPTable(choices, dynamic)
+
+
 def split_diagonal_dp_seed(
     field: SplitInteractionField,
     budget_pages: int,
     allowed_states: Sequence[int] = tuple(range(8)),
+    *,
+    page_price: float = 0.0,
 ) -> np.ndarray:
-    """Solve the exact-self multiple-choice allocation."""
+    """Solve one exact-self allocation using a vectorized DP table."""
     budget = int(budget_pages)
-    if budget < 0 or budget > 3 * field.units:
-        raise ValueError("page budget lies outside [0,3*units]")
-    dynamic = np.full((field.units + 1, budget + 1), np.inf, np.float64)
-    choice = np.full((field.units, budget + 1), -1, np.int8)
-    previous = np.full((field.units, budget + 1), -1, np.int32)
-    dynamic[0, 0] = 0.0
-    local = np.asarray(field.local_damage)
-    allowed = tuple(sorted({int(state) for state in allowed_states}))
-    if not allowed or any(state < 0 or state > 7 for state in allowed):
-        raise ValueError("allowed states must be a nonempty subset of [0,7]")
-    for unit in range(field.units):
-        for used in np.flatnonzero(np.isfinite(dynamic[unit])).tolist():
-            for state in allowed:
-                cost = int(SPLIT_STATE_PAGE_COSTS[state])
-                target = used + int(cost)
-                if target > budget:
-                    continue
-                candidate = float(dynamic[unit, used] + local[unit, state])
-                current = float(dynamic[unit + 1, target])
-                if candidate < current - 1e-15 or (
-                    abs(candidate - current) <= 1e-15
-                    and (choice[unit, target] < 0 or state < int(choice[unit, target]))
-                ):
-                    dynamic[unit + 1, target] = candidate
-                    choice[unit, target] = state
-                    previous[unit, target] = used
-    final_pages = min(
-        range(budget + 1),
-        key=lambda pages: (float(dynamic[field.units, pages]), pages),
-    )
-    if not np.isfinite(dynamic[field.units, final_pages]):
-        raise RuntimeError("diagonal allocation has no feasible state")
-    states = np.empty(field.units, np.int64)
-    pages = int(final_pages)
-    for unit in range(field.units - 1, -1, -1):
-        state = int(choice[unit, pages])
-        if state < 0:
-            raise RuntimeError("diagonal allocation backtrack failed")
-        states[unit] = state
-        pages = int(previous[unit, pages])
-    return states
+    price = float(page_price)
+    return build_split_diagonal_dp_table(
+        field, budget, allowed_states,
+    ).seed(budget, page_price=price)
 
 
 @dataclass(frozen=True)
@@ -330,6 +369,7 @@ def split_coordinate_descent(
     *,
     allowed_states: Sequence[int] = tuple(range(8)),
     max_sweeps: int = 8,
+    page_price: float = 0.0,
     tolerance: float = 1e-12,
 ) -> SplitCoordinateTrace:
     """Incremental coordinate descent using two rank-r dots per unit."""
@@ -341,6 +381,9 @@ def split_coordinate_descent(
     pages = field.pages(states)
     if budget < 0 or budget > 3 * field.units or pages > budget:
         raise ValueError("seed exceeds the page budget")
+    price = float(page_price)
+    if not np.isfinite(price) or price < 0.0:
+        raise ValueError("page_price must be finite and nonnegative")
     rho = np.asarray(field.rho)
     coefficients = np.asarray(field.coefficients)
     local = np.asarray(field.local_damage)
@@ -349,6 +392,7 @@ def split_coordinate_descent(
     rows = np.arange(field.units)
     residual = rho[rows, states].sum(axis=0)
     damage = field.damage(states)
+    objective = damage + price * pages
     accepted = 0
     completed = 0
     for sweep in range(int(max_sweeps)):
@@ -363,17 +407,23 @@ def split_coordinate_descent(
                 residual_without @ l2[unit],
             ))
             scores = 2.0 * (coefficients[unit] @ dots) + local[unit]
+            priced_scores = scores + price * SPLIT_STATE_PAGE_COSTS
             state_allowed = np.zeros(8, dtype=bool)
             state_allowed[list(allowed_states)] = True
-            destination = int(np.argmin(np.where(page_allowed & state_allowed, scores, np.inf)))
+            destination = int(np.argmin(np.where(
+                page_allowed & state_allowed, priced_scores, np.inf,
+            )))
             if destination == source:
                 continue
             candidate_damage = damage + float(scores[destination] - scores[source])
-            if candidate_damage < damage - float(tolerance):
+            candidate_pages = base_pages + int(SPLIT_STATE_PAGE_COSTS[destination])
+            candidate_objective = candidate_damage + price * candidate_pages
+            if candidate_objective < objective - float(tolerance):
                 states[unit] = destination
-                pages = base_pages + int(SPLIT_STATE_PAGE_COSTS[destination])
+                pages = candidate_pages
                 residual = residual_without + rho[unit, destination]
                 damage = candidate_damage
+                objective = candidate_objective
                 accepted += 1
                 changed = True
         completed = sweep + 1
@@ -382,6 +432,10 @@ def split_coordinate_descent(
     exact_damage = field.damage(states)
     if not np.isclose(damage, exact_damage, rtol=1e-9, atol=1e-8):
         raise RuntimeError("incremental compressed coordinate damage lost parity")
+    if not np.isclose(
+        objective, exact_damage + price * pages, rtol=1e-9, atol=1e-8,
+    ):
+        raise RuntimeError("incremental priced coordinate objective lost parity")
     return SplitCoordinateTrace(
         states.copy(), pages, float(exact_damage), completed, accepted,
         2 * field.units * field.rank * completed,
@@ -408,6 +462,7 @@ def split_local_search(
     shortlist_size: int = 8,
     max_swap_units: int = 3,
     max_passes: int = 12,
+    page_price: float = 0.0,
     tolerance: float = 1e-12,
 ) -> SplitLocalSearchTrace:
     """Bounded 1/2/3-unit repair over a frozen state subset."""
@@ -419,11 +474,15 @@ def split_local_search(
     pages = field.pages(states)
     if pages > budget:
         raise ValueError("seed exceeds page budget")
+    price = float(page_price)
+    if not np.isfinite(price) or price < 0.0:
+        raise ValueError("page_price must be finite and nonnegative")
     rho = np.asarray(field.rho)
     self_term = np.asarray(field.self_residual)
     rows = np.arange(field.units)
     residual = rho[rows, states].sum(axis=0)
     damage = field.damage(states)
+    objective = damage + price * pages
     accepted, evaluated = 0, 0
     candidate_count = (len(allowed_states) - 1) * field.units
     maximum_shortlist = 0
@@ -446,7 +505,7 @@ def split_local_search(
                 moves.append((
                     UnitStateMove(unit, source, destination, page_delta),
                     delta,
-                    -change,
+                    -change - price * page_delta,
                 ))
         shortlisted: list[tuple[UnitStateMove, np.ndarray, float]] = []
         for delta_pages in range(-3, 4):
@@ -486,12 +545,15 @@ def split_local_search(
             move = shortlisted[index][0]
             proposal[move.unit] = move.to_state
         proposal_damage = field.damage(proposal)
-        if proposal_damage >= damage - tolerance:
+        proposal_pages = field.pages(proposal)
+        proposal_objective = proposal_damage + price * proposal_pages
+        if proposal_objective >= objective - tolerance:
             break
         states = proposal
-        pages = field.pages(states)
+        pages = proposal_pages
         residual = rho[rows, states].sum(axis=0)
         damage = proposal_damage
+        objective = proposal_objective
         accepted += 1
     return SplitLocalSearchTrace(
         states.copy(), pages, float(damage), evaluated, accepted,

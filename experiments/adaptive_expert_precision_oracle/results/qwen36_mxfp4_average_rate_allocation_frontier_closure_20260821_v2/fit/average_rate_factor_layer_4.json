@@ -1,0 +1,50 @@
+{
+  "bytes": 11862595,
+  "decode_seconds": 11.044451331719756,
+  "experts": 256,
+  "factor_ids": [
+    "matrix_free_joint_rank8_int4_per_row_hadamard",
+    "exact_proxy_rank4_fp32",
+    "exact_proxy_rank4_fp16",
+    "exact_proxy_rank4_int8_per_row",
+    "exact_proxy_rank4_int4_per_row_hadamard",
+    "exact_proxy_rank4_int8_plus_euclidean_tail4_int4"
+  ],
+  "factor_seconds": 316.4825449530035,
+  "file": "average_rate_factor_layer_4.npz",
+  "fit_split": "train",
+  "fp16_self_safe_shrink_min": 1.0,
+  "layer": 4,
+  "mixed_self_safe_shrink_min": 1.0,
+  "primary_self_safe_shrink_median": 1.0,
+  "primary_self_safe_shrink_min": 0.8738641142845154,
+  "probe_relative_error_median": 0.5459482772516573,
+  "probe_relative_error_p90_across_experts": 0.8421637835764842,
+  "proxy_facts": {
+    "beta": 512.0,
+    "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+    "margin_medians": [
+      0.0625,
+      0.0625,
+      0.0625,
+      0.0625
+    ],
+    "rank": 4,
+    "ridge": 1.0406021028757096e-05,
+    "train_samples": 70
+  },
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "2223becc3395",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5",
+  "test_scientific_rows_admitted_or_used": false,
+  "validation_rows_admitted_or_used": false
+}
