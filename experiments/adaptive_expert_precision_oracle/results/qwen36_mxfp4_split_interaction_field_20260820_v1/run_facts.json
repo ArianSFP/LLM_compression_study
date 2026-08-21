@@ -20,7 +20,7 @@
   "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
   "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
   "completed": true,
-  "completed_unix": 1787262514.8858445,
+  "completed_unix": 1787270488.3523047,
   "completed_work_units": [
     "validation:0:62",
     "validation:0:72",
@@ -35,7 +35,7 @@
     "validation:39:108",
     "validation:39:231"
   ],
-  "config_sha256": "e62fdc4d3ffdc45482342736215433e443e59d9037e597f4cb72df39bbfa17f3",
+  "config_sha256": "e61aae7b38a76b95c858f00344d0d9cc9e6d59fa4c686d8f28dbac170f877557",
   "cpu_capacity": {
     "affinity_logical_cpus": 256,
     "cpu_quota_raw": "2720000 100000",
@@ -45,8 +45,9 @@
   "effective_evaluation_workers": 24,
   "evaluation_workers": 24,
   "failures": [],
-  "frontier_rows": 2898,
-  "frontier_sha256": "f46ee5ee8caeb35f7cc1bf97de483e26d1270c987c98a497b2f5d6631c4ebe71",
+  "frontier_rows": 4278,
+  "frontier_sha256": "9b38c9056551de2ba14b462230c432f612b9ac5b0ebdd820b9118ffbfa9a2b24",
+  "incremental_coordinate_updates": true,
   "inherited_four_state_map": [
     0,
     6,
@@ -58,20 +59,20 @@
   "pr11_frontier_sha256": "2f251a9d92a12de448712d96a0de87d59f2e596733a04df5070e8b5326f71b47",
   "pr11_run_facts_sha256": "835ac98e495566cb1f2aab181d5be3871174c859dcdf77de74470a751872396e",
   "run_id": "qwen36_mxfp4_split_interaction_field_20260820_v1",
-  "runner_sha256": "3528d3a865f6089ea189ab339fea5285a00fad140b3f5270912a1079c31d81f6",
+  "runner_sha256": "24735d86459d3c4d0aa7fb10c69259210efb2abf79ad759665054b406999173b",
   "runtime_provenance": {
     "device": "cuda:0",
     "gpu_names_used": [
       "NVIDIA GeForce RTX 3090"
     ],
-    "host": "ab7e9d182ee6",
+    "host": "62477fd08f13",
     "numpy_version": "2.1.2",
     "python_version": "3.12.3",
     "torch_cuda_runtime": "12.8",
     "torch_version": "2.8.0+cu128"
   },
   "selection_split": "validation",
-  "split_core_sha256": "3f977a67293b53d6919b18b6322305e03b6e7bfd1ea3102af0b5bda469932760",
+  "split_core_sha256": "311365d169dd8c5c1d041ab023130d4d5e08980f0ab50b12afe331c5a16e2c1e",
   "state_page_costs": [
     0,
     1,
@@ -82,6 +83,13 @@
     2,
     3
   ],
+  "strict_all_in_page_budgets": {
+    "exact_proxy_plus_eigh_tail_tail0_exact4_fp32": 729,
+    "joint_eigh_tail8_exact0_fp32": 697,
+    "joint_eigh_tail8_exact0_int4_per_row_hadamard": 749,
+    "joint_eigh_tail8_exact0_int8_per_row": 741
+  },
+  "strict_all_in_total_bytes": 393216,
   "study_scope": "exact mixed-H4 eight-state geometry ceiling; separate gate/up/down action test only; no candidate predictor, prefetch, downstream, routing, logit, or token claim",
   "test_rows_admitted": false,
   "test_scientific_values_used": false,

@@ -113,6 +113,24 @@ def _validate_contract(config: Mapping[str, Any], old: Mapping[str, Any]) -> Non
         raise RuntimeError("test admission must remain forbidden")
     if list(map(int, config.get("page_budgets", []))) != [384, 576, 768]:
         raise RuntimeError("page budgets changed")
+    expected_all_in = {
+        "exact_proxy_plus_eigh_tail_tail0_exact4_fp32": 729,
+        "joint_eigh_tail8_exact0_fp32": 697,
+        "joint_eigh_tail8_exact0_int8_per_row": 741,
+        "joint_eigh_tail8_exact0_int4_per_row_hadamard": 749,
+    }
+    observed_all_in = {
+        str(name): int(pages)
+        for name, pages in config.get("strict_all_in_page_budgets", {}).items()
+    }
+    if observed_all_in != expected_all_in:
+        raise RuntimeError("strict all-in page budgets changed")
+    if int(config.get("strict_all_in_total_bytes", -1)) != 393_216:
+        raise RuntimeError("strict all-in byte budget changed")
+    if config.get("all_in_factor_selection_rule") != (
+        "maximum_median_recovery_then_minimum_metadata_bytes"
+    ):
+        raise RuntimeError("all-in factor selection rule changed")
     if list(map(int, config.get("state_page_costs", []))) != SPLIT_STATE_PAGE_COSTS.tolist():
         raise RuntimeError("eight-state page costs changed")
     if list(map(int, config.get("inherited_four_state_map", []))) != INHERITED_FOUR_STATE_MAP.tolist():
@@ -221,15 +239,19 @@ def _split_solver(
     config: Mapping[str, Any],
     *,
     inherited: bool,
-) -> tuple[Any, str, int, int]:
+    allowed_states: tuple[int, ...] = tuple(range(8)),
+) -> tuple[Any, str, dict[str, int]]:
     all_00 = np.zeros(UNITS, np.int64)
-    diagonal = split_diagonal_dp_seed(field, budget)
+    diagonal = split_diagonal_dp_seed(field, budget, allowed_states)
     seeds = {"all_00": all_00, "diagonal_exact_self_dp": diagonal}
     if inherited:
+        if tuple(allowed_states) != tuple(range(8)):
+            raise ValueError("PR #11 warm start is only defined for the eight-state solver")
         seeds["inherited_four_state"] = map_four_state_to_split(old_states)
     traces = {
         name: split_coordinate_descent(
-            field, seed, budget, max_sweeps=int(config["coordinate_sweeps"]),
+            field, seed, budget, allowed_states=allowed_states,
+            max_sweeps=int(config["coordinate_sweeps"]),
         )
         for name, seed in seeds.items()
     }
@@ -238,23 +260,36 @@ def _split_solver(
         field,
         chosen.states,
         budget,
+        allowed_states=allowed_states,
         shortlist_size=int(config["local_shortlist"]),
         max_swap_units=int(config["local_swap_units"]),
         max_passes=int(config["local_max_passes"]),
     )
-    sweeps = sum(int(trace.sweeps) for trace in traces.values())
-    passes = min(int(config["local_max_passes"]), int(repaired.passes) + 1)
-    return repaired, name, sweeps, passes
+    diagnostics = {
+        "coordinate_sweeps": sum(int(trace.sweeps) for trace in traces.values()),
+        "selected_seed_coordinate_sweeps": int(chosen.sweeps),
+        "coordinate_accepted_moves": sum(int(trace.accepted_moves) for trace in traces.values()),
+        "local_evaluated_passes": int(repaired.passes),
+        "local_accepted_bundles": int(repaired.accepted_bundles),
+        "local_candidate_moves_per_pass": int(repaired.candidate_moves_per_pass),
+        "local_maximum_shortlist": int(repaired.maximum_shortlist),
+        "allowed_state_count": len(allowed_states),
+        "seed_count": len(seeds),
+    }
+    return repaired, name, diagnostics
 
 
 def _split_compute(
-    rank: int, sweeps: int, passes: int,
+    rank: int, diagnostics: Mapping[str, int],
 ) -> tuple[int, dict[str, int]]:
     build = 16 * UNITS * rank + 24 * UNITS
-    coordinate = (2 * UNITS * rank + 16 * UNITS) * int(sweeps)
-    maximum_shortlist = 7 * 8
-    local = int(passes) * (
-        14 * UNITS * rank + maximum_shortlist * maximum_shortlist * rank
+    allowed = int(diagnostics["allowed_state_count"])
+    coordinate = (2 * UNITS * rank + 2 * allowed * UNITS) * int(
+        diagnostics["coordinate_sweeps"]
+    )
+    local = int(diagnostics["local_evaluated_passes"]) * (
+        2 * (allowed - 1) * UNITS * rank
+        + int(diagnostics["local_maximum_shortlist"]) ** 2 * rank
     )
     components = {
         "field_build_macs": int(build),
@@ -279,9 +314,10 @@ def _row(
     selector_macs: int | None,
     components: Mapping[str, int],
     seed: str,
-    coordinate_sweeps: int,
-    local_passes: int,
+    diagnostics: Mapping[str, int],
     exact_gram_oracle: bool,
+    budget_regime: str = "fixed_correction_budget",
+    field_build_seconds: float = 0.0,
 ) -> dict[str, Any]:
     recovery = 1.0 - float(exact_damage) / float(base_damage)
     factor_id = (
@@ -290,48 +326,67 @@ def _row(
     )
     factor_bytes = None if factor_entry is None else int(factor_entry["factor_payload_bytes"])
     factor_rank = None if factor_entry is None else int(factor_entry["total_rank"])
+    combined_bytes = None if factor_bytes is None else factor_bytes + ABC_BYTES
+    total_budget_bytes = None if combined_bytes is None else combined_bytes + int(budget) * 512
+    strict_all_in = budget_regime == "strict_all_in_one_bpw"
+    exact_hybrid = reference.get("exact_hybrid")
     result = {
         **metadata,
+        "budget_regime": budget_regime,
         "physical_budget_pages": int(budget),
         "physical_pages": int(SPLIT_STATE_PAGE_COSTS[np.asarray(states)].sum()),
         "physical_budget_bpw": float(budget) / 768.0,
+        "strict_all_in_total_bytes": 393_216 if strict_all_in else None,
+        "budget_total_bytes": total_budget_bytes,
+        "budget_total_bpw": None if total_budget_bytes is None else 8.0 * total_budget_bytes / WEIGHTS,
+        "strict_all_in_budget_pass": None if not strict_all_in else total_budget_bytes <= 393_216,
+        "strict_all_in_slack_bytes": None if not strict_all_in else 393_216 - total_budget_bytes,
         "factor_config_id": factor_id,
         "factor_family": "exact_full_down_gram" if factor_entry is None else factor_entry["factor_family"],
         "total_rank": factor_rank,
         "factor_payload_bytes": factor_bytes,
-        "combined_metadata_bytes": None if factor_bytes is None else factor_bytes + ABC_BYTES,
-        "combined_metadata_bpw": None if factor_bytes is None else 8.0 * (factor_bytes + ABC_BYTES) / WEIGHTS,
+        "combined_metadata_bytes": combined_bytes,
+        "combined_metadata_bpw": None if combined_bytes is None else 8.0 * combined_bytes / WEIGHTS,
         "solver": solver,
         "selected_seed": seed,
         "recovery": float(recovery),
         "four_state_reference_recovery": float(reference["recovery"]),
-        "pr11_four_state_recovery": float(
-            reference.get("pr11_recovery", reference["recovery"])
+        "pr11_four_state_recovery": float(reference.get("pr11_recovery", reference["recovery"])),
+        "recovery_gain_vs_four_state_reference": float(recovery - float(reference["recovery"])),
+        "recovery_gain_vs_pr11_four_state": float(
+            recovery - float(reference.get("pr11_recovery", reference["recovery"]))
         ),
-        "recovery_gain_vs_four_state_reference": float(
-            recovery - float(reference["recovery"])
+        "seed_optimizer_gain_vs_pr11_four_state": float(
+            float(reference["recovery"])
+            - float(reference.get("pr11_recovery", reference["recovery"]))
         ),
-        "four_state_reference_kind": str(
-            reference.get("kind", "same_factor_pr11")
+        "four_state_reference_kind": str(reference.get("kind", "same_factor_pr11")),
+        "pr10_exact_hybrid_recovery": (
+            None if exact_hybrid is None else float(exact_hybrid)
         ),
-        "pr10_exact_hybrid_recovery": float(reference["exact_hybrid"]),
-        "set_gain_retention_vs_pr10_exact_hybrid": float(recovery / float(reference["exact_hybrid"])),
+        "set_gain_retention_vs_pr10_exact_hybrid": (
+            None if exact_hybrid is None else float(recovery / float(exact_hybrid))
+        ),
         "compressed_predicted_damage": float(predicted_damage),
         "exact_qenergy_damage": float(exact_damage),
         "damage_prediction_error_over_base": float((predicted_damage - exact_damage) / base_damage),
         "selector_runtime_ms": 1000.0 * float(runtime_seconds),
+        "field_build_runtime_ms": 1000.0 * float(field_build_seconds),
         "selector_compute_macs": selector_macs,
-        "selector_compute_gate_pass": (
-            None if selector_macs is None
-            else int(selector_macs) < 1_572_864
-        ),
+        "selector_compute_gate_pass": None if selector_macs is None else int(selector_macs) < 1_572_864,
         "selector_compute_accounting_bound": (
             "training_only_exact_gram_oracle_nonpromotable"
-            if exact_gram_oracle
-            else "complete_conservative_logical_MAC_upper_bound"
+            if exact_gram_oracle else "complete_conservative_logical_MAC_upper_bound"
         ),
-        "coordinate_sweeps": int(coordinate_sweeps),
-        "local_evaluated_passes": int(local_passes),
+        "coordinate_sweeps": int(diagnostics.get("coordinate_sweeps", 0)),
+        "selected_seed_coordinate_sweeps": int(diagnostics.get("selected_seed_coordinate_sweeps", 0)),
+        "coordinate_accepted_moves": int(diagnostics.get("coordinate_accepted_moves", 0)),
+        "local_evaluated_passes": int(diagnostics.get("local_evaluated_passes", 0)),
+        "local_accepted_bundles": int(diagnostics.get("local_accepted_bundles", 0)),
+        "local_candidate_moves_per_pass": int(diagnostics.get("local_candidate_moves_per_pass", 0)),
+        "local_maximum_shortlist": int(diagnostics.get("local_maximum_shortlist", 0)),
+        "allowed_state_count": int(diagnostics.get("allowed_state_count", 0)),
+        "seed_count": int(diagnostics.get("seed_count", 0)),
         "uses_exact_mixed_h4": True,
         "exact_gram_oracle": bool(exact_gram_oracle),
         "promotable": bool(
@@ -339,16 +394,14 @@ def _row(
             and factor_entry is not None
             and factor_entry["factor_config_id"] in _EVALUATION_CONTEXT["config"]["primary_factor_config_ids"]
             and solver == _EVALUATION_CONTEXT["config"]["primary_solver_id"]
+            and budget_regime == "fixed_correction_budget"
         ),
         "selection_regime": "h0_exact_mixed_h4_split_action_geometry_ceiling",
-        "selector_non_mac_operations": (
-            "exact_self_DP_state_additions_sort_topk_and_control_flow_excluded"
-        ),
+        "selector_non_mac_operations": "exact_self_DP_state_additions_sort_topk_and_control_flow_excluded",
         **{name: int(value) for name, value in components.items()},
         **_state_summary(states),
     }
     return result
-
 
 def _exact_gram_rows(
     responses: Any,
@@ -441,8 +494,23 @@ def _exact_gram_rows(
             selector_macs=None,
             components={},
             seed=seed,
-            coordinate_sweeps=sweeps,
-            local_passes=int(trace.passes),
+            diagnostics={
+                "coordinate_sweeps": int(sweeps),
+                "selected_seed_coordinate_sweeps": 0,
+                "coordinate_accepted_moves": 0,
+                "local_evaluated_passes": int(trace.passes),
+                "local_accepted_bundles": int(trace.accepted_bundles),
+                "local_candidate_moves_per_pass": 0,
+                "local_maximum_shortlist": 0,
+                "allowed_state_count": (
+                    4 if solver == config["exact_four_state_solver_id"] else 8
+                ),
+                "seed_count": (
+                    len(four_seeds)
+                    if solver == config["exact_four_state_solver_id"]
+                    else len(full_seeds)
+                ),
+            },
             exact_gram_oracle=True,
         ))
     return rows
@@ -461,106 +529,156 @@ def _evaluate_task(task: tuple[int, int]) -> tuple[int, int, list[dict[str, Any]
     )
     if not np.isfinite(base_damage) or base_damage <= 0.0:
         raise RuntimeError("base damage must be positive and finite")
-    rows = []
+    rows: list[dict[str, Any]] = []
     identity = tuple(metadata[name] for name in IDENTITY)
-    global_context = _EVALUATION_CONTEXT
-    previous_proxy = global_context.get("cell_proxy")
-    previous_beta = global_context.get("cell_beta")
-    global_context["cell_proxy"], global_context["cell_beta"] = cell["proxy"], cell["beta"]
+    config = _EVALUATION_CONTEXT["config"]
+    restricted = tuple(INHERITED_FOUR_STATE_MAP.tolist())
+    previous_proxy = _EVALUATION_CONTEXT.get("cell_proxy")
+    previous_beta = _EVALUATION_CONTEXT.get("cell_beta")
+    _EVALUATION_CONTEXT["cell_proxy"] = cell["proxy"]
+    _EVALUATION_CONTEXT["cell_beta"] = cell["beta"]
+
+    def factor_rows(
+        entry: Mapping[str, Any], factor: JointInteractionFactor, field: Any,
+        field_seconds: float, budget: int, *, budget_regime: str, include_pr11: bool,
+        include_warm: bool,
+    ) -> list[dict[str, Any]]:
+        emitted: list[dict[str, Any]] = []
+        pr11_reference = (
+            _EVALUATION_CONTEXT["references"].get(
+                identity + (budget, entry["factor_config_id"])
+            )
+            if budget_regime == "fixed_correction_budget" else None
+        )
+        old_started = time.perf_counter()
+        old, old_seed = _old_solution(old_outputs, cell["abc"], factor, budget, config)
+        old_seconds = time.perf_counter() - old_started
+        old_states = map_four_state_to_split(old.states)
+        old_exact = split_exact_damage(
+            responses, old_states, proxy=cell["proxy"], beta=cell["beta"],
+        )
+        old_recovery = 1.0 - old_exact / base_damage
+        if pr11_reference is not None and not np.isclose(
+            old_recovery, pr11_reference["recovery"], rtol=1e-7, atol=2e-8,
+        ):
+            raise RuntimeError("recomputed four-state reference changed from PR #11")
+        old_reference = {
+            "recovery": old_recovery,
+            "pr11_recovery": old_recovery,
+            "exact_hybrid": (
+                None if pr11_reference is None else pr11_reference["exact_hybrid"]
+            ),
+            "kind": "same_factor_pr11_legacy_solver",
+        }
+        if include_pr11:
+            old_macs = int(pr11_reference["selector_compute_macs"])
+            emitted.append(_row(
+                metadata, factor_entry=entry, solver=config["pr11_four_state_solver_id"],
+                states=old_states, budget=budget, exact_damage=old_exact,
+                base_damage=base_damage, reference=old_reference,
+                predicted_damage=field.damage(old_states), runtime_seconds=old_seconds,
+                selector_macs=old_macs,
+                components={"inherited_pr11_selector_macs": old_macs},
+                seed=old_seed,
+                diagnostics={"allowed_state_count": 4, "seed_count": 2},
+                exact_gram_oracle=False, budget_regime=budget_regime,
+            ))
+
+        same_started = time.perf_counter()
+        same, same_seed, same_diagnostics = _split_solver(
+            field, budget, old.states, config, inherited=False,
+            allowed_states=restricted,
+        )
+        same_seconds = time.perf_counter() - same_started
+        same_macs, same_components = _split_compute(field.rank, same_diagnostics)
+        same_exact = split_exact_damage(
+            responses, same.states, proxy=cell["proxy"], beta=cell["beta"],
+        )
+        same_recovery = 1.0 - same_exact / base_damage
+        comparison = {
+            "recovery": same_recovery,
+            "pr11_recovery": old_recovery,
+            "exact_hybrid": (
+                None if pr11_reference is None else pr11_reference["exact_hybrid"]
+            ),
+            "kind": "compressed_four_state_exact_self_dp_same_solver",
+        }
+        emitted.append(_row(
+            metadata, factor_entry=entry, solver=config["four_state_reference_solver_id"],
+            states=same.states, budget=budget, exact_damage=same_exact,
+            base_damage=base_damage, reference=comparison,
+            predicted_damage=same.damage, runtime_seconds=field_seconds + same_seconds,
+            selector_macs=same_macs, components=same_components, seed=same_seed,
+            diagnostics=same_diagnostics, exact_gram_oracle=False,
+            budget_regime=budget_regime, field_build_seconds=field_seconds,
+        ))
+
+        choices = [(False, config["primary_solver_id"])]
+        if include_warm:
+            choices.append((True, config["warm_start_solver_id"]))
+        for inherited, solver in choices:
+            started = time.perf_counter()
+            trace, seed, diagnostics = _split_solver(
+                field, budget, old.states, config, inherited=inherited,
+            )
+            seconds = time.perf_counter() - started
+            selector_macs, components = _split_compute(field.rank, diagnostics)
+            if inherited:
+                inherited_macs = int(pr11_reference["selector_compute_macs"])
+                components["inherited_pr11_selector_macs"] = inherited_macs
+                selector_macs += inherited_macs
+            exact = split_exact_damage(
+                responses, trace.states, proxy=cell["proxy"], beta=cell["beta"],
+            )
+            emitted.append(_row(
+                metadata, factor_entry=entry, solver=solver, states=trace.states,
+                budget=budget, exact_damage=exact, base_damage=base_damage,
+                reference=comparison, predicted_damage=trace.damage,
+                runtime_seconds=field_seconds + seconds, selector_macs=selector_macs,
+                components=components, seed=seed, diagnostics=diagnostics,
+                exact_gram_oracle=False, budget_regime=budget_regime,
+                field_build_seconds=field_seconds,
+            ))
+        return emitted
+
+    prepared_factors = []
+    for entry, factor in cell["factors"]:
+        build_started = time.perf_counter()
+        field = build_split_interaction_field(factor, responses.hidden, cell["abc"])
+        prepared_factors.append((entry, factor, field, time.perf_counter() - build_started))
+
     try:
-        for budget in map(int, global_context["config"]["page_budgets"]):
-            exact_reference = global_context["references"][
-                identity + (budget, global_context["config"]["factor_config_ids"][0])
+        for budget in map(int, config["page_budgets"]):
+            exact_reference = _EVALUATION_CONTEXT["references"][
+                identity + (budget, config["factor_config_ids"][0])
             ]
             rows.extend(_exact_gram_rows(
                 responses, cell["abc"], cell["gram"], budget, metadata,
-                exact_reference, base_damage, global_context["config"],
+                exact_reference, base_damage, config,
             ))
-            for entry, factor in cell["factors"]:
-                reference = global_context["references"][
-                    identity + (budget, entry["factor_config_id"])
-                ]
-                old_started = time.perf_counter()
-                old, old_seed = _old_solution(
-                    old_outputs, cell["abc"], factor, budget, global_context["config"],
-                )
-                old_seconds = time.perf_counter() - old_started
-                old_split_states = map_four_state_to_split(old.states)
-                old_exact = split_exact_damage(
-                    responses, old_split_states, proxy=cell["proxy"], beta=cell["beta"],
-                )
-                old_recovery = 1.0 - old_exact / base_damage
-                if not np.isclose(old_recovery, reference["recovery"], rtol=1e-7, atol=2e-8):
-                    raise RuntimeError("recomputed four-state reference changed from PR #11")
-                old_components = {"inherited_pr11_selector_macs": int(reference["selector_compute_macs"])}
-                rows.append(_row(
-                    metadata,
-                    factor_entry=entry,
-                    solver=global_context["config"]["four_state_reference_solver_id"],
-                    states=old_split_states,
-                    budget=budget,
-                    exact_damage=old_exact,
-                    base_damage=base_damage,
-                    reference=reference,
-                    predicted_damage=build_split_interaction_field(
-                        factor, responses.hidden, cell["abc"],
-                    ).damage(old_split_states),
-                    runtime_seconds=old_seconds,
-                    selector_macs=int(reference["selector_compute_macs"]),
-                    components=old_components,
-                    seed=old_seed,
-                    coordinate_sweeps=0,
-                    local_passes=0,
-                    exact_gram_oracle=False,
+            for entry, factor, field, field_seconds in prepared_factors:
+                rows.extend(factor_rows(
+                    entry, factor, field, field_seconds, budget,
+                    budget_regime="fixed_correction_budget",
+                    include_pr11=True, include_warm=True,
                 ))
-                field = build_split_interaction_field(factor, responses.hidden, cell["abc"])
-                for inherited, solver in (
-                    (False, global_context["config"]["primary_solver_id"]),
-                    (True, global_context["config"]["warm_start_solver_id"]),
-                ):
-                    started = time.perf_counter()
-                    trace, seed, sweeps, passes = _split_solver(
-                        field, budget, old.states, global_context["config"], inherited=inherited,
-                    )
-                    seconds = time.perf_counter() - started
-                    selector_macs, components = _split_compute(field.rank, sweeps, passes)
-                    if inherited:
-                        components["inherited_pr11_selector_macs"] = int(
-                            reference["selector_compute_macs"]
-                        )
-                        selector_macs += int(reference["selector_compute_macs"])
-                    exact = split_exact_damage(
-                        responses, trace.states, proxy=cell["proxy"], beta=cell["beta"],
-                    )
-                    rows.append(_row(
-                        metadata,
-                        factor_entry=entry,
-                        solver=solver,
-                        states=trace.states,
-                        budget=budget,
-                        exact_damage=exact,
-                        base_damage=base_damage,
-                        reference=reference,
-                        predicted_damage=trace.damage,
-                        runtime_seconds=seconds,
-                        selector_macs=selector_macs,
-                        components=components,
-                        seed=seed,
-                        coordinate_sweeps=sweeps,
-                        local_passes=passes,
-                        exact_gram_oracle=False,
-                    ))
+        for entry, factor, field, field_seconds in prepared_factors:
+            budget = int(config["strict_all_in_page_budgets"][entry["factor_config_id"]])
+            rows.extend(factor_rows(
+                entry, factor, field, field_seconds, budget,
+                budget_regime="strict_all_in_one_bpw",
+                include_pr11=False, include_warm=False,
+            ))
     finally:
         if previous_proxy is None:
-            global_context.pop("cell_proxy", None)
+            _EVALUATION_CONTEXT.pop("cell_proxy", None)
         else:
-            global_context["cell_proxy"] = previous_proxy
+            _EVALUATION_CONTEXT["cell_proxy"] = previous_proxy
         if previous_beta is None:
-            global_context.pop("cell_beta", None)
+            _EVALUATION_CONTEXT.pop("cell_beta", None)
         else:
-            global_context["cell_beta"] = previous_beta
+            _EVALUATION_CONTEXT["cell_beta"] = previous_beta
     return cell_index, observation_index, rows
-
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -647,6 +765,9 @@ def main() -> None:
         "worker_thread_environment": threads,
         "state_page_costs": SPLIT_STATE_PAGE_COSTS.tolist(),
         "inherited_four_state_map": INHERITED_FOUR_STATE_MAP.tolist(),
+        "strict_all_in_total_bytes": int(config["strict_all_in_total_bytes"]),
+        "strict_all_in_page_budgets": config["strict_all_in_page_budgets"],
+        "incremental_coordinate_updates": True,
     }
     _atomic_json(facts_path, facts)
     try:
@@ -748,20 +869,28 @@ def main() -> None:
         _EVALUATION_CONTEXT = None
         if next_cell != len(cells):
             raise RuntimeError("parallel evaluation did not close every cell")
-        per_identity = 3 * (2 + 3 * len(config["factor_config_ids"]))
+        fixed_rows_per_identity = len(config["page_budgets"]) * (
+            2 + 4 * len(config["factor_config_ids"])
+        )
+        all_in_rows_per_identity = 2 * len(config["factor_config_ids"])
+        per_identity = fixed_rows_per_identity + all_in_rows_per_identity
         expected_rows = config["expected_validation_unique_invocations"] * per_identity
         if len(rows) != expected_rows:
             raise RuntimeError(f"frontier rows {len(rows)} != {expected_rows}")
         identities = {tuple(row[name] for name in IDENTITY) for row in rows}
         if len(identities) != config["expected_validation_unique_invocations"]:
             raise RuntimeError("validation identity coverage changed")
-        primary = [
+        primary_fixed = [
             row for row in rows
             if row["solver"] == config["primary_solver_id"]
             and row["factor_config_id"] in config["primary_factor_config_ids"]
+            and row["budget_regime"] == "fixed_correction_budget"
         ]
-        if len(primary) != config["expected_validation_unique_invocations"] * 3 * 2:
-            raise RuntimeError("primary grid incomplete")
+        if len(primary_fixed) != config["expected_validation_unique_invocations"] * 3 * 2:
+            raise RuntimeError("fixed-budget primary grid incomplete")
+        all_in = [row for row in rows if row["budget_regime"] == "strict_all_in_one_bpw"]
+        if len(all_in) != config["expected_validation_unique_invocations"] * 2 * 4:
+            raise RuntimeError("strict all-in grid incomplete")
         facts.update({
             "completed": True,
             "frontier_rows": len(rows),

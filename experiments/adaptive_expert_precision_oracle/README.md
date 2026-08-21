@@ -7,41 +7,51 @@ The principal deployment x-axis is actual bytes read after 4 KiB page accounting
 ## Split gate/up/down interaction field (stacked on PR #11)
 
 This follow-on separates the physically distinct gate and up refinement pages.
-Its state encoding is 4*gate_high + 2*up_high + down_high, with page costs
-[0,1,1,2,1,2,2,3]. The inherited four states map exactly to [0,6,1,7], so the
-new action set contains every PR #11 decision while reusing the same A/B/C
-self terms and signed L4/L2 interaction factors.
+Its state encoding is `4*gate_high + 2*up_high + down_high`, with page costs
+`[0,1,1,2,1,2,2,3]`. The inherited four states map exactly to `[0,6,1,7]`,
+so the eight-state action set contains every PR #11 decision while reusing the
+same exact A/B/C self terms and signed L4/L2 interaction factors.
 
 Reviewer entry points:
 
 - [Canonical report](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/SPLIT_INTERACTION_FIELD_REPORT.md),
   [frozen continuation decision](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/split_interaction_field_promotions.json),
   and [analysis manifest](results/qwen36_mxfp4_split_interaction_field_20260820_v1/analysis/analysis_manifest.json).
-- [Immutable 2,898-row frontier](results/qwen36_mxfp4_split_interaction_field_20260820_v1/split_interaction_field_frontier.parquet),
+- [Immutable 4,278-row frontier](results/qwen36_mxfp4_split_interaction_field_20260820_v1/split_interaction_field_frontier.parquet),
   [run facts](results/qwen36_mxfp4_split_interaction_field_20260820_v1/run_facts.json),
   and [reproducibility protocol](SPLIT_INTERACTION_FIELD_REPRODUCIBILITY.md).
 
-At one physical bpw, the two-seed rank-8 Hadamard INT4 solver reaches
-99.065% p10 / 99.476% median recovery, versus 96.107% / 98.022% for its
-recomputed PR #11 four-state reference. The paired median gain is +1.430
-percentage points. Rank-8 INT8 reaches 99.094% / 99.488% with a paired median
-gain of +1.386 points. Both pass the predeclared retention, gain, metadata,
-and strict 1.573M-MAC gates; the protocol did not predeclare a tie-break, so
-both advance and no single validation winner is selected.
+The attribution caveat is now resolved. At a fixed one-correction-bpw budget,
+rank-8 Hadamard INT4 progresses from 96.107% p10 / 98.022% median for the
+legacy PR #11 solver, to 97.270% / 98.504% for compressed four-state search
+with the exact-self DP seed and the same coordinate/local solver, to 99.065% /
+99.476% for eight states. The paired median components are +0.5753 percentage
+points of seed/optimizer headroom and +0.8443 points from the action space.
+The old headline gain versus PR #11 remains +1.4304 points, but is no longer
+attributed solely to split gate/up states. The independent exact-Gram
+same-solver action-space control remains +0.7353 points.
 
-The training-only exact-Gram same-solver control reaches 99.168% p10 /
-99.512% median at one bpw, with a +0.735-point paired median gain over its
-restricted four-state solution. Split-only states are structural rather than
-rare: the INT4 primary uses a median 239 such units at one bpw. The inherited
-four-state warm start changes none of 828 primary solutions, showing that the
-all-00 plus exact-self dynamic-program seeds already reach the same compressed
-basin without paying the inherited selector cost.
+Under a strict all-in one-bpw budget including A/B/C, factor metadata, and
+correction pages, INT4 is the default at a 749-page cap, 98.916% p10 / 99.408% median
+recovery, versus INT8 at 741 pages and 98.887% / 99.388%. The paired median
+advantage reverses in INT4's favour by +0.0129 points while INT4 also uses less
+metadata. The rank-4 exact-proxy control retains 729 pages and reaches 98.822% /
+99.337% with 736,256 charged MACs instead of 1,329,152.
 
-The run used 24 single-thread workers on a host exposing 256 logical CPUs but
-limited by a measured 27.2-core cgroup quota; a single RTX 3090 was sufficient.
-This remains an exact mixed-H4 geometry ceiling. The next experiment must
-predict h42/h24/h44 (or their residual signatures) before it can make a
-candidate-prefetch or downstream-quality claim.
+The implementation now updates coordinate damage incrementally and performs a
+full objective calculation only at initialization and for terminal parity. For
+the all-in INT4 path, actual coordinate sweeps are median/p90 12/16 and local
+passes are 12/12. A median 12 repair bundles are accepted, so the local search
+exhausts its frozen cap; this is a bounded-search result, not a convergence
+claim. The actual quota-contended Python reference wall-time is p10/median/p90
+3.581/4.214/4.304 seconds per selector invocation, including the measured
+field build. These timings are not optimized-kernel latency.
+
+The run closed all 69 validation invocations and 12 cells in about 9 minutes
+14 seconds with 24 single-thread workers. The rented host exposed 256 logical /
+128 physical CPUs but only 27.2 cgroup cores, so more workers would
+oversubscribe the available CPU time. One RTX 3090 was sufficient; a Pro 6000
+is not required. The result remains an exact mixed-H4 geometry ceiling.
 
 
 ## Low-rank signed interaction field (stacked on PR #10)

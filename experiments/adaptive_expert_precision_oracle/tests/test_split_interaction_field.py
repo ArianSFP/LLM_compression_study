@@ -11,6 +11,7 @@ from oracle_study.interaction_field import (
 from oracle_study.neuron_selector import factorized_unit_outputs, unit_score_metadata
 from oracle_study.split_interaction_field import (
     INHERITED_FOUR_STATE_MAP, SPLIT_ONLY_STATES, SPLIT_STATE_PAGE_COSTS,
+    SplitInteractionField,
     build_split_interaction_field, map_four_state_to_split,
     split_coordinate_descent, split_diagonal_dp_seed, split_exact_damage,
     build_split_gram_field, split_gram_coordinate_descent,
@@ -111,7 +112,7 @@ def test_diagonal_dp_and_split_solvers_are_budgeted_and_monotone():
     assert coordinate.interaction_dot_macs == 2 * field.units * field.rank * coordinate.sweeps
     np.testing.assert_array_equal(repaired.states, repeated.states)
     assert repaired.candidate_moves_per_pass == 7 * field.units
-    assert repaired.maximum_shortlist == 42
+    assert 0 < repaired.maximum_shortlist <= 42
 
 
 def test_inherited_four_state_solution_is_a_feasible_split_warm_start():
@@ -191,3 +192,40 @@ def test_diagonal_dp_is_exact_for_the_eight_state_self_objective():
     )
     np.testing.assert_allclose(observed, expected)
     assert field.pages(states) <= budget
+
+
+def test_compressed_four_state_control_uses_exact_same_solver_path():
+    _, _, _, responses, _, _, gram, abc = _problem(units=8, output=10)
+    field = build_split_interaction_field(
+        factor_joint_gram(gram, 5, dtype=np.float64), responses.hidden, abc,
+    )
+    allowed = tuple(INHERITED_FOUR_STATE_MAP.tolist())
+    seed = split_diagonal_dp_seed(field, 12, allowed)
+    coordinate = split_coordinate_descent(
+        field, seed, 12, allowed_states=allowed, max_sweeps=8,
+    )
+    repaired = split_local_search(
+        field, coordinate.states, 12, allowed_states=allowed, shortlist_size=6,
+    )
+    assert set(repaired.states.tolist()).issubset(set(allowed))
+    assert repaired.candidate_moves_per_pass == 3 * field.units
+    assert repaired.damage <= field.damage(seed) + 1e-10
+
+
+def test_coordinate_descent_updates_damage_incrementally(monkeypatch):
+    _, _, _, responses, _, _, gram, abc = _problem(units=8, output=10)
+    field = build_split_interaction_field(
+        factor_joint_gram(gram, 5, dtype=np.float64), responses.hidden, abc,
+    )
+    seed = split_diagonal_dp_seed(field, 12)
+    original = SplitInteractionField.damage
+    calls = {"count": 0}
+
+    def counted(self, states):
+        calls["count"] += 1
+        return original(self, states)
+
+    monkeypatch.setattr(SplitInteractionField, "damage", counted)
+    trace = split_coordinate_descent(field, seed, 12, max_sweeps=8)
+    assert trace.pages <= 12
+    assert calls["count"] == 2

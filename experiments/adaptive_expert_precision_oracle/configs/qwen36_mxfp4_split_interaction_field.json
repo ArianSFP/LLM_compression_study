@@ -15,6 +15,14 @@
   "expected_validation_unique_invocations": 69,
   "expected_validation_layer_expert_cells": 12,
   "page_budgets": [384, 576, 768],
+  "strict_all_in_total_bytes": 393216,
+  "strict_all_in_page_budgets": {
+    "exact_proxy_plus_eigh_tail_tail0_exact4_fp32": 729,
+    "joint_eigh_tail8_exact0_fp32": 697,
+    "joint_eigh_tail8_exact0_int8_per_row": 741,
+    "joint_eigh_tail8_exact0_int4_per_row_hadamard": 749
+  },
+  "all_in_factor_selection_rule": "maximum_median_recovery_then_minimum_metadata_bytes",
   "factor_config_ids": [
     "exact_proxy_plus_eigh_tail_tail0_exact4_fp32",
     "joint_eigh_tail8_exact0_fp32",
@@ -44,7 +52,8 @@
   "inherited_four_state_map": [0, 6, 1, 7],
   "primary_solver_id": "eight_state_two_seed_coordinate_plus_local",
   "warm_start_solver_id": "eight_state_inherited_four_state_warm_start",
-  "four_state_reference_solver_id": "four_state_same_factor_reference",
+  "pr11_four_state_solver_id": "four_state_pr11_reference",
+  "four_state_reference_solver_id": "four_state_dp_two_seed_coordinate_plus_local",
   "exact_four_state_solver_id": "exact_gram_four_state_reference",
   "exact_eight_state_solver_id": "exact_gram_eight_state_oracle"
 }

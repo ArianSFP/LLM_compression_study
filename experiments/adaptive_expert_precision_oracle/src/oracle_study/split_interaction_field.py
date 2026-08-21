@@ -328,12 +328,16 @@ def split_coordinate_descent(
     seed: Sequence[int] | np.ndarray,
     budget_pages: int,
     *,
+    allowed_states: Sequence[int] = tuple(range(8)),
     max_sweeps: int = 8,
     tolerance: float = 1e-12,
 ) -> SplitCoordinateTrace:
-    """Eight-state coordinate descent using two rank-r dots per unit."""
+    """Incremental coordinate descent using two rank-r dots per unit."""
+    allowed_states = _allowed_states(allowed_states)
     budget = int(budget_pages)
     states = _validate_states(seed, field.units)
+    if any(int(state) not in allowed_states for state in states):
+        raise ValueError("seed contains a forbidden state")
     pages = field.pages(states)
     if budget < 0 or budget > 3 * field.units or pages > budget:
         raise ValueError("seed exceeds the page budget")
@@ -353,20 +357,20 @@ def split_coordinate_descent(
             source = int(states[unit])
             residual_without = residual - rho[unit, source]
             base_pages = pages - int(SPLIT_STATE_PAGE_COSTS[source])
-            allowed = base_pages + SPLIT_STATE_PAGE_COSTS <= budget
+            page_allowed = base_pages + SPLIT_STATE_PAGE_COSTS <= budget
             dots = np.asarray((
                 residual_without @ l4[unit],
                 residual_without @ l2[unit],
             ))
             scores = 2.0 * (coefficients[unit] @ dots) + local[unit]
-            destination = int(np.argmin(np.where(allowed, scores, np.inf)))
+            state_allowed = np.zeros(8, dtype=bool)
+            state_allowed[list(allowed_states)] = True
+            destination = int(np.argmin(np.where(page_allowed & state_allowed, scores, np.inf)))
             if destination == source:
                 continue
-            proposal = states.copy()
-            proposal[unit] = destination
-            candidate_damage = field.damage(proposal)
+            candidate_damage = damage + float(scores[destination] - scores[source])
             if candidate_damage < damage - float(tolerance):
-                states = proposal
+                states[unit] = destination
                 pages = base_pages + int(SPLIT_STATE_PAGE_COSTS[destination])
                 residual = residual_without + rho[unit, destination]
                 damage = candidate_damage
@@ -375,8 +379,11 @@ def split_coordinate_descent(
         completed = sweep + 1
         if not changed:
             break
+    exact_damage = field.damage(states)
+    if not np.isclose(damage, exact_damage, rtol=1e-9, atol=1e-8):
+        raise RuntimeError("incremental compressed coordinate damage lost parity")
     return SplitCoordinateTrace(
-        states.copy(), pages, float(damage), completed, accepted,
+        states.copy(), pages, float(exact_damage), completed, accepted,
         2 * field.units * field.rank * completed,
     )
 
@@ -397,13 +404,17 @@ def split_local_search(
     seed: Sequence[int] | np.ndarray,
     budget_pages: int,
     *,
+    allowed_states: Sequence[int] = tuple(range(8)),
     shortlist_size: int = 8,
     max_swap_units: int = 3,
     max_passes: int = 12,
     tolerance: float = 1e-12,
 ) -> SplitLocalSearchTrace:
-    """Bounded 1/2/3-unit repair over seven alternatives per unit."""
+    """Bounded 1/2/3-unit repair over a frozen state subset."""
+    allowed_states = _allowed_states(allowed_states)
     states = _validate_states(seed, field.units)
+    if any(int(state) not in allowed_states for state in states):
+        raise ValueError("seed contains a forbidden state")
     budget = int(budget_pages)
     pages = field.pages(states)
     if pages > budget:
@@ -413,13 +424,14 @@ def split_local_search(
     rows = np.arange(field.units)
     residual = rho[rows, states].sum(axis=0)
     damage = field.damage(states)
-    accepted, completed = 0, 0
-    candidate_count = 7 * field.units
-    maximum_shortlist = 7 * int(shortlist_size)
+    accepted, evaluated = 0, 0
+    candidate_count = (len(allowed_states) - 1) * field.units
+    maximum_shortlist = 0
     for pass_index in range(int(max_passes)):
+        evaluated = pass_index + 1
         moves: list[tuple[UnitStateMove, np.ndarray, float]] = []
         for unit, source in enumerate(states.tolist()):
-            for destination in range(8):
+            for destination in allowed_states:
                 if destination == source:
                     continue
                 page_delta = int(
@@ -441,6 +453,7 @@ def split_local_search(
             group = [move for move in moves if move[0].page_delta == delta_pages]
             group.sort(key=lambda item: (-item[2], item[0].unit, item[0].to_state))
             shortlisted.extend(group[: int(shortlist_size)])
+        maximum_shortlist = max(maximum_shortlist, len(shortlisted))
         if not shortlisted:
             break
         deltas = np.stack([item[1] for item in shortlisted])
@@ -480,9 +493,8 @@ def split_local_search(
         residual = rho[rows, states].sum(axis=0)
         damage = proposal_damage
         accepted += 1
-        completed = pass_index + 1
     return SplitLocalSearchTrace(
-        states.copy(), pages, float(damage), completed, accepted,
+        states.copy(), pages, float(damage), evaluated, accepted,
         candidate_count, maximum_shortlist,
     )
 
@@ -716,8 +728,9 @@ def split_gram_local_search(
     q22 = np.asarray(field.gram.q22, np.float64)
     coefficients = np.asarray(field.coefficients)
     damage = field.damage(states)
-    accepted, completed = 0, 0
+    accepted, evaluated = 0, 0
     for pass_index in range(int(max_passes)):
+        evaluated = pass_index + 1
         moves = []
         for unit, source in enumerate(states.tolist()):
             for destination in allowed:
@@ -782,7 +795,6 @@ def split_gram_local_search(
         high, low, correlation4, correlation2 = _gram_state(field, states)
         damage = proposal_damage
         accepted += 1
-        completed = pass_index + 1
     return SplitGramLocalSearchTrace(
-        states.copy(), pages, float(damage), completed, accepted,
+        states.copy(), pages, float(damage), evaluated, accepted,
     )

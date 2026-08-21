@@ -25,7 +25,8 @@ IDENTITY = (
     "layer", "expert_id",
 )
 EXPECTED_SOLVERS = {
-    "four_state_same_factor_reference",
+    "four_state_pr11_reference",
+    "four_state_dp_two_seed_coordinate_plus_local",
     "eight_state_two_seed_coordinate_plus_local",
     "eight_state_inherited_four_state_warm_start",
     "exact_gram_four_state_reference",
@@ -93,16 +94,12 @@ def validate_evidence_bundle(
         raise RuntimeError("runner hash mismatch")
     if facts.get("split_core_sha256") != sha256(core_path):
         raise RuntimeError("split core hash mismatch")
-    if facts.get("pr11_run_facts_sha256") != config["pr11_run_facts_sha256"]:
-        raise RuntimeError("PR #11 facts hash mismatch")
-    if facts.get("pr11_factor_manifest_sha256") != config["pr11_factor_manifest_sha256"]:
-        raise RuntimeError("PR #11 factor manifest hash mismatch")
-    if facts.get("pr11_frontier_sha256") != config["pr11_frontier_sha256"]:
-        raise RuntimeError("PR #11 frontier hash mismatch")
+    for field in ("pr11_run_facts_sha256", "pr11_factor_manifest_sha256", "pr11_frontier_sha256"):
+        if facts.get(field) != config[field]:
+            raise RuntimeError(f"{field} mismatch")
     if facts.get("frontier_sha256") != sha256(frontier_path):
         raise RuntimeError("frontier hash mismatch")
-    expected_work = int(config["expected_validation_layer_expert_cells"])
-    if len(facts.get("completed_work_units", [])) != expected_work:
+    if len(facts.get("completed_work_units", [])) != int(config["expected_validation_layer_expert_cells"]):
         raise RuntimeError("work-unit coverage changed")
     scope = facts.get("validation_scope_audit", {})
     if (
@@ -115,9 +112,18 @@ def validate_evidence_bundle(
         raise RuntimeError("serialized state costs changed")
     if facts.get("inherited_four_state_map") != INHERITED_FOUR_STATE_MAP.tolist():
         raise RuntimeError("serialized four-state embedding changed")
+    if facts.get("strict_all_in_page_budgets") != config["strict_all_in_page_budgets"]:
+        raise RuntimeError("serialized all-in page budgets changed")
+    if int(facts.get("strict_all_in_total_bytes", -1)) != 393_216:
+        raise RuntimeError("serialized all-in total-byte budget changed")
+    if facts.get("incremental_coordinate_updates") is not True:
+        raise RuntimeError("incremental coordinate implementation is not declared")
 
     frame = pd.read_parquet(frontier_path)
-    expected_rows = 69 * 3 * (2 + 3 * len(config["factor_config_ids"]))
+    expected_rows = 69 * (
+        3 * (2 + 4 * len(config["factor_config_ids"]))
+        + 2 * len(config["factor_config_ids"])
+    )
     if len(frame) != expected_rows or int(facts.get("frontier_rows", -1)) != expected_rows:
         raise RuntimeError("frontier row count changed")
     if set(frame["solver"]) != EXPECTED_SOLVERS:
@@ -125,48 +131,70 @@ def validate_evidence_bundle(
     identities = frame[list(IDENTITY)].drop_duplicates()
     if len(identities) != 69 or set(frame["evaluation_split"]) != {"validation"}:
         raise RuntimeError("identity/split coverage changed")
-    if set(frame["physical_budget_pages"].astype(int)) != {384, 576, 768}:
-        raise RuntimeError("page budget grid changed")
+    fixed = frame[frame["budget_regime"] == "fixed_correction_budget"]
+    all_in = frame[frame["budget_regime"] == "strict_all_in_one_bpw"]
+    if len(fixed) != 69 * 3 * (2 + 4 * len(config["factor_config_ids"])):
+        raise RuntimeError("fixed-budget grid changed")
+    if len(all_in) != 69 * 2 * len(config["factor_config_ids"]):
+        raise RuntimeError("strict all-in grid changed")
+    if set(fixed["physical_budget_pages"].astype(int)) != {384, 576, 768}:
+        raise RuntimeError("fixed page-budget grid changed")
     ordinary = frame[~frame["exact_gram_oracle"].astype(bool)]
     exact = frame[frame["exact_gram_oracle"].astype(bool)]
     if set(ordinary["factor_config_id"]) != set(config["factor_config_ids"]):
         raise RuntimeError("factor grid changed")
     if set(exact["factor_config_id"]) != {"exact_full_down_gram_training_only"}:
         raise RuntimeError("exact-Gram factor identity changed")
-    expected_factor_rows = 69 * 3
+    if set(exact["budget_regime"]) != {"fixed_correction_budget"}:
+        raise RuntimeError("exact-Gram control entered all-in comparison")
+    expected_fixed_factor_rows = 69 * 3
     for factor in config["factor_config_ids"]:
         for solver in (
-            config["four_state_reference_solver_id"],
-            config["primary_solver_id"],
-            config["warm_start_solver_id"],
+            config["pr11_four_state_solver_id"], config["four_state_reference_solver_id"],
+            config["primary_solver_id"], config["warm_start_solver_id"],
         ):
-            if len(frame[(frame["factor_config_id"] == factor) & (frame["solver"] == solver)]) != expected_factor_rows:
-                raise RuntimeError("factor/solver grid incomplete")
-    for solver in (
-        config["exact_four_state_solver_id"],
-        config["exact_eight_state_solver_id"],
-    ):
-        if len(frame[frame["solver"] == solver]) != expected_factor_rows:
+            rows = fixed[(fixed["factor_config_id"] == factor) & (fixed["solver"] == solver)]
+            if len(rows) != expected_fixed_factor_rows:
+                raise RuntimeError("fixed factor/solver grid incomplete")
+        expected_pages = int(config["strict_all_in_page_budgets"][factor])
+        for solver in (config["four_state_reference_solver_id"], config["primary_solver_id"]):
+            rows = all_in[(all_in["factor_config_id"] == factor) & (all_in["solver"] == solver)]
+            if len(rows) != 69 or set(rows["physical_budget_pages"].astype(int)) != {expected_pages}:
+                raise RuntimeError("strict all-in factor/solver grid incomplete")
+    for solver in (config["exact_four_state_solver_id"], config["exact_eight_state_solver_id"]):
+        if len(exact[exact["solver"] == solver]) != expected_fixed_factor_rows:
             raise RuntimeError("exact-Gram solver grid incomplete")
 
-    numeric = (
+    universal_numeric = (
         "physical_pages", "physical_budget_pages", "recovery",
         "four_state_reference_recovery", "pr11_four_state_recovery",
-        "recovery_gain_vs_four_state_reference",
-        "pr10_exact_hybrid_recovery",
-        "set_gain_retention_vs_pr10_exact_hybrid",
-        "compressed_predicted_damage", "exact_qenergy_damage",
-        "damage_prediction_error_over_base", "selector_runtime_ms",
-        "coordinate_sweeps", "local_evaluated_passes",
+        "recovery_gain_vs_four_state_reference", "recovery_gain_vs_pr11_four_state",
+        "seed_optimizer_gain_vs_pr11_four_state", "compressed_predicted_damage",
+        "exact_qenergy_damage", "damage_prediction_error_over_base",
+        "selector_runtime_ms", "field_build_runtime_ms", "coordinate_sweeps", "selected_seed_coordinate_sweeps",
+        "coordinate_accepted_moves", "local_evaluated_passes", "local_accepted_bundles",
+        "local_candidate_moves_per_pass", "local_maximum_shortlist",
+        "allowed_state_count", "seed_count",
     )
-    for field in numeric:
+    for field in universal_numeric:
         if not np.all(np.isfinite(frame[field].to_numpy(np.float64))):
             raise RuntimeError(f"non-finite required field: {field}")
-    inherited = set(INHERITED_FOUR_STATE_MAP.tolist())
+    for field in ("pr10_exact_hybrid_recovery", "set_gain_retention_vs_pr10_exact_hybrid"):
+        if not np.all(np.isfinite(fixed[field].to_numpy(np.float64))):
+            raise RuntimeError(f"non-finite fixed-budget field: {field}")
+        if not all_in[field].isna().all():
+            raise RuntimeError(f"all-in row fabricated fixed-budget field: {field}")
+
+    inherited_states = set(INHERITED_FOUR_STATE_MAP.tolist())
+    restricted_solvers = {
+        config["pr11_four_state_solver_id"], config["four_state_reference_solver_id"],
+        config["exact_four_state_solver_id"],
+    }
     for row in frame.to_dict("records"):
         states = _canonical_states(row["selected_states"])
         pages = int(SPLIT_STATE_PAGE_COSTS[states].sum())
-        if pages != int(row["physical_pages"]) or pages > int(row["physical_budget_pages"]):
+        budget = int(row["physical_budget_pages"])
+        if pages != int(row["physical_pages"]) or pages > budget:
             raise RuntimeError("state/page evidence mismatch")
         counts = np.bincount(states, minlength=8).tolist()
         if row["state_counts"] != json.dumps(counts, separators=(",", ":")):
@@ -179,60 +207,94 @@ def validate_evidence_bundle(
             raise RuntimeError("up-high state count mismatch")
         if int(row["down_high_units"]) != int(SPLIT_STATE_DOWN_HIGH[states].sum()):
             raise RuntimeError("down-high state count mismatch")
-        if row["solver"] in {
-            config["four_state_reference_solver_id"],
-            config["exact_four_state_solver_id"],
-        } and not set(states.tolist()).issubset(inherited):
+        if row["solver"] in restricted_solvers and not set(states.tolist()).issubset(inherited_states):
             raise RuntimeError("four-state reference used a split-only state")
+        expected_allowed = 4 if row["solver"] in restricted_solvers else 8
+        if int(row["allowed_state_count"]) != expected_allowed:
+            raise RuntimeError("allowed-state accounting mismatch")
         if bool(row["exact_gram_oracle"]):
             if not pd.isna(row["selector_compute_macs"]) or bool(row["promotable"]):
                 raise RuntimeError("exact-Gram oracle became promotable/accounted as deployable")
-        else:
-            macs = int(row["selector_compute_macs"])
-            if macs < 0 or bool(row["selector_compute_gate_pass"]) != (macs < 1_572_864):
-                raise RuntimeError("selector compute gate mismatch")
-            factor_bytes = int(row["factor_payload_bytes"])
-            if int(row["combined_metadata_bytes"]) != factor_bytes + 3_084:
-                raise RuntimeError("metadata bytes mismatch")
-            _assert_close(
-                row["combined_metadata_bpw"],
-                8.0 * (factor_bytes + 3_084) / 3_145_728,
-                "combined_metadata_bpw",
-            )
-    exact_eight = frame[frame["solver"] == config["exact_eight_state_solver_id"]]
+            if not pd.isna(row["budget_total_bytes"]):
+                raise RuntimeError("exact-Gram control acquired deployable all-in bytes")
+            continue
+        macs = int(row["selector_compute_macs"])
+        if macs < 0 or bool(row["selector_compute_gate_pass"]) != (macs < 1_572_864):
+            raise RuntimeError("selector compute gate mismatch")
+        factor_bytes = int(row["factor_payload_bytes"])
+        metadata_bytes = factor_bytes + 3_084
+        if int(row["combined_metadata_bytes"]) != metadata_bytes:
+            raise RuntimeError("metadata bytes mismatch")
+        _assert_close(row["combined_metadata_bpw"], 8.0 * metadata_bytes / 3_145_728, "metadata bpw")
+        total_bytes = metadata_bytes + budget * 512
+        if int(row["budget_total_bytes"]) != total_bytes:
+            raise RuntimeError("total budget bytes mismatch")
+        _assert_close(row["budget_total_bpw"], 8.0 * total_bytes / 3_145_728, "total budget bpw")
+        if row["budget_regime"] == "strict_all_in_one_bpw":
+            if int(row["strict_all_in_total_bytes"]) != 393_216:
+                raise RuntimeError("strict all-in byte limit mismatch")
+            slack = 393_216 - total_bytes
+            if bool(row["strict_all_in_budget_pass"]) != (0 <= slack < 512):
+                raise RuntimeError("strict all-in maximal-page flag mismatch")
+            if int(row["strict_all_in_slack_bytes"]) != slack:
+                raise RuntimeError("strict all-in slack mismatch")
+        elif not pd.isna(row["strict_all_in_total_bytes"]):
+            raise RuntimeError("fixed-budget row acquired all-in marker")
+
+    exact_eight = fixed[fixed["solver"] == config["exact_eight_state_solver_id"]]
     if np.min(exact_eight["recovery_gain_vs_four_state_reference"]) < -1e-9:
         raise RuntimeError("exact eight-state oracle lost to four-state embedding")
-    primary = frame[frame["solver"] == config["primary_solver_id"]]
-    expected_primary = 69 * 3 * len(config["factor_config_ids"])
-    if len(primary) != expected_primary:
-        raise RuntimeError("primary grid incomplete")
-    eligible = primary[primary["factor_config_id"].isin(config["primary_factor_config_ids"])]
+    primary_fixed = fixed[fixed["solver"] == config["primary_solver_id"]]
+    if len(primary_fixed) != 69 * 3 * len(config["factor_config_ids"]):
+        raise RuntimeError("fixed primary grid incomplete")
+    eligible = primary_fixed[primary_fixed["factor_config_id"].isin(config["primary_factor_config_ids"])]
     if len(eligible) != 69 * 3 * len(config["primary_factor_config_ids"]):
         raise RuntimeError("promotion-eligible grid incomplete")
     if not eligible["promotable"].astype(bool).all():
         raise RuntimeError("primary promotion marker changed")
-    if ordinary[ordinary["solver"] != config["primary_solver_id"]]["promotable"].astype(bool).any():
+    if ordinary.drop(index=eligible.index)["promotable"].astype(bool).any():
         raise RuntimeError("control solver became promotable")
     return config, facts, frame
 
 
+def _optional_quantiles(values: pd.Series) -> dict[str, float | None]:
+    if values.isna().all():
+        return {"p10": None, "median": None, "p90": None}
+    if values.isna().any():
+        raise RuntimeError("partially missing summary field")
+    return quantiles(values)
+
+
 def summary_table(frame: pd.DataFrame) -> pd.DataFrame:
     rows = []
-    group = ["factor_config_id", "factor_family", "solver", "physical_budget_bpw"]
+    group = [
+        "budget_regime", "factor_config_id", "factor_family", "solver",
+        "physical_budget_pages", "physical_budget_bpw", "budget_total_bpw",
+    ]
     for key, values in frame.groupby(group, sort=True, dropna=False):
         recovery = quantiles(values["recovery"])
-        retention = quantiles(values["set_gain_retention_vs_pr10_exact_hybrid"])
+        retention = _optional_quantiles(values["set_gain_retention_vs_pr10_exact_hybrid"])
         gain = quantiles(values["recovery_gain_vs_four_state_reference"])
+        pr11_gain = quantiles(values["recovery_gain_vs_pr11_four_state"])
+        seed_gain = quantiles(values["seed_optimizer_gain_vs_pr11_four_state"])
+        runtime = quantiles(values["selector_runtime_ms"])
+        field_runtime = quantiles(values["field_build_runtime_ms"])
+        sweeps = quantiles(values["coordinate_sweeps"])
+        passes = quantiles(values["local_evaluated_passes"])
         rows.append({
-            **dict(zip(group, key)),
-            "rows": len(values),
-            "recovery_p10": recovery["p10"],
-            "recovery_median": recovery["median"],
+            **dict(zip(group, key)), "rows": len(values),
+            "recovery_p10": recovery["p10"], "recovery_median": recovery["median"],
             "recovery_p90": recovery["p90"],
             "set_gain_retention_p10": retention["p10"],
             "set_gain_retention_median": retention["median"],
-            "recovery_gain_p10": gain["p10"],
-            "recovery_gain_median": gain["median"],
+            "recovery_gain_p10": gain["p10"], "recovery_gain_median": gain["median"],
+            "gain_vs_pr11_p10": pr11_gain["p10"], "gain_vs_pr11_median": pr11_gain["median"],
+            "seed_optimizer_gain_p10": seed_gain["p10"],
+            "seed_optimizer_gain_median": seed_gain["median"],
+            "metadata_bytes": (
+                None if values["combined_metadata_bytes"].isna().all()
+                else int(values["combined_metadata_bytes"].iloc[0])
+            ),
             "metadata_bpw": (
                 None if values["combined_metadata_bpw"].isna().all()
                 else float(values["combined_metadata_bpw"].iloc[0])
@@ -241,6 +303,17 @@ def summary_table(frame: pd.DataFrame) -> pd.DataFrame:
                 None if values["selector_compute_macs"].isna().all()
                 else int(values["selector_compute_macs"].max())
             ),
+            "selector_runtime_ms_p10": runtime["p10"],
+            "selector_runtime_ms_median": runtime["median"],
+            "selector_runtime_ms_p90": runtime["p90"],
+            "field_build_runtime_ms_median": field_runtime["median"],
+            "field_build_runtime_ms_p90": field_runtime["p90"],
+            "coordinate_sweeps_median": sweeps["median"],
+            "coordinate_sweeps_p90": sweeps["p90"],
+            "local_evaluated_passes_median": passes["median"],
+            "local_evaluated_passes_p90": passes["p90"],
+            "coordinate_accepted_moves_median": float(values["coordinate_accepted_moves"].median()),
+            "local_accepted_bundles_median": float(values["local_accepted_bundles"].median()),
             "split_only_units_median": float(values["split_only_units"].median()),
         })
     return pd.DataFrame(rows)
@@ -248,20 +321,18 @@ def summary_table(frame: pd.DataFrame) -> pd.DataFrame:
 
 def layer_table(frame: pd.DataFrame, config: Mapping[str, Any]) -> pd.DataFrame:
     rows = []
-    primary = frame[frame["solver"].isin({
-        config["primary_solver_id"], config["exact_eight_state_solver_id"],
-    })]
+    primary = frame[frame["solver"].isin({config["primary_solver_id"], config["exact_eight_state_solver_id"]})]
     for key, values in primary.groupby(
-        ["factor_config_id", "solver", "physical_budget_bpw", "layer"], sort=True,
+        ["budget_regime", "factor_config_id", "solver", "physical_budget_pages", "layer"],
+        sort=True, dropna=False,
     ):
         recovery = quantiles(values["recovery"])
         gain = quantiles(values["recovery_gain_vs_four_state_reference"])
         rows.append({
-            "factor_config_id": key[0], "solver": key[1],
-            "physical_budget_bpw": key[2], "layer": int(key[3]),
+            "budget_regime": key[0], "factor_config_id": key[1], "solver": key[2],
+            "physical_budget_pages": int(key[3]), "layer": int(key[4]),
             "rows": len(values), "recovery_p10": recovery["p10"],
-            "recovery_median": recovery["median"],
-            "recovery_gain_p10": gain["p10"],
+            "recovery_median": recovery["median"], "recovery_gain_p10": gain["p10"],
             "recovery_gain_median": gain["median"],
         })
     return pd.DataFrame(rows)
@@ -272,9 +343,10 @@ def promotion_payload(
     frame: pd.DataFrame, summary: pd.DataFrame,
 ) -> dict[str, Any]:
     rows = summary[
-        (summary["solver"] == config["primary_solver_id"])
+        (summary["budget_regime"] == "fixed_correction_budget")
+        & (summary["solver"] == config["primary_solver_id"])
         & summary["factor_config_id"].isin(config["primary_factor_config_ids"])
-        & np.isclose(summary["physical_budget_bpw"], 1.0)
+        & (summary["physical_budget_pages"] == 768)
     ].copy()
     if len(rows) != len(config["primary_factor_config_ids"]):
         raise RuntimeError("one-bpw primary promotion rows incomplete")
@@ -288,40 +360,62 @@ def promotion_payload(
             "compute_gate_pass": row["selector_compute_macs_max"] < config["selector_compute_gate_macs"],
         }
         gate["all_gates_pass"] = all(
-            gate[name] for name in (
-                "retention_gate_pass", "gain_gate_pass",
-                "metadata_gate_pass", "compute_gate_pass",
-            )
+            gate[name] for name in ("retention_gate_pass", "gain_gate_pass", "metadata_gate_pass", "compute_gate_pass")
         )
         gates.append(gate)
     passing = [row for row in gates if row["all_gates_pass"]]
     exact = summary[
-        (summary["solver"] == config["exact_eight_state_solver_id"])
-        & np.isclose(summary["physical_budget_bpw"], 1.0)
+        (summary["budget_regime"] == "fixed_correction_budget")
+        & (summary["solver"] == config["exact_eight_state_solver_id"])
+        & (summary["physical_budget_pages"] == 768)
     ]
     if len(exact) != 1:
         raise RuntimeError("exact one-bpw comparison row missing")
-    passing_ids = sorted(row["factor_config_id"] for row in passing)
-    minimum_metadata_followup = (
-        min(passing, key=lambda row: (row["metadata_bpw"], row["factor_config_id"]))["factor_config_id"]
-        if passing else None
+    all_in = summary[
+        (summary["budget_regime"] == "strict_all_in_one_bpw")
+        & (summary["solver"] == config["primary_solver_id"])
+    ].copy()
+    if len(all_in) != len(config["factor_config_ids"]):
+        raise RuntimeError("strict all-in primary summary incomplete")
+    ranked = all_in.sort_values(
+        ["recovery_median", "metadata_bytes", "factor_config_id"],
+        ascending=[False, True, True],
     )
+    recommended = ranked.iloc[0].to_dict()
+    int4_id = "joint_eigh_tail8_exact0_int4_per_row_hadamard"
+    int8_id = "joint_eigh_tail8_exact0_int8_per_row"
+    int4 = frame[
+        (frame["budget_regime"] == "strict_all_in_one_bpw")
+        & (frame["solver"] == config["primary_solver_id"])
+        & (frame["factor_config_id"] == int4_id)
+    ][list(IDENTITY) + ["recovery"]]
+    int8 = frame[
+        (frame["budget_regime"] == "strict_all_in_one_bpw")
+        & (frame["solver"] == config["primary_solver_id"])
+        & (frame["factor_config_id"] == int8_id)
+    ][list(IDENTITY) + ["recovery"]]
+    paired = int4.merge(int8, on=list(IDENTITY), suffixes=("_int4", "_int8"), validate="one_to_one")
+    delta = quantiles(paired["recovery_int8"] - paired["recovery_int4"])
+    rank4 = all_in[all_in["factor_config_id"] == "exact_proxy_plus_eigh_tail_tail0_exact4_fp32"]
+    if len(rank4) != 1:
+        raise RuntimeError("rank-4 exact-proxy all-in control missing")
+    passing_ids = sorted(row["factor_config_id"] for row in passing)
     return {
         "run_id": config["run_id"],
-        "status": (
-            "continue_to_predicted_mixed_hidden_interface"
-            if passing_ids else "stop_split_action_extension"
-        ),
+        "status": "continue_to_predicted_mixed_hidden_interface" if passing_ids else "stop_split_action_extension",
         "selected_validation_configuration": None,
         "passing_validation_configurations": passing_ids,
-        "minimum_metadata_followup": minimum_metadata_followup,
-        "selection_note": "no winner tie-break was predeclared; both passing factors advance",
-        "exact_mixed_h4_geometry_only": True,
-        "no_deployment_claim": True,
-        "primary_gate_rows": gates,
-        "exact_gram_one_bpw": exact.iloc[0].to_dict(),
-        "validation_invocations": 69,
-        "locked_cells": 12,
-        "test_scientific_values_used": False,
-        "frontier_sha256": facts["frontier_sha256"],
+        "minimum_metadata_followup": (
+            min(passing, key=lambda row: (row["metadata_bpw"], row["factor_config_id"]))["factor_config_id"]
+            if passing else None
+        ),
+        "selection_note": "fixed-correction promotion remains separate from the strict all-in diagnostic",
+        "strict_all_in_factor_selection_rule": config["all_in_factor_selection_rule"],
+        "recommended_strict_all_in_factor": recommended,
+        "int8_minus_int4_all_in_recovery": delta,
+        "rank4_exact_proxy_all_in_control": rank4.iloc[0].to_dict(),
+        "exact_mixed_h4_geometry_only": True, "no_deployment_claim": True,
+        "primary_gate_rows": gates, "exact_gram_one_bpw": exact.iloc[0].to_dict(),
+        "validation_invocations": 69, "locked_cells": 12,
+        "test_scientific_values_used": False, "frontier_sha256": facts["frontier_sha256"],
     }

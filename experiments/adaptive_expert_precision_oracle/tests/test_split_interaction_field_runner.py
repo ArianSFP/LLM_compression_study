@@ -66,10 +66,17 @@ def test_frozen_contract_uses_24_single_thread_workers_and_four_factors():
 
 
 def test_rank8_primary_worst_case_stays_below_compute_gate():
-    total, components = runner._split_compute(rank=8, sweeps=16, passes=12)
+    diagnostics = {
+        "allowed_state_count": 8, "coordinate_sweeps": 16,
+        "local_evaluated_passes": 12, "local_maximum_shortlist": 56,
+    }
+    total, components = runner._split_compute(rank=8, diagnostics=diagnostics)
     assert total == sum(components.values())
     assert total < 1_572_864
     assert components["local_search_macs"] > components["coordinate_macs"]
+    restricted = dict(diagnostics, allowed_state_count=4, local_maximum_shortlist=24)
+    four_total, _ = runner._split_compute(rank=8, diagnostics=restricted)
+    assert four_total < total
 
 
 def test_state_summary_reports_split_only_and_separate_pages():
@@ -93,8 +100,16 @@ def test_old_reference_and_split_solver_smoke(monkeypatch):
     responses = split_projection_responses(q2, q4, x)
     field = build_split_interaction_field(factor, responses.hidden, abc)
     primary = runner._split_solver(field, 12, old.states, config, inherited=False)
+    restricted = runner._split_solver(
+        field, 12, old.states, config, inherited=False,
+        allowed_states=tuple(runner.INHERITED_FOUR_STATE_MAP.tolist()),
+    )
     warm = runner._split_solver(field, 12, old.states, config, inherited=True)
     assert primary[0].pages <= 12
+    assert restricted[0].pages <= 12
+    assert set(restricted[0].states.tolist()).issubset(
+        set(runner.INHERITED_FOUR_STATE_MAP.tolist())
+    )
     assert warm[0].pages <= 12
     assert warm[0].damage <= field.damage(
         np.asarray([0, 6, 1, 7], np.int64)[old.states]
