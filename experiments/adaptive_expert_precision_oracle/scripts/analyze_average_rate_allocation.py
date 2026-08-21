@@ -30,6 +30,8 @@ ACCURACY_CSV = "average_rate_accuracy_by_bpw.csv"
 LAYER_CSV = "average_rate_layer_accuracy.csv"
 ALLOCATION_CSV = "average_rate_allocation_distribution.csv"
 RUNTIME_CSV = "average_rate_runtime.csv"
+CLOSURE_CSV = "average_rate_frontier_closure.csv"
+GLOBAL_BOUND_CSV = "average_rate_global_bound.csv"
 PROMOTION_JSON = "average_rate_promotions.json"
 REPORT_MD = "AVERAGE_RATE_ALLOCATION_REPORT.md"
 PLOT_PNG = "average_rate_accuracy.png"
@@ -61,11 +63,17 @@ def _pp(value: float) -> str:
 def _policy_name(value: str) -> str:
     return {
         "uniform_per_expert": "Uniform per expert",
-        "pooled_router_square_compressed": "Pooled router-squared",
+        "pooled_router_square_compressed": "Coarse pooled router-squared",
+        "pooled_router_square_column_generated": "Column-generated router-squared",
         "pooled_equal_weight_compressed": "Pooled equal weight",
-        "pooled_exact_combined_moe_oracle": "Exact combined-MoE oracle",
+        "pooled_exact_combined_moe_oracle": "Exact combined local oracle, coarse",
+        "pooled_exact_combined_moe_column_generated_local": (
+            "Exact combined local oracle, refined"
+        ),
+        "pooled_exact_combined_moe_global_bound": (
+            "Bounded 3/4-exchange upper solution"
+        ),
     }.get(value, value)
-
 
 def _report(bundle: Any, tables: dict[str, Any], promotion: dict[str, Any]) -> str:
     config = bundle.config
@@ -75,25 +83,46 @@ def _report(bundle: Any, tables: dict[str, Any], promotion: dict[str, Any]) -> s
         & (
             accuracy["allocation_policy"].eq("uniform_per_expert")
             | (
-                accuracy["allocation_policy"].eq("pooled_router_square_compressed")
+                accuracy["allocation_policy"].isin({
+                    "pooled_router_square_compressed",
+                    "pooled_router_square_column_generated",
+                })
                 & accuracy["burst_cap_pages_per_expert"].eq(1536)
             )
-            | accuracy["allocation_policy"].eq("pooled_exact_combined_moe_oracle")
+            | accuracy["allocation_policy"].isin({
+                "pooled_exact_combined_moe_oracle",
+                "pooled_exact_combined_moe_column_generated_local",
+                "pooled_exact_combined_moe_global_bound",
+            })
         )
     ].sort_values(["overall_average_bpw", "allocation_policy"])
+    closure = tables["frontier_closure"]
+    closure = closure[
+        closure["comparison"].eq("selected_column_repair")
+        & closure["factor_config_id"].eq(config["primary_factor_id"])
+        & closure["burst_cap_pages_per_expert"].eq(1536)
+    ].sort_values("mean_budget_pages_per_expert")
+    controls = accuracy[
+        accuracy["factor_config_id"].isin(
+            [config["compute_control_factor_id"], *config["quantized_control_factor_ids"]]
+        )
+        & accuracy["allocation_policy"].eq(
+            "pooled_router_square_column_generated"
+        )
+    ].sort_values("overall_average_bpw")
+    bound = tables["global_bound"].iloc[0]
     lines = [
-        "# Average-rate allocation over true top-8 expert groups",
+        "# Average-rate frontier closure over true top-8 expert groups",
         "",
         "## Outcome",
         "",
         f"Continuation status: **{promotion['status']}**.",
         "",
-        "This is an exact-H4 interaction-geometry ceiling over 128 captured "
+        "This remains an exact-H4 interaction-geometry ceiling over 128 "
         "validation token/layer groups (1,024 routed expert invocations). "
-        "No row is deployable or promotable: exact Q4 activation-dependent "
-        "responses and, for the oracle control, exact cross-expert residual "
-        "vectors are used. The actionable question is whether pooled bandwidth "
-        "allocation is strong enough to justify a future predicted-H4 allocator.",
+        "The extension isolates selected-column repair, quantizes the rank-4 "
+        "exact-proxy factor, and brackets the finite-frontier global group "
+        "objective. No row is deployable or promotable.",
         "",
         "## Accuracy by overall average bpw",
         "",
@@ -113,37 +142,87 @@ def _report(bundle: Any, tables: dict[str, Any], promotion: dict[str, Any]) -> s
         )
     lines += [
         "",
-        "The table reports exact combined top-8 qenergy recovery, not token "
-        "accuracy or model quality. Overall bpw includes the 9,232-byte "
-        "rank-8 INT4+A/B/C resident sidecar and the allowed mean correction "
-        "pages. Actual bpw can be lower when the frontier leaves budget unused.",
+        "Recovery is exact combined top-8 qenergy recovery, not token accuracy "
+        "or model quality. Overall bpw includes factor+A/B/C metadata and the "
+        "allowed average correction pages.",
+        "",
+        "## Selected-column frontier repair",
+        "",
+        "| Mean pages | p10 gain vs coarse | Median gain vs coarse | "
+        "p90 gain vs coarse | Page-vector change fraction |",
+        "| ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in closure.itertuples(index=False):
+        lines.append(
+            f"| {int(row.mean_budget_pages_per_expert)} | "
+            f"{_pp(row.recovery_gain_p10)} | "
+            f"{_pp(row.recovery_gain_median)} | "
+            f"{_pp(row.recovery_gain_p90)} | "
+            f"{100 * row.selected_page_vector_change_fraction:.1f}% |"
+        )
+    lines += [
+        "",
+        "Only allocator-selected page points receive full hard-budget local "
+        "repair. Two prices around each selected marginal slope are inserted "
+        "for the affected frontier section, and MCKP is rerun until the "
+        "selected state vectors stabilize or the frozen three-round cap is hit.",
+        "",
+        "## Rank-4 factor encodings at strict all-in rate",
+        "",
+        "| Factor | Overall bpw | p10 | Median | Charged group MACs |",
+        "| :--- | ---: | ---: | ---: | ---: |",
+    ]
+    for row in controls.itertuples(index=False):
+        lines.append(
+            f"| {row.factor_config_id} | {row.overall_average_bpw:.6f} | "
+            f"{_percent(row.qenergy_recovery_p10)} | "
+            f"{_percent(row.qenergy_recovery_median)} | "
+            f"{int(row.selector_compute_macs):,} |"
+        )
+    lines += [
+        "",
+        "The controls include FP32, self-safe FP16, per-row INT8, "
+        "Hadamard-rotated per-row INT4, and a mixed exact-proxy INT8 plus "
+        "Euclidean-tail INT4 factor. Each uses the maximum integral correction "
+        "pages that keep metadata+corrections within one total bpw.",
+        "",
+        "## Global finite-frontier bound",
+        "",
+        f"- Certified-to-tolerance group fraction: "
+        f"{100 * bound.certified_fraction:.1f}%",
+        f"- Relative optimality gap median/p90/max: "
+        f"{100 * bound.relative_gap_median:.5f}% / "
+        f"{100 * bound.relative_gap_p90:.5f}% / "
+        f"{100 * bound.relative_gap_max:.5f}%",
+        f"- Median bounded-exchange candidate evaluations: "
+        f"{bound.exchange_evaluations_median:,.0f}",
+        "",
+        "The upper solution adds deterministic three/four-expert exchanges. "
+        "The lower value is globally valid over every combination of the "
+        "available refined frontier columns: tangent convexity plus an exact "
+        "linear MCKP solve produces each dual bound. It is not a bound over "
+        "states absent from those per-expert frontiers.",
         "",
         "## Frozen primary decision",
         "",
         f"- Mean correction pages/expert: {promotion['mean_correction_pages_per_expert']}",
         f"- Overall average bpw: {promotion['overall_average_bpw']:.6f}",
-        f"- Router-squared pooled recovery p10/median: "
+        f"- Column-generated recovery p10/median: "
         f"{_percent(promotion['qenergy_recovery_p10'])} / "
         f"{_percent(promotion['qenergy_recovery_median'])}",
         f"- Paired p10/median gain over uniform: "
         f"{_pp(promotion['paired_gain_vs_uniform_p10'])} / "
         f"{_pp(promotion['paired_gain_vs_uniform_median'])}",
+        f"- Additional selected-frontier p10/median gain: "
+        f"{_pp(promotion['frontier_repair_gain_p10'])} / "
+        f"{_pp(promotion['frontier_repair_gain_median'])}",
         f"- Median-gain gate: {promotion['median_gain_gate_pass']}",
         f"- Tail-nonregression gate: {promotion['p10_gain_gate_pass']}",
         "",
-        "## Runtime and optimization",
-        "",
-        "Each expert frontier uses one vectorized exact-self DP table shared "
-        "across all hard budgets and page prices. Hard anchors receive bounded "
-        "1/2/3-unit local repair; the descending price path uses two incremental "
-        "coordinate basins without repeatedly rebuilding the DP or repairing "
-        "discarded price points. CSV evidence reports actual wall time, "
-        "coordinate sweeps, local passes, DP state evaluations, and charged MACs.",
-        "",
         "## Q3 decision",
         "",
-        f"Q3 status: **{promotion['q3_status']}**. Q3 was deliberately not mixed "
-        "into this attribution experiment. A later Q3 run must include:",
+        f"Q3 status: **{promotion['q3_status']}**. Q3 remains separated from "
+        "this attribution experiment. A later Q3 run must include:",
     ]
     lines.extend(f"- {item}" for item in promotion["q3_required_controls"])
     lines += [
@@ -162,7 +241,6 @@ def _report(bundle: Any, tables: dict[str, Any], promotion: dict[str, Any]) -> s
     ]
     return "\n".join(lines)
 
-
 def _plot(tables: dict[str, Any], config: dict[str, Any], output: Path) -> None:
     matplotlib.rcParams["svg.hashsalt"] = str(config["run_id"])
     frame = tables["accuracy_by_bpw"]
@@ -173,12 +251,18 @@ def _plot(tables: dict[str, Any], config: dict[str, Any], output: Path) -> None:
             frame["allocation_policy"].eq("pooled_router_square_compressed")
             & frame["burst_cap_pages_per_expert"].eq(768)
         ),
-        "Pooled router-squared, cap 1536": (
+        "Coarse pooled, cap 1536": (
             frame["allocation_policy"].eq("pooled_router_square_compressed")
             & frame["burst_cap_pages_per_expert"].eq(1536)
         ),
-        "Exact combined oracle": frame["allocation_policy"].eq(
-            "pooled_exact_combined_moe_oracle"
+        "Column-generated pooled, cap 1536": (
+            frame["allocation_policy"].eq(
+                "pooled_router_square_column_generated"
+            )
+            & frame["burst_cap_pages_per_expert"].eq(1536)
+        ),
+        "Exact combined refined": frame["allocation_policy"].eq(
+            "pooled_exact_combined_moe_column_generated_local"
         ),
     }
     fig, ax = plt.subplots(figsize=(7.8, 4.8))
@@ -240,6 +324,8 @@ def main() -> None:
         LAYER_CSV: tables["layer_accuracy"],
         ALLOCATION_CSV: tables["allocation_distribution"],
         RUNTIME_CSV: tables["runtime"],
+        CLOSURE_CSV: tables["frontier_closure"],
+        GLOBAL_BOUND_CSV: tables["global_bound"],
     }
     for name, frame in output_map.items():
         frame.to_csv(args.output / name, index=False)
@@ -265,6 +351,19 @@ def main() -> None:
             "bytes": path.stat().st_size,
             "sha256": sha256(path),
         })
+    analysis_sources = {
+        "analyzer_wrapper_sha256": Path(__file__).resolve(),
+        "analyzer_core_sha256": (
+            EXPERIMENT / "src/oracle_study/average_rate_analysis.py"
+        ),
+    }
+    for field, path in analysis_sources.items():
+        inputs.append({
+            "name": field,
+            "path": relative(path),
+            "bytes": path.stat().st_size,
+            "sha256": sha256(path),
+        })
     generated = []
     for path in sorted(args.output.iterdir()):
         if path.name == MANIFEST_JSON:
@@ -275,7 +374,7 @@ def main() -> None:
             "sha256": sha256(path),
         })
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "run_id": bundle.config["run_id"],
         "inputs": sorted(inputs, key=lambda row: (row["name"], row["path"])),
         "generated": generated,
@@ -284,6 +383,8 @@ def main() -> None:
             "expert_allocation": len(bundle.experts),
             "accuracy_summary": len(tables["accuracy_by_bpw"]),
             "layer_summary": len(tables["layer_accuracy"]),
+            "frontier_closure_summary": len(tables["frontier_closure"]),
+            "global_bound_summary": len(tables["global_bound"]),
         },
         "promotion_sha256": sha256(args.output / PROMOTION_JSON),
         "test_scientific_rows_admitted_or_used": False,

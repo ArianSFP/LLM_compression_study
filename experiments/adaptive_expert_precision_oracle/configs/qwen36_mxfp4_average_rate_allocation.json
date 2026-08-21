@@ -1,5 +1,5 @@
 {
-  "run_id": "qwen36_mxfp4_average_rate_allocation_20260821_v1",
+  "run_id": "qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2",
   "seed": 20260821,
   "base_pr12_commit": "32601905f45c2e7caf402fd0a6d297d3fbd2a6d4",
   "base_pr12_config_sha256": "e61aae7b38a76b95c858f00344d0d9cc9e6d59fa4c686d8f28dbac170f877557",
@@ -69,13 +69,13 @@
     1536
   ],
   "frontier_price_ratios": [
-    64.0,
-    32.0,
-    16.0,
-    8.0,
-    4.0,
-    2.0,
-    1.0,
+    64,
+    32,
+    16,
+    8,
+    4,
+    2,
+    1,
     0.5,
     0.25,
     0.125,
@@ -89,8 +89,8 @@
     0.00048828125,
     0.000244140625,
     0.0001220703125,
-    6.103515625e-05,
-    0.0
+    0.00006103515625,
+    0
   ],
   "coordinate_sweeps": 8,
   "local_shortlist": 8,
@@ -101,15 +101,18 @@
   "allocation_policies": [
     "uniform_per_expert",
     "pooled_router_square_compressed",
+    "pooled_router_square_column_generated",
     "pooled_equal_weight_compressed",
-    "pooled_exact_combined_moe_oracle"
+    "pooled_exact_combined_moe_oracle",
+    "pooled_exact_combined_moe_column_generated_local",
+    "pooled_exact_combined_moe_global_bound"
   ],
   "evaluation_workers": 24,
   "worker_start_method": "fork",
   "worker_blas_threads": 1,
   "expert_weights": 3145728,
   "page_bytes": 512,
-  "promotion_primary_policy": "pooled_router_square_compressed",
+  "promotion_primary_policy": "pooled_router_square_column_generated",
   "promotion_primary_burst_cap_pages": 1536,
   "promotion_comparison_policy": "uniform_per_expert",
   "promotion_mean_pages": 749,
@@ -121,7 +124,75 @@
     "physical_512_byte_training_only_coselection_layout",
     "physical_512_byte_fixed_gate_up_pairing_control"
   ],
-  "study_scope": "exact_h4 grouped top8 average-rate geometry ceiling; expanded all-expert static factor coverage; no prediction, prefetch, latency, downstream, routing, logit, token, or Q3 result claim",
+  "study_scope": "exact_h4 grouped top8 average-rate geometry ceiling with selected-column repair, quantized rank-4 controls, and a global finite-frontier objective bound; no prediction, prefetch, latency, downstream, routing, logit, token, or Q3 result claim",
   "price_local_max_passes": 0,
-  "frontier_algorithm": "one_vectorized_exact_self_dp_table_plus_hard_anchor_coordinate_local_repair_plus_dual_basin_incremental_coordinate_price_path"
+  "frontier_algorithm": "vectorized_exact_self_dp_plus_hard_anchors_plus_dual_basin_price_path_plus_selected_column_repair_plus_adaptive_price_insertion",
+  "quantized_control_factor_ids": [
+    "exact_proxy_rank4_fp16",
+    "exact_proxy_rank4_int8_per_row",
+    "exact_proxy_rank4_int4_per_row_hadamard",
+    "exact_proxy_rank4_int8_plus_euclidean_tail4_int4"
+  ],
+  "factor_configs": [
+    {
+      "factor_id": "matrix_free_joint_rank8_int4_per_row_hadamard",
+      "rank": 8,
+      "factor_payload_bytes": 6148,
+      "all_in_mean_pages": 749,
+      "evaluation_grid": "full_primary"
+    },
+    {
+      "factor_id": "exact_proxy_rank4_fp32",
+      "rank": 4,
+      "factor_payload_bytes": 16384,
+      "all_in_mean_pages": 729,
+      "evaluation_grid": "strict_control"
+    },
+    {
+      "factor_id": "exact_proxy_rank4_fp16",
+      "rank": 4,
+      "factor_payload_bytes": 8196,
+      "all_in_mean_pages": 745,
+      "evaluation_grid": "strict_control"
+    },
+    {
+      "factor_id": "exact_proxy_rank4_int8_per_row",
+      "rank": 4,
+      "factor_payload_bytes": 6148,
+      "all_in_mean_pages": 749,
+      "evaluation_grid": "strict_control"
+    },
+    {
+      "factor_id": "exact_proxy_rank4_int4_per_row_hadamard",
+      "rank": 4,
+      "factor_payload_bytes": 4100,
+      "all_in_mean_pages": 753,
+      "evaluation_grid": "strict_control"
+    },
+    {
+      "factor_id": "exact_proxy_rank4_int8_plus_euclidean_tail4_int4",
+      "rank": 8,
+      "factor_payload_bytes": 10244,
+      "all_in_mean_pages": 741,
+      "evaluation_grid": "strict_control"
+    }
+  ],
+  "mixed_euclidean_tail_rank": 4,
+  "column_generation_max_rounds": 3,
+  "column_generation_price_multipliers": [
+    0.5,
+    2
+  ],
+  "column_generation_price_local_max_passes": 0,
+  "global_bound_factor_id": "matrix_free_joint_rank8_int4_per_row_hadamard",
+  "global_bound_mean_pages": 749,
+  "global_bound_burst_cap_pages": 1536,
+  "global_bound_max_iterations": 128,
+  "global_bound_relative_tolerance": 0.000001,
+  "global_exchange_sizes": [
+    3,
+    4
+  ],
+  "global_exchange_shortlist": 8,
+  "global_exchange_max_passes": 2
 }

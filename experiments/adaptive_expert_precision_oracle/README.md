@@ -303,60 +303,84 @@ all exact H0 action labels, and `artifact_hashes.json`.
 ## Scope boundary
 
 The pilot validates projection and sequential complete-expert representation with a rank-4 future-router-gradient proxy. It does not claim direct teacher-forced H1-H4 replay, top-8 joint layer allocation, or token/logit agreement: the available captures did not include a validated arbitrary-MoE-output replay checkpoint, and the replay identity prerequisite was therefore not satisfied. Those omissions are explicit in the report rather than filled with synthetic data.
-## Grouped top-8 average-rate allocation
+## Grouped top-8 average-rate allocation and frontier closure
 
-The average-rate continuation replaces a uniform per-expert page cap with an exact
-multiple-choice allocation over the true eight routed experts for each captured
-validation token/layer. It is stacked on PR #12 and preserves its eight
-gate/up/down states, exact A/B/C self terms, rank-8 Hadamard INT4 interaction
-field, and bounded interaction-aware search. The new fit covers all 256 experts
-in layers 0/4/20/39 without consulting validation values.
+This PR #13 continuation replaces a uniform per-expert page cap with an exact
+multiple-choice allocation over the true eight routed experts of each captured
+validation token/layer. It preserves PR #12's eight gate/up/down states, exact
+A/B/C self terms, and signed interaction field. The train-only factor fit covers
+all 256 experts in layers 0/4/20/39; validation contains 128 groups and 1,024
+routed expert invocations.
 
-The key implementation optimization is one vectorized exact-self DP table per
-expert, reused for every hard budget and Lagrange price. Hard anchors retain
-coordinate descent and bounded 1/2/3-unit repair; the warm price path uses two
-incremental coordinate basins without recomputing the DP or repairing discarded
-price points. A real-expert frontier fell from 123.74 seconds to 4.56 seconds
-(27.2x) on the supplied RTX 3090 pod. The container exposed 256 logical CPUs but
-was cgroup-limited to 27.2 cores, so the frozen evaluation used 24 one-thread
-fork workers rather than oversubscribing with 64 or 256 workers.
+The implementation constructs one vectorized exact-self DP table per expert and
+reuses it across every hard budget and Lagrange price. The closure run adds three
+controls requested after the first PR #13 result:
 
-The exact-H4 validation contains 128 token/layer groups and 1,024 routed expert
-invocations. At strict all-in 0.998739 average bpw, pooled router-weighted
-allocation with a 1,536-page burst cap reaches 99.576% p10 / 99.881% median
-combined top-8 qenergy recovery. Uniform 749-page caps reach 99.337% / 99.710%.
-The paired gain is +0.006 pp p10 / +0.104 pp median, passing the frozen
-continuation gates. At 0.523478 average bpw the corresponding pooled result is
-96.744% / 99.011%, versus 95.175% / 97.823% uniform.
+- allocation-aware column generation repairs only the eight selected frontier
+  points, inserts two prices around each selected marginal slope, and reruns the
+  MCKP for at most three deterministic rounds;
+- rank-4 exact-proxy factors are evaluated as FP16, per-row INT8, Hadamard INT4,
+  and mixed proxy-INT8 plus Euclidean-tail INT4 encodings;
+- a validation-only combined-MoE search adds bounded three/four-expert exchanges
+  and a globally valid convex-hull lower bound over the finite refined columns.
 
-These are qenergy-recovery statistics, not token accuracy. Every row is an
-exact-H4 geometry ceiling and is explicitly nonpromotable. The primary frontier
-construction is also compute-expensive (about 51.34M charged MACs and 68.1
-seconds median Python reference wall time per top-8 group); the result advances
-to a predicted-H4, reduced-frontier implementation study, not deployment.
+Accuracy by overall average rate for the rank-8 Hadamard INT4 factor and the
+1,536-page burst cap is:
 
-The rank-4 exact-proxy control is useful: at 0.998728 average bpw it reaches
-99.514% p10 / 99.865% median with pooled allocation, using 33.63M charged MACs.
-It trails rank-8 INT4 by only 0.062 pp p10 / 0.016 pp median while reducing
-charged arithmetic by roughly one third.
+| Overall average bpw | Uniform p10 / median | Coarse pooled p10 / median | Column-generated p10 / median | Exact combined local p10 / median |
+| ---: | ---: | ---: | ---: | ---: |
+| 0.523478 | 95.175% / 97.823% | 96.744% / 99.011% | 96.787% / 99.042% | 96.887% / 99.066% |
+| 0.773478 | 98.123% / 99.215% | 98.830% / 99.658% | 98.886% / 99.674% | 98.895% / 99.683% |
+| 0.998739 | 99.337% / 99.710% | 99.576% / 99.881% | 99.589% / 99.885% | 99.598% / 99.886% |
+| 1.023478 | 99.387% / 99.736% | 99.623% / 99.895% | 99.628% / 99.897% | 99.646% / 99.899% |
 
-Q3 is deliberately deferred so it cannot confound the average-rate attribution.
-A later Q3 study must report an ideal logical 256-byte bitplane ceiling, a
-training-only 512-byte co-selection layout, and a fixed 512-byte gate/up pairing
-control, all charged by unique physical page IDs.
+Selected-column repair changes 71.1% of strict-rate page vectors but adds only
++0.00001 pp p10 and +0.00305 pp median recovery over the coarse pooled
+frontier. Sparse price coverage is therefore measurable but is not the
+remaining accuracy bottleneck.
+
+At strict one-total-bpw, rank-4 Hadamard INT4 is the best factor control:
+99.590% p10 / 99.887% median at 753 correction pages and 39.92M charged group
+MACs. It slightly exceeds rank-8 INT4 at 749 pages (99.589% / 99.885%, 60.41M
+MACs) while cutting charged arithmetic by 33.9%. Rank-4 INT8 reaches 99.573% /
+99.884% at the same total rate and uses the same factor payload as rank 8;
+quantization precision is not the limiting factor here.
+
+Three/four-expert exchange changes only 2/128 selected page vectors and produces
+no quantile-level accuracy gain. The finite-frontier lower bound is globally
+valid, but its median relative damage gap is 34.75% (absolute gap 9.35e-5), so
+this run does not certify global optimality. The defensible result is that no
+improvement was found within the frozen exchange search, not that allocation is
+globally solved.
+
+These are exact combined top-8 qenergy-recovery statistics, not token accuracy.
+Every row uses exact validation H4 and is nonpromotable. Column generation costs
+a median/p90 2,833/2,884 coordinate sweeps, 389/410 local passes, and
+83.84/86.82 seconds of quota-contended Python reference wall time per group.
+The 24-worker validation took about 93 minutes under a measured 27.2-core cgroup
+quota; the host exposed 256 logical CPUs, but 64 or 256 workers would
+oversubscribe it. One RTX 3090 is sufficient.
+
+Q3 remains deliberately separate. A later Q3 study must report an ideal logical
+256-byte bitplane ceiling, a training-only 512-byte co-selection layout, and a
+fixed 512-byte gate/up pairing control, all charged by unique physical page IDs.
 
 Canonical artifacts are under
-`results/qwen36_mxfp4_average_rate_allocation_20260821_v1/`. Regenerate the
-analysis with:
+`results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/`.
+Reviewer entry points are the [report](results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/analysis/AVERAGE_RATE_ALLOCATION_REPORT.md),
+[frozen continuation decision](results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/analysis/average_rate_promotions.json),
+[analysis manifest](results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/analysis/average_rate_analysis_manifest.json),
+and [reproducibility contract](AVERAGE_RATE_ALLOCATION_REPRODUCIBILITY.md).
+Regenerate the analysis with:
 
 ```bash
 MPLBACKEND=Agg \
 PYTHONPATH=experiments/adaptive_expert_precision_oracle/src:experiments/adaptive_expert_precision_oracle/scripts \
 python experiments/adaptive_expert_precision_oracle/scripts/analyze_average_rate_allocation.py \
   --config experiments/adaptive_expert_precision_oracle/configs/qwen36_mxfp4_average_rate_allocation.json \
-  --fit-dir experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_20260821_v1/fit \
-  --validation-dir experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_20260821_v1/validation_exact_h4 \
-  --output experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_20260821_v1/analysis
+  --fit-dir experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/fit \
+  --validation-dir experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/validation_exact_h4 \
+  --output experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2/analysis_reproduced
 ```
 
 See `AVERAGE_RATE_ALLOCATION_REPRODUCIBILITY.md` for the complete execution,

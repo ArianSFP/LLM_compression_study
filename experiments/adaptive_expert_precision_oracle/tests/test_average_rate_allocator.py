@@ -5,8 +5,12 @@ from itertools import product
 import numpy as np
 
 from oracle_study.average_rate_allocator import (
+    AllocationTrace,
     RateOption,
+    allocation_aware_rate_frontiers,
+    bounded_group_exchange_allocate,
     exact_group_option_allocate,
+    global_group_dual_bound,
     lagrangian_rate_frontier,
     multiple_choice_allocate,
     qmetric_features,
@@ -174,3 +178,101 @@ def test_exact_self_priced_dp_matches_brute_force():
         if SPLIT_STATE_PAGE_COSTS[np.asarray(candidate)].sum() <= 7
     )
     np.testing.assert_allclose(observed, expected)
+
+def test_allocation_aware_frontier_repairs_only_selected_columns_deterministically():
+    *_, left_field = _problem(seed=31, units=7, output=10)
+    *_, right_field = _problem(seed=37, units=7, output=10)
+    kwargs = dict(
+        maximum_pages=21,
+        target_pages=(0, 6, 12, 21),
+        price_ratios=(8.0, 2.0, .5, .125, 0.0),
+        coordinate_sweeps=4,
+        local_shortlist=4,
+        local_swap_units=2,
+        local_max_passes=3,
+    )
+    frontiers = (
+        lagrangian_rate_frontier(left_field, **kwargs).options,
+        lagrangian_rate_frontier(right_field, **kwargs).options,
+    )
+    weights = np.asarray([0.7, 0.3])
+    coarse = multiple_choice_allocate(frontiers, 23, weights)
+    call = dict(
+        page_budget=23,
+        burst_cap_pages=21,
+        weights=weights,
+        coordinate_sweeps=4,
+        local_shortlist=4,
+        local_swap_units=2,
+        local_max_passes=3,
+        max_rounds=3,
+        adaptive_price_multipliers=(.5, 2.0),
+    )
+    first = allocation_aware_rate_frontiers(
+        (left_field, right_field), frontiers, **call,
+    )
+    second = allocation_aware_rate_frontiers(
+        (left_field, right_field), frontiers, **call,
+    )
+    assert first.rounds >= 1
+    assert first.selected_repairs == 2 * first.rounds
+    assert first.adaptive_price_solves >= 0
+    assert first.allocation.objective <= coarse.objective + 1e-12
+    assert first.allocation.pages <= 23
+    assert [
+        (option.pages, option.damage, option.states.tolist())
+        for frontier in first.frontiers for option in frontier
+    ] == [
+        (option.pages, option.damage, option.states.tolist())
+        for frontier in second.frontiers for option in frontier
+    ]
+
+
+def test_four_expert_exchange_and_global_dual_bound_bracket_brute_force():
+    frontiers = tuple((
+        _option(0, 0.0, 0),
+        _option(1, 0.0, 1),
+        _option(2, 0.0, 2),
+    ) for _ in range(4))
+    raw = (
+        np.asarray([[2.0, 0.0], [1.0, 1.0], [0.0, .2]]),
+        np.asarray([[-1.8, .1], [-.8, 1.0], [0.0, .2]]),
+        np.asarray([[.2, 2.0], [1.0, .9], [.2, 0.0]]),
+        np.asarray([[.1, -1.8], [1.0, -.7], [.2, 0.0]]),
+    )
+    alpha = np.asarray([.4, .3, .2, .1])
+    seed_residual = sum(
+        (alpha[e] * raw[e][0] for e in range(4)), np.zeros(2),
+    )
+    seed = AllocationTrace(
+        np.zeros(4, np.int64), 0, float(seed_residual @ seed_residual),
+    )
+    improved = bounded_group_exchange_allocate(
+        frontiers, raw, alpha, 5, seed,
+        exchange_sizes=(4,), shortlist_size=3, max_passes=2,
+    )
+    expected = min(
+        (
+            float(sum(
+                (alpha[e] * raw[e][choice[e]] for e in range(4)),
+                np.zeros(2),
+            ) @ sum(
+                (alpha[e] * raw[e][choice[e]] for e in range(4)),
+                np.zeros(2),
+            )),
+            choice,
+        )
+        for choice in product(range(3), repeat=4)
+        if sum(frontiers[e][choice[e]].pages for e in range(4)) <= 5
+    )
+    np.testing.assert_allclose(improved.objective, expected[0], atol=1e-12)
+    bound = global_group_dual_bound(
+        frontiers, raw, alpha, 5, improved,
+        max_iterations=256, relative_tolerance=1e-9,
+    )
+    assert 0.0 <= bound.lower_bound <= expected[0] + 1e-10
+    assert expected[0] <= bound.upper_bound + 1e-10
+    np.testing.assert_allclose(
+        bound.absolute_gap,
+        bound.upper_bound - bound.lower_bound,
+    )

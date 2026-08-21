@@ -1,0 +1,73 @@
+{
+  "allocator_core_sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b",
+  "base_pr12_config_sha256": "e61aae7b38a76b95c858f00344d0d9cc9e6d59fa4c686d8f28dbac170f877557",
+  "base_pr12_frontier_sha256": "9b38c9056551de2ba14b462230c432f612b9ac5b0ebdd820b9118ffbfa9a2b24",
+  "base_pr12_run_facts_sha256": "56a838c271cf3c3bd54584fbf42d1f60fae0e1b1f1926eabc001b08c374a2e77",
+  "base_pr12_runner_sha256": "24735d86459d3c4d0aa7fb10c69259210efb2abf79ad759665054b406999173b",
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_audit": {
+    "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "completed_layers": [
+    0,
+    4,
+    20,
+    39
+  ],
+  "config_sha256": "a889dbf9c5ebdf79de0e7e7b7d65165d9f39782d72d669e073c80966e5d83edf",
+  "cpu_capacity": {
+    "affinity_logical_cpus": 256,
+    "cpu_quota_raw": "2720000 100000",
+    "os_cpu_count": 256,
+    "quota_cores": 27.2
+  },
+  "factor_manifest_sha256": "1b11e5fe32b27db0a7e1edcd45f57abebe76997d701c2e1b0ed80291a5b24f54",
+  "failure_history": [],
+  "failures": [],
+  "fit_split": "train",
+  "interaction_core_sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab",
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "phase": "fit",
+  "run_id": "qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2",
+  "runner_sha256": "55dd6f1b28b3dea36913943d5094b007176ddeabf8c12925dfbcf200118acaae",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "2223becc3395",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "selector_core_sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94",
+  "set_utility_runner_sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73",
+  "sparse_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "split_core_sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82",
+  "test_scientific_rows_admitted_or_used": false,
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_rows_admitted_or_used": false,
+  "worker_thread_environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  }
+}

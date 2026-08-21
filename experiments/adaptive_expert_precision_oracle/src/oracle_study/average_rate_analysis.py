@@ -90,24 +90,54 @@ class EvidenceBundle:
     input_paths: dict[str, Path]
 
 
-def expected_grid(config: Mapping[str, Any]) -> set[tuple[str, str, int, int]]:
+def expected_grid(
+    config: Mapping[str, Any],
+) -> set[tuple[str, str, int, int]]:
     primary = str(config["primary_factor_id"])
-    control = str(config["compute_control_factor_id"])
     result: set[tuple[str, str, int, int]] = set()
     for mean in map(int, config["mean_correction_page_budgets"]):
         result.add((primary, "uniform_per_expert", mean, mean))
         for burst in map(int, config["primary_burst_caps_pages"]):
-            result.add((primary, "pooled_router_square_compressed", mean, burst))
-        result.add((primary, "pooled_equal_weight_compressed", mean, 1536))
-        result.add((primary, "pooled_exact_combined_moe_oracle", mean, 1536))
-    mean = int(config["compute_control_all_in_mean_pages"])
-    result |= {
-        (control, "uniform_per_expert", mean, mean),
-        (control, "pooled_router_square_compressed", mean, 1536),
-        (control, "pooled_exact_combined_moe_oracle", mean, 1536),
-    }
+            result.add((
+                primary, "pooled_router_square_compressed", mean, burst,
+            ))
+            result.add((
+                primary, "pooled_router_square_column_generated", mean, burst,
+            ))
+        result |= {
+            (primary, "pooled_equal_weight_compressed", mean, 1536),
+            (primary, "pooled_exact_combined_moe_oracle", mean, 1536),
+            (
+                primary,
+                "pooled_exact_combined_moe_column_generated_local",
+                mean, 1536,
+            ),
+        }
+        if mean == int(config["global_bound_mean_pages"]):
+            result.add((
+                primary, "pooled_exact_combined_moe_global_bound",
+                mean, int(config["global_bound_burst_cap_pages"]),
+            ))
+    for record in config["factor_configs"]:
+        factor_id = str(record["factor_id"])
+        if factor_id == primary:
+            continue
+        mean = int(record["all_in_mean_pages"])
+        result |= {
+            (factor_id, "uniform_per_expert", mean, mean),
+            (factor_id, "pooled_router_square_compressed", mean, 1536),
+            (
+                factor_id, "pooled_router_square_column_generated",
+                mean, 1536,
+            ),
+            (factor_id, "pooled_exact_combined_moe_oracle", mean, 1536),
+            (
+                factor_id,
+                "pooled_exact_combined_moe_column_generated_local",
+                mean, 1536,
+            ),
+        }
     return result
-
 
 def validate_evidence_bundle(
     config_path: Path, fit_dir: Path, validation_dir: Path,
@@ -206,10 +236,50 @@ def validate_evidence_bundle(
             "primary_global_scales": (256,),
             "rank4_l4": (256, 512, 4),
             "rank4_l2": (256, 512, 4),
+            "rank4_fp16_l4": (256, 512, 4),
+            "rank4_fp16_l2": (256, 512, 4),
+            "rank4_fp16_global_scales": (256,),
+            "rank4_int8_packed_codes": (256, 4096),
+            "rank4_int8_row_scales": (256, 1024),
+            "rank4_int8_global_scales": (256,),
+            "rank4_int4_packed_codes": (256, 2048),
+            "rank4_int4_row_scales": (256, 1024),
+            "rank4_int4_global_scales": (256,),
+            "mixed_tail_int4_packed_codes": (256, 2048),
+            "mixed_tail_int4_row_scales": (256, 1024),
+            "mixed_proxy_int8_packed_codes": (256, 4096),
+            "mixed_proxy_int8_row_scales": (256, 1024),
+            "mixed_global_scales": (256,),
         }
         for name, shape in shapes.items():
             if name not in arrays or arrays[name].shape != shape:
                 raise RuntimeError(f"factor shape changed: layer {layer} {name}")
+
+    factor_specs = {
+        str(record["factor_id"]): record for record in config["factor_configs"]
+    }
+    if (
+        manifest.get("factor_ids") != list(factor_specs)
+        or manifest.get("factor_payload_bytes") != {
+            factor_id: int(record["factor_payload_bytes"])
+            for factor_id, record in factor_specs.items()
+        }
+    ):
+        raise RuntimeError("fit manifest factor grid changed")
+    if (
+        int(accounting.get("schema_version", -1)) != 2
+        or accounting.get("factor_payload_bytes") != {
+            factor_id: int(record["factor_payload_bytes"])
+            for factor_id, record in factor_specs.items()
+        }
+        or accounting.get("factor_all_in_mean_pages") != {
+            factor_id: int(record["all_in_mean_pages"])
+            for factor_id, record in factor_specs.items()
+        }
+        or int(accounting.get("policies_per_group", -1))
+        != len(expected_grid(config))
+    ):
+        raise RuntimeError("validation factor accounting grid changed")
 
     group_columns = (
         *GROUP_IDENTITY, "sequence_id", *POLICY_IDENTITY,
@@ -222,7 +292,13 @@ def validate_evidence_bundle(
         "router_square_additive_damage", "router_square_additive_base_damage",
         "selector_runtime_ms", "selector_compute_macs",
         "selector_dp_state_evaluations", "selector_coordinate_sweeps",
-        "selector_local_passes", "selected_expert_pages", "router_weights",
+        "selector_local_passes", "frontier_refinement_rounds",
+        "frontier_selected_repairs", "frontier_adaptive_price_solves",
+        "group_exchange_passes", "group_exchange_evaluations",
+        "global_bound_lower_damage", "global_bound_upper_damage",
+        "global_bound_absolute_gap", "global_bound_relative_gap",
+        "global_bound_iterations", "global_bound_certified",
+        "selected_expert_pages", "router_weights",
         "promotable", "continuation_eligible",
         "exact_cross_expert_information_used",
     )
@@ -245,13 +321,18 @@ def validate_evidence_bundle(
         "router_square_additive_damage", "router_square_additive_base_damage",
         "selector_runtime_ms", "selector_compute_macs",
         "selector_dp_state_evaluations", "selector_coordinate_sweeps",
-        "selector_local_passes",
+        "selector_local_passes", "frontier_refinement_rounds",
+        "frontier_selected_repairs", "frontier_adaptive_price_solves",
+        "group_exchange_passes", "group_exchange_evaluations",
+        "global_bound_iterations",
     ), "group frontier")
     _finite(experts, (
         "expert_id", "router_rank", "router_weight", "selected_pages",
         "exact_qenergy_damage", "base_qenergy_damage", "expert_recovery",
     ), "expert allocation")
-    expected_rows = int(config["expected_validation_groups"]) * 27
+    expected_rows = (
+        int(config["expected_validation_groups"]) * len(expected_grid(config))
+    )
     if len(groups) != expected_rows or len(experts) != 8 * expected_rows:
         raise RuntimeError("result row count changed")
     if groups[list(GROUP_IDENTITY) + list(POLICY_IDENTITY)].duplicated().any():
@@ -280,6 +361,15 @@ def validate_evidence_bundle(
     for row in groups.itertuples(index=False):
         mean, pages = int(row.mean_budget_pages_per_expert), int(row.actual_group_pages)
         metadata = int(row.combined_metadata_bytes_per_expert)
+        factor_id = str(row.factor_config_id)
+        if factor_id not in factor_specs:
+            raise RuntimeError("unknown factor config in group evidence")
+        expected_metadata = (
+            int(config["abc_metadata_bytes_per_expert"])
+            + int(factor_specs[factor_id]["factor_payload_bytes"])
+        )
+        if metadata != expected_metadata:
+            raise RuntimeError("factor metadata byte accounting changed")
         if int(row.group_page_budget) != 8 * mean or pages > 8 * mean:
             raise RuntimeError("group page cap arithmetic changed")
         if int(row.unused_group_pages) != 8 * mean - pages:
@@ -307,14 +397,63 @@ def validate_evidence_bundle(
         weights = json.loads(str(row.router_weights))
         if len(weights) != 8 or not np.isclose(sum(map(float, weights)), 1.0, atol=5e-7):
             raise RuntimeError("router weight evidence changed")
-        oracle = row.allocation_policy == "pooled_exact_combined_moe_oracle"
+        policy = str(row.allocation_policy)
+        oracle = policy.startswith("pooled_exact_combined_moe")
         if bool(row.exact_cross_expert_information_used) != oracle or bool(row.promotable):
             raise RuntimeError("oracle/deployability marker changed")
-        eligible = row.allocation_policy in {
-            "uniform_per_expert", "pooled_router_square_compressed",
+        eligible = policy in {
+            "uniform_per_expert",
+            "pooled_router_square_compressed",
+            "pooled_router_square_column_generated",
         }
         if bool(row.continuation_eligible) != eligible:
             raise RuntimeError("continuation marker changed")
+        refined = (
+            "column_generated" in policy
+            or policy == "pooled_exact_combined_moe_global_bound"
+        )
+        rounds = int(row.frontier_refinement_rounds)
+        repairs = int(row.frontier_selected_repairs)
+        adaptive = int(row.frontier_adaptive_price_solves)
+        if refined:
+            if (
+                rounds < 1 or rounds > int(config["column_generation_max_rounds"])
+                or repairs < 8 or repairs % 8
+                or adaptive < 0
+            ):
+                raise RuntimeError("column-generation work markers changed")
+        elif rounds or repairs or adaptive:
+            raise RuntimeError("coarse policy contains refinement work")
+        bounded = policy == "pooled_exact_combined_moe_global_bound"
+        bound_values = np.asarray([
+            row.global_bound_lower_damage, row.global_bound_upper_damage,
+            row.global_bound_absolute_gap, row.global_bound_relative_gap,
+        ], np.float64)
+        if bounded:
+            if np.any(~np.isfinite(bound_values)):
+                raise RuntimeError("global bound contains non-finite evidence")
+            lower, upper, absolute, relative = bound_values.tolist()
+            if (
+                lower < -1e-10 or lower > upper + 1e-8
+                or not np.isclose(upper, float(row.group_exact_qenergy_damage),
+                                  rtol=1e-9, atol=1e-8)
+                or not np.isclose(absolute, upper - lower, rtol=1e-9, atol=1e-8)
+                or not np.isclose(relative, absolute / max(upper, 1e-30),
+                                  rtol=1e-9, atol=1e-10)
+                or int(row.global_bound_iterations) < 1
+                or int(row.global_bound_iterations)
+                > int(config["global_bound_max_iterations"])
+                or bool(row.global_bound_certified) != (
+                    relative <= float(config["global_bound_relative_tolerance"])
+                )
+            ):
+                raise RuntimeError("global bound arithmetic changed")
+        elif (
+            np.any(np.isfinite(bound_values))
+            or int(row.global_bound_iterations)
+            or bool(row.global_bound_certified)
+        ):
+            raise RuntimeError("non-bound policy contains global-bound evidence")
         key = tuple(getattr(row, name) for name in (*GROUP_IDENTITY, *POLICY_IDENTITY))
         frame = expert_groups.get_group(key).sort_values("router_rank")
         if frame["router_rank"].astype(int).tolist() != list(range(1, 9)):
@@ -329,6 +468,13 @@ def validate_evidence_bundle(
             if np.bincount(states, minlength=8).tolist() != state_counts:
                 raise RuntimeError("selected state counts changed")
 
+    bounded_rows = groups[
+        groups["allocation_policy"].eq(
+            "pooled_exact_combined_moe_global_bound"
+        )
+    ]
+    if len(bounded_rows) != int(config["expected_validation_groups"]):
+        raise RuntimeError("global-bound row coverage changed")
     if int(accounting.get("group_rows", -1)) != len(groups):
         raise RuntimeError("validation accounting group count changed")
     if int(accounting.get("expert_rows", -1)) != len(experts):
@@ -407,11 +553,128 @@ def summary_tables(bundle: EvidenceBundle) -> dict[str, pd.DataFrame]:
         "selector_compute_macs", "selector_dp_state_evaluations",
         "selector_coordinate_sweeps_median", "selector_local_passes_median",
     ]].copy()
+
+    comparison_specs = (
+        (
+            "selected_column_repair",
+            "pooled_router_square_column_generated",
+            "pooled_router_square_compressed",
+        ),
+        (
+            "exact_local_on_refined_frontier",
+            "pooled_exact_combined_moe_column_generated_local",
+            "pooled_exact_combined_moe_oracle",
+        ),
+        (
+            "bounded_exchange_after_refinement",
+            "pooled_exact_combined_moe_global_bound",
+            "pooled_exact_combined_moe_column_generated_local",
+        ),
+    )
+    comparison_rows = []
+    join = list(GROUP_IDENTITY) + [
+        "factor_config_id", "mean_budget_pages_per_expert",
+        "burst_cap_pages_per_expert",
+    ]
+    for comparison, challenger_policy, baseline_policy in comparison_specs:
+        challenger = groups[
+            groups["allocation_policy"].eq(challenger_policy)
+        ][join + [
+            "group_recovery", "selected_expert_pages",
+            "actual_group_pages",
+        ]]
+        baseline = groups[
+            groups["allocation_policy"].eq(baseline_policy)
+        ][join + [
+            "group_recovery", "selected_expert_pages",
+            "actual_group_pages",
+        ]].rename(columns={
+            "group_recovery": "baseline_recovery",
+            "selected_expert_pages": "baseline_selected_expert_pages",
+            "actual_group_pages": "baseline_group_pages",
+        })
+        merged = challenger.merge(
+            baseline, on=join, how="inner", validate="one_to_one",
+        )
+        if len(merged) != len(challenger):
+            raise RuntimeError(f"incomplete frontier comparison: {comparison}")
+        merged["recovery_gain"] = (
+            merged["group_recovery"] - merged["baseline_recovery"]
+        )
+        merged["page_delta"] = (
+            merged["actual_group_pages"] - merged["baseline_group_pages"]
+        )
+        merged["selected_state_changed"] = (
+            merged["selected_expert_pages"]
+            != merged["baseline_selected_expert_pages"]
+        )
+        for key, frame in merged.groupby(
+            [
+                "factor_config_id", "mean_budget_pages_per_expert",
+                "burst_cap_pages_per_expert",
+            ],
+            sort=True,
+        ):
+            gain = quantiles(frame["recovery_gain"])
+            comparison_rows.append({
+                "comparison": comparison,
+                "challenger_policy": challenger_policy,
+                "baseline_policy": baseline_policy,
+                "factor_config_id": key[0],
+                "mean_budget_pages_per_expert": int(key[1]),
+                "burst_cap_pages_per_expert": int(key[2]),
+                "groups": len(frame),
+                "recovery_gain_p10": gain["p10"],
+                "recovery_gain_median": gain["median"],
+                "recovery_gain_p90": gain["p90"],
+                "recovery_gain_mean": gain["mean"],
+                "selected_page_vector_change_fraction": float(
+                    frame["selected_state_changed"].mean()
+                ),
+                "group_page_delta_median": float(
+                    np.median(frame["page_delta"])
+                ),
+            })
+    closure = pd.DataFrame(comparison_rows)
+
+    bounded = groups[
+        groups["allocation_policy"].eq(
+            "pooled_exact_combined_moe_global_bound"
+        )
+    ]
+    relative = quantiles(bounded["global_bound_relative_gap"])
+    absolute = quantiles(bounded["global_bound_absolute_gap"])
+    bound_table = pd.DataFrame([{
+        "factor_config_id": str(bounded["factor_config_id"].iloc[0]),
+        "mean_budget_pages_per_expert": int(
+            bounded["mean_budget_pages_per_expert"].iloc[0]
+        ),
+        "burst_cap_pages_per_expert": int(
+            bounded["burst_cap_pages_per_expert"].iloc[0]
+        ),
+        "groups": len(bounded),
+        "certified_fraction": float(bounded["global_bound_certified"].mean()),
+        "relative_gap_p10": relative["p10"],
+        "relative_gap_median": relative["median"],
+        "relative_gap_p90": relative["p90"],
+        "relative_gap_max": float(bounded["global_bound_relative_gap"].max()),
+        "absolute_gap_p10": absolute["p10"],
+        "absolute_gap_median": absolute["median"],
+        "absolute_gap_p90": absolute["p90"],
+        "iterations_median": float(
+            np.median(bounded["global_bound_iterations"])
+        ),
+        "exchange_evaluations_median": float(
+            np.median(bounded["group_exchange_evaluations"])
+        ),
+    }])
     return {
         "accuracy_by_bpw": accuracy,
         "layer_accuracy": pd.DataFrame(layer_rows),
         "allocation_distribution": allocation,
         "runtime": runtime,
+        "frontier_closure": closure,
+        "global_bound": bound_table,
     }
 
 
@@ -436,8 +699,38 @@ def promotion_payload(
     p10_gate = float(row["paired_gain_vs_uniform_p10"]) >= float(
         config["promotion_gate_p10_group_recovery_gain"]
     )
+    closure = tables["frontier_closure"]
+    closure_mask = (
+        closure["comparison"].eq("selected_column_repair")
+        & closure["factor_config_id"].eq(config["primary_factor_id"])
+        & closure["mean_budget_pages_per_expert"].eq(
+            int(config["promotion_mean_pages"])
+        )
+        & closure["burst_cap_pages_per_expert"].eq(
+            int(config["promotion_primary_burst_cap_pages"])
+        )
+    )
+    if int(closure_mask.sum()) != 1:
+        raise RuntimeError("primary frontier-closure summary is incomplete")
+    closure_row = closure[closure_mask].iloc[0]
+    bound_row = tables["global_bound"].iloc[0]
+    quantized = rows[
+        rows["factor_config_id"].isin(config["quantized_control_factor_ids"])
+        & rows["allocation_policy"].eq(
+            "pooled_router_square_column_generated"
+        )
+    ].sort_values("factor_config_id")
+    if len(quantized) != len(config["quantized_control_factor_ids"]):
+        raise RuntimeError("quantized rank-4 summary grid is incomplete")
+    controls = [{
+        "factor_config_id": str(control.factor_config_id),
+        "overall_average_bpw": float(control.overall_average_bpw),
+        "qenergy_recovery_p10": float(control.qenergy_recovery_p10),
+        "qenergy_recovery_median": float(control.qenergy_recovery_median),
+        "selector_compute_macs": int(control.selector_compute_macs),
+    } for control in quantized.itertuples(index=False)]
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": (
             "continue_to_predicted_h4_average_rate"
             if median_gate and p10_gate else "stop_average_rate_path"
@@ -448,12 +741,36 @@ def promotion_payload(
         "primary_policy": str(config["promotion_primary_policy"]),
         "comparison_policy": str(config["promotion_comparison_policy"]),
         "mean_correction_pages_per_expert": int(config["promotion_mean_pages"]),
-        "burst_cap_pages_per_expert": int(config["promotion_primary_burst_cap_pages"]),
+        "burst_cap_pages_per_expert": int(
+            config["promotion_primary_burst_cap_pages"]
+        ),
         "overall_average_bpw": float(row["overall_average_bpw"]),
         "qenergy_recovery_p10": float(row["qenergy_recovery_p10"]),
         "qenergy_recovery_median": float(row["qenergy_recovery_median"]),
-        "paired_gain_vs_uniform_p10": float(row["paired_gain_vs_uniform_p10"]),
-        "paired_gain_vs_uniform_median": float(row["paired_gain_vs_uniform_median"]),
+        "paired_gain_vs_uniform_p10": float(
+            row["paired_gain_vs_uniform_p10"]
+        ),
+        "paired_gain_vs_uniform_median": float(
+            row["paired_gain_vs_uniform_median"]
+        ),
+        "frontier_repair_gain_p10": float(
+            closure_row["recovery_gain_p10"]
+        ),
+        "frontier_repair_gain_median": float(
+            closure_row["recovery_gain_median"]
+        ),
+        "frontier_selected_page_vector_change_fraction": float(
+            closure_row["selected_page_vector_change_fraction"]
+        ),
+        "global_bound_relative_gap_median": float(
+            bound_row["relative_gap_median"]
+        ),
+        "global_bound_relative_gap_p90": float(bound_row["relative_gap_p90"]),
+        "global_bound_relative_gap_max": float(bound_row["relative_gap_max"]),
+        "global_bound_certified_fraction": float(
+            bound_row["certified_fraction"]
+        ),
+        "quantized_rank4_controls": controls,
         "median_gain_gate_pass": median_gate,
         "p10_gain_gate_pass": p10_gate,
         "q3_status": str(config["q3_followup_status"]),

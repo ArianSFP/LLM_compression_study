@@ -34,6 +34,24 @@ def test_frozen_contract_accepts_only_declared_grid():
     with pytest.raises(RuntimeError, match="mean rate grid"):
         runner._validate_contract(changed)
 
+def test_frozen_policy_grid_and_strict_all_in_page_arithmetic():
+    config = _config()
+    grid = runner._expected_policy_grid(config)
+    assert len(grid) == 66
+    assert len(grid) == len(set(grid))
+    strict_bytes = int(config["strict_all_in_total_bytes_per_expert"])
+    abc_bytes = int(config["abc_metadata_bytes_per_expert"])
+    for record in config["factor_configs"]:
+        expected = (
+            strict_bytes - abc_bytes - int(record["factor_payload_bytes"])
+        ) // runner.PAGE_BYTES
+        assert int(record["all_in_mean_pages"]) == expected
+        assert (
+            abc_bytes + int(record["factor_payload_bytes"])
+            + expected * runner.PAGE_BYTES
+        ) <= strict_bytes
+
+
 
 def test_group_plan_uses_complete_top8_validation_rows_only():
     config = _config()

@@ -1,0 +1,83 @@
+{
+  "allocator_core_sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b",
+  "base_pr12_config_sha256": "e61aae7b38a76b95c858f00344d0d9cc9e6d59fa4c686d8f28dbac170f877557",
+  "base_pr12_frontier_sha256": "9b38c9056551de2ba14b462230c432f612b9ac5b0ebdd820b9118ffbfa9a2b24",
+  "base_pr12_run_facts_sha256": "56a838c271cf3c3bd54584fbf42d1f60fae0e1b1f1926eabc001b08c374a2e77",
+  "base_pr12_runner_sha256": "24735d86459d3c4d0aa7fb10c69259210efb2abf79ad759665054b406999173b",
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "compute_control_factor_payload_bytes": 16384,
+  "config_sha256": "a889dbf9c5ebdf79de0e7e7b7d65165d9f39782d72d669e073c80966e5d83edf",
+  "experts_per_layer": 256,
+  "factor_fit_scope": "all_256_experts_in_each_locked_layer_without_validation_value_selection",
+  "factor_ids": [
+    "matrix_free_joint_rank8_int4_per_row_hadamard",
+    "exact_proxy_rank4_fp32",
+    "exact_proxy_rank4_fp16",
+    "exact_proxy_rank4_int8_per_row",
+    "exact_proxy_rank4_int4_per_row_hadamard",
+    "exact_proxy_rank4_int8_plus_euclidean_tail4_int4"
+  ],
+  "factor_payload_bytes": {
+    "exact_proxy_rank4_fp16": 8196,
+    "exact_proxy_rank4_fp32": 16384,
+    "exact_proxy_rank4_int4_per_row_hadamard": 4100,
+    "exact_proxy_rank4_int8_per_row": 6148,
+    "exact_proxy_rank4_int8_plus_euclidean_tail4_int4": 10244,
+    "matrix_free_joint_rank8_int4_per_row_hadamard": 6148
+  },
+  "fit_split": "train",
+  "interaction_core_sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab",
+  "layers": {
+    "0": {
+      "bytes": 10101292,
+      "file": "average_rate_factor_layer_0.npz",
+      "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84",
+      "sidecar": "average_rate_factor_layer_0.json",
+      "sidecar_sha256": "b6cd0e54ab39ea80d0a88553fe915cb9ea4a987a70b3c0b90b14f37b44bd1692"
+    },
+    "20": {
+      "bytes": 11861764,
+      "file": "average_rate_factor_layer_20.npz",
+      "sha256": "a7348065486a7eb7a0e718d6733206314728a00fc32affdc4134308a151b450c",
+      "sidecar": "average_rate_factor_layer_20.json",
+      "sidecar_sha256": "a0b7dba7237c4620f88531add7be0dae70f0551e0432e33965522944d053073a"
+    },
+    "39": {
+      "bytes": 11879453,
+      "file": "average_rate_factor_layer_39.npz",
+      "sha256": "cfee3462278a9de9847df806d5050d079a27893c41b9ea5d369fc0163a762a07",
+      "sidecar": "average_rate_factor_layer_39.json",
+      "sidecar_sha256": "c9d04c45e9de745aa3a2514dc6101ddf712185a83ff620d179accca3002d6f82"
+    },
+    "4": {
+      "bytes": 11862595,
+      "file": "average_rate_factor_layer_4.npz",
+      "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5",
+      "sidecar": "average_rate_factor_layer_4.json",
+      "sidecar_sha256": "5228232d85bffd291822bfa43ec09d0726c38c81bda95b4eeb382d0e27f0b04f"
+    }
+  },
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "primary_factor_payload_bytes": 6148,
+  "run_id": "qwen36_mxfp4_average_rate_allocation_frontier_closure_20260821_v2",
+  "runner_sha256": "55dd6f1b28b3dea36913943d5094b007176ddeabf8c12925dfbcf200118acaae",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "2223becc3395",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "selector_core_sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94",
+  "set_utility_runner_sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73",
+  "sparse_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "split_core_sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82",
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+}

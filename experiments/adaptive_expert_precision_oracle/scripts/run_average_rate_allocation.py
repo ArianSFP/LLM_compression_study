@@ -25,7 +25,10 @@ sys.path[:0] = [str(EXPERIMENT / "src"), str(EXPERIMENT / "scripts")]
 from oracle_study.average_rate_allocator import (  # noqa: E402
     AllocationTrace,
     RateOption,
+    allocation_aware_rate_frontiers,
+    bounded_group_exchange_allocate,
     exact_group_option_allocate,
+    global_group_dual_bound,
     lagrangian_rate_frontier,
     multiple_choice_allocate,
     qmetric_features,
@@ -37,6 +40,7 @@ from oracle_study.interaction_field import (  # noqa: E402
     encode_interaction_factor,
     factor_exact_proxy_plus_tail,
     make_encoded_factor_self_safe,
+    make_factor_self_safe,
 )
 from oracle_study.mxfp4_embed import load_compressed_mxfp4_expert  # noqa: E402
 from oracle_study.neuron_selector import unit_score_metadata  # noqa: E402
@@ -162,6 +166,36 @@ def _validate_contract(config: Mapping[str, Any]) -> None:
         raise RuntimeError("A/B/C payload changed")
     if int(config.get("factor_fit_rank", -1)) != 8:
         raise RuntimeError("primary factor rank changed")
+    expected_factors = [
+        ("matrix_free_joint_rank8_int4_per_row_hadamard", 8, 6148, 749, "full_primary"),
+        ("exact_proxy_rank4_fp32", 4, 16384, 729, "strict_control"),
+        ("exact_proxy_rank4_fp16", 4, 8196, 745, "strict_control"),
+        ("exact_proxy_rank4_int8_per_row", 4, 6148, 749, "strict_control"),
+        ("exact_proxy_rank4_int4_per_row_hadamard", 4, 4100, 753, "strict_control"),
+        ("exact_proxy_rank4_int8_plus_euclidean_tail4_int4", 8, 10244, 741, "strict_control"),
+    ]
+    observed_factors = [
+        (
+            str(record.get("factor_id")), int(record.get("rank", -1)),
+            int(record.get("factor_payload_bytes", -1)),
+            int(record.get("all_in_mean_pages", -1)),
+            str(record.get("evaluation_grid")),
+        )
+        for record in config.get("factor_configs", [])
+    ]
+    if observed_factors != expected_factors:
+        raise RuntimeError("factor control grid changed")
+    strict_bytes = int(config["strict_all_in_total_bytes_per_expert"])
+    abc_bytes = int(config["abc_metadata_bytes_per_expert"])
+    for _, _, payload_bytes, pages, _ in expected_factors:
+        if (strict_bytes - abc_bytes - payload_bytes) // PAGE_BYTES != pages:
+            raise RuntimeError("strict all-in factor page arithmetic changed")
+    if list(config.get("quantized_control_factor_ids", [])) != [
+        record[0] for record in expected_factors[2:]
+    ]:
+        raise RuntimeError("quantized rank-4 factor grid changed")
+    if int(config.get("mixed_euclidean_tail_rank", -1)) != 4:
+        raise RuntimeError("mixed Euclidean tail rank changed")
     if int(config.get("price_local_max_passes", -1)) != 0:
         raise RuntimeError("price-path repair contract changed")
     targets = list(map(int, config.get("frontier_target_pages", [])))
@@ -170,7 +204,76 @@ def _validate_contract(config: Mapping[str, Any]) -> None:
     prices = list(map(float, config.get("frontier_price_ratios", [])))
     if not prices or prices != sorted(prices, reverse=True) or prices[-1] != 0.0:
         raise RuntimeError("frontier page-price path changed")
+    if int(config.get("column_generation_max_rounds", -1)) != 3:
+        raise RuntimeError("column-generation round cap changed")
+    if list(map(float, config.get("column_generation_price_multipliers", []))) != [0.5, 2.0]:
+        raise RuntimeError("adaptive price insertion changed")
+    if int(config.get("column_generation_price_local_max_passes", -1)) != 0:
+        raise RuntimeError("adaptive price local-repair contract changed")
+    if (
+        config.get("global_bound_factor_id") != config.get("primary_factor_id")
+        or int(config.get("global_bound_mean_pages", -1)) != 749
+        or int(config.get("global_bound_burst_cap_pages", -1)) != 1536
+        or int(config.get("global_bound_max_iterations", -1)) != 128
+        or float(config.get("global_bound_relative_tolerance", -1.0)) != 1e-6
+        or list(map(int, config.get("global_exchange_sizes", []))) != [3, 4]
+        or int(config.get("global_exchange_shortlist", -1)) != 8
+        or int(config.get("global_exchange_max_passes", -1)) != 2
+    ):
+        raise RuntimeError("global group-bound contract changed")
 
+
+
+def _expected_policy_grid(
+    config: Mapping[str, Any],
+) -> set[tuple[str, str, int, int]]:
+    primary = str(config["primary_factor_id"])
+    result: set[tuple[str, str, int, int]] = set()
+    for mean in map(int, config["mean_correction_page_budgets"]):
+        result.add((primary, "uniform_per_expert", mean, mean))
+        for burst in map(int, config["primary_burst_caps_pages"]):
+            result.add((
+                primary, "pooled_router_square_compressed", mean, burst,
+            ))
+            result.add((
+                primary, "pooled_router_square_column_generated", mean, burst,
+            ))
+        result.add((
+            primary, "pooled_equal_weight_compressed", mean, 1536,
+        ))
+        result.add((
+            primary, "pooled_exact_combined_moe_oracle", mean, 1536,
+        ))
+        result.add((
+            primary,
+            "pooled_exact_combined_moe_column_generated_local",
+            mean, 1536,
+        ))
+        if mean == int(config["global_bound_mean_pages"]):
+            result.add((
+                primary, "pooled_exact_combined_moe_global_bound",
+                mean, int(config["global_bound_burst_cap_pages"]),
+            ))
+    for record in config["factor_configs"]:
+        factor_id = str(record["factor_id"])
+        if factor_id == primary:
+            continue
+        mean = int(record["all_in_mean_pages"])
+        result |= {
+            (factor_id, "uniform_per_expert", mean, mean),
+            (factor_id, "pooled_router_square_compressed", mean, 1536),
+            (
+                factor_id, "pooled_router_square_column_generated",
+                mean, 1536,
+            ),
+            (factor_id, "pooled_exact_combined_moe_oracle", mean, 1536),
+            (
+                factor_id,
+                "pooled_exact_combined_moe_column_generated_local",
+                mean, 1536,
+            ),
+        }
+    return result
 
 def _verify_base(
     config: Mapping[str, Any], pr12_config: Path, pr12_dir: Path,
@@ -220,6 +323,16 @@ def _thread_contract(config: Mapping[str, Any]) -> dict[str, str | None]:
     return values
 
 
+def _stored_downward_scale(value: float) -> np.float32:
+    target = float(value)
+    stored = np.float32(target)
+    if float(stored) > target:
+        stored = np.nextafter(stored, np.float32(0.0))
+    if not np.isfinite(stored) or stored < 0:
+        raise RuntimeError("factor shrink is not representable")
+    return stored
+
+
 def _fit_probe_error(
     down2: np.ndarray, down4: np.ndarray, proxy: np.ndarray, beta: float,
     factor: JointInteractionFactor, seed: int,
@@ -245,10 +358,17 @@ def _fit_layer(
     config: Mapping[str, Any], checkpoint: Path, index: Mapping[str, str],
     tree: Any, layer: int, proxy: np.ndarray, beta: float, device: str,
 ) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
-    packed, scales, global_scales = [], [], []
+    primary_codes, primary_scales, primary_global = [], [], []
     rank4_l4, rank4_l2 = [], []
-    shrink_values, probe_median, probe_p90 = [], [], []
+    fp16_l4, fp16_l2, fp16_global = [], [], []
+    int8_codes, int8_scales, int8_global = [], [], []
+    int4_codes, int4_scales, int4_global = [], [], []
+    mixed_tail_codes, mixed_tail_scales = [], []
+    mixed_proxy_codes, mixed_proxy_scales, mixed_global = [], [], []
+    primary_shrink, fp16_shrink, mixed_shrink = [], [], []
+    probe_median, probe_p90 = [], []
     decode_seconds = factor_seconds = 0.0
+    empty_proxy = np.empty((proxy.shape[0], 0), np.float32)
     for expert in range(int(config["experts_per_layer"])):
         started = time.perf_counter()
         leaves = load_compressed_mxfp4_expert(
@@ -259,6 +379,7 @@ def _fit_layer(
         decode_seconds += time.perf_counter() - started
         abc = unit_score_metadata(down2, down4, proxy=proxy, beta=beta)
         started = time.perf_counter()
+
         primary = randomized_joint_metric_factor(
             down2, down4, proxy, beta, int(config["factor_fit_rank"]),
             oversample=int(config["factor_fit_oversample"]),
@@ -266,52 +387,181 @@ def _fit_layer(
             seed=int(config["seed"]) + 1000 * layer + expert,
             device=device,
         )
-        encoded = encode_interaction_factor(primary, "int4_per_row", hadamard_rotate=True)
-        encoded, shrink = make_encoded_factor_self_safe(encoded, abc)
-        decoded = encoded.decode()
+        primary_encoded = encode_interaction_factor(
+            primary, "int4_per_row", hadamard_rotate=True,
+        )
+        primary_encoded, primary_scale = make_encoded_factor_self_safe(
+            primary_encoded, abc,
+        )
+        primary_decoded = primary_encoded.decode()
+
         control = factor_exact_proxy_plus_tail(
             down2, down4, proxy, beta, 0, dtype=np.float32,
         )
+        proxy_int8 = encode_interaction_factor(
+            control, "int8_per_row", hadamard_rotate=False,
+        )
+        proxy_int8, _ = make_encoded_factor_self_safe(proxy_int8, abc)
+        proxy_int4 = encode_interaction_factor(
+            control, "int4_per_row", hadamard_rotate=True,
+        )
+        proxy_int4, _ = make_encoded_factor_self_safe(proxy_int4, abc)
+
+        rounded_l4 = np.asarray(control.l4, np.float16)
+        rounded_l2 = np.asarray(control.l2, np.float16)
+        rounded = JointInteractionFactor(
+            l4=rounded_l4.astype(np.float32),
+            l2=rounded_l2.astype(np.float32),
+            method="exact_proxy_fp16",
+            tail_rank=0,
+            exact_rank=control.rank,
+            encoding="fp16",
+        )
+        _, rounded_scale = make_factor_self_safe(rounded, abc)
+        rounded_stored = _stored_downward_scale(rounded_scale)
+        rounded_decoded = JointInteractionFactor(
+            l4=rounded.l4 * rounded_stored,
+            l2=rounded.l2 * rounded_stored,
+            method=rounded.method,
+            tail_rank=0,
+            exact_rank=rounded.rank,
+            encoding="fp16_self_safe",
+            storage_bytes=8196,
+        )
+        _, rounded_post = make_factor_self_safe(rounded_decoded, abc)
+        if rounded_post != 1.0:
+            raise RuntimeError("stored FP16 proxy factor is not self-safe")
+
+        tail = randomized_joint_metric_factor(
+            down2, down4, empty_proxy, 0.0,
+            int(config["mixed_euclidean_tail_rank"]),
+            oversample=int(config["factor_fit_oversample"]),
+            power_iterations=int(config["factor_fit_power_iterations"]),
+            seed=int(config["seed"]) + 500000 + 1000 * layer + expert,
+            device=device,
+        )
+        tail_encoded = encode_interaction_factor(
+            tail, "int4_per_row", hadamard_rotate=True,
+        )
+        mixed_proxy_encoded = encode_interaction_factor(
+            control, "int8_per_row", hadamard_rotate=False,
+        )
+        tail_decoded = tail_encoded.decode()
+        proxy_decoded = mixed_proxy_encoded.decode()
+        mixed_decoded = JointInteractionFactor(
+            l4=np.concatenate((tail_decoded.l4, proxy_decoded.l4), axis=1),
+            l2=np.concatenate((tail_decoded.l2, proxy_decoded.l2), axis=1),
+            method="exact_proxy_rank4_int8_plus_euclidean_tail4_int4",
+            tail_rank=tail_decoded.rank,
+            exact_rank=proxy_decoded.rank,
+            encoding="mixed_int8_int4",
+            storage_bytes=10244,
+        )
+        _, mixed_scale_value = make_factor_self_safe(mixed_decoded, abc)
+        mixed_stored = _stored_downward_scale(mixed_scale_value)
+        mixed_loaded = JointInteractionFactor(
+            l4=mixed_decoded.l4 * mixed_stored,
+            l2=mixed_decoded.l2 * mixed_stored,
+            method=mixed_decoded.method,
+            tail_rank=mixed_decoded.tail_rank,
+            exact_rank=mixed_decoded.exact_rank,
+            encoding=mixed_decoded.encoding + "_self_safe",
+            storage_bytes=10244,
+        )
+        _, mixed_post = make_factor_self_safe(mixed_loaded, abc)
+        if mixed_post != 1.0:
+            raise RuntimeError("stored mixed factor is not self-safe")
+
         factor_seconds += time.perf_counter() - started
-        if encoded.payload_bytes != int(config["primary_factor_payload_bytes"]):
-            raise RuntimeError("encoded INT4 factor payload changed")
-        control_bytes = int(control.l4.nbytes + control.l2.nbytes)
-        if control_bytes != int(config["compute_control_factor_payload_bytes"]):
-            raise RuntimeError("rank-4 control payload changed")
+        expected_payloads = {
+            "primary": (primary_encoded.payload_bytes, 6148),
+            "rank4_int8": (proxy_int8.payload_bytes, 6148),
+            "rank4_int4": (proxy_int4.payload_bytes, 4100),
+            "rank4_fp16": (rounded_decoded.payload_bytes, 8196),
+            "mixed": (mixed_loaded.payload_bytes, 10244),
+        }
+        for name, (observed, expected) in expected_payloads.items():
+            if int(observed) != int(expected):
+                raise RuntimeError(f"{name} factor payload changed")
+        if int(control.l4.nbytes + control.l2.nbytes) != 16384:
+            raise RuntimeError("rank-4 FP32 control payload changed")
         median, p90 = _fit_probe_error(
-            down2, down4, proxy, beta, decoded,
+            down2, down4, proxy, beta, primary_decoded,
             int(config["seed"]) + 100000 * layer + expert,
         )
-        packed.append(np.asarray(encoded.packed_codes, np.uint8))
-        scales.append(np.asarray(encoded.row_scales, np.float16))
-        global_scales.append(np.float32(encoded.global_scale))
+
+        primary_codes.append(np.asarray(primary_encoded.packed_codes, np.uint8))
+        primary_scales.append(np.asarray(primary_encoded.row_scales, np.float16))
+        primary_global.append(np.float32(primary_encoded.global_scale))
         rank4_l4.append(np.asarray(control.l4, np.float32))
         rank4_l2.append(np.asarray(control.l2, np.float32))
-        shrink_values.append(float(shrink))
+        fp16_l4.append(rounded_l4)
+        fp16_l2.append(rounded_l2)
+        fp16_global.append(rounded_stored)
+        int8_codes.append(np.asarray(proxy_int8.packed_codes, np.uint8))
+        int8_scales.append(np.asarray(proxy_int8.row_scales, np.float16))
+        int8_global.append(np.float32(proxy_int8.global_scale))
+        int4_codes.append(np.asarray(proxy_int4.packed_codes, np.uint8))
+        int4_scales.append(np.asarray(proxy_int4.row_scales, np.float16))
+        int4_global.append(np.float32(proxy_int4.global_scale))
+        mixed_tail_codes.append(np.asarray(tail_encoded.packed_codes, np.uint8))
+        mixed_tail_scales.append(np.asarray(tail_encoded.row_scales, np.float16))
+        mixed_proxy_codes.append(
+            np.asarray(mixed_proxy_encoded.packed_codes, np.uint8)
+        )
+        mixed_proxy_scales.append(
+            np.asarray(mixed_proxy_encoded.row_scales, np.float16)
+        )
+        mixed_global.append(mixed_stored)
+        primary_shrink.append(float(primary_scale))
+        fp16_shrink.append(float(rounded_stored))
+        mixed_shrink.append(float(mixed_stored))
         probe_median.append(median)
         probe_p90.append(p90)
-        del leaves, down2, down4, abc, primary, encoded, decoded, control
+        del (
+            leaves, down2, down4, abc, primary, primary_encoded,
+            primary_decoded, control, proxy_int8, proxy_int4, rounded,
+            rounded_decoded, tail, tail_encoded, tail_decoded,
+            mixed_proxy_encoded, proxy_decoded, mixed_decoded, mixed_loaded,
+        )
         if expert % 32 == 31:
             gc.collect()
     arrays = {
-        "primary_packed_codes": np.stack(packed),
-        "primary_row_scales": np.stack(scales),
-        "primary_global_scales": np.asarray(global_scales, np.float32),
+        "primary_packed_codes": np.stack(primary_codes),
+        "primary_row_scales": np.stack(primary_scales),
+        "primary_global_scales": np.asarray(primary_global, np.float32),
         "rank4_l4": np.stack(rank4_l4),
         "rank4_l2": np.stack(rank4_l2),
+        "rank4_fp16_l4": np.stack(fp16_l4),
+        "rank4_fp16_l2": np.stack(fp16_l2),
+        "rank4_fp16_global_scales": np.asarray(fp16_global, np.float32),
+        "rank4_int8_packed_codes": np.stack(int8_codes),
+        "rank4_int8_row_scales": np.stack(int8_scales),
+        "rank4_int8_global_scales": np.asarray(int8_global, np.float32),
+        "rank4_int4_packed_codes": np.stack(int4_codes),
+        "rank4_int4_row_scales": np.stack(int4_scales),
+        "rank4_int4_global_scales": np.asarray(int4_global, np.float32),
+        "mixed_tail_int4_packed_codes": np.stack(mixed_tail_codes),
+        "mixed_tail_int4_row_scales": np.stack(mixed_tail_scales),
+        "mixed_proxy_int8_packed_codes": np.stack(mixed_proxy_codes),
+        "mixed_proxy_int8_row_scales": np.stack(mixed_proxy_scales),
+        "mixed_global_scales": np.asarray(mixed_global, np.float32),
     }
     diagnostics = {
         "layer": int(layer),
         "experts": int(config["experts_per_layer"]),
         "decode_seconds": decode_seconds,
         "factor_seconds": factor_seconds,
-        "self_safe_shrink_min": float(np.min(shrink_values)),
-        "self_safe_shrink_median": float(np.median(shrink_values)),
+        "primary_self_safe_shrink_min": float(np.min(primary_shrink)),
+        "primary_self_safe_shrink_median": float(np.median(primary_shrink)),
+        "fp16_self_safe_shrink_min": float(np.min(fp16_shrink)),
+        "mixed_self_safe_shrink_min": float(np.min(mixed_shrink)),
         "probe_relative_error_median": float(np.median(probe_median)),
-        "probe_relative_error_p90_across_experts": float(np.quantile(probe_p90, .9)),
+        "probe_relative_error_p90_across_experts": float(
+            np.quantile(probe_p90, .9)
+        ),
     }
     return arrays, diagnostics
-
 
 def _fit(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
     _validate_contract(config)
@@ -429,7 +679,7 @@ def _fit(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
                 "validation_rows_admitted_or_used": False,
                 "test_scientific_rows_admitted_or_used": False,
                 "factor_ids": [
-                    config["primary_factor_id"], config["compute_control_factor_id"],
+                    str(record["factor_id"]) for record in config["factor_configs"]
                 ],
             }
             _atomic_json(sidecar, sidecar_payload)
@@ -452,7 +702,13 @@ def _fit(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
             "fit_split": "train",
             "experts_per_layer": int(config["experts_per_layer"]),
             "factor_fit_scope": config["factor_fit_scope"],
-            "factor_ids": [config["primary_factor_id"], config["compute_control_factor_id"]],
+            "factor_ids": [
+                str(record["factor_id"]) for record in config["factor_configs"]
+            ],
+            "factor_payload_bytes": {
+                str(record["factor_id"]): int(record["factor_payload_bytes"])
+                for record in config["factor_configs"]
+            },
             "primary_factor_payload_bytes": int(config["primary_factor_payload_bytes"]),
             "compute_control_factor_payload_bytes": int(config["compute_control_factor_payload_bytes"]),
             "layers": layer_records,
@@ -480,33 +736,102 @@ def _fit(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
 def _load_layer_factors(
     arrays: Mapping[str, np.ndarray], config: Mapping[str, Any], expert: int,
 ) -> dict[str, JointInteractionFactor]:
-    encoded = EncodedInteractionFactor(
-        packed_codes=np.asarray(arrays["primary_packed_codes"][expert], np.uint8),
-        row_scales=np.asarray(arrays["primary_row_scales"][expert], np.float16),
-        units=UNITS,
-        rank=int(config["factor_fit_rank"]),
-        method=str(config["factor_fit_method"]),
-        tail_rank=int(config["factor_fit_rank"]),
-        exact_rank=0,
-        encoding="int4_hadamard",
-        global_scale=np.float32(arrays["primary_global_scales"][expert]),
+    def encoded(
+        prefix: str, rank: int, tail_rank: int, exact_rank: int,
+        encoding: str, global_name: str | None,
+    ) -> EncodedInteractionFactor:
+        global_scale = (
+            np.float32(1.0) if global_name is None
+            else np.float32(arrays[global_name][expert])
+        )
+        return EncodedInteractionFactor(
+            packed_codes=np.asarray(
+                arrays[f"{prefix}_packed_codes"][expert], np.uint8,
+            ),
+            row_scales=np.asarray(
+                arrays[f"{prefix}_row_scales"][expert], np.float16,
+            ),
+            units=UNITS,
+            rank=int(rank),
+            method=prefix,
+            tail_rank=int(tail_rank),
+            exact_rank=int(exact_rank),
+            encoding=encoding,
+            global_scale=global_scale,
+        )
+
+    primary_encoded = encoded(
+        "primary", int(config["factor_fit_rank"]),
+        int(config["factor_fit_rank"]), 0, "int4_hadamard",
+        "primary_global_scales",
     )
-    if encoded.payload_bytes != int(config["primary_factor_payload_bytes"]):
-        raise RuntimeError("loaded primary factor payload changed")
-    rank4 = JointInteractionFactor(
+    rank4_fp32 = JointInteractionFactor(
         l4=np.asarray(arrays["rank4_l4"][expert], np.float32),
         l2=np.asarray(arrays["rank4_l2"][expert], np.float32),
         method="exact_proxy",
         tail_rank=0,
-        exact_rank=int(np.asarray(arrays["rank4_l4"]).shape[-1]),
+        exact_rank=4,
         encoding="float32",
-        storage_bytes=int(config["compute_control_factor_payload_bytes"]),
+        storage_bytes=16384,
     )
-    return {
-        str(config["primary_factor_id"]): encoded.decode(),
-        str(config["compute_control_factor_id"]): rank4,
+    fp16_scale = np.float32(arrays["rank4_fp16_global_scales"][expert])
+    rank4_fp16 = JointInteractionFactor(
+        l4=np.asarray(arrays["rank4_fp16_l4"][expert], np.float16).astype(
+            np.float32
+        ) * fp16_scale,
+        l2=np.asarray(arrays["rank4_fp16_l2"][expert], np.float16).astype(
+            np.float32
+        ) * fp16_scale,
+        method="exact_proxy_fp16",
+        tail_rank=0,
+        exact_rank=4,
+        encoding="fp16_self_safe",
+        storage_bytes=8196,
+    )
+    rank4_int8 = encoded(
+        "rank4_int8", 4, 0, 4, "int8_per_row",
+        "rank4_int8_global_scales",
+    ).decode()
+    rank4_int4 = encoded(
+        "rank4_int4", 4, 0, 4, "int4_per_row_hadamard",
+        "rank4_int4_global_scales",
+    ).decode()
+    tail = encoded(
+        "mixed_tail_int4", 4, 4, 0, "int4_per_row_hadamard", None,
+    ).decode()
+    proxy_part = encoded(
+        "mixed_proxy_int8", 4, 0, 4, "int8_per_row", None,
+    ).decode()
+    mixed_scale = np.float32(arrays["mixed_global_scales"][expert])
+    mixed = JointInteractionFactor(
+        l4=np.concatenate((tail.l4, proxy_part.l4), axis=1) * mixed_scale,
+        l2=np.concatenate((tail.l2, proxy_part.l2), axis=1) * mixed_scale,
+        method="exact_proxy_rank4_int8_plus_euclidean_tail4_int4",
+        tail_rank=4,
+        exact_rank=4,
+        encoding="mixed_int8_int4_self_safe",
+        storage_bytes=10244,
+    )
+    factors = {
+        str(config["primary_factor_id"]): primary_encoded.decode(),
+        str(config["compute_control_factor_id"]): rank4_fp32,
+        "exact_proxy_rank4_fp16": rank4_fp16,
+        "exact_proxy_rank4_int8_per_row": rank4_int8,
+        "exact_proxy_rank4_int4_per_row_hadamard": rank4_int4,
+        "exact_proxy_rank4_int8_plus_euclidean_tail4_int4": mixed,
     }
-
+    expected = {
+        str(record["factor_id"]): (
+            int(record["rank"]), int(record["factor_payload_bytes"])
+        )
+        for record in config["factor_configs"]
+    }
+    if set(factors) != set(expected):
+        raise RuntimeError("loaded factor IDs changed")
+    for factor_id, factor in factors.items():
+        if (factor.rank, factor.payload_bytes) != expected[factor_id]:
+            raise RuntimeError(f"loaded factor contract changed: {factor_id}")
+    return factors
 
 def _plan(data: Mapping[str, np.ndarray], config: Mapping[str, Any]) -> list[dict[str, Any]]:
     groups = []
@@ -545,14 +870,28 @@ def _plan(data: Mapping[str, np.ndarray], config: Mapping[str, Any]) -> list[dic
     return groups
 
 
-def _frontier_compute_macs(rank: int, trace: Any, config: Mapping[str, Any]) -> int:
-    build = 16 * UNITS * int(rank) + 24 * UNITS
-    coordinate = (2 * UNITS * int(rank) + 16 * UNITS) * int(trace.coordinate_sweeps)
+def _incremental_solver_macs(
+    rank: int, coordinate_sweeps: int, local_passes: int,
+    config: Mapping[str, Any],
+) -> int:
+    coordinate = (
+        2 * UNITS * int(rank) + 16 * UNITS
+    ) * int(coordinate_sweeps)
     maximum_shortlist = 7 * int(config["local_shortlist"])
-    local = int(trace.local_passes) * (
-        14 * UNITS * int(rank) + maximum_shortlist * maximum_shortlist * int(rank)
+    local = int(local_passes) * (
+        14 * UNITS * int(rank)
+        + maximum_shortlist * maximum_shortlist * int(rank)
     )
-    return int(build + coordinate + local)
+    return int(coordinate + local)
+
+
+def _frontier_compute_macs(
+    rank: int, trace: Any, config: Mapping[str, Any],
+) -> int:
+    build = 16 * UNITS * int(rank) + 24 * UNITS
+    return int(build + _incremental_solver_macs(
+        rank, int(trace.coordinate_sweeps), int(trace.local_passes), config,
+    ))
 
 
 def _exact_option_data(
@@ -598,6 +937,18 @@ def _uniform_allocation(frontiers: Sequence[Sequence[RateOption]], cap: int) -> 
     return AllocationTrace(np.asarray(selected, np.int64), pages, objective)
 
 
+def _factor_spec(
+    config: Mapping[str, Any], factor_id: str,
+) -> Mapping[str, Any]:
+    records = [
+        record for record in config["factor_configs"]
+        if str(record["factor_id"]) == str(factor_id)
+    ]
+    if len(records) != 1:
+        raise RuntimeError(f"factor specification is not unique: {factor_id}")
+    return records[0]
+
+
 def _allocation_rows(
     metadata: Mapping[str, Any], factor_id: str,
     frontiers: Sequence[Sequence[RateOption]], features: Sequence[np.ndarray],
@@ -608,6 +959,8 @@ def _allocation_rows(
     frontier_macs: int, frontier_dp_evaluations: int,
     frontier_coordinate_sweeps: int, frontier_local_passes: int,
     metadata_bytes: int, config: Mapping[str, Any],
+    *, refinement_work: Mapping[str, Any] | None = None,
+    global_bound: Any | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     selected = np.asarray(allocation.option_indices, np.int64)
     chosen_features = [features[e][int(index)] for e, index in enumerate(selected)]
@@ -623,6 +976,10 @@ def _allocation_rows(
     group_base = float(base_combined @ base_combined)
     if not np.isfinite(group_base) or group_base <= 0:
         raise RuntimeError("combined top-8 base damage is not positive finite")
+    if policy.startswith("pooled_exact_combined_moe") and not np.isclose(
+        group_damage, float(allocation.objective), rtol=1e-9, atol=1e-8,
+    ):
+        raise RuntimeError("exact group allocation objective changed")
     individual_base = np.asarray([float(value @ value) for value in base_features])
     individual_selected = np.asarray([
         float(exact_damage[e][int(index)]) for e, index in enumerate(selected)
@@ -636,6 +993,47 @@ def _allocation_rows(
         raise RuntimeError("group allocation page accounting changed")
     allowed_bytes = 8 * (int(metadata_bytes) + int(mean_pages) * PAGE_BYTES)
     actual_bytes = 8 * int(metadata_bytes) + total_pages * PAGE_BYTES
+    refinement = {
+        "runtime": 0.0, "rounds": 0, "selected_repairs": 0,
+        "adaptive_price_solves": 0, "coordinate_sweeps": 0,
+        "local_passes": 0,
+        **dict(refinement_work or {}),
+    }
+    factor_rank = int(_factor_spec(config, factor_id)["rank"])
+    extra_macs = _incremental_solver_macs(
+        factor_rank, int(refinement["coordinate_sweeps"]),
+        int(refinement["local_passes"]), config,
+    )
+    total_frontier_runtime = float(frontier_runtime) + float(refinement["runtime"])
+    total_coordinate_sweeps = (
+        int(frontier_coordinate_sweeps)
+        + int(refinement["coordinate_sweeps"])
+    )
+    total_local_passes = (
+        int(frontier_local_passes) + int(refinement["local_passes"])
+    )
+    bound_fields = {
+        "global_bound_lower_damage": np.nan,
+        "global_bound_upper_damage": np.nan,
+        "global_bound_absolute_gap": np.nan,
+        "global_bound_relative_gap": np.nan,
+        "global_bound_iterations": 0,
+        "global_bound_certified": False,
+    }
+    if global_bound is not None:
+        if not np.isclose(
+            float(global_bound.upper_bound), group_damage, rtol=1e-9, atol=1e-8,
+        ):
+            raise RuntimeError("global bound upper value changed")
+        bound_fields = {
+            "global_bound_lower_damage": float(global_bound.lower_bound),
+            "global_bound_upper_damage": float(global_bound.upper_bound),
+            "global_bound_absolute_gap": float(global_bound.absolute_gap),
+            "global_bound_relative_gap": float(global_bound.relative_gap),
+            "global_bound_iterations": int(global_bound.iterations),
+            "global_bound_certified": bool(global_bound.certified),
+        }
+    exact_group = policy.startswith("pooled_exact_combined_moe")
     group = {
         **{name: metadata[name] for name in GROUP_IDENTITY},
         "sequence_id": metadata["sequence_id"],
@@ -649,13 +1047,20 @@ def _allocation_rows(
         "average_actual_correction_pages": total_pages / 8.0,
         "average_actual_correction_bpw": total_pages / (8.0 * 768.0),
         "average_allowed_correction_bpw": int(mean_pages) / 768.0,
-        "factor_payload_bytes_per_expert": int(metadata_bytes) - int(config["abc_metadata_bytes_per_expert"]),
-        "abc_metadata_bytes_per_expert": int(config["abc_metadata_bytes_per_expert"]),
+        "factor_payload_bytes_per_expert": (
+            int(metadata_bytes) - int(config["abc_metadata_bytes_per_expert"])
+        ),
+        "abc_metadata_bytes_per_expert": int(
+            config["abc_metadata_bytes_per_expert"]
+        ),
         "combined_metadata_bytes_per_expert": int(metadata_bytes),
         "combined_metadata_bpw": 8.0 * int(metadata_bytes) / EXPERT_WEIGHTS,
         "average_allowed_total_bpw": allowed_bytes / EXPERT_WEIGHTS,
         "average_actual_total_bpw": actual_bytes / EXPERT_WEIGHTS,
-        "strict_one_bpw_pass": allowed_bytes <= 8 * int(config["strict_all_in_total_bytes_per_expert"]),
+        "strict_one_bpw_pass": (
+            allowed_bytes
+            <= 8 * int(config["strict_all_in_total_bytes_per_expert"])
+        ),
         "group_recovery": 1.0 - group_damage / group_base,
         "group_exact_qenergy_damage": group_damage,
         "group_base_qenergy_damage": group_base,
@@ -664,27 +1069,46 @@ def _allocation_rows(
         "router_square_additive_base_damage": additive_base,
         "compressed_predicted_objective": float(predicted_objective),
         "allocation_objective": float(allocation.objective),
-        "selected_option_indices": json.dumps(selected.tolist(), separators=(",", ":")),
+        "selected_option_indices": json.dumps(
+            selected.tolist(), separators=(",", ":"),
+        ),
         "selected_expert_pages": json.dumps([
-            int(frontiers[e][int(index)].pages) for e, index in enumerate(selected)
+            int(frontiers[e][int(index)].pages)
+            for e, index in enumerate(selected)
         ], separators=(",", ":")),
         "router_weights": json.dumps(weights.tolist(), separators=(",", ":")),
-        "frontier_runtime_ms": 1000.0 * float(frontier_runtime),
+        "frontier_runtime_ms": 1000.0 * total_frontier_runtime,
         "allocation_runtime_ms": 1000.0 * float(allocation_runtime),
-        "selector_runtime_ms": 1000.0 * float(frontier_runtime + allocation_runtime),
-        "selector_compute_macs": int(frontier_macs),
-        "selector_compute_macs_per_expert": int(frontier_macs) / 8.0,
+        "selector_runtime_ms": 1000.0 * (
+            total_frontier_runtime + float(allocation_runtime)
+        ),
+        "selector_compute_macs": int(frontier_macs) + int(extra_macs),
+        "selector_compute_macs_per_expert": (
+            int(frontier_macs) + int(extra_macs)
+        ) / 8.0,
         "selector_dp_state_evaluations": int(frontier_dp_evaluations),
-        "selector_coordinate_sweeps": int(frontier_coordinate_sweeps),
-        "selector_local_passes": int(frontier_local_passes),
+        "selector_coordinate_sweeps": total_coordinate_sweeps,
+        "selector_local_passes": total_local_passes,
+        "frontier_refinement_rounds": int(refinement["rounds"]),
+        "frontier_selected_repairs": int(refinement["selected_repairs"]),
+        "frontier_adaptive_price_solves": int(
+            refinement["adaptive_price_solves"]
+        ),
         "group_coordinate_sweeps": int(allocation.coordinate_sweeps),
         "group_pair_passes": int(allocation.pair_passes),
-        "exact_cross_expert_information_used": policy == "pooled_exact_combined_moe_oracle",
+        "group_exchange_passes": int(allocation.exchange_passes),
+        "group_exchange_evaluations": int(allocation.exchange_evaluations),
+        **bound_fields,
+        "exact_cross_expert_information_used": exact_group,
         "promotable": False,
         "continuation_eligible": policy in {
-            "uniform_per_expert", "pooled_router_square_compressed",
+            "uniform_per_expert",
+            "pooled_router_square_compressed",
+            "pooled_router_square_column_generated",
         },
-        "selection_regime": "exact_h4_grouped_top8_average_rate_geometry_ceiling",
+        "selection_regime": (
+            "exact_h4_grouped_top8_average_rate_geometry_ceiling"
+        ),
     }
     expert_rows = []
     expert_ids = metadata["experts"]
@@ -704,9 +1128,12 @@ def _allocation_rows(
             "burst_cap_pages_per_expert": int(burst_cap),
             "selected_pages": int(option.pages),
             "selected_state_counts": json.dumps(
-                np.bincount(option.states, minlength=8).tolist(), separators=(",", ":"),
+                np.bincount(option.states, minlength=8).tolist(),
+                separators=(",", ":"),
             ),
-            "selected_states": json.dumps(option.states.tolist(), separators=(",", ":")),
+            "selected_states": json.dumps(
+                option.states.tolist(), separators=(",", ":"),
+            ),
             "option_source": option.source,
             "option_page_price": float(option.page_price),
             "compressed_predicted_damage": float(option.damage),
@@ -716,8 +1143,9 @@ def _allocation_rows(
         })
     return group, expert_rows
 
-
-def _evaluate_group(task: int) -> tuple[int, list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+def _evaluate_group(
+    task: int,
+) -> tuple[int, list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     if _EVAL_CONTEXT is None:
         raise RuntimeError("evaluation context is not initialized")
     group = _EVAL_CONTEXT["groups"][int(task)]
@@ -725,18 +1153,27 @@ def _evaluate_group(task: int) -> tuple[int, list[dict[str, Any]], list[dict[str
     local = _EVAL_CONTEXT["local"]
     activation = np.asarray(local["x"][int(group["record"])], np.float32)
     weights = np.asarray(group["router_weights"], np.float64)
+    expert_ids = list(map(int, group["experts"]))
+    responses_by_expert = []
+    for expert in expert_ids:
+        cell = _EVAL_CONTEXT["experts"][expert]
+        responses_by_expert.append(
+            split_projection_responses(cell["q2"], cell["q4"], activation)
+        )
+
     factor_data: dict[str, Any] = {}
     diagnostics = {"group_index": int(task), "experts": []}
-    for factor_id in (config["primary_factor_id"], config["compute_control_factor_id"]):
-        frontiers, features, exact_values, base_features = [], [], [], []
+    factor_ids = [
+        str(record["factor_id"]) for record in config["factor_configs"]
+    ]
+    for factor_id in factor_ids:
+        frontiers, features, exact_values, base_features, fields = [], [], [], [], []
         runtime_total = 0.0
-        macs_total = 0
-        dp_evaluations_total = 0
-        coordinate_sweeps_total = 0
-        local_passes_total = 0
-        for expert in map(int, group["experts"]):
+        macs_total = dp_evaluations_total = 0
+        coordinate_sweeps_total = local_passes_total = 0
+        for router_rank, expert in enumerate(expert_ids):
             cell = _EVAL_CONTEXT["experts"][expert]
-            responses = split_projection_responses(cell["q2"], cell["q4"], activation)
+            responses = responses_by_expert[router_rank]
             field_started = time.perf_counter()
             field = build_split_interaction_field(
                 cell["factors"][factor_id], responses.hidden, cell["abc"],
@@ -754,12 +1191,14 @@ def _evaluate_group(task: int) -> tuple[int, list[dict[str, Any]], list[dict[str
             )
             runtime_total += time.perf_counter() - field_started
             option_features, option_exact = _exact_option_data(
-                responses, trace.options, _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"],
+                responses, trace.options,
+                _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"],
             )
             zero = next(
                 index for index, option in enumerate(trace.options)
                 if int(option.pages) == 0
             )
+            fields.append(field)
             frontiers.append(trace.options)
             features.append(option_features)
             exact_values.append(option_exact)
@@ -778,9 +1217,14 @@ def _evaluate_group(task: int) -> tuple[int, list[dict[str, Any]], list[dict[str
                 "local_passes": int(trace.local_passes),
             })
         factor_data[factor_id] = {
-            "frontiers": frontiers, "features": features,
-            "exact": exact_values, "base": base_features,
-            "runtime": runtime_total, "macs": macs_total,
+            "fields": tuple(fields),
+            "frontiers": tuple(frontiers),
+            "features": tuple(features),
+            "exact": tuple(exact_values),
+            "base": tuple(base_features),
+            "responses": tuple(responses_by_expert),
+            "runtime": runtime_total,
+            "macs": macs_total,
             "dp_evaluations": dp_evaluations_total,
             "coordinate_sweeps": coordinate_sweeps_total,
             "local_passes": local_passes_total,
@@ -793,6 +1237,9 @@ def _evaluate_group(task: int) -> tuple[int, list[dict[str, Any]], list[dict[str
         factor_id: str, mean_pages: int, burst: int, policy: str,
         allocation: AllocationTrace, allocation_seconds: float,
         filtered: tuple[Any, Any, Any],
+        *, refinement_trace: Any | None = None,
+        refinement_seconds: float = 0.0,
+        global_bound: Any | None = None,
     ) -> None:
         frontiers, features, exact_values = filtered
         data = factor_data[factor_id]
@@ -800,124 +1247,258 @@ def _evaluate_group(task: int) -> tuple[int, list[dict[str, Any]], list[dict[str
             weights[e] * weights[e] * frontiers[e][int(index)].damage
             for e, index in enumerate(allocation.option_indices)
         ))
-        metadata_bytes = int(config["abc_metadata_bytes_per_expert"]) + (
-            int(config["primary_factor_payload_bytes"])
-            if factor_id == config["primary_factor_id"]
-            else int(config["compute_control_factor_payload_bytes"])
+        spec = _factor_spec(config, factor_id)
+        metadata_bytes = (
+            int(config["abc_metadata_bytes_per_expert"])
+            + int(spec["factor_payload_bytes"])
         )
+        refinement_work = None
+        if refinement_trace is not None:
+            refinement_work = {
+                "runtime": float(refinement_seconds),
+                "rounds": int(refinement_trace.rounds),
+                "selected_repairs": int(refinement_trace.selected_repairs),
+                "adaptive_price_solves": int(
+                    refinement_trace.adaptive_price_solves
+                ),
+                "coordinate_sweeps": int(refinement_trace.coordinate_sweeps),
+                "local_passes": int(refinement_trace.local_passes),
+            }
         row, experts = _allocation_rows(
             group, factor_id, frontiers, features, exact_values, data["base"],
             weights, mean_pages, burst, policy, allocation, predicted,
             data["runtime"], allocation_seconds, data["macs"],
             data["dp_evaluations"], data["coordinate_sweeps"],
             data["local_passes"], metadata_bytes, config,
+            refinement_work=refinement_work, global_bound=global_bound,
         )
         group_rows.append(row)
         expert_rows.extend(experts)
 
-    primary = factor_data[config["primary_factor_id"]]
-    for mean_pages in map(int, config["mean_correction_page_budgets"]):
-        filtered_by_cap = {}
-        for burst in map(int, config["primary_burst_caps_pages"]):
-            filtered_by_cap[burst] = tuple(zip(*[
-                _filter_frontier(
-                    primary["frontiers"][expert], primary["features"][expert],
-                    primary["exact"][expert], burst,
-                )
-                for expert in range(8)
-            ]))
-        uniform_filtered = tuple(zip(*[
+    def filtered(
+        factor_id: str, maximum_pages: int,
+    ) -> tuple[Any, Any, Any]:
+        data = factor_data[factor_id]
+        return tuple(zip(*[
             _filter_frontier(
-                primary["frontiers"][expert], primary["features"][expert],
-                primary["exact"][expert], mean_pages,
+                data["frontiers"][expert], data["features"][expert],
+                data["exact"][expert], maximum_pages,
             )
             for expert in range(8)
         ]))
+
+    def refined(
+        factor_id: str, mean_pages: int, burst: int,
+    ) -> tuple[tuple[Any, Any, Any], Any, float]:
+        data = factor_data[factor_id]
+        coarse = filtered(factor_id, burst)
+        started = time.perf_counter()
+        trace = allocation_aware_rate_frontiers(
+            data["fields"], coarse[0],
+            page_budget=8 * int(mean_pages),
+            burst_cap_pages=int(burst),
+            weights=weights * weights,
+            coordinate_sweeps=int(config["coordinate_sweeps"]),
+            local_shortlist=int(config["local_shortlist"]),
+            local_swap_units=int(config["local_swap_units"]),
+            local_max_passes=int(config["local_max_passes"]),
+            max_rounds=int(config["column_generation_max_rounds"]),
+            adaptive_price_multipliers=config[
+                "column_generation_price_multipliers"
+            ],
+            adaptive_price_local_passes=int(
+                config["column_generation_price_local_max_passes"]
+            ),
+        )
+        refined_features, refined_exact = [], []
+        for expert, options in enumerate(trace.frontiers):
+            values, damage = _exact_option_data(
+                data["responses"][expert], options,
+                _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"],
+            )
+            refined_features.append(values)
+            refined_exact.append(damage)
+        seconds = time.perf_counter() - started
+        return (
+            (trace.frontiers, tuple(refined_features), tuple(refined_exact)),
+            trace,
+            seconds,
+        )
+
+    primary_id = str(config["primary_factor_id"])
+    for mean_pages in map(int, config["mean_correction_page_budgets"]):
+        uniform_filtered = filtered(primary_id, mean_pages)
         started = time.perf_counter()
         uniform = _uniform_allocation(uniform_filtered[0], mean_pages)
         emit(
-            config["primary_factor_id"], mean_pages, mean_pages,
-            "uniform_per_expert", uniform, time.perf_counter() - started,
-            uniform_filtered,
+            primary_id, mean_pages, mean_pages, "uniform_per_expert",
+            uniform, time.perf_counter() - started, uniform_filtered,
         )
+
+        coarse_by_cap = {
+            burst: filtered(primary_id, burst)
+            for burst in map(int, config["primary_burst_caps_pages"])
+        }
+        refined_full = refinement_full = refinement_seconds_full = None
         router_seed_for_exact = None
-        exact_filtered = filtered_by_cap[1536]
         for burst in map(int, config["primary_burst_caps_pages"]):
-            filtered = filtered_by_cap[burst]
+            coarse = coarse_by_cap[burst]
             started = time.perf_counter()
             allocation = multiple_choice_allocate(
-                filtered[0], 8 * mean_pages, weights * weights,
+                coarse[0], 8 * mean_pages, weights * weights,
             )
-            seconds = time.perf_counter() - started
             emit(
-                config["primary_factor_id"], mean_pages, burst,
-                "pooled_router_square_compressed", allocation, seconds, filtered,
+                primary_id, mean_pages, burst,
+                "pooled_router_square_compressed", allocation,
+                time.perf_counter() - started, coarse,
             )
-            if burst == 1536:
+            if burst == int(config["global_bound_burst_cap_pages"]):
                 router_seed_for_exact = allocation
+
+            refined_data, refinement, refinement_seconds = refined(
+                primary_id, mean_pages, burst,
+            )
+            emit(
+                primary_id, mean_pages, burst,
+                "pooled_router_square_column_generated",
+                refinement.allocation, 0.0, refined_data,
+                refinement_trace=refinement,
+                refinement_seconds=refinement_seconds,
+            )
+            if burst == int(config["global_bound_burst_cap_pages"]):
+                refined_full = refined_data
+                refinement_full = refinement
+                refinement_seconds_full = refinement_seconds
+
+        full = coarse_by_cap[int(config["global_bound_burst_cap_pages"])]
         started = time.perf_counter()
-        equal = multiple_choice_allocate(exact_filtered[0], 8 * mean_pages, np.ones(8))
+        equal = multiple_choice_allocate(
+            full[0], 8 * mean_pages, np.ones(8),
+        )
         emit(
-            config["primary_factor_id"], mean_pages, 1536,
+            primary_id, mean_pages, 1536,
             "pooled_equal_weight_compressed", equal,
-            time.perf_counter() - started, exact_filtered,
+            time.perf_counter() - started, full,
         )
         if router_seed_for_exact is None:
             raise RuntimeError("missing router-weight exact-oracle seed")
         started = time.perf_counter()
-        exact = exact_group_option_allocate(
-            exact_filtered[0], exact_filtered[1], weights, 8 * mean_pages,
+        exact_coarse = exact_group_option_allocate(
+            full[0], full[1], weights, 8 * mean_pages,
             router_seed_for_exact.option_indices,
             max_coordinate_sweeps=int(config["group_exact_coordinate_sweeps"]),
             max_pair_passes=int(config["group_exact_pair_passes"]),
         )
         emit(
-            config["primary_factor_id"], mean_pages, 1536,
-            "pooled_exact_combined_moe_oracle", exact,
-            time.perf_counter() - started, exact_filtered,
+            primary_id, mean_pages, 1536,
+            "pooled_exact_combined_moe_oracle", exact_coarse,
+            time.perf_counter() - started, full,
+        )
+        if (
+            refined_full is None or refinement_full is None
+            or refinement_seconds_full is None
+        ):
+            raise RuntimeError("missing full-burst refined frontier")
+        started = time.perf_counter()
+        exact_refined = exact_group_option_allocate(
+            refined_full[0], refined_full[1], weights, 8 * mean_pages,
+            refinement_full.allocation.option_indices,
+            max_coordinate_sweeps=int(config["group_exact_coordinate_sweeps"]),
+            max_pair_passes=int(config["group_exact_pair_passes"]),
+        )
+        emit(
+            primary_id, mean_pages, 1536,
+            "pooled_exact_combined_moe_column_generated_local",
+            exact_refined, time.perf_counter() - started, refined_full,
+            refinement_trace=refinement_full,
+            refinement_seconds=refinement_seconds_full,
         )
 
-    control_id = config["compute_control_factor_id"]
-    control = factor_data[control_id]
-    mean_pages = int(config["compute_control_all_in_mean_pages"])
-    full = tuple(zip(*[
-        _filter_frontier(
-            control["frontiers"][expert], control["features"][expert],
-            control["exact"][expert], 1536,
+        if mean_pages == int(config["global_bound_mean_pages"]):
+            started = time.perf_counter()
+            exchanged = bounded_group_exchange_allocate(
+                refined_full[0], refined_full[1], weights,
+                8 * mean_pages, exact_refined,
+                exchange_sizes=config["global_exchange_sizes"],
+                shortlist_size=int(config["global_exchange_shortlist"]),
+                max_passes=int(config["global_exchange_max_passes"]),
+            )
+            bound = global_group_dual_bound(
+                refined_full[0], refined_full[1], weights,
+                8 * mean_pages, exchanged,
+                max_iterations=int(config["global_bound_max_iterations"]),
+                relative_tolerance=float(
+                    config["global_bound_relative_tolerance"]
+                ),
+            )
+            emit(
+                primary_id, mean_pages, 1536,
+                "pooled_exact_combined_moe_global_bound",
+                exchanged, time.perf_counter() - started, refined_full,
+                refinement_trace=refinement_full,
+                refinement_seconds=refinement_seconds_full,
+                global_bound=bound,
+            )
+
+    for spec in config["factor_configs"]:
+        factor_id = str(spec["factor_id"])
+        if factor_id == primary_id:
+            continue
+        mean_pages = int(spec["all_in_mean_pages"])
+        full = filtered(factor_id, 1536)
+        uniform_filtered = filtered(factor_id, mean_pages)
+        started = time.perf_counter()
+        uniform = _uniform_allocation(uniform_filtered[0], mean_pages)
+        emit(
+            factor_id, mean_pages, mean_pages, "uniform_per_expert",
+            uniform, time.perf_counter() - started, uniform_filtered,
         )
-        for expert in range(8)
-    ]))
-    uniform_filtered = tuple(zip(*[
-        _filter_frontier(
-            control["frontiers"][expert], control["features"][expert],
-            control["exact"][expert], mean_pages,
+        started = time.perf_counter()
+        router = multiple_choice_allocate(
+            full[0], 8 * mean_pages, weights * weights,
         )
-        for expert in range(8)
-    ]))
-    started = time.perf_counter()
-    uniform = _uniform_allocation(uniform_filtered[0], mean_pages)
-    emit(
-        control_id, mean_pages, mean_pages, "uniform_per_expert", uniform,
-        time.perf_counter() - started, uniform_filtered,
-    )
-    started = time.perf_counter()
-    router = multiple_choice_allocate(full[0], 8 * mean_pages, weights * weights)
-    emit(
-        control_id, mean_pages, 1536, "pooled_router_square_compressed", router,
-        time.perf_counter() - started, full,
-    )
-    started = time.perf_counter()
-    exact = exact_group_option_allocate(
-        full[0], full[1], weights, 8 * mean_pages, router.option_indices,
-        max_coordinate_sweeps=int(config["group_exact_coordinate_sweeps"]),
-        max_pair_passes=int(config["group_exact_pair_passes"]),
-    )
-    emit(
-        control_id, mean_pages, 1536, "pooled_exact_combined_moe_oracle", exact,
-        time.perf_counter() - started, full,
-    )
+        emit(
+            factor_id, mean_pages, 1536,
+            "pooled_router_square_compressed", router,
+            time.perf_counter() - started, full,
+        )
+        started = time.perf_counter()
+        exact_coarse = exact_group_option_allocate(
+            full[0], full[1], weights, 8 * mean_pages,
+            router.option_indices,
+            max_coordinate_sweeps=int(config["group_exact_coordinate_sweeps"]),
+            max_pair_passes=int(config["group_exact_pair_passes"]),
+        )
+        emit(
+            factor_id, mean_pages, 1536,
+            "pooled_exact_combined_moe_oracle", exact_coarse,
+            time.perf_counter() - started, full,
+        )
+        refined_data, refinement, refinement_seconds = refined(
+            factor_id, mean_pages, 1536,
+        )
+        emit(
+            factor_id, mean_pages, 1536,
+            "pooled_router_square_column_generated",
+            refinement.allocation, 0.0, refined_data,
+            refinement_trace=refinement,
+            refinement_seconds=refinement_seconds,
+        )
+        started = time.perf_counter()
+        exact_refined = exact_group_option_allocate(
+            refined_data[0], refined_data[1], weights, 8 * mean_pages,
+            refinement.allocation.option_indices,
+            max_coordinate_sweeps=int(config["group_exact_coordinate_sweeps"]),
+            max_pair_passes=int(config["group_exact_pair_passes"]),
+        )
+        emit(
+            factor_id, mean_pages, 1536,
+            "pooled_exact_combined_moe_column_generated_local",
+            exact_refined, time.perf_counter() - started, refined_data,
+            refinement_trace=refinement,
+            refinement_seconds=refinement_seconds,
+        )
     return int(task), group_rows, expert_rows, diagnostics
-
 
 def _evaluate(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
     _validate_contract(config)
@@ -1001,9 +1582,11 @@ def _evaluate(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
                 raise RuntimeError("group checkpoint layer scope changed")
             if set(map(int, expert_frame["layer"].unique())) != completed:
                 raise RuntimeError("expert checkpoint layer scope changed")
-            expected_groups = len(completed) * int(
-                config["expected_validation_groups_per_layer"]
-            ) * 27
+            expected_groups = (
+                len(completed)
+                * int(config["expected_validation_groups_per_layer"])
+                * len(_expected_policy_grid(config))
+            )
             if len(group_frame) != expected_groups or len(expert_frame) != 8 * expected_groups:
                 raise RuntimeError("evaluation checkpoint row count changed")
             group_rows = group_frame.to_dict("records")
@@ -1106,7 +1689,10 @@ def _evaluate(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
             del experts, arrays
             _EVAL_CONTEXT = None
             gc.collect()
-        expected_group_rows = int(config["expected_validation_groups"]) * 27
+        expected_group_rows = (
+            int(config["expected_validation_groups"])
+            * len(_expected_policy_grid(config))
+        )
         expected_expert_rows = expected_group_rows * 8
         if len(group_rows) != expected_group_rows or len(expert_rows) != expected_expert_rows:
             raise RuntimeError(
@@ -1125,7 +1711,7 @@ def _evaluate(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
         if np.any(expert_frame["selected_pages"] > expert_frame["burst_cap_pages_per_expert"]):
             raise RuntimeError("per-expert burst cap exceeded")
         accounting = {
-            "schema_version": 1,
+            "schema_version": 2,
             "group_rows": len(group_rows),
             "expert_rows": len(expert_rows),
             "validation_groups": int(config["expected_validation_groups"]),
@@ -1136,6 +1722,15 @@ def _evaluate(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
             + int(config["abc_metadata_bytes_per_expert"]),
             "compute_control_combined_metadata_bytes": int(config["compute_control_factor_payload_bytes"])
             + int(config["abc_metadata_bytes_per_expert"]),
+            "factor_payload_bytes": {
+                str(record["factor_id"]): int(record["factor_payload_bytes"])
+                for record in config["factor_configs"]
+            },
+            "factor_all_in_mean_pages": {
+                str(record["factor_id"]): int(record["all_in_mean_pages"])
+                for record in config["factor_configs"]
+            },
+            "policies_per_group": len(_expected_policy_grid(config)),
             "mean_correction_page_budgets": config["mean_correction_page_budgets"],
             "primary_burst_caps_pages": config["primary_burst_caps_pages"],
             "frontier_diagnostics": diagnostics,
