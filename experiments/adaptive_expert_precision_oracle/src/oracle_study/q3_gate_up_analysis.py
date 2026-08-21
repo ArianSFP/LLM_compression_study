@@ -75,7 +75,7 @@ def _json_vector(value: str, length: int, name: str) -> np.ndarray:
 
 
 def _layouts(action_pages: np.ndarray) -> dict[str, Q3PageLayout]:
-    return {
+    native = {
         BASELINE_LAYOUT: monolithic_q2q4_layout(512),
         "q3_ideal_logical_256_byte_plane_ceiling": Q3PageLayout("ideal", 512, None),
         "q3_physical_fixed_gate_up_pairing": fixed_gate_up_layout(512),
@@ -86,6 +86,20 @@ def _layouts(action_pages: np.ndarray) -> dict[str, Q3PageLayout]:
             "learned2", 512, np.asarray(action_pages, np.int64), learned=True,
         ),
     }
+    legacy = np.asarray(native[BASELINE_LAYOUT].action_pages, np.int64)
+    output = dict(native)
+    for layout_id in (
+        "q3_physical_fixed_gate_up_pairing",
+        "q3_physical_training_coselection_single",
+        "q3_physical_training_coselection_replicated2",
+    ):
+        value = native[layout_id]
+        output[layout_id] = Q3PageLayout(
+            f"{value.layout_id}_plus_legacy_q2q4_fallback", value.units,
+            np.concatenate((np.asarray(value.action_pages, np.int64), legacy), axis=0),
+            learned=value.learned, fixed=value.fixed,
+        )
+    return output
 
 def _expected_layout_accounting(
     layout_id: str, config: Mapping[str, Any],
@@ -96,13 +110,13 @@ def _expected_layout_accounting(
         descriptor = int(config["layout_descriptor_bytes_per_layer_replicated"]) // 256
     else:
         descriptor = 0
-    replicas = (
-        0 if layout_id == "q3_ideal_logical_256_byte_plane_ceiling"
-        else 2 if layout_id == "q3_physical_training_coselection_replicated2" else 1
-    )
+    replicas = {BASELINE_LAYOUT: 1, "q3_ideal_logical_256_byte_plane_ceiling": 0,
+                "q3_physical_fixed_gate_up_pairing": 2,
+                "q3_physical_training_coselection_single": 2,
+                "q3_physical_training_coselection_replicated2": 3}[layout_id]
     physical = layout_id != "q3_ideal_logical_256_byte_plane_ceiling"
     base_bytes = BASE_EXACT_BPW * EXPERT_WEIGHTS / 8.0
-    duplicated = 2 * 512 * 2048 * 2 / 8 if replicas == 2 else 0
+    duplicated = max(replicas - 1, 0) * (2 * 512 * 2048 * 2 / 8)
     resident = (
         int(config["factor_payload_bytes_per_expert"])
         + int(config["abc_metadata_bytes_per_expert"])
@@ -270,8 +284,18 @@ def validate_evidence_bundle(
         "group_recovery", "group_exact_qenergy_damage", "group_base_qenergy_damage",
         "actual_group_quanta", "group_budget_quanta", "average_allowed_total_bpw",
         "average_actual_total_bpw", "combined_metadata_bpw", "selector_wall_time_ms",
-        "selector_compute_macs", "external_storage_multiplier",
+        "selector_frontier_wall_time_ms", "selector_allocation_wall_time_ms",
+        "selector_compute_macs", "selector_diagonal_dp_tables",
+        "selector_diagonal_dp_state_updates", "external_storage_multiplier",
     ), "group")
+    if np.any(group.selector_diagonal_dp_tables < 0) or np.any(group.selector_diagonal_dp_state_updates < 0):
+        raise RuntimeError("Q3 diagonal-DP operation counters changed")
+    if not np.allclose(
+        group.selector_wall_time_ms,
+        group.selector_frontier_wall_time_ms + group.selector_allocation_wall_time_ms,
+        rtol=0, atol=1e-6,
+    ):
+        raise RuntimeError("Q3 selector wall-time decomposition changed")
     expected_descriptor = group.layout_id.astype(str).map(
         lambda item: _expected_layout_accounting(item, config)[0]
     ).to_numpy(np.int64)
@@ -403,6 +427,7 @@ def validate_evidence_bundle(
         "mean_correction_quanta": config["mean_correction_quanta"],
         "physical_cost_convention": "two_256_byte_planes_per_512_byte_page_charged_by_exact_unique_page_union",
         "replicated_cost_convention": "choose_one_complete_layout_replica_with_minimum_union_per_expert_invocation_no_cross_replica_mixing",
+        "legacy_q2q4_fallback_replica": True,
     }
     if any(accounting.get(name) != value for name, value in expected_accounting.items()):
         raise RuntimeError("accounting schema/content changed")
@@ -467,42 +492,66 @@ def threshold_table(accuracy: pd.DataFrame, config: Mapping[str, Any]) -> pd.Dat
 def promotion_payload(accuracy: pd.DataFrame, config: Mapping[str, Any]) -> dict[str, Any]:
     primary = accuracy[accuracy.allocation_policy == PRIMARY_POLICY]
     strict = int(config["strict_all_in_mean_quanta"])
+    target_p10 = float(config["frozen_pr13_rank4_target_recovery_p10"])
+    target_median = float(config["frozen_pr13_rank4_target_recovery_median"])
+    target_bpw = float(config["frozen_pr13_rank4_target_total_bpw"])
+    tolerance = float(config["baseline_reproduction_absolute_tolerance"])
+    search_resolution_quanta = int(config["matched_target_search_resolution_quanta"])
+    search_resolution_bpw = (
+        8.0 * search_resolution_quanta * int(config["cost_quantum_bytes"])
+        / int(config["expert_weights"])
+    )
     baseline_rows = primary[(primary.layout_id == BASELINE_LAYOUT) & (primary.mean_budget_quanta_per_expert == strict)]
     if len(baseline_rows) != 1:
         raise RuntimeError("strict baseline summary is not unique")
     baseline = baseline_rows.iloc[0]
     if 1.0 - float(baseline.recovery_median) <= 0 or 1.0 - float(baseline.recovery_p10) <= 0:
         raise RuntimeError("strict baseline remaining damage is not positive")
+    baseline_p10_delta = float(baseline.recovery_p10) - target_p10
+    baseline_median_delta = float(baseline.recovery_median) - target_median
+    reproduction_pass = (
+        abs(baseline_p10_delta) <= tolerance and abs(baseline_median_delta) <= tolerance
+    )
     comparisons = []
     for layout in config["primary_physical_layouts"]:
         row = primary[(primary.layout_id == layout) & (primary.mean_budget_quanta_per_expert == strict)]
         if len(row) != 1:
             raise RuntimeError("strict physical-layout summary is not unique")
         value = row.iloc[0]
-        median_ratio = (1.0 - float(value.recovery_median)) / (1.0 - float(baseline.recovery_median))
-        p10_ratio = (1.0 - float(value.recovery_p10)) / (1.0 - float(baseline.recovery_p10))
+        median_ratio = (1.0 - float(value.recovery_median)) / (1.0 - target_median)
+        p10_ratio = (1.0 - float(value.recovery_p10)) / (1.0 - target_p10)
         curve = primary[primary.layout_id == layout].sort_values("average_allowed_total_bpw")
-        matched = curve[(curve.recovery_median >= float(baseline.recovery_median)) &
-                        (curve.recovery_p10 >= float(baseline.recovery_p10))]
-        matched_bpw = None if matched.empty else float(matched.average_allowed_total_bpw.iloc[0])
-        delta = None if matched_bpw is None else matched_bpw - float(baseline.average_allowed_total_bpw)
+        matched = curve[(curve.recovery_median >= target_median) &
+                        (curve.recovery_p10 >= target_p10)]
+        matched_row = None if matched.empty else matched.iloc[0]
+        matched_bpw = None if matched_row is None else float(matched_row.average_allowed_total_bpw)
+        matched_quanta = None if matched_row is None else int(matched_row.mean_budget_quanta_per_expert)
+        prior = curve[curve.mean_budget_quanta_per_expert < matched_quanta] if matched_quanta is not None else curve.iloc[0:0]
+        prior_row = None if prior.empty else prior.iloc[-1]
+        delta = None if matched_bpw is None else matched_bpw - target_bpw
         same_rate_pass = median_ratio <= float(config["promotion_same_rate_remaining_damage_ratio_max"])
         matched_pass = delta is not None and delta <= float(config["promotion_matched_quality_total_bpw_delta_max"])
         comparisons.append({
             "layout_id": layout, "strict_recovery_p10": float(value.recovery_p10),
             "strict_recovery_median": float(value.recovery_median),
-            "strict_median_remaining_damage_ratio_vs_baseline": median_ratio,
-            "strict_p10_remaining_damage_ratio_vs_baseline": p10_ratio,
-            "matched_baseline_p10_and_median_minimum_total_bpw": matched_bpw,
+            "strict_median_remaining_damage_ratio_vs_frozen_pr13_target": median_ratio,
+            "strict_p10_remaining_damage_ratio_vs_frozen_pr13_target": p10_ratio,
+            "matched_frozen_pr13_p10_and_median_minimum_total_bpw": matched_bpw,
+            "matched_frozen_pr13_mean_quanta": matched_quanta,
+            "previous_sampled_total_bpw": None if prior_row is None else float(prior_row.average_allowed_total_bpw),
+            "previous_sampled_recovery_p10": None if prior_row is None else float(prior_row.recovery_p10),
+            "previous_sampled_recovery_median": None if prior_row is None else float(prior_row.recovery_median),
+            "matched_target_search_resolution_quanta": search_resolution_quanta,
+            "matched_target_search_resolution_total_bpw": search_resolution_bpw,
             "matched_quality_total_bpw_delta": delta,
             "same_rate_remaining_damage_gate_pass": same_rate_pass,
             "matched_quality_rate_shift_gate_pass": matched_pass,
-            "passes": same_rate_pass or matched_pass,
+            "passes": reproduction_pass and (same_rate_pass or matched_pass),
         })
     passing = [item for item in comparisons if item["passes"]]
     selected = None if not passing else min(
         passing, key=lambda item: (
-            item["strict_median_remaining_damage_ratio_vs_baseline"],
+            item["strict_median_remaining_damage_ratio_vs_frozen_pr13_target"],
             np.inf if item["matched_quality_total_bpw_delta"] is None else item["matched_quality_total_bpw_delta"],
             item["layout_id"],
         ),
@@ -523,6 +572,8 @@ def promotion_payload(accuracy: pd.DataFrame, config: Mapping[str, Any]) -> dict
     )
     ideal_diagnostic = {
         "reported_ideal_control_is_certified_global_ceiling": False,
+        "candidate_frontier_is_constructive_superset_of_every_physical_frontier": True,
+        "compressed_objective_dominance_is_runner_asserted": True,
         "strict_solver_recovery_p10": float(ideal.recovery_p10),
         "strict_solver_recovery_median": float(ideal.recovery_median),
         "strict_feasible_witness_layout": witness["layout_id"],
@@ -533,12 +584,22 @@ def promotion_payload(accuracy: pd.DataFrame, config: Mapping[str, Any]) -> dict
         "interpretation": "every physical-layout state is feasible at equal-or-lower cost in the ideal plane space; a lower ideal solver result is optimization headroom, not a representation bound",
     }
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "gate_up_q3_status": "continue_to_predictive_q3_study" if selected else "stop_embedded_gate_up_q3",
         "selected_physical_layout": selected,
-        "baseline_strict_all_in": {
+        "frozen_pr13_rank4_target": {
+            "total_bpw": target_bpw, "recovery_p10": target_p10,
+            "recovery_median": target_median,
+            "search_resolution_quanta": search_resolution_quanta,
+            "search_resolution_total_bpw": search_resolution_bpw,
+        },
+        "restored_eight_state_baseline": {
             "mean_quanta": strict, "total_bpw": float(baseline.average_allowed_total_bpw),
             "recovery_p10": float(baseline.recovery_p10), "recovery_median": float(baseline.recovery_median),
+            "p10_delta_vs_frozen_pr13": baseline_p10_delta,
+            "median_delta_vs_frozen_pr13": baseline_median_delta,
+            "absolute_tolerance": tolerance,
+            "reproduction_pass": reproduction_pass,
         },
         "physical_layout_comparisons": comparisons,
         "ideal_logical_solver_diagnostic": ideal_diagnostic,

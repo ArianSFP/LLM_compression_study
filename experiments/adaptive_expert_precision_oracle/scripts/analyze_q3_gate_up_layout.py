@@ -61,6 +61,8 @@ def _report(
     primary = accuracy[accuracy.allocation_policy == PRIMARY_POLICY]
     strict = primary[primary.mean_budget_quanta_per_expert == int(config["strict_all_in_mean_quanta"])]
     diagnostic = promotion["ideal_logical_solver_diagnostic"]
+    target = promotion["frozen_pr13_rank4_target"]
+    reproduction = promotion["restored_eight_state_baseline"]
     lines = [
         "# Gate/up Q3 physical-layout study", "",
         "## Outcome", "",
@@ -68,21 +70,24 @@ def _report(
         f"Selected physical layout: `{promotion['selected_physical_layout']}`.",
         f"Down-Q3 status: **{promotion['down_q3_status']}**.", "",
         "This is an exact-H4 Rank-4 Hadamard geometry/layout study. It is not a deployable predictor, latency, downstream, routing, logit, or token-quality result.",
-        "The ideal-plane row is a heuristic solver result, not a certified global ceiling. The best physical state vector is feasible in the ideal space at equal-or-lower cost.",
+        f"The frozen PR #13 target is {100*target['recovery_p10']:.4f}% p10 / {100*target['recovery_median']:.4f}% median at {target['total_bpw']:.6f} total bpw.",
+        f"The restored restricted-eight-state DP control reaches {100*reproduction['recovery_p10']:.4f}% p10 / {100*reproduction['recovery_median']:.4f}% median; reproduction gate: **{reproduction['reproduction_pass']}**.",
+        "Every Q3 candidate frontier includes the reproduced Q2/Q4 states. The ideal candidate frontier additionally includes every physical candidate after re-costing it in 256-byte quanta.",
+        "The ideal row remains a heuristic solver result rather than a globally certified exact-recovery ceiling; constructive inclusion certifies compressed-objective dominance, not exact-qenergy ordering.",
         f"At strict rate the heuristic ideal solve trails the `{diagnostic['strict_feasible_witness_layout']}` feasible witness by {100*diagnostic['solver_median_recovery_gap_to_feasible_witness']:.4f} median pp and {100*diagnostic['solver_p10_recovery_gap_to_feasible_witness']:.4f} p10 pp; this is optimizer headroom.", "",
-        "## Strict all-in one-bpw comparison", "",
-        "| Layout | p10 recovery | Median recovery | Median remaining-damage ratio vs eight-state | Total bpw |",
+        "## Frozen-target all-in comparison", "",
+        "| Layout | p10 recovery | Median recovery | Median remaining-damage ratio vs frozen PR #13 | Total bpw |",
         "|---|---:|---:|---:|---:|",
     ]
     comparison = {item["layout_id"]: item for item in promotion["physical_layout_comparisons"]}
     for row in strict.sort_values("layout_id").itertuples(index=False):
-        ratio = 1.0 if row.layout_id == BASELINE_LAYOUT else comparison.get(row.layout_id, {}).get("strict_median_remaining_damage_ratio_vs_baseline")
+        ratio = (1.0 - float(row.recovery_median)) / (1.0 - float(target["recovery_median"]))
         lines.append(f"| `{row.layout_id}` | {100*row.recovery_p10:.4f}% | {100*row.recovery_median:.4f}% | {'—' if ratio is None else f'{ratio:.4f}'} | {row.average_allowed_total_bpw:.6f} |")
     selected_layout = promotion["selected_physical_layout"]
     if selected_layout is None:
         selected_layout = min(
             promotion["physical_layout_comparisons"],
-            key=lambda item: (item["strict_median_remaining_damage_ratio_vs_baseline"], item["layout_id"]),
+            key=lambda item: (item["strict_median_remaining_damage_ratio_vs_frozen_pr13_target"], item["layout_id"]),
         )["layout_id"]
     selected_curve = primary[primary.layout_id == selected_layout].sort_values("average_allowed_total_bpw")
     lines += ["", f"## Average-rate accuracy curve: `{selected_layout}`", "",
@@ -94,20 +99,35 @@ def _report(
             f"{100*row.recovery_p10:.4f}% | {100*row.recovery_median:.4f}% | {100*row.recovery_p90:.4f}% | "
             f"{row.median_remaining_damage_ratio_vs_baseline_same_budget:.4f} |"
         )
+    lines += ["", "## Minimum rate matching frozen PR #13 p10 and median", "",
+              f"These are grid-certified minima. The dense target region is sampled every {target['search_resolution_quanta']} quanta ({target['search_resolution_total_bpw']:.6f} total bpw); the preceding sampled point is the lower edge of the certified interval.", "",
+              "| Physical layout | Previous sampled bpw (fails one or both targets) | Minimum sampled total bpw | Delta vs PR #13 |", "|---|---:|---:|---:|"]
+    for item in promotion["physical_layout_comparisons"]:
+        matched = item["matched_frozen_pr13_p10_and_median_minimum_total_bpw"]
+        delta = item["matched_quality_total_bpw_delta"]
+        previous = item["previous_sampled_total_bpw"]
+        lines.append(
+            f"| {item['layout_id']} | "
+            f"{'—' if previous is None else f'{previous:.6f}'} | "
+            f"{'not reached' if matched is None else f'{matched:.6f}'} | "
+            f"{'—' if delta is None else f'{delta:+.6f}'} |"
+        )
     lines += ["", "## Minimum total bpw at target quality", "",
               "| Layout | Statistic | Target | Minimum total bpw |", "|---|---|---:|---:|"]
     for row in thresholds.itertuples(index=False):
         value = "not reached" if pd.isna(row.minimum_total_bpw) else f"{row.minimum_total_bpw:.6f}"
         lines.append(f"| `{row.layout_id}` | {row.metric} | {100*row.target:.2f}% | {value} |")
     lines += ["", "## Runtime", "",
-              "| Layout | p50 full multi-budget frontier time | p90 | p99 | Median sweeps | Median local passes |",
-              "|---|---:|---:|---:|---:|---:|"]
+              "| Layout | p50 total selector | p50 frontier | p50 allocation | total p90 | total p99 | Median sweeps | Median local passes | Median DP tables | Median DP state updates |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for row in runtime.itertuples(index=False):
-        lines.append(f"| `{row.layout_id}` | {row.wall_ms_p50:.2f} ms | {row.wall_ms_p90:.2f} ms | {row.wall_ms_p99:.2f} ms | {row.coordinate_sweeps_median:.1f} | {row.local_passes_median:.1f} |")
+        lines.append(f"| `{row.layout_id}` | {row.wall_ms_p50:.2f} ms | {row.frontier_ms_p50:.2f} ms | {row.allocation_ms_p50:.2f} ms | {row.wall_ms_p90:.2f} ms | {row.wall_ms_p99:.2f} ms | {row.coordinate_sweeps_median:.1f} | {row.local_passes_median:.1f} | {row.diagonal_dp_tables_median:.1f} | {row.diagonal_dp_state_updates_median:.1f} |")
     lines += ["", "## Accounting and interpretation", "",
-              "- Ideal Q3 charges independent 256-byte planes, but the reported coordinate/local solve is a nonphysical heuristic control rather than a certified global ceiling.",
-              "- Every physical Q3 result charges the exact union of 512-byte page IDs; the replicated control chooses one whole layout and never mixes replicas.",
-              "- The eight-state comparator uses the same coordinate/local solver and Rank-4 factor, restricted to inherited states with monolithic Q2→Q4 projection pages.",
+              "- Exact-self dynamic programming seeds both the full 18-state and restricted inherited-eight-state additive layouts before the identical coordinate/local solver.",
+              "- Ideal Q3 charges independent 256-byte planes; its candidate set is a constructive superset of every physical frontier, but its selected exact-recovery row is still a nonphysical heuristic control rather than a certified global optimum.",
+              "- Every physical Q3 result charges the exact union of 512-byte page IDs and includes a fully charged legacy Q2/Q4 packing replica, making every restored PR #13 state physically feasible at its original page cost.",
+              "- Each expert chooses one complete packing replica and never mixes pages across replicas. External-storage accounting charges every extra gate/up refinement copy.",
+              "- The restored eight-state comparator uses the same DP seed, coordinate/local solver, and Rank-4 factor, restricted to inherited states with monolithic Q2→Q4 projection pages.",
               "- Learned layouts use only routed train occurrences. Validation values never fit pairings or factors; test scientific values are never admitted.",
               "- The table reports allowed total bpw, including A/B/C, factor, amortized learned-layout descriptor, and correction bytes.", ""]
     return "\n".join(lines)
@@ -134,11 +154,15 @@ def main() -> None:
     primary = group[group.allocation_policy == PRIMARY_POLICY]
     runtime = primary.groupby("layout_id", sort=True).agg(
         wall_ms_p50=("selector_wall_time_ms", "median"),
+        frontier_ms_p50=("selector_frontier_wall_time_ms", "median"),
+        allocation_ms_p50=("selector_allocation_wall_time_ms", "median"),
         wall_ms_p90=("selector_wall_time_ms", lambda x: x.quantile(.9)),
         wall_ms_p99=("selector_wall_time_ms", lambda x: x.quantile(.99)),
         coordinate_sweeps_median=("selector_coordinate_sweeps", "median"),
         local_passes_median=("selector_local_passes", "median"),
         selector_macs_max=("selector_compute_macs", "max"),
+        diagonal_dp_tables_median=("selector_diagonal_dp_tables", "median"),
+        diagonal_dp_state_updates_median=("selector_diagonal_dp_state_updates", "median"),
     ).reset_index()
     layer = primary.groupby(["layout_id", "mean_budget_quanta_per_expert", "layer"], sort=True).group_recovery.agg(
         recovery_p10=lambda x: x.quantile(.1), recovery_median="median", recovery_p90=lambda x: x.quantile(.9), groups="size",
