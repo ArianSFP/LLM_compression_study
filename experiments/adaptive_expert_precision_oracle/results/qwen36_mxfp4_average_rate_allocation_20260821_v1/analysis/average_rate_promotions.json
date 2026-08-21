@@ -1,0 +1,25 @@
+{
+  "burst_cap_pages_per_expert": 1536,
+  "comparison_policy": "uniform_per_expert",
+  "exact_h4_geometry_ceiling_only": true,
+  "mean_correction_pages_per_expert": 749,
+  "median_gain_gate_pass": true,
+  "overall_average_bpw": 0.9987386067708334,
+  "p10_gain_gate_pass": true,
+  "paired_gain_vs_uniform_median": 0.0010402388025957943,
+  "paired_gain_vs_uniform_p10": 6.397239323748804e-05,
+  "primary_factor_config_id": "matrix_free_joint_rank8_int4_per_row_hadamard",
+  "primary_policy": "pooled_router_square_compressed",
+  "q3_required_controls": [
+    "ideal_logical_256_byte_plane_ceiling",
+    "physical_512_byte_training_only_coselection_layout",
+    "physical_512_byte_fixed_gate_up_pairing_control"
+  ],
+  "q3_status": "deferred_until_average_rate_baseline_is_frozen",
+  "qenergy_recovery_median": 0.9988117627770534,
+  "qenergy_recovery_p10": 0.995761261455678,
+  "schema_version": 1,
+  "selected_deployable_configuration": null,
+  "status": "continue_to_predicted_h4_average_rate",
+  "test_scientific_rows_admitted_or_used": false
+}

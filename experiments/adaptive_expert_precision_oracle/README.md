@@ -303,3 +303,61 @@ all exact H0 action labels, and `artifact_hashes.json`.
 ## Scope boundary
 
 The pilot validates projection and sequential complete-expert representation with a rank-4 future-router-gradient proxy. It does not claim direct teacher-forced H1-H4 replay, top-8 joint layer allocation, or token/logit agreement: the available captures did not include a validated arbitrary-MoE-output replay checkpoint, and the replay identity prerequisite was therefore not satisfied. Those omissions are explicit in the report rather than filled with synthetic data.
+## Grouped top-8 average-rate allocation
+
+The average-rate continuation replaces a uniform per-expert page cap with an exact
+multiple-choice allocation over the true eight routed experts for each captured
+validation token/layer. It is stacked on PR #12 and preserves its eight
+gate/up/down states, exact A/B/C self terms, rank-8 Hadamard INT4 interaction
+field, and bounded interaction-aware search. The new fit covers all 256 experts
+in layers 0/4/20/39 without consulting validation values.
+
+The key implementation optimization is one vectorized exact-self DP table per
+expert, reused for every hard budget and Lagrange price. Hard anchors retain
+coordinate descent and bounded 1/2/3-unit repair; the warm price path uses two
+incremental coordinate basins without recomputing the DP or repairing discarded
+price points. A real-expert frontier fell from 123.74 seconds to 4.56 seconds
+(27.2x) on the supplied RTX 3090 pod. The container exposed 256 logical CPUs but
+was cgroup-limited to 27.2 cores, so the frozen evaluation used 24 one-thread
+fork workers rather than oversubscribing with 64 or 256 workers.
+
+The exact-H4 validation contains 128 token/layer groups and 1,024 routed expert
+invocations. At strict all-in 0.998739 average bpw, pooled router-weighted
+allocation with a 1,536-page burst cap reaches 99.576% p10 / 99.881% median
+combined top-8 qenergy recovery. Uniform 749-page caps reach 99.337% / 99.710%.
+The paired gain is +0.006 pp p10 / +0.104 pp median, passing the frozen
+continuation gates. At 0.523478 average bpw the corresponding pooled result is
+96.744% / 99.011%, versus 95.175% / 97.823% uniform.
+
+These are qenergy-recovery statistics, not token accuracy. Every row is an
+exact-H4 geometry ceiling and is explicitly nonpromotable. The primary frontier
+construction is also compute-expensive (about 51.34M charged MACs and 68.1
+seconds median Python reference wall time per top-8 group); the result advances
+to a predicted-H4, reduced-frontier implementation study, not deployment.
+
+The rank-4 exact-proxy control is useful: at 0.998728 average bpw it reaches
+99.514% p10 / 99.865% median with pooled allocation, using 33.63M charged MACs.
+It trails rank-8 INT4 by only 0.062 pp p10 / 0.016 pp median while reducing
+charged arithmetic by roughly one third.
+
+Q3 is deliberately deferred so it cannot confound the average-rate attribution.
+A later Q3 study must report an ideal logical 256-byte bitplane ceiling, a
+training-only 512-byte co-selection layout, and a fixed 512-byte gate/up pairing
+control, all charged by unique physical page IDs.
+
+Canonical artifacts are under
+`results/qwen36_mxfp4_average_rate_allocation_20260821_v1/`. Regenerate the
+analysis with:
+
+```bash
+MPLBACKEND=Agg \
+PYTHONPATH=experiments/adaptive_expert_precision_oracle/src:experiments/adaptive_expert_precision_oracle/scripts \
+python experiments/adaptive_expert_precision_oracle/scripts/analyze_average_rate_allocation.py \
+  --config experiments/adaptive_expert_precision_oracle/configs/qwen36_mxfp4_average_rate_allocation.json \
+  --fit-dir experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_20260821_v1/fit \
+  --validation-dir experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_20260821_v1/validation_exact_h4 \
+  --output experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_average_rate_allocation_20260821_v1/analysis
+```
+
+See `AVERAGE_RATE_ALLOCATION_REPRODUCIBILITY.md` for the complete execution,
+hash, accounting, worker, and scientific-boundary contract.
