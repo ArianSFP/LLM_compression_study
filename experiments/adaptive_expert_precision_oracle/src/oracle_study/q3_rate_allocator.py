@@ -11,14 +11,105 @@ from .average_rate_allocator import AllocationTrace, RateOption, multiple_choice
 from .q3_gate_up_field import (
     Q3InteractionField, Q3PageLayout, Q3_IDEAL_COST_QUANTA,
     Q3_STATE_GATE_LEVEL, Q3_STATE_UP_LEVEL, plane_action_id,
-    q3_coordinate_descent, q3_local_search,
+    q3_additive_state_costs, q3_coordinate_descent, q3_local_search,
 )
 
 
 __all__ = [
-    "Q3RateFrontierTrace", "Q3AllocationAwareTrace", "q3_rate_frontier",
+    "Q3DiagonalDPTable", "Q3RateFrontierTrace", "Q3AllocationAwareTrace",
+    "build_q3_diagonal_dp_table", "q3_diagonal_dp_seed", "q3_rate_frontier",
     "q3_allocation_aware_rate_frontiers", "training_plane_incidence",
 ]
+
+
+@dataclass(frozen=True)
+class Q3DiagonalDPTable:
+    """Reusable exact-self table for one additive Q3 layout."""
+
+    choices: np.ndarray
+    final_damage: np.ndarray
+    state_costs: np.ndarray
+
+    @property
+    def units(self) -> int:
+        return int(self.choices.shape[0])
+
+    @property
+    def maximum_quanta(self) -> int:
+        return int(self.choices.shape[1] - 1)
+
+    def seed(self, budget_quanta: int, *, page_price: float = 0.0) -> np.ndarray:
+        budget = int(budget_quanta)
+        price = float(page_price)
+        if budget < 0 or budget > self.maximum_quanta:
+            raise ValueError("Q3 quantum budget lies outside the DP table")
+        if not np.isfinite(price) or price < 0.0:
+            raise ValueError("page_price must be finite and nonnegative")
+        objective = self.final_damage[:budget + 1] + price * np.arange(budget + 1)
+        quanta = int(np.argmin(objective))
+        if not np.isfinite(objective[quanta]):
+            raise RuntimeError("Q3 diagonal allocation has no feasible state")
+        states = np.empty(self.units, np.int64)
+        for unit in range(self.units - 1, -1, -1):
+            state = int(self.choices[unit, quanta])
+            if state < 0:
+                raise RuntimeError("Q3 diagonal allocation backtrack failed")
+            states[unit] = state
+            quanta -= int(self.state_costs[state])
+        return states
+
+
+def _allowed_states(values: Sequence[int]) -> tuple[int, ...]:
+    states = tuple(sorted({int(value) for value in values}))
+    if not states or states[0] < 0 or states[-1] >= 18:
+        raise ValueError("allowed Q3 states must be a nonempty subset of [0,17]")
+    return states
+
+
+def build_q3_diagonal_dp_table(
+    field: Q3InteractionField, layout: Q3PageLayout, maximum_quanta: int,
+    allowed_states: Sequence[int] = tuple(range(18)),
+) -> Q3DiagonalDPTable:
+    """Solve exact per-unit self damage once for every additive-layout budget."""
+    costs = q3_additive_state_costs(layout)
+    if costs is None:
+        raise ValueError("Q3 diagonal DP requires an additive page layout")
+    maximum = int(maximum_quanta)
+    if maximum < 0 or maximum > int(np.max(costs)) * field.units:
+        raise ValueError("Q3 quantum budget lies outside the additive layout")
+    allowed = _allowed_states(allowed_states)
+    dynamic = np.full(maximum + 1, np.inf, np.float64)
+    dynamic[0] = 0.0
+    choices = np.full((field.units, maximum + 1), -1, np.int8)
+    local = np.asarray(field.local_damage, np.float64)
+    for unit in range(field.units):
+        updated = np.full(maximum + 1, np.inf, np.float64)
+        unit_choice = choices[unit]
+        for state in allowed:
+            cost = int(costs[state])
+            candidate = dynamic[:maximum + 1 - cost] + local[unit, state]
+            current = updated[cost:]
+            previous = unit_choice[cost:]
+            better = candidate < current - 1e-15
+            tied = np.isfinite(candidate) & np.isfinite(current)
+            difference = np.zeros_like(candidate)
+            np.subtract(candidate, current, out=difference, where=tied)
+            tied &= np.abs(difference) <= 1e-15
+            better |= tied & ((previous < 0) | (state < previous))
+            current[better] = candidate[better]
+            previous[better] = state
+        dynamic = updated
+    return Q3DiagonalDPTable(choices, dynamic, costs)
+
+
+def q3_diagonal_dp_seed(
+    field: Q3InteractionField, layout: Q3PageLayout, budget_quanta: int,
+    allowed_states: Sequence[int] = tuple(range(18)), *, page_price: float = 0.0,
+) -> np.ndarray:
+    """Return one exact-self Q3 seed for an additive page layout."""
+    return build_q3_diagonal_dp_table(
+        field, layout, int(budget_quanta), allowed_states,
+    ).seed(int(budget_quanta), page_price=float(page_price))
 
 
 @dataclass(frozen=True)
@@ -29,6 +120,8 @@ class Q3RateFrontierTrace:
     anchor_solves: int
     price_solves: int
     state_comparisons: int
+    diagonal_dp_tables: int
+    diagonal_dp_state_updates: int
 
 
 @dataclass(frozen=True)
@@ -72,7 +165,7 @@ def q3_rate_frontier(
     local_max_passes: int, price_local_max_passes: int = 0,
     allowed_states: Sequence[int] = tuple(range(18)),
 ) -> Q3RateFrontierTrace:
-    """Generate a price path, then repair requested feasible hard anchors."""
+    """Generate price solutions plus exact-self-DP-seeded hard anchors."""
     maximum = int(maximum_quanta)
     if maximum < 0 or maximum > 6 * field.units:
         raise ValueError("maximum Q3 cost lies outside [0,6*units]")
@@ -85,6 +178,7 @@ def q3_rate_frontier(
     if any(not np.isfinite(value) or value < 0 for value in ratios):
         raise ValueError("price ratios must be finite and nonnegative")
 
+    allowed_states = _allowed_states(allowed_states)
     zero = np.zeros(field.units, np.int64)
     scale = max(field.damage(zero), 1e-30) / max(maximum, 1)
     options: list[RateOption] = [RateOption(
@@ -113,9 +207,26 @@ def q3_rate_frontier(
         ))
 
     coarse = _pareto(options)
+    additive_costs = q3_additive_state_costs(layout)
+    diagonal = None if additive_costs is None else build_q3_diagonal_dp_table(
+        field, layout, maximum, allowed_states,
+    )
     for target in targets:
-        feasible = [item for item in coarse if int(item.pages) <= int(target)]
-        seed = min(feasible, key=lambda item: (float(item.damage), -int(item.pages), _key(item)))
+        if diagonal is None:
+            feasible = [item for item in coarse if int(item.pages) <= int(target)]
+            seed = min(
+                feasible,
+                key=lambda item: (float(item.damage), -int(item.pages), _key(item)),
+            )
+            source = f"hard_anchor_{target}"
+        else:
+            states = diagonal.seed(int(target))
+            seed = RateOption(
+                int(layout.cost_quanta(states)), float(field.damage(states)),
+                states.copy(), f"exact_self_dp_seed_{target}", 0.0, 0, 0,
+            )
+            options.append(seed)
+            source = f"exact_self_dp_repaired_{target}"
         coordinate = q3_coordinate_descent(
             field, layout, seed.states, int(target), max_sweeps=int(coordinate_sweeps),
             allowed_states=allowed_states,
@@ -129,11 +240,15 @@ def q3_rate_frontier(
         passes += int(repaired.passes)
         options.append(RateOption(
             int(repaired.cost_quanta), float(repaired.damage), repaired.states.copy(),
-            f"hard_anchor_{target}", 0.0, int(coordinate.sweeps), int(repaired.passes),
+            source, 0.0, int(coordinate.sweeps), int(repaired.passes),
         ))
+    diagonal_updates = 0 if diagonal is None else field.units * sum(
+        maximum + 1 - int(additive_costs[state]) for state in allowed_states
+    )
     return Q3RateFrontierTrace(
         _pareto(options), sweeps, passes, len(targets), len(ratios),
         field.units * 18 * (len(ratios) + len(targets)),
+        int(diagonal is not None), int(diagonal_updates),
     )
 
 

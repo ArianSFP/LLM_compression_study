@@ -2,10 +2,17 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from oracle_study.average_rate_allocator import AllocationTrace, RateOption
+from oracle_study.interaction_field import JointInteractionFactor
+from oracle_study.q3_gate_up_field import (
+    Q3InteractionField, Q3PageLayout, fixed_gate_up_layout, monolithic_q2q4_layout,
+)
 from run_q3_gate_up_layout import (
-    GROUP_IDENTITY, _allocation_rows, _layout_descriptor_bytes, _layouts,
+    GROUP_IDENTITY, _allocation_rows, _assert_allocation_objective_dominates,
+    _layout_descriptor_bytes, _layouts, _merge_literal_rebased_frontiers,
+    _merge_rebased_frontiers, _rebased_allocation_witness,
     _validate_contract,
 )
 
@@ -28,8 +35,90 @@ def test_frozen_config_contract_and_layout_grid():
     layouts = _layouts(pages)
     assert list(layouts) == config["layout_controls"]
     assert layouts["q3_ideal_logical_256_byte_plane_ceiling"].ideal
-    assert layouts["q3_physical_training_coselection_single"].replicas == 1
-    assert layouts["q3_physical_training_coselection_replicated2"].replicas == 2
+    assert layouts["q3_physical_fixed_gate_up_pairing"].replicas == 2
+    assert layouts["q3_physical_training_coselection_single"].replicas == 2
+    assert layouts["q3_physical_training_coselection_replicated2"].replicas == 3
+
+def test_injected_frontier_witnesses_and_objective_dominance_are_fail_closed():
+    units, rank = 2, 1
+    factor = JointInteractionFactor(
+        np.zeros((units, rank)), np.zeros((units, rank)),
+        "synthetic", rank, 0, "fp64",
+    )
+    self_residual = np.full((units, 18), 10.0)
+    self_residual[:, 17] = 0.0
+    field = Q3InteractionField(
+        np.zeros((units, 18, rank)), np.zeros((units, 18, 2)),
+        self_residual.copy(), self_residual, factor,
+    )
+    fixed = fixed_gate_up_layout(units)
+    legacy = monolithic_q2q4_layout(units)
+    layout = Q3PageLayout(
+        "fixed_plus_legacy", units,
+        np.concatenate((fixed.action_pages, legacy.action_pages)),
+    )
+    zero = np.zeros(units, np.int64)
+    upgraded = np.asarray([17, 0], np.int64)
+    native = (RateOption(layout.cost_quanta(zero), field.damage(zero), zero, "native", 0.0, 0, 0),)
+    injected = (RateOption(999, 999.0, upgraded, "reference", 0.0, 2, 1),)
+    merged = _merge_rebased_frontiers(
+        field, layout, native, (("restricted_eight_state", injected),),
+        maximum_quanta=12,
+    )
+    assert layout.cost_quanta(upgraded) <= legacy.cost_quanta(upgraded)
+    assert any(
+        option.pages == layout.cost_quanta(upgraded)
+        and np.isclose(option.damage, field.damage(upgraded))
+        for option in merged
+    )
+    better = AllocationTrace(np.zeros(1, np.int64), 0, 1.0)
+    worse = AllocationTrace(np.zeros(1, np.int64), 0, 2.0)
+    _assert_allocation_objective_dominates(better, worse, "synthetic")
+    with pytest.raises(RuntimeError, match="compressed-objective dominance"):
+        _assert_allocation_objective_dominates(worse, better, "synthetic")
+
+
+def test_literal_frontier_and_group_allocation_preserve_exact_inherited_states():
+    units, rank = 2, 1
+    factor = JointInteractionFactor(
+        np.zeros((units, rank)), np.zeros((units, rank)),
+        "synthetic", rank, 0, "fp64",
+    )
+    local = np.full((units, 18), 10.0)
+    local[:, 0] = 5.0
+    local[:, 17] = 0.0
+    field = Q3InteractionField(
+        np.zeros((units, 18, rank)), np.zeros((units, 18, 2)),
+        local.copy(), local, factor,
+    )
+    fixed = fixed_gate_up_layout(units)
+    legacy = monolithic_q2q4_layout(units)
+    layout = Q3PageLayout(
+        "fixed_plus_legacy", units,
+        np.concatenate((fixed.action_pages, legacy.action_pages)),
+    )
+    zero = np.zeros(units, np.int64)
+    inherited = np.asarray([17, 0], np.int64)
+    native_better_same_cost = np.asarray([0, 17], np.int64)
+    native = (RateOption(
+        layout.cost_quanta(native_better_same_cost), -1.0,
+        native_better_same_cost, "native_dominator", 0.0, 0, 0,
+    ),)
+    reference = (
+        RateOption(0, field.damage(zero), zero, "zero", 0.0, 0, 0),
+        RateOption(6, field.damage(inherited), inherited, "pr13", 0.0, 2, 1),
+    )
+    merged = _merge_literal_rebased_frontiers(
+        field, layout, native, (("pr13", reference),), maximum_quanta=12,
+    )
+    assert any(np.array_equal(option.states, inherited) for option in merged)
+    allocation = AllocationTrace(np.asarray([1]), 6, field.damage(inherited))
+    witness = _rebased_allocation_witness(
+        (merged,), (reference,), allocation, np.ones(1),
+    )
+    assert witness.pages == layout.cost_quanta(inherited)
+    assert np.array_equal(merged[int(witness.option_indices[0])].states, inherited)
+
 
 
 def test_layout_descriptor_is_conservatively_amortized_per_expert():
@@ -64,7 +153,8 @@ def test_group_row_uses_exact_quantum_and_total_bpw_accounting():
         frontiers, features, exact, base, np.full(8, 1 / 8), cost,
         "pooled_router_square_multi_budget_column_generated", allocation,
         .01, {"coordinate_sweeps": 8, "local_passes": 2,
-              "state_comparisons": 100, "refinement_rounds": 1}, config,
+              "state_comparisons": 100, "diagonal_dp_tables": 8, "diagonal_dp_state_updates": 1234,
+              "frontier_wall_seconds": .006, "allocation_wall_seconds": .004, "refinement_rounds": 1}, config,
     )
     assert row["actual_group_quanta"] == 8 * cost
     expected = (
@@ -73,6 +163,9 @@ def test_group_row_uses_exact_quantum_and_total_bpw_accounting():
     assert np.isclose(row["average_actual_total_bpw"], expected)
     assert np.isclose(row["average_allowed_total_bpw"], expected)
     assert len(experts) == 8
+    assert np.isclose(row["selector_frontier_wall_time_ms"], 6.0)
+    assert np.isclose(row["selector_allocation_wall_time_ms"], 4.0)
+    assert np.isclose(row["selector_wall_time_ms"], 10.0)
     assert all(len(expert["selected_states_blob"]) == 512 for expert in experts)
     assert all(expert["selected_unique_pages"] * 2 == expert["selected_quanta"] for expert in experts)
     assert all(name in row for name in GROUP_IDENTITY)
@@ -89,7 +182,8 @@ def test_group_row_uses_exact_quantum_and_total_bpw_accounting():
         ideal_frontiers, features, exact, base, np.full(8, 1 / 8), ideal_cost,
         "pooled_router_square_multi_budget_column_generated", ideal_allocation,
         .01, {"coordinate_sweeps": 8, "local_passes": 2,
-              "state_comparisons": 100, "refinement_rounds": 1}, config,
+              "state_comparisons": 100, "diagonal_dp_tables": 8, "diagonal_dp_state_updates": 1234,
+              "frontier_wall_seconds": .006, "allocation_wall_seconds": .004, "refinement_rounds": 1}, config,
     )
     assert all(len(expert["selected_states_blob"]) == 512 for expert in ideal_experts)
     assert all(expert["selected_replica"] == -1 for expert in ideal_experts)

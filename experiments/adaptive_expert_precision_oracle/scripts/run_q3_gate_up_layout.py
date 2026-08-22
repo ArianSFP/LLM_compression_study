@@ -164,7 +164,7 @@ def _validate_contract(config: Mapping[str, Any]) -> None:
         raise RuntimeError("physical transfer geometry changed")
     if int(config.get("frontier_maximum_quanta", -1)) != 3072:
         raise RuntimeError("full Q4 endpoint changed")
-    if int(config.get("strict_all_in_mean_quanta", -1)) != 1507:
+    if int(config.get("strict_all_in_mean_quanta", -1)) != 1506:
         raise RuntimeError("strict all-in quantum budget changed")
     if int(config.get("evaluation_workers", -1)) != 32 or config.get("worker_start_method") != "fork":
         raise RuntimeError("worker execution contract changed")
@@ -179,6 +179,32 @@ def _validate_contract(config: Mapping[str, Any]) -> None:
     ]
     if list(config.get("layout_controls", [])) != expected_layouts:
         raise RuntimeError("Q3 layout grid changed")
+    if config.get("reproduced_pr13_baseline_layout") != expected_layouts[0]:
+        raise RuntimeError("reproduced PR13 baseline identity changed")
+    frozen_targets = (
+        float(config.get("frozen_pr13_rank4_target_recovery_p10", -1)),
+        float(config.get("frozen_pr13_rank4_target_recovery_median", -1)),
+        float(config.get("frozen_pr13_rank4_target_total_bpw", -1)),
+        float(config.get("baseline_reproduction_absolute_tolerance", -1)),
+    )
+    expected_targets = (
+        0.9959026317130112, 0.998869448260264,
+        0.9987386067708334, 0.0005,
+    )
+    if frozen_targets != expected_targets:
+        raise RuntimeError("frozen PR13 Rank-4 target changed")
+    expected_rate_grid = sorted({
+        *range(384, 1281, 32),
+        *range(1284, 1537, 4),
+        1506, 1507, 1568, 1600, 1632, 1664,
+    })
+    if list(map(int, config.get("mean_correction_quanta", []))) != expected_rate_grid:
+        raise RuntimeError("matched-target Q3 rate grid changed")
+    if int(config.get("matched_target_search_resolution_quanta", -1)) != 4:
+        raise RuntimeError("matched-target search resolution changed")
+    if config.get("legacy_q2q4_fallback_replica") is not True:
+        raise RuntimeError("legacy Q2/Q4 fallback replica changed")
+
     if list(config.get("allocation_policies", [])) != [
         "uniform_per_expert", "pooled_router_square_multi_budget_column_generated",
         "pooled_exact_combined_moe_local_control",
@@ -415,7 +441,7 @@ def _fit_layouts(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
         raise
 
 
-def _layouts(action_pages: np.ndarray) -> dict[str, Q3PageLayout]:
+def _native_layouts(action_pages: np.ndarray) -> dict[str, Q3PageLayout]:
     return {
         "q2q4_monolithic_same_solver_reference": monolithic_q2q4_layout(UNITS),
         "q3_ideal_logical_256_byte_plane_ceiling": Q3PageLayout("ideal_logical_256", UNITS, None),
@@ -428,6 +454,31 @@ def _layouts(action_pages: np.ndarray) -> dict[str, Q3PageLayout]:
         ),
     }
 
+
+def _with_legacy_fallback(layout: Q3PageLayout) -> Q3PageLayout:
+    if layout.ideal:
+        raise ValueError("ideal layout cannot have a physical fallback replica")
+    legacy = monolithic_q2q4_layout(layout.units)
+    pages = np.concatenate((
+        np.asarray(layout.action_pages, np.int64),
+        np.asarray(legacy.action_pages, np.int64),
+    ), axis=0)
+    return Q3PageLayout(
+        f"{layout.layout_id}_plus_legacy_q2q4_fallback",
+        layout.units, pages, learned=layout.learned, fixed=layout.fixed,
+    )
+
+
+def _layouts(action_pages: np.ndarray) -> dict[str, Q3PageLayout]:
+    native = _native_layouts(action_pages)
+    output = dict(native)
+    for layout_id in (
+        "q3_physical_fixed_gate_up_pairing",
+        "q3_physical_training_coselection_single",
+        "q3_physical_training_coselection_replicated2",
+    ):
+        output[layout_id] = _with_legacy_fallback(native[layout_id])
+    return output
 
 def _option_data(responses: Any, options: Sequence[RateOption], proxy: np.ndarray, beta: float):
     residuals = np.stack([
@@ -455,6 +506,138 @@ def _pareto(options: Sequence[RateOption]) -> tuple[RateOption, ...]:
     return tuple(output)
 
 
+def _merge_rebased_frontiers(
+    field: Q3InteractionField, layout: Q3PageLayout,
+    native: Sequence[RateOption], injections: Sequence[tuple[str, Sequence[RateOption]]],
+    *, maximum_quanta: int,
+) -> tuple[RateOption, ...]:
+    """Union candidate states after charging each under the target layout."""
+    candidates = list(native)
+    witnesses = []
+    for label, frontier in injections:
+        for option in frontier:
+            states = np.asarray(option.states, np.int64)
+            cost = int(layout.cost_quanta(states))
+            if cost > int(maximum_quanta):
+                continue
+            mapped = RateOption(
+                cost, float(field.damage(states)), states.copy(),
+                f"injected_{label}:{option.source}", float(option.page_price),
+                int(option.coordinate_sweeps), int(option.local_passes),
+            )
+            candidates.append(mapped)
+            witnesses.append(mapped)
+    merged = _pareto(candidates)
+    for witness in witnesses:
+        if not any(
+            int(candidate.pages) <= int(witness.pages)
+            and float(candidate.damage) <= float(witness.damage) + 1e-12
+            for candidate in merged
+        ):
+            raise RuntimeError("Q3 frontier lost an injected dominance witness")
+    return merged
+
+
+def _merge_literal_rebased_frontiers(
+    field: Q3InteractionField, layout: Q3PageLayout,
+    native: Sequence[RateOption], injections: Sequence[tuple[str, Sequence[RateOption]]],
+    *, maximum_quanta: int,
+) -> tuple[RateOption, ...]:
+    """Union exact state witnesses without Pareto-pruning them away.
+
+    This is used only after column generation.  The allocator must see every
+    inherited Q2/Q4 state literally: domination by a different compressed
+    state is not a reproducible baseline witness.
+    """
+    candidates = [option for option in native if int(option.pages) <= int(maximum_quanta)]
+    witnesses: list[RateOption] = []
+    for label, frontier in injections:
+        for option in frontier:
+            states = np.asarray(option.states, np.int64)
+            cost = int(layout.cost_quanta(states))
+            if cost > int(maximum_quanta):
+                continue
+            witness = RateOption(
+                cost, float(field.damage(states)), states.copy(),
+                f"literal_{label}:{option.source}", float(option.page_price),
+                int(option.coordinate_sweeps), int(option.local_passes),
+            )
+            candidates.append(witness)
+            witnesses.append(witness)
+
+    unique: dict[tuple[int, bytes], RateOption] = {}
+    for option in candidates:
+        key = (int(option.pages), np.asarray(option.states, np.int64).tobytes())
+        previous = unique.get(key)
+        if previous is None or (
+            float(option.damage), str(option.source)
+        ) < (float(previous.damage), str(previous.source)):
+            unique[key] = option
+    merged = tuple(sorted(
+        unique.values(),
+        key=lambda option: (
+            int(option.pages), float(option.damage), str(option.source),
+            tuple(np.asarray(option.states, np.int64).tolist()),
+        ),
+    ))
+    for witness in witnesses:
+        if not any(
+            int(candidate.pages) == int(witness.pages)
+            and np.array_equal(candidate.states, witness.states)
+            for candidate in merged
+        ):
+            raise RuntimeError("Q3 frontier lost a literal injected state witness")
+    return merged
+
+
+def _rebased_allocation_witness(
+    candidate_frontiers: Sequence[Sequence[RateOption]],
+    reference_frontiers: Sequence[Sequence[RateOption]],
+    reference: AllocationTrace, weights: np.ndarray,
+) -> AllocationTrace:
+    """Map one allocation to identical states in another charged layout."""
+    importance = np.asarray(weights, np.float64).reshape(-1)
+    if importance.shape != (len(candidate_frontiers),):
+        raise ValueError("allocation witness weights do not match frontiers")
+    selected = []
+    for expert, reference_index in enumerate(reference.option_indices.tolist()):
+        reference_option = reference_frontiers[expert][int(reference_index)]
+        matches = [
+            index for index, option in enumerate(candidate_frontiers[expert])
+            if np.array_equal(option.states, reference_option.states)
+        ]
+        if not matches:
+            raise RuntimeError("Q3 frontier lacks a literal group-allocation witness")
+        selected.append(min(matches, key=lambda index: (
+            int(candidate_frontiers[expert][index].pages),
+            float(candidate_frontiers[expert][index].damage), index,
+        )))
+    pages = sum(
+        int(candidate_frontiers[expert][index].pages)
+        for expert, index in enumerate(selected)
+    )
+    objective = sum(
+        float(importance[expert]) * float(candidate_frontiers[expert][index].damage)
+        for expert, index in enumerate(selected)
+    )
+    return AllocationTrace(np.asarray(selected, np.int64), int(pages), float(objective))
+
+
+def _prefer_allocation(candidate: AllocationTrace, witness: AllocationTrace) -> AllocationTrace:
+    return witness if (
+        float(witness.objective), int(witness.pages), tuple(witness.option_indices.tolist())
+    ) < (
+        float(candidate.objective), int(candidate.pages), tuple(candidate.option_indices.tolist())
+    ) else candidate
+
+
+def _assert_allocation_objective_dominates(
+    candidate: AllocationTrace, reference: AllocationTrace, label: str,
+) -> None:
+    if float(candidate.objective) > float(reference.objective) + 1e-10:
+        raise RuntimeError(f"{label} failed compressed-objective dominance")
+
+
 def _uniform(frontiers: Sequence[Sequence[RateOption]], mean_quanta: int) -> AllocationTrace:
     chosen = []
     for frontier in frontiers:
@@ -473,11 +656,9 @@ def _layout_descriptor_bytes(layout_id: str, config: Mapping[str, Any]) -> int:
     return 0
 
 
-def _storage_multiplier(layout_id: str, config: Mapping[str, Any]) -> float:
+def _storage_multiplier(layout_id: str, layout: Q3PageLayout, config: Mapping[str, Any]) -> float:
     base_bytes = BASE_EXACT_BPW * EXPERT_WEIGHTS / 8.0
-    extra_replica = 0
-    if layout_id == "q3_physical_training_coselection_replicated2":
-        extra_replica = 2 * 512 * 2048 * 2 / 8
+    extra_replica = max(layout.replicas - 1, 0) * (2 * 512 * 2048 * 2 / 8)
     resident = int(config["factor_payload_bytes_per_expert"]) + int(config["abc_metadata_bytes_per_expert"])
     resident += _layout_descriptor_bytes(layout_id, config)
     return float((base_bytes + extra_replica + resident) / base_bytes)
@@ -532,11 +713,15 @@ def _allocation_rows(
         "selected_expert_quanta": json.dumps([int(frontiers[e][int(i)].pages) for e, i in enumerate(selected)], separators=(",", ":")),
         "router_weights": json.dumps(weights.tolist(), separators=(",", ":")),
         "selector_wall_time_ms": 1000.0 * float(runtime_seconds),
+        "selector_frontier_wall_time_ms": 1000.0 * float(work["frontier_wall_seconds"]),
+        "selector_allocation_wall_time_ms": 1000.0 * float(work["allocation_wall_seconds"]),
         "selector_compute_macs": solver_macs, "selector_state_comparisons": scalar_comparisons,
         "selector_coordinate_sweeps": int(work["coordinate_sweeps"]),
         "selector_local_passes": int(work["local_passes"]),
+        "selector_diagonal_dp_tables": int(work["diagonal_dp_tables"]),
+        "selector_diagonal_dp_state_updates": int(work["diagonal_dp_state_updates"]),
         "frontier_refinement_rounds": int(work["refinement_rounds"]),
-        "external_storage_multiplier": _storage_multiplier(layout_id, config),
+        "external_storage_multiplier": _storage_multiplier(layout_id, layout, config),
         "exact_h4_gate_up_responses_used": True,
         "exact_cross_expert_information_used": policy == "pooled_exact_combined_moe_local_control",
         "promotable": False,
@@ -585,6 +770,7 @@ def _evaluate_group(task: int):
     weights = np.asarray(group["router_weights"], np.float64)
     expert_ids = list(map(int, group["experts"]))
     layouts = _layouts(_EVAL_CONTEXT["action_pages"])
+    native_layouts = _native_layouts(_EVAL_CONTEXT["action_pages"])
     fields, responses = [], []
     for expert in expert_ids:
         cell = _EVAL_CONTEXT["experts"][expert]
@@ -592,26 +778,90 @@ def _evaluate_group(task: int):
         responses.append(response)
         fields.append(build_q3_interaction_field(cell["factor"], response.hidden, cell["abc"]))
 
+    baseline_id = str(config["reproduced_pr13_baseline_layout"])
+    ideal_id = "q3_ideal_logical_256_byte_plane_ceiling"
+    maximum = int(config["frontier_maximum_quanta"])
     layout_data = {}
     runtime_start = time.perf_counter()
     for layout_id, layout in layouts.items():
+        native_layout = native_layouts[layout_id]
         started = time.perf_counter()
-        frontiers, features, exact, base_features = [], [], [], []
-        sweeps = passes = comparisons = 0
+        frontiers, base_features = [], []
+        sweeps = passes = comparisons = dp_tables = dp_updates = 0
         allowed = Q3_INHERITED_EIGHT_STATE_MAP if layout_id.startswith("q2q4_") else tuple(range(18))
         for expert in range(8):
             trace = q3_rate_frontier(
-                fields[expert], layout, maximum_quanta=int(config["frontier_maximum_quanta"]),
+                fields[expert], native_layout, maximum_quanta=maximum,
                 target_quanta=config["frontier_target_quanta"], price_ratios=config["frontier_price_ratios"],
                 coordinate_sweeps=int(config["coordinate_sweeps"]), local_shortlist=int(config["local_shortlist"]),
                 local_swap_units=int(config["local_swap_units"]), local_max_passes=int(config["local_max_passes"]),
                 price_local_max_passes=int(config["price_local_max_passes"]), allowed_states=allowed,
             )
-            values, damage = _option_data(responses[expert], trace.options, _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"])
+            values, _ = _option_data(
+                responses[expert], trace.options, _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"],
+            )
             zero = next(index for index, option in enumerate(trace.options) if int(option.pages) == 0)
-            frontiers.append(trace.options); features.append(values); exact.append(damage); base_features.append(values[zero])
+            frontiers.append(_merge_rebased_frontiers(
+                fields[expert], layout, (),
+                (("native_layout", trace.options),),
+                maximum_quanta=maximum,
+            ))
+            base_features.append(values[zero])
             sweeps += int(trace.coordinate_sweeps); passes += int(trace.local_passes); comparisons += int(trace.state_comparisons)
-        working = tuple(frontiers)
+            dp_tables += int(trace.diagonal_dp_tables)
+            dp_updates += int(trace.diagonal_dp_state_updates)
+        layout_data[layout_id] = {
+            "layout": layout, "frontiers": tuple(frontiers), "base": tuple(base_features),
+            "runtime": time.perf_counter() - started,
+            "allocation_runtime": 0.0,
+            "work": {"coordinate_sweeps": sweeps, "local_passes": passes,
+                     "state_comparisons": comparisons, "refinement_rounds": 0,
+                     "inherited_candidates_injected": 0,
+                     "diagonal_dp_tables": dp_tables,
+                     "diagonal_dp_state_updates": dp_updates,
+                     "physical_candidates_injected_into_ideal": 0},
+        }
+
+    baseline_frontiers = layout_data[baseline_id]["frontiers"]
+    for layout_id, data in layout_data.items():
+        if layout_id == baseline_id:
+            continue
+        data["frontiers"] = tuple(
+            _merge_rebased_frontiers(
+                fields[expert], data["layout"], data["frontiers"][expert],
+                (("reproduced_pr13_q2q4", baseline_frontiers[expert]),),
+                maximum_quanta=maximum,
+            )
+            for expert in range(8)
+        )
+        data["work"]["inherited_candidates_injected"] = sum(
+            len(frontier) for frontier in baseline_frontiers
+        )
+
+    refinement_order = [
+        layout_id for layout_id in config["layout_controls"] if layout_id != ideal_id
+    ] + [ideal_id]
+    for layout_id in refinement_order:
+        data = layout_data[layout_id]
+        layout = data["layout"]
+        started = time.perf_counter()
+        if layout_id == ideal_id:
+            injected = 0
+            rebuilt = []
+            for expert in range(8):
+                sources = tuple(
+                    (physical_id, layout_data[physical_id]["frontiers"][expert])
+                    for physical_id in config["primary_physical_layouts"]
+                )
+                injected += sum(len(frontier) for _, frontier in sources)
+                rebuilt.append(_merge_rebased_frontiers(
+                    fields[expert], layout, data["frontiers"][expert], sources,
+                    maximum_quanta=maximum,
+                ))
+            data["frontiers"] = tuple(rebuilt)
+            data["work"]["physical_candidates_injected_into_ideal"] = injected
+        allowed = Q3_INHERITED_EIGHT_STATE_MAP if layout_id.startswith("q2q4_") else tuple(range(18))
+        working = data["frontiers"]
         refinement_rounds = 0
         for _ in range(int(config["column_generation_outer_rounds"])):
             for mean in map(int, config["column_generation_mean_quanta"]):
@@ -626,41 +876,129 @@ def _evaluate_group(task: int):
                     allowed_states=allowed,
                 )
                 working = refinement.frontiers
-                sweeps += int(refinement.coordinate_sweeps); passes += int(refinement.local_passes)
-                comparisons += 18 * UNITS * int(refinement.coordinate_sweeps)
+                data["work"]["coordinate_sweeps"] += int(refinement.coordinate_sweeps)
+                data["work"]["local_passes"] += int(refinement.local_passes)
+                data["work"]["state_comparisons"] += 18 * UNITS * int(refinement.coordinate_sweeps)
                 refinement_rounds += int(refinement.rounds)
         features, exact = [], []
         for expert in range(8):
             values, damage = _option_data(responses[expert], working[expert], _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"])
             features.append(values); exact.append(damage)
-        layout_data[layout_id] = {
-            "layout": layout, "frontiers": working, "features": tuple(features),
-            "exact": tuple(exact), "base": tuple(base_features),
-            "runtime": time.perf_counter() - started,
-            "work": {"coordinate_sweeps": sweeps, "local_passes": passes,
-                     "state_comparisons": comparisons, "refinement_rounds": refinement_rounds},
-        }
+        data["frontiers"] = working
+        data["features"] = tuple(features)
+        data["exact"] = tuple(exact)
+        data["runtime"] += time.perf_counter() - started
+        data["work"]["refinement_rounds"] = refinement_rounds
+
+    final_baseline_frontiers = layout_data[baseline_id]["frontiers"]
+    # Column generation Pareto-prunes aggressively.  Reinsert every inherited
+    # state literally after refinement, then place every final physical state
+    # in the ideal control.  Recompute exact option arrays for the expanded
+    # frontiers so row indices remain a closed evidence contract.
+    for physical_id in config["primary_physical_layouts"]:
+        data = layout_data[physical_id]
+        data["frontiers"] = tuple(
+            _merge_literal_rebased_frontiers(
+                fields[expert], data["layout"], data["frontiers"][expert],
+                (("reproduced_pr13_q2q4", final_baseline_frontiers[expert]),),
+                maximum_quanta=maximum,
+            )
+            for expert in range(8)
+        )
+    ideal = layout_data[ideal_id]
+    ideal["frontiers"] = tuple(
+        _merge_literal_rebased_frontiers(
+            fields[expert], ideal["layout"], ideal["frontiers"][expert],
+            tuple(
+                (physical_id, layout_data[physical_id]["frontiers"][expert])
+                for physical_id in config["primary_physical_layouts"]
+            ),
+            maximum_quanta=maximum,
+        )
+        for expert in range(8)
+    )
+    for data in layout_data.values():
+        features, exact = [], []
+        for expert in range(8):
+            values, damage = _option_data(
+                responses[expert], data["frontiers"][expert],
+                _EVAL_CONTEXT["proxy"], _EVAL_CONTEXT["beta"],
+            )
+            features.append(values); exact.append(damage)
+        data["features"] = tuple(features)
+        data["exact"] = tuple(exact)
+
+    router_cache = {}
+    for mean in map(int, config["mean_correction_quanta"]):
+        for layout_id, data in layout_data.items():
+            started = time.perf_counter()
+            router_cache[(layout_id, mean)] = multiple_choice_allocate(
+                data["frontiers"], 8 * mean, weights * weights,
+            )
+            data["allocation_runtime"] += time.perf_counter() - started
+        baseline_allocation = router_cache[(baseline_id, mean)]
+        for physical_id in config["primary_physical_layouts"]:
+            witness = _rebased_allocation_witness(
+                layout_data[physical_id]["frontiers"], final_baseline_frontiers,
+                baseline_allocation, weights * weights,
+            )
+            if int(witness.pages) > 8 * mean:
+                raise RuntimeError("inherited Q2/Q4 allocation witness exceeds Q3 budget")
+            router_cache[(physical_id, mean)] = _prefer_allocation(
+                router_cache[(physical_id, mean)], witness,
+            )
+            _assert_allocation_objective_dominates(
+                router_cache[(physical_id, mean)], baseline_allocation,
+                f"{physical_id} Q3 at {mean} quanta",
+            )
+
+        for physical_id in config["primary_physical_layouts"]:
+            physical = router_cache[(physical_id, mean)]
+            witness = _rebased_allocation_witness(
+                layout_data[ideal_id]["frontiers"],
+                layout_data[physical_id]["frontiers"], physical, weights * weights,
+            )
+            if int(witness.pages) > 8 * mean:
+                raise RuntimeError("physical allocation witness exceeds ideal Q3 budget")
+            router_cache[(ideal_id, mean)] = _prefer_allocation(
+                router_cache[(ideal_id, mean)], witness,
+            )
+            _assert_allocation_objective_dominates(
+                router_cache[(ideal_id, mean)], physical,
+                f"ideal Q3 versus {physical_id} at {mean} quanta",
+            )
+
+    allocation_cache = {}
+    for layout_id in config["layout_controls"]:
+        data = layout_data[layout_id]
+        for mean in map(int, config["mean_correction_quanta"]):
+            started = time.perf_counter()
+            router = router_cache[(layout_id, mean)]
+            allocations = (
+                ("uniform_per_expert", _uniform(data["frontiers"], mean)),
+                ("pooled_router_square_multi_budget_column_generated", router),
+                ("pooled_exact_combined_moe_local_control", exact_group_option_allocate(
+                    data["frontiers"], data["features"], weights, 8 * mean,
+                    router.option_indices,
+                    max_coordinate_sweeps=int(config["exact_group_coordinate_sweeps"]),
+                    max_pair_passes=int(config["exact_group_pair_passes"]),
+                )),
+            )
+            allocation_cache[(layout_id, mean)] = allocations
+            data["allocation_runtime"] += time.perf_counter() - started
+        data["work"]["frontier_wall_seconds"] = float(data["runtime"])
+        data["work"]["allocation_wall_seconds"] = float(data["allocation_runtime"])
 
     rows, expert_rows = [], []
     for layout_id in config["layout_controls"]:
         data = layout_data[layout_id]
         for mean in map(int, config["mean_correction_quanta"]):
-            allocations = []
-            uniform = _uniform(data["frontiers"], mean)
-            allocations.append(("uniform_per_expert", uniform))
-            router = multiple_choice_allocate(data["frontiers"], 8 * mean, weights * weights)
-            allocations.append(("pooled_router_square_multi_budget_column_generated", router))
-            exact_group = exact_group_option_allocate(
-                data["frontiers"], data["features"], weights, 8 * mean,
-                router.option_indices, max_coordinate_sweeps=int(config["exact_group_coordinate_sweeps"]),
-                max_pair_passes=int(config["exact_group_pair_passes"]),
-            )
-            allocations.append(("pooled_exact_combined_moe_local_control", exact_group))
+            allocations = allocation_cache[(layout_id, mean)]
             for policy, allocation in allocations:
                 row, experts = _allocation_rows(
                     group, layout_id, data["layout"], data["frontiers"], data["features"],
                     data["exact"], data["base"], weights, mean, policy, allocation,
-                    data["runtime"], data["work"], config,
+                    data["runtime"] + data["allocation_runtime"], data["work"], config,
                 )
                 rows.append(row); expert_rows.extend(experts)
     return int(task), rows, expert_rows, {
@@ -801,6 +1139,7 @@ def _evaluate(args: argparse.Namespace, config: Mapping[str, Any]) -> None:
             "mean_correction_quanta": config["mean_correction_quanta"],
             "physical_cost_convention": "two_256_byte_planes_per_512_byte_page_charged_by_exact_unique_page_union",
             "replicated_cost_convention": "choose_one_complete_layout_replica_with_minimum_union_per_expert_invocation_no_cross_replica_mixing",
+            "legacy_q2q4_fallback_replica": True,
         }
         _atomic_json(args.output / ACCOUNTING, accounting)
         facts["completed"] = True

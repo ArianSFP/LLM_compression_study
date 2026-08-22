@@ -7,7 +7,7 @@ from oracle_study.q3_gate_up_analysis import (
     accuracy_table, promotion_payload, threshold_table,
 )
 
-from analyze_q3_gate_up_layout import EXPERIMENT, _experiment_path
+from analyze_q3_gate_up_layout import EXPERIMENT, _experiment_path, _normalize_svg, _report
 
 
 
@@ -23,6 +23,13 @@ def test_analyzer_resolves_repository_relative_cli_paths():
     assert _experiment_path(relative) == (EXPERIMENT / relative).resolve()
     absolute = Path("/tmp/q3-analysis-output")
     assert _experiment_path(absolute) == absolute.resolve()
+
+
+def test_svg_normalization_removes_trailing_whitespace(tmp_path):
+    path = tmp_path / "plot.svg"
+    path.write_text("<svg>  \n  <path /> \t\n</svg>\n")
+    _normalize_svg(path)
+    assert path.read_text() == "<svg>\n  <path />\n</svg>\n"
 
 
 def _rows():
@@ -64,18 +71,50 @@ def test_promotion_uses_residual_ratio_or_matched_rate_shift():
         "primary_physical_layouts": ["q3_physical_fixed_gate_up_pairing"],
         "promotion_same_rate_remaining_damage_ratio_max": .8,
         "promotion_matched_quality_total_bpw_delta_max": -.1,
+        "frozen_pr13_rank4_target_recovery_p10": .9942,
+        "frozen_pr13_rank4_target_recovery_median": .995,
+        "frozen_pr13_rank4_target_total_bpw": 1.0,
+        "baseline_reproduction_absolute_tolerance": 1e-12,
+        "matched_target_search_resolution_quanta": 20,
+        "cost_quantum_bytes": 256,
+        "expert_weights": 409600,
         "study_scope": "synthetic",
     }
     payload = promotion_payload(accuracy, config)
     assert payload["gate_up_q3_status"] == "continue_to_predictive_q3_study"
     assert payload["selected_physical_layout"] == "q3_physical_fixed_gate_up_pairing"
     comparison = payload["physical_layout_comparisons"][0]
-    assert np.isclose(comparison["strict_median_remaining_damage_ratio_vs_baseline"], .6)
+    assert np.isclose(
+        comparison["strict_median_remaining_damage_ratio_vs_frozen_pr13_target"], .6,
+    )
+    assert payload["restored_eight_state_baseline"]["reproduction_pass"] is True
+    assert np.isclose(payload["frozen_pr13_rank4_target"]["search_resolution_total_bpw"], .1)
+    assert comparison["matched_frozen_pr13_mean_quanta"] == 120
+    assert np.isclose(comparison["previous_sampled_total_bpw"], .8)
     diagnostic = payload["ideal_logical_solver_diagnostic"]
+    assert diagnostic["candidate_frontier_is_constructive_superset_of_every_physical_frontier"] is True
     assert diagnostic["reported_ideal_control_is_certified_global_ceiling"] is False
     assert diagnostic["strict_feasible_witness_layout"] == "q3_physical_fixed_gate_up_pairing"
     assert np.isclose(diagnostic["solver_median_recovery_gap_to_feasible_witness"], .001)
-    assert payload["schema_version"] == 2
+    assert payload["schema_version"] == 3
+    runtime = pd.DataFrame([
+        {
+            "layout_id": layout,
+            "wall_ms_p50": 1.0,
+            "frontier_ms_p50": 1.0,
+            "allocation_ms_p50": 1.0,
+            "wall_ms_p90": 1.0,
+            "wall_ms_p99": 1.0,
+            "coordinate_sweeps_median": 1.0,
+            "local_passes_median": 1.0,
+            "diagonal_dp_tables_median": 1.0,
+            "diagonal_dp_state_updates_median": 1.0,
+        }
+        for layout in sorted(accuracy.layout_id.unique())
+    ])
+    report = _report(accuracy, pd.DataFrame(), payload, runtime, config)
+    assert "witness-minus-ideal recovery gaps" in report
+    assert "positive means the ideal solver trails" in report
 
 
 def test_layout_accounting_is_derived_from_frozen_payloads():
@@ -90,5 +129,5 @@ def test_layout_accounting_is_derived_from_frozen_payloads():
     single = _expected_layout_accounting("q3_physical_training_coselection_single", config)
     replicated = _expected_layout_accounting("q3_physical_training_coselection_replicated2", config)
     assert baseline[:3] == (0, 1, True) and ideal[:3] == (0, 0, False)
-    assert single[:3] == (16, 1, True) and replicated[:3] == (32, 2, True)
+    assert single[:3] == (16, 2, True) and replicated[:3] == (32, 3, True)
     assert replicated[3] > single[3] > 1.0

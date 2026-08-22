@@ -1,3 +1,5 @@
+from itertools import product
+
 import numpy as np
 
 from oracle_study.average_rate_allocator import multiple_choice_allocate
@@ -5,9 +7,10 @@ from oracle_study.interaction_field import JointInteractionFactor
 from oracle_study.neuron_selector import UnitScoreMetadata
 from oracle_study.q3_gate_up_field import (
     Q3_INHERITED_EIGHT_STATE_MAP, Q3PageLayout, build_q3_interaction_field,
-    fixed_gate_up_layout, monolithic_q2q4_layout,
+    fixed_gate_up_layout, monolithic_q2q4_layout, q3_additive_state_costs,
 )
 from oracle_study.q3_rate_allocator import (
+    build_q3_diagonal_dp_table,
     q3_allocation_aware_rate_frontiers, q3_rate_frontier,
     training_plane_incidence,
 )
@@ -77,3 +80,34 @@ def test_same_solver_reference_never_admits_q3_states():
     )
     allowed = set(map(int, Q3_INHERITED_EIGHT_STATE_MAP))
     assert all(set(map(int, option.states)) <= allowed for option in trace.options)
+    assert any(option.source.startswith("exact_self_dp_repaired_")
+               for option in trace.options)
+
+
+def test_exact_self_dp_matches_bruteforce_for_full_and_inherited_states():
+    field = _field(51, units=3, rank=2)
+    layout = fixed_gate_up_layout(field.units)
+    costs = q3_additive_state_costs(layout)
+    assert costs is not None
+    assert costs.tolist() == [
+        0, 2, 2, 4, 4, 6, 2, 4, 2, 4, 4, 6, 4, 6, 4, 6, 4, 6,
+    ]
+    local = np.asarray(field.local_damage)
+    for allowed in (tuple(range(18)), tuple(map(int, Q3_INHERITED_EIGHT_STATE_MAP))):
+        table = build_q3_diagonal_dp_table(
+            field, layout, 18, allowed_states=allowed,
+        )
+        for budget in range(19):
+            seed = table.seed(budget)
+            assert layout.cost_quanta(seed) <= budget
+            assert set(map(int, seed)) <= set(allowed)
+            observed = float(local[np.arange(field.units), seed].sum())
+            feasible = [
+                states for states in product(allowed, repeat=field.units)
+                if sum(int(costs[state]) for state in states) <= budget
+            ]
+            expected = min(
+                float(local[np.arange(field.units), np.asarray(states)].sum())
+                for states in feasible
+            )
+            assert np.isclose(observed, expected, rtol=0, atol=1e-12)

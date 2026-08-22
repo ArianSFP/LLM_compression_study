@@ -1,0 +1,142 @@
+{
+  "actions_per_layer": 2048,
+  "average_allocator_core_sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b",
+  "base_pr13_allocator_sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b",
+  "base_pr13_config_sha256": "a889dbf9c5ebdf79de0e7e7b7d65165d9f39782d72d669e073c80966e5d83edf",
+  "base_pr13_fit_facts_sha256": "f4191af6db2041a5235a44fa9c3325baf7d3356670b440417db50e1f07f90693",
+  "base_pr13_fit_manifest_sha256": "1b11e5fe32b27db0a7e1edcd45f57abebe76997d701c2e1b0ed80291a5b24f54",
+  "base_pr13_promotions_sha256": "59d55019d72a2895452c6afe679152ab7768293c75a664c3e499b5f0e080a2f2",
+  "base_pr13_runner_sha256": "55dd6f1b28b3dea36913943d5094b007176ddeabf8c12925dfbcf200118acaae",
+  "base_pr13_split_core_sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82",
+  "base_pr13_validation_facts_sha256": "b791fc211f804826f2fba3661eb8cc4cb3859b4cff2e13a7e0b41c4e48a24166",
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "config_sha256": "d5817503e23350785cdf0f0eae0cf4bd1d2c93c72f601baa29ab1ef82436a073",
+  "fit_split": "train",
+  "interaction_core_sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab",
+  "layers": {
+    "0": {
+      "fit_split": "train",
+      "incidence_rows": 3288,
+      "incidence_sha256": "130758fca10161676aae946bb7fce7063255a6cd407778cc1b1bfc2312bbee44",
+      "layer": 0,
+      "routed_experts": 166,
+      "routed_train_invocations": 548,
+      "runtime_provenance": {
+        "device": "cuda:0",
+        "gpu_names_used": [
+          "NVIDIA GeForce RTX 3090"
+        ],
+        "host": "7c98fa9c21f0",
+        "numpy_version": "2.1.2",
+        "python_version": "3.12.3",
+        "torch_cuda_runtime": "12.8",
+        "torch_version": "2.8.0+cu128"
+      },
+      "shard": "q3_layout_layer_0.npz",
+      "shard_bytes": 11357,
+      "shard_sha256": "eb607120541892755b0ad1b2a3ce920b02ed5aceecbcecbedd7bb282adfebe13",
+      "sidecar_sha256": "94c6c48eb65bfd1128eaf38f6e5150d231effde6194fd3a95901c0aa71602e78",
+      "validation_or_test_values_used": false
+    },
+    "20": {
+      "fit_split": "train",
+      "incidence_rows": 2424,
+      "incidence_sha256": "dfeed9b9a7bac39dc455a3e24be8314f993da1f59ce7d59efc9d1e7d8c707190",
+      "layer": 20,
+      "routed_experts": 121,
+      "routed_train_invocations": 404,
+      "runtime_provenance": {
+        "device": "cuda:0",
+        "gpu_names_used": [
+          "NVIDIA GeForce RTX 3090"
+        ],
+        "host": "7c98fa9c21f0",
+        "numpy_version": "2.1.2",
+        "python_version": "3.12.3",
+        "torch_cuda_runtime": "12.8",
+        "torch_version": "2.8.0+cu128"
+      },
+      "shard": "q3_layout_layer_20.npz",
+      "shard_bytes": 11856,
+      "shard_sha256": "caa16122d52164263dc79694f9dc3fed0c959862674889504527ba77d247ddd4",
+      "sidecar_sha256": "2e773ae807a855d7d77be42eb5f4951ab121220518043587c70f981d6fc4e251",
+      "validation_or_test_values_used": false
+    },
+    "39": {
+      "fit_split": "train",
+      "incidence_rows": 2562,
+      "incidence_sha256": "12b37d999a6b52c919376e614866195ea034b1096098021f1409cac07a9ca058",
+      "layer": 39,
+      "routed_experts": 117,
+      "routed_train_invocations": 427,
+      "runtime_provenance": {
+        "device": "cuda:0",
+        "gpu_names_used": [
+          "NVIDIA GeForce RTX 3090"
+        ],
+        "host": "7c98fa9c21f0",
+        "numpy_version": "2.1.2",
+        "python_version": "3.12.3",
+        "torch_cuda_runtime": "12.8",
+        "torch_version": "2.8.0+cu128"
+      },
+      "shard": "q3_layout_layer_39.npz",
+      "shard_bytes": 11518,
+      "shard_sha256": "308df1c7dc55be77336cc663354e951df443be966a6677d1de769442bac234d1",
+      "sidecar_sha256": "239158571e15f727d780bb67492ab2acf440a0d9521e70b2e8d7fa563caa2023",
+      "validation_or_test_values_used": false
+    },
+    "4": {
+      "fit_split": "train",
+      "incidence_rows": 2526,
+      "incidence_sha256": "57d3cf4c52d37c6f77b26ed648e4a6880ef86fba48ce03539753365c7354a32c",
+      "layer": 4,
+      "routed_experts": 122,
+      "routed_train_invocations": 421,
+      "runtime_provenance": {
+        "device": "cuda:0",
+        "gpu_names_used": [
+          "NVIDIA GeForce RTX 3090"
+        ],
+        "host": "7c98fa9c21f0",
+        "numpy_version": "2.1.2",
+        "python_version": "3.12.3",
+        "torch_cuda_runtime": "12.8",
+        "torch_version": "2.8.0+cu128"
+      },
+      "shard": "q3_layout_layer_4.npz",
+      "shard_bytes": 11512,
+      "shard_sha256": "d5c6ce63bd681cd50c9930726cc71cbfc9bf4dd0b97cb5c64633890c88e95899",
+      "sidecar_sha256": "32e95f512a815c26954e38175f4529ccc97e83183db4aa6f6cbe657d0ae54b6c",
+      "validation_or_test_values_used": false
+    }
+  },
+  "layout_scope": "layer_shared_training_only_routed_exact_checkpoint_incidence",
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "pages_per_replica": 1024,
+  "q3_allocator_core_sha256": "5ad3de7ca43eb28af22e190e8438489f10d3460ad3479f898ebec28a022c2a1f",
+  "q3_field_core_sha256": "0db2424dbea62d4d31dd06ae3c6e6ad0d892424f549ebaf3aaf069e486756302",
+  "replicas": 2,
+  "run_id": "qwen36_mxfp4_q3_dp_dominance_20260822_v1",
+  "runner_sha256": "738eb06c35f11ba2a631e34f78d4d02e8332375e07b89b988c2afb3d0a0f33c9",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "host": "7c98fa9c21f0",
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "schema_version": 1,
+  "set_utility_runner_sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73",
+  "sparse_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "split_core_sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82",
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_or_test_values_used": false
+}

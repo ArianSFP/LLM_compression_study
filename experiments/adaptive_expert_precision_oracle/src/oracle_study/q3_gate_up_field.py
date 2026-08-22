@@ -42,6 +42,7 @@ __all__ = [
     "Q3LocalSearchTrace", "q3_projection_responses", "q3_state_output",
     "q3_exact_damage", "build_q3_interaction_field", "plane_action_id",
     "fixed_gate_up_layout", "fit_coselection_layouts",
+    "q3_additive_state_costs",
     "q3_coordinate_descent", "q3_local_search",
 ]
 
@@ -247,7 +248,7 @@ def build_q3_interaction_field(
 
 @dataclass(frozen=True)
 class Q3PageLayout:
-    """One ideal layout or one/two complete physical gate/up replicas."""
+    """One ideal layout or up to three complete physical gate/up replicas."""
 
     layout_id: str
     units: int
@@ -264,8 +265,8 @@ class Q3PageLayout:
         pages = np.asarray(self.action_pages, np.int64)
         if pages.ndim != 2 or pages.shape[1] != 4 * units:
             raise ValueError("physical action_pages must have shape [replica,4*units]")
-        if pages.shape[0] not in (1, 2) or np.any(pages < 0):
-            raise ValueError("physical layout supports one or two nonnegative replicas")
+        if pages.shape[0] not in (1, 2, 3) or np.any(pages < 0):
+            raise ValueError("physical layout supports one to three nonnegative replicas")
         for replica in pages:
             counts = np.bincount(replica)
             if counts.shape[0] != 2 * units or np.any(counts != 2):
@@ -367,6 +368,41 @@ def monolithic_q2q4_layout(units: int = 512) -> Q3PageLayout:
             pages[0, plane_action_id(projection, 1, unit, units)] = page
             pages[0, plane_action_id(projection, 2, unit, units)] = page
     return Q3PageLayout("monolithic_q2q4_projection_page", int(units), pages, fixed=True)
+
+
+def q3_additive_state_costs(layout: Q3PageLayout) -> np.ndarray | None:
+    """Return exact per-unit costs when a layout has no cross-unit sharing.
+
+    The ideal plane control, fixed same-unit gate/up pairing, and inherited
+    monolithic Q2/Q4 layout are additive. Training-fitted layouts deliberately
+    pair actions across units and therefore return None.
+    """
+    if layout.ideal:
+        costs = np.asarray(Q3_IDEAL_COST_QUANTA, np.int64)
+    elif layout.layout_id == "fixed_gate_up_same_unit_stage":
+        costs = 2 * (
+            np.maximum(Q3_STATE_GATE_LEVEL, Q3_STATE_UP_LEVEL)
+            + Q3_STATE_DOWN_HIGH.astype(np.int64)
+        )
+    elif layout.layout_id == "monolithic_q2q4_projection_page":
+        costs = 2 * (
+            (Q3_STATE_GATE_LEVEL > 0).astype(np.int64)
+            + (Q3_STATE_UP_LEVEL > 0).astype(np.int64)
+            + Q3_STATE_DOWN_HIGH.astype(np.int64)
+        )
+    else:
+        return None
+    costs = np.asarray(costs, np.int64)
+    for state in range(18):
+        probe = np.full(layout.units, Q3_TARGET_STATE, np.int64)
+        baseline = layout.cost_quanta(probe)
+        probe[0] = state
+        if layout.cost_quanta(probe) - baseline != int(
+            costs[state] - costs[Q3_TARGET_STATE]
+        ):
+            raise RuntimeError("declared additive Q3 layout cost changed")
+    costs.setflags(write=False)
+    return costs
 
 
 def _greedy_pairing(
