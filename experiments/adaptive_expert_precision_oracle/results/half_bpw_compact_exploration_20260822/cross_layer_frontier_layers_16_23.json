@@ -1,0 +1,3675 @@
+{
+  "cost_contract": {
+    "base_pr13_group_compute_macs": 79712256,
+    "cross_layer_dp_is_small_control_overhead": true,
+    "geometry_ratio_vs_pr13": 1.0,
+    "group_geometry_bytes": 73856
+  },
+  "elapsed_seconds": 226.09901266545057,
+  "groups": [
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.08749810860726215,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.08300209862838236,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00018519695792618417,
+          "exact_normalized_damage": 0.002116582413883324,
+          "pages": 2045,
+          "predicted_damage": 0.00016585954680234987,
+          "predicted_normalized_damage": 0.0019982572675052174,
+          "recovery": 0.9978834175861166,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.00014749417560540256,
+          "exact_normalized_damage": 0.0016856841588134726,
+          "pages": 2302,
+          "predicted_damage": 0.0001355832050499766,
+          "predicted_normalized_damage": 0.0016334912886601916,
+          "recovery": 0.9983143158411866,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.00012159558793691549,
+          "exact_normalized_damage": 0.0013896939016442159,
+          "pages": 2549,
+          "predicted_damage": 0.00011201917956379367,
+          "predicted_normalized_damage": 0.0013495945453780248,
+          "recovery": 0.9986103060983558,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 9.70182068671899e-05,
+          "exact_normalized_damage": 0.0011088034748574851,
+          "pages": 2811,
+          "predicted_damage": 9.094282531831456e-05,
+          "predicted_normalized_damage": 0.0010956689869431433,
+          "recovery": 0.9988911965251425,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 7.70456369529226e-05,
+          "exact_normalized_damage": 0.0008805405988687621,
+          "pages": 3070,
+          "predicted_damage": 7.398197393965154e-05,
+          "predicted_normalized_damage": 0.0008913265467043696,
+          "recovery": 0.9991194594011312,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 6.77358588397057e-05,
+          "exact_normalized_damage": 0.0007741408347892422,
+          "pages": 3328,
+          "predicted_damage": 6.380561789760112e-05,
+          "predicted_normalized_damage": 0.0007687229473952475,
+          "recovery": 0.9992258591652108,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 5.9144090160175083e-05,
+          "exact_normalized_damage": 0.0006759470701891979,
+          "pages": 3580,
+          "predicted_damage": 5.4765178716285547e-05,
+          "predicted_normalized_damage": 0.000659804747365252,
+          "recovery": 0.9993240529298109,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 4.927186171670452e-05,
+          "exact_normalized_damage": 0.0005631191633851507,
+          "pages": 3836,
+          "predicted_damage": 4.682415154130791e-05,
+          "predicted_normalized_damage": 0.0005641321402118923,
+          "recovery": 0.9994368808366149,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 4.020191339539004e-05,
+          "exact_normalized_damage": 0.00045946037046169216,
+          "pages": 4095,
+          "predicted_damage": 3.9078497729005994e-05,
+          "predicted_normalized_damage": 0.0004708133694783857,
+          "recovery": 0.9995405396295383,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 3.1926093875356245e-05,
+          "exact_normalized_damage": 0.0003648775314522222,
+          "pages": 4352,
+          "predicted_damage": 3.190329863409586e-05,
+          "predicted_normalized_damage": 0.0003843673733712874,
+          "recovery": 0.9996351224685478,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 2.6812826243121342e-05,
+          "exact_normalized_damage": 0.0003064389238797322,
+          "pages": 4605,
+          "predicted_damage": 2.5554455136610146e-05,
+          "predicted_normalized_damage": 0.0003078772170692063,
+          "recovery": 0.9996935610761203,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.08749810860726215,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.08300209862838236,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.00018519695792618417,
+          "exact_normalized_damage": 0.002116582413883324,
+          "pages": 2045,
+          "predicted_damage": 0.00016585954680234987,
+          "predicted_normalized_damage": 0.0019982572675052174,
+          "recovery": 0.9978834175861166,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.00014749417560540256,
+          "exact_normalized_damage": 0.0016856841588134726,
+          "pages": 2302,
+          "predicted_damage": 0.0001355832050499766,
+          "predicted_normalized_damage": 0.0016334912886601916,
+          "recovery": 0.9983143158411866,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0001195955802844287,
+          "exact_normalized_damage": 0.0013668361772394076,
+          "pages": 2557,
+          "predicted_damage": 0.00011460415024302535,
+          "predicted_normalized_damage": 0.0013807379829771768,
+          "recovery": 0.9986331638227606,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 9.70182068671899e-05,
+          "exact_normalized_damage": 0.0011088034748574851,
+          "pages": 2811,
+          "predicted_damage": 9.094282531831456e-05,
+          "predicted_normalized_damage": 0.0010956689869431433,
+          "recovery": 0.9988911965251425,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 7.677676337528475e-05,
+          "exact_normalized_damage": 0.000877467691557763,
+          "pages": 3071,
+          "predicted_damage": 7.542118204732393e-05,
+          "predicted_normalized_damage": 0.0009086659650016832,
+          "recovery": 0.9991225323084423,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 6.698404980191583e-05,
+          "exact_normalized_damage": 0.0007655485457700088,
+          "pages": 3327,
+          "predicted_damage": 6.429065056457439e-05,
+          "predicted_normalized_damage": 0.0007745665667131742,
+          "recovery": 0.99923445145423,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 5.5831884852065556e-05,
+          "exact_normalized_damage": 0.0006380924769776296,
+          "pages": 3581,
+          "predicted_damage": 5.494542484110117e-05,
+          "predicted_normalized_damage": 0.0006619763325154374,
+          "recovery": 0.9993619075230223,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 4.7784206237947105e-05,
+          "exact_normalized_damage": 0.0005461170189681234,
+          "pages": 3840,
+          "predicted_damage": 4.831336835121307e-05,
+          "predicted_normalized_damage": 0.0005820740577599376,
+          "recovery": 0.9994538829810319,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 3.861454469834339e-05,
+          "exact_normalized_damage": 0.00044131862177348215,
+          "pages": 4095,
+          "predicted_damage": 3.9871376328295706e-05,
+          "predicted_normalized_damage": 0.00048036588215447595,
+          "recovery": 0.9995586813782266,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 3.16861638228963e-05,
+          "exact_normalized_damage": 0.00036213541443644895,
+          "pages": 4341,
+          "predicted_damage": 3.2479521828831914e-05,
+          "predicted_normalized_damage": 0.00039130964596750117,
+          "recovery": 0.9996378645855636,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 2.6552332391763245e-05,
+          "exact_normalized_damage": 0.00030346178693923745,
+          "pages": 4605,
+          "predicted_damage": 2.5854118166519108e-05,
+          "predicted_normalized_damage": 0.00031148752373447045,
+          "recovery": 0.9996965382130608,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 16,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.12236676998776966,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.11126328362325733,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.006046937675914114,
+          "exact_normalized_damage": 0.049416501526668516,
+          "pages": 2048,
+          "predicted_damage": 0.005865202844439333,
+          "predicted_normalized_damage": 0.05271463014069568,
+          "recovery": 0.9505834984733315,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.004894834565046465,
+          "exact_normalized_damage": 0.040001338317058585,
+          "pages": 2302,
+          "predicted_damage": 0.004731313340825737,
+          "predicted_normalized_damage": 0.04252358178504047,
+          "recovery": 0.9599986616829415,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.003924919207098135,
+          "exact_normalized_damage": 0.03207504134897427,
+          "pages": 2560,
+          "predicted_damage": 0.003917032160946837,
+          "predicted_normalized_damage": 0.035205074247225084,
+          "recovery": 0.9679249586510257,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.0031281126860424995,
+          "exact_normalized_damage": 0.02556341632908304,
+          "pages": 2811,
+          "predicted_damage": 0.003198507902335274,
+          "predicted_normalized_damage": 0.02874720031781168,
+          "recovery": 0.974436583670917,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.002643861389310175,
+          "exact_normalized_damage": 0.021606040508991325,
+          "pages": 3072,
+          "predicted_damage": 0.0026100028509482543,
+          "predicted_normalized_damage": 0.023457898831979882,
+          "recovery": 0.9783939594910087,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0022148328412277666,
+          "exact_normalized_damage": 0.018099953455085357,
+          "pages": 3323,
+          "predicted_damage": 0.0022421052770243803,
+          "predicted_normalized_damage": 0.020151349160395567,
+          "recovery": 0.9819000465449147,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0019154860571587943,
+          "exact_normalized_damage": 0.015653645653556467,
+          "pages": 3579,
+          "predicted_damage": 0.001907970927793099,
+          "predicted_normalized_damage": 0.017148252915612106,
+          "recovery": 0.9843463543464436,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.001625189183113138,
+          "exact_normalized_damage": 0.013281295103855178,
+          "pages": 3829,
+          "predicted_damage": 0.0016488046535273826,
+          "predicted_normalized_damage": 0.01481894655482497,
+          "recovery": 0.9867187048961448,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.0013848226934540689,
+          "exact_normalized_damage": 0.011316983308397201,
+          "pages": 4093,
+          "predicted_damage": 0.0013845263927059722,
+          "predicted_normalized_damage": 0.01244369523906955,
+          "recovery": 0.9886830166916027,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0011278020952189072,
+          "exact_normalized_damage": 0.00921657158501143,
+          "pages": 4342,
+          "predicted_damage": 0.001151566883439624,
+          "predicted_normalized_damage": 0.010349927181179403,
+          "recovery": 0.9907834284149886,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.0009876399666377087,
+          "exact_normalized_damage": 0.008071145187017861,
+          "pages": 4601,
+          "predicted_damage": 0.0009619703180303348,
+          "predicted_normalized_damage": 0.008645891858518317,
+          "recovery": 0.9919288548129821,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.12236676998776966,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.11126328362325733,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.005970706281071732,
+          "exact_normalized_damage": 0.04879352688371601,
+          "pages": 2047,
+          "predicted_damage": 0.006031451112722245,
+          "predicted_normalized_damage": 0.05420881818610549,
+          "recovery": 0.951206473116284,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.004800366249353925,
+          "exact_normalized_damage": 0.03922932876167045,
+          "pages": 2302,
+          "predicted_damage": 0.004780038127767495,
+          "predicted_normalized_damage": 0.04296150510848599,
+          "recovery": 0.9607706712383296,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0038892324752846075,
+          "exact_normalized_damage": 0.03178340390674143,
+          "pages": 2555,
+          "predicted_damage": 0.0039172595551387485,
+          "predicted_normalized_damage": 0.03520711799593092,
+          "recovery": 0.9682165960932586,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.0031281126860424995,
+          "exact_normalized_damage": 0.02556341632908304,
+          "pages": 2811,
+          "predicted_damage": 0.003198507902335274,
+          "predicted_normalized_damage": 0.02874720031781168,
+          "recovery": 0.974436583670917,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.0026269296847863857,
+          "exact_normalized_damage": 0.021467672024430673,
+          "pages": 3070,
+          "predicted_damage": 0.0026489207455558154,
+          "predicted_normalized_damage": 0.02380768083858809,
+          "recovery": 0.9785323279755693,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.002201326888970297,
+          "exact_normalized_damage": 0.017989580743124265,
+          "pages": 3326,
+          "predicted_damage": 0.0022677843514063737,
+          "predicted_normalized_damage": 0.02038214474314094,
+          "recovery": 0.9820104192568757,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.0018830215540282008,
+          "exact_normalized_damage": 0.015388340758004854,
+          "pages": 3580,
+          "predicted_damage": 0.0019262130433671774,
+          "predicted_normalized_damage": 0.017312207411471197,
+          "recovery": 0.9846116592419951,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.001625189183113138,
+          "exact_normalized_damage": 0.013281295103855178,
+          "pages": 3829,
+          "predicted_damage": 0.0016488046535273826,
+          "predicted_normalized_damage": 0.01481894655482497,
+          "recovery": 0.9867187048961448,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.0013670601140735197,
+          "exact_normalized_damage": 0.011171824787155492,
+          "pages": 4092,
+          "predicted_damage": 0.0014072347115360651,
+          "predicted_normalized_damage": 0.012647790589221037,
+          "recovery": 0.9888281752128445,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.0011252535842486333,
+          "exact_normalized_damage": 0.009195744762741554,
+          "pages": 4350,
+          "predicted_damage": 0.0011567888041794376,
+          "predicted_normalized_damage": 0.010396860190612194,
+          "recovery": 0.9908042552372585,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0009645741964733348,
+          "exact_normalized_damage": 0.007882648177848792,
+          "pages": 4605,
+          "predicted_damage": 0.0009982828762191253,
+          "predicted_normalized_damage": 0.008972257906744491,
+          "recovery": 0.9921173518221512,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 16,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.0262488895407653,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.03000163086935123,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00040768632472791897,
+          "exact_normalized_damage": 0.01553156464370693,
+          "pages": 2048,
+          "predicted_damage": 0.0003638808460662364,
+          "predicted_normalized_damage": 0.012128702191252084,
+          "recovery": 0.984468435356293,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.00031531101879862995,
+          "exact_normalized_damage": 0.012012356496412644,
+          "pages": 2300,
+          "predicted_damage": 0.0003028263976668981,
+          "predicted_normalized_damage": 0.010093664540625241,
+          "recovery": 0.9879876435035874,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.0002538124503070148,
+          "exact_normalized_damage": 0.009669454774947205,
+          "pages": 2556,
+          "predicted_damage": 0.00024673825595399686,
+          "predicted_normalized_damage": 0.008224161447371758,
+          "recovery": 0.9903305452250528,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.00021637013184645773,
+          "exact_normalized_damage": 0.008243020395602966,
+          "pages": 2805,
+          "predicted_damage": 0.0002028165335243325,
+          "predicted_normalized_damage": 0.006760183618268692,
+          "recovery": 0.991756979604397,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.00017618186712635176,
+          "exact_normalized_damage": 0.0067119741142853346,
+          "pages": 3072,
+          "predicted_damage": 0.00016694824164877514,
+          "predicted_normalized_damage": 0.005564638881659079,
+          "recovery": 0.9932880258857146,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.00014721133260251696,
+          "exact_normalized_damage": 0.005608288014389844,
+          "pages": 3320,
+          "predicted_damage": 0.0001444334842017875,
+          "predicted_normalized_damage": 0.004814187763017124,
+          "recovery": 0.9943917119856102,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0001281635066304016,
+          "exact_normalized_damage": 0.004882625850947328,
+          "pages": 3581,
+          "predicted_damage": 0.0001242029473269907,
+          "predicted_normalized_damage": 0.004139873191156176,
+          "recovery": 0.9951173741490527,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.00010774762518649937,
+          "exact_normalized_damage": 0.004104845083795416,
+          "pages": 3840,
+          "predicted_damage": 0.00010511246138612248,
+          "predicted_normalized_damage": 0.0035035582513450038,
+          "recovery": 0.9958951549162046,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 8.793354737056123e-05,
+          "exact_normalized_damage": 0.003349991139015532,
+          "pages": 4095,
+          "predicted_damage": 8.901445679812352e-05,
+          "predicted_normalized_damage": 0.002966987267650774,
+          "recovery": 0.9966500088609844,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 7.482713350283815e-05,
+          "exact_normalized_damage": 0.002850678059604365,
+          "pages": 4349,
+          "predicted_damage": 7.508233139070911e-05,
+          "predicted_normalized_damage": 0.002502608332116071,
+          "recovery": 0.9971493219403956,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 6.135640285423681e-05,
+          "exact_normalized_damage": 0.0023374856585437072,
+          "pages": 4608,
+          "predicted_damage": 6.141389788819666e-05,
+          "predicted_normalized_damage": 0.00204701864894069,
+          "recovery": 0.9976625143414563,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.0262488895407653,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.03000163086935123,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.00039813278855565197,
+          "exact_normalized_damage": 0.015167605011912598,
+          "pages": 2047,
+          "predicted_damage": 0.00036890828903454645,
+          "predicted_normalized_damage": 0.012296274513910245,
+          "recovery": 0.9848323949880874,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.0003146005585791391,
+          "exact_normalized_damage": 0.01198529020020276,
+          "pages": 2298,
+          "predicted_damage": 0.0003049327665299434,
+          "predicted_normalized_damage": 0.010163873019364878,
+          "recovery": 0.9880147097997972,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.00025359619773335766,
+          "exact_normalized_damage": 0.009661216233148274,
+          "pages": 2554,
+          "predicted_damage": 0.00024884462481704214,
+          "predicted_normalized_damage": 0.008294369926111395,
+          "recovery": 0.9903387837668517,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.0002088123506394733,
+          "exact_normalized_damage": 0.007955092740787435,
+          "pages": 2806,
+          "predicted_damage": 0.00020882891441949367,
+          "predicted_normalized_damage": 0.0069605854204688265,
+          "recovery": 0.9920449072592126,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.00017249058152539313,
+          "exact_normalized_damage": 0.006571347761493307,
+          "pages": 3043,
+          "predicted_damage": 0.00017676345264574047,
+          "predicted_normalized_damage": 0.0058917947966060985,
+          "recovery": 0.9934286522385067,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0001441237042305049,
+          "exact_normalized_damage": 0.005490659100327902,
+          "pages": 3317,
+          "predicted_damage": 0.00015223499639572283,
+          "predicted_normalized_damage": 0.005074224033308854,
+          "recovery": 0.9945093408996721,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.00012184069976537254,
+          "exact_normalized_damage": 0.004641746828038204,
+          "pages": 3584,
+          "predicted_damage": 0.0001256988617617308,
+          "predicted_normalized_damage": 0.0041897342950826385,
+          "recovery": 0.9953582531719618,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.00010143489813539218,
+          "exact_normalized_damage": 0.0038643500700424214,
+          "pages": 3822,
+          "predicted_damage": 0.00010823492297695278,
+          "predicted_normalized_damage": 0.0036076346465392433,
+          "recovery": 0.9961356499299576,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 8.686081083445201e-05,
+          "exact_normalized_damage": 0.0033091232564164135,
+          "pages": 4096,
+          "predicted_damage": 9.357516092841275e-05,
+          "predicted_normalized_damage": 0.0031190024747623415,
+          "recovery": 0.9966908767435836,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 7.455763370172537e-05,
+          "exact_normalized_damage": 0.0028404109661833567,
+          "pages": 4352,
+          "predicted_damage": 7.574116800268833e-05,
+          "predicted_normalized_damage": 0.002524568358717567,
+          "recovery": 0.9971595890338166,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 6.132477976990643e-05,
+          "exact_normalized_damage": 0.0023362809186524723,
+          "pages": 4604,
+          "predicted_damage": 6.241153595785757e-05,
+          "predicted_normalized_damage": 0.002080271443563934,
+          "recovery": 0.9976637190813475,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 17,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.11684673085055035,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.08939324317581944,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.006087187654278344,
+          "exact_normalized_damage": 0.052095489621048936,
+          "pages": 2043,
+          "predicted_damage": 0.005681308867227168,
+          "predicted_normalized_damage": 0.06355411958880515,
+          "recovery": 0.9479045103789511,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.00504138782294216,
+          "exact_normalized_damage": 0.043145304847169504,
+          "pages": 2304,
+          "predicted_damage": 0.0046756002543519555,
+          "predicted_normalized_damage": 0.052303732231259836,
+          "recovery": 0.9568546951528305,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.004144339196142315,
+          "exact_normalized_damage": 0.035468165570186304,
+          "pages": 2555,
+          "predicted_damage": 0.0038764457646780193,
+          "predicted_normalized_damage": 0.04336396831529862,
+          "recovery": 0.9645318344298137,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.0033302432953133117,
+          "exact_normalized_damage": 0.028500953951144506,
+          "pages": 2808,
+          "predicted_damage": 0.0031534117718786557,
+          "predicted_normalized_damage": 0.035275728453844066,
+          "recovery": 0.9714990460488555,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.002782920288513617,
+          "exact_normalized_damage": 0.02381684338326107,
+          "pages": 3064,
+          "predicted_damage": 0.0025412204388103286,
+          "predicted_normalized_damage": 0.028427433086997786,
+          "recovery": 0.9761831566167389,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.002326135772973043,
+          "exact_normalized_damage": 0.019907581119648302,
+          "pages": 3328,
+          "predicted_damage": 0.002154186774021129,
+          "predicted_normalized_damage": 0.02409787023594451,
+          "recovery": 0.9800924188803517,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0020180225298930127,
+          "exact_normalized_damage": 0.017270680276661825,
+          "pages": 3580,
+          "predicted_damage": 0.0018767008722291242,
+          "predicted_normalized_damage": 0.020993766481187084,
+          "recovery": 0.9827293197233382,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.0016863209296455696,
+          "exact_normalized_damage": 0.014431905089432179,
+          "pages": 3835,
+          "predicted_damage": 0.001603431161380389,
+          "predicted_normalized_damage": 0.0179368272636305,
+          "recovery": 0.9855680949105678,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.0014262639712946269,
+          "exact_normalized_damage": 0.012206280491654073,
+          "pages": 4095,
+          "predicted_damage": 0.001343929206119803,
+          "predicted_normalized_damage": 0.015033901426716905,
+          "recovery": 0.9877937195083459,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.001178313618837251,
+          "exact_normalized_damage": 0.010084266887572073,
+          "pages": 4347,
+          "predicted_damage": 0.001117009124788764,
+          "predicted_normalized_damage": 0.012495453628322,
+          "recovery": 0.989915733112428,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.0009364387396424087,
+          "exact_normalized_damage": 0.0080142485187723,
+          "pages": 4602,
+          "predicted_damage": 0.0008974388426712189,
+          "predicted_normalized_damage": 0.01003922456315997,
+          "recovery": 0.9919857514812277,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.11684673085055035,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.08939324317581944,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.006071055558971043,
+          "exact_normalized_damage": 0.051957427604338045,
+          "pages": 2042,
+          "predicted_damage": 0.005740994888079475,
+          "predicted_normalized_damage": 0.0642217989203953,
+          "recovery": 0.9480425723956619,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.005015215952275154,
+          "exact_normalized_damage": 0.042921320226662826,
+          "pages": 2302,
+          "predicted_damage": 0.004725381220607449,
+          "predicted_normalized_damage": 0.05286060839423318,
+          "recovery": 0.9570786797733372,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0041014099313162,
+          "exact_normalized_damage": 0.035100767487983874,
+          "pages": 2560,
+          "predicted_damage": 0.0039020713815533766,
+          "predicted_normalized_damage": 0.04365062999089033,
+          "recovery": 0.9648992325120161,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.003300883364793503,
+          "exact_normalized_damage": 0.028249685213832882,
+          "pages": 2799,
+          "predicted_damage": 0.00323421910862865,
+          "predicted_normalized_damage": 0.036179681972915545,
+          "recovery": 0.9717503147861671,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.0026732104189709734,
+          "exact_normalized_damage": 0.022877922210678456,
+          "pages": 3069,
+          "predicted_damage": 0.002580989583850009,
+          "predicted_normalized_damage": 0.028872311733602673,
+          "recovery": 0.9771220777893216,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0022515030657121113,
+          "exact_normalized_damage": 0.01926885801017262,
+          "pages": 3327,
+          "predicted_damage": 0.0022117757157336733,
+          "predicted_normalized_damage": 0.024742090533436994,
+          "recovery": 0.9807311419898274,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.0019703940366739368,
+          "exact_normalized_damage": 0.016863065165204458,
+          "pages": 3564,
+          "predicted_damage": 0.001912472320356151,
+          "predicted_normalized_damage": 0.021393924780138955,
+          "recovery": 0.9831369348347956,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0016503396612706919,
+          "exact_normalized_damage": 0.01412396948770021,
+          "pages": 3837,
+          "predicted_damage": 0.001621509992693487,
+          "predicted_normalized_damage": 0.01813906661272247,
+          "recovery": 0.9858760305122998,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.001416457533960341,
+          "exact_normalized_damage": 0.012122354845956477,
+          "pages": 4093,
+          "predicted_damage": 0.0013920818627812036,
+          "predicted_normalized_damage": 0.015572562459147437,
+          "recovery": 0.9878776451540435,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.001178313618837251,
+          "exact_normalized_damage": 0.010084266887572073,
+          "pages": 4347,
+          "predicted_damage": 0.001117009124788764,
+          "predicted_normalized_damage": 0.012495453628322,
+          "recovery": 0.989915733112428,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0009364387396424087,
+          "exact_normalized_damage": 0.0080142485187723,
+          "pages": 4602,
+          "predicted_damage": 0.0008974388426712189,
+          "predicted_normalized_damage": 0.01003922456315997,
+          "recovery": 0.9919857514812277,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 17,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.04234247872945975,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.028999972250542995,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00034218767946012714,
+          "exact_normalized_damage": 0.008081427675655896,
+          "pages": 2043,
+          "predicted_damage": 0.0003228086065722247,
+          "predicted_normalized_damage": 0.011131341912445466,
+          "recovery": 0.9919185723243441,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0002669213385507336,
+          "exact_normalized_damage": 0.006303866626613507,
+          "pages": 2303,
+          "predicted_damage": 0.00026557570000899694,
+          "predicted_normalized_damage": 0.009157791521818587,
+          "recovery": 0.9936961333733865,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.0002290111130581054,
+          "exact_normalized_damage": 0.0054085429084427,
+          "pages": 2560,
+          "predicted_damage": 0.00022208005734187928,
+          "predicted_normalized_damage": 0.007657940339502258,
+          "recovery": 0.9945914570915573,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.0001941166205415786,
+          "exact_normalized_damage": 0.004584441590721568,
+          "pages": 2815,
+          "predicted_damage": 0.00018284466710365404,
+          "predicted_normalized_damage": 0.006304994553925149,
+          "recovery": 0.9954155584092784,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.00015317562058121461,
+          "exact_normalized_damage": 0.0036175402380173548,
+          "pages": 3071,
+          "predicted_damage": 0.00014770311722289914,
+          "predicted_normalized_damage": 0.005093215812305943,
+          "recovery": 0.9963824597619827,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.00013909803184769298,
+          "exact_normalized_damage": 0.0032850705962784274,
+          "pages": 3327,
+          "predicted_damage": 0.00012835995485685294,
+          "predicted_normalized_damage": 0.004426209575233284,
+          "recovery": 0.9967149294037215,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.00011586743195868894,
+          "exact_normalized_damage": 0.0027364347916191845,
+          "pages": 3583,
+          "predicted_damage": 0.00010969348203868622,
+          "predicted_normalized_damage": 0.003782537482829223,
+          "recovery": 0.9972635652083808,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 9.809638368106818e-05,
+          "exact_normalized_damage": 0.002316736918210168,
+          "pages": 3840,
+          "predicted_damage": 9.375948604554543e-05,
+          "predicted_normalized_damage": 0.0032330888193794695,
+          "recovery": 0.9976832630817898,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 8.520178219751512e-05,
+          "exact_normalized_damage": 0.002012205821532031,
+          "pages": 4094,
+          "predicted_damage": 7.839385283349792e-05,
+          "predicted_normalized_damage": 0.0027032388912727346,
+          "recovery": 0.997987794178468,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 6.758426598853934e-05,
+          "exact_normalized_damage": 0.0015961339065754226,
+          "pages": 4345,
+          "predicted_damage": 6.502366301162073e-05,
+          "predicted_normalized_damage": 0.0022421974217717825,
+          "recovery": 0.9984038660934246,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 5.61391951355366e-05,
+          "exact_normalized_damage": 0.0013258362953720466,
+          "pages": 4606,
+          "predicted_damage": 5.224341637422615e-05,
+          "predicted_normalized_damage": 0.0018014988401669227,
+          "recovery": 0.9986741637046279,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.04234247872945975,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.028999972250542995,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.00034124182146574427,
+          "exact_normalized_damage": 0.00805908939923079,
+          "pages": 2048,
+          "predicted_damage": 0.0003239683957726546,
+          "predicted_normalized_damage": 0.011171334681762967,
+          "recovery": 0.9919409106007692,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.0002669213385507336,
+          "exact_normalized_damage": 0.006303866626613507,
+          "pages": 2303,
+          "predicted_damage": 0.00026557570000899694,
+          "predicted_normalized_damage": 0.009157791521818587,
+          "recovery": 0.9936961333733865,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0002236780767671515,
+          "exact_normalized_damage": 0.005282592882582654,
+          "pages": 2560,
+          "predicted_damage": 0.00022711616258380967,
+          "predicted_normalized_damage": 0.00783159930711855,
+          "recovery": 0.9947174071174173,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.0001910032342301896,
+          "exact_normalized_damage": 0.004510912916803314,
+          "pages": 2794,
+          "predicted_damage": 0.0001906502252796462,
+          "predicted_normalized_damage": 0.00657415198995842,
+          "recovery": 0.9954890870831967,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.00015317562058121461,
+          "exact_normalized_damage": 0.0036175402380173548,
+          "pages": 3071,
+          "predicted_damage": 0.00014770311722289914,
+          "predicted_normalized_damage": 0.005093215812305943,
+          "recovery": 0.9963824597619827,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.00013257954804156058,
+          "exact_normalized_damage": 0.0031311239214089383,
+          "pages": 3307,
+          "predicted_damage": 0.00013147691082898214,
+          "predicted_normalized_damage": 0.004533690918498047,
+          "recovery": 0.9968688760785911,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.00011487395372403412,
+          "exact_normalized_damage": 0.0027129718705889232,
+          "pages": 3569,
+          "predicted_damage": 0.00011188063128789198,
+          "predicted_normalized_damage": 0.003857956494623788,
+          "recovery": 0.9972870281294111,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 9.672567014980535e-05,
+          "exact_normalized_damage": 0.0022843648518505017,
+          "pages": 3807,
+          "predicted_damage": 9.789855020262442e-05,
+          "predicted_normalized_damage": 0.003375815306195383,
+          "recovery": 0.9977156351481495,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 8.321176031109243e-05,
+          "exact_normalized_damage": 0.00196520758368352,
+          "pages": 4054,
+          "predicted_damage": 8.376349945970952e-05,
+          "predicted_normalized_damage": 0.0028883992969386766,
+          "recovery": 0.9980347924163164,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 6.758426598853934e-05,
+          "exact_normalized_damage": 0.0015961339065754226,
+          "pages": 4345,
+          "predicted_damage": 6.502366301162073e-05,
+          "predicted_normalized_damage": 0.0022421974217717825,
+          "recovery": 0.9984038660934246,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 5.443642334504396e-05,
+          "exact_normalized_damage": 0.0012856220272992628,
+          "pages": 4608,
+          "predicted_damage": 5.32681557767322e-05,
+          "predicted_normalized_damage": 0.001836834715444764,
+          "recovery": 0.9987143779727007,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 18,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.11254042538846763,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.14543933447600604,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.006341437790648333,
+          "exact_normalized_damage": 0.05634808797602217,
+          "pages": 2043,
+          "predicted_damage": 0.0058981150163705375,
+          "predicted_normalized_damage": 0.040553781668628185,
+          "recovery": 0.9436519120239778,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.005143957888532224,
+          "exact_normalized_damage": 0.0457076456817742,
+          "pages": 2299,
+          "predicted_damage": 0.004868816909525062,
+          "predicted_normalized_damage": 0.03347661708620028,
+          "recovery": 0.9542923543182258,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.0040793418154601606,
+          "exact_normalized_damage": 0.036247790972702185,
+          "pages": 2559,
+          "predicted_damage": 0.004020573214456216,
+          "predicted_normalized_damage": 0.027644331768580204,
+          "recovery": 0.9637522090272979,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.003332967663523552,
+          "exact_normalized_damage": 0.02961573720748608,
+          "pages": 2806,
+          "predicted_damage": 0.0032270508311777173,
+          "predicted_normalized_damage": 0.022188294815871167,
+          "recovery": 0.9703842627925139,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.0027556250095667587,
+          "exact_normalized_damage": 0.024485645936159185,
+          "pages": 3070,
+          "predicted_damage": 0.0026836239597556838,
+          "predicted_normalized_damage": 0.018451844333751518,
+          "recovery": 0.9755143540638408,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0023923689973015688,
+          "exact_normalized_damage": 0.02125786346589305,
+          "pages": 3326,
+          "predicted_damage": 0.002320004882145765,
+          "predicted_normalized_damage": 0.015951701721575944,
+          "recovery": 0.9787421365341069,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.002037938492366747,
+          "exact_normalized_damage": 0.01810850177020551,
+          "pages": 3581,
+          "predicted_damage": 0.001981247583918369,
+          "predicted_normalized_damage": 0.013622501719060237,
+          "recovery": 0.9818914982297945,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.0017546884704143953,
+          "exact_normalized_damage": 0.015591628202555236,
+          "pages": 3838,
+          "predicted_damage": 0.0016726319680141115,
+          "predicted_normalized_damage": 0.011500547455338192,
+          "recovery": 0.9844083717974448,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.0014627290985085946,
+          "exact_normalized_damage": 0.012997365999457871,
+          "pages": 4096,
+          "predicted_damage": 0.0014005199745661364,
+          "predicted_normalized_damage": 0.009629581843261173,
+          "recovery": 0.9870026340005421,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0012156883157034928,
+          "exact_normalized_damage": 0.010802236720779875,
+          "pages": 4351,
+          "predicted_damage": 0.001169273782511304,
+          "predicted_normalized_damage": 0.008039597999564593,
+          "recovery": 0.9891977632792202,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.0009976759761076948,
+          "exact_normalized_damage": 0.008865045361823644,
+          "pages": 4608,
+          "predicted_damage": 0.0009479171217455554,
+          "predicted_normalized_damage": 0.006517611794365978,
+          "recovery": 0.9911349546381764,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.11254042538846763,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.14543933447600604,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.006341437790648333,
+          "exact_normalized_damage": 0.05634808797602217,
+          "pages": 2043,
+          "predicted_damage": 0.0058981150163705375,
+          "predicted_normalized_damage": 0.040553781668628185,
+          "recovery": 0.9436519120239778,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.005007384900325973,
+          "exact_normalized_damage": 0.04449409963612147,
+          "pages": 2304,
+          "predicted_damage": 0.004893964181903315,
+          "predicted_normalized_damage": 0.03364952266548428,
+          "recovery": 0.9555059003638785,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.004042198304572803,
+          "exact_normalized_damage": 0.03591774502912995,
+          "pages": 2558,
+          "predicted_damage": 0.004029639063913051,
+          "predicted_normalized_damage": 0.02770666600222819,
+          "recovery": 0.9640822549708701,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.003266914162209083,
+          "exact_normalized_damage": 0.02902880587959688,
+          "pages": 2797,
+          "predicted_damage": 0.003292926079252164,
+          "predicted_normalized_damage": 0.02264123451276805,
+          "recovery": 0.9709711941204031,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.00270311082459361,
+          "exact_normalized_damage": 0.024019020856398912,
+          "pages": 3051,
+          "predicted_damage": 0.0027015217543841716,
+          "predicted_normalized_damage": 0.018574904540902288,
+          "recovery": 0.975980979143601,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0023463581009107357,
+          "exact_normalized_damage": 0.020849024631029823,
+          "pages": 3328,
+          "predicted_damage": 0.002377926622561174,
+          "predicted_normalized_damage": 0.0163499553344936,
+          "recovery": 0.9791509753689702,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.002037938492366747,
+          "exact_normalized_damage": 0.01810850177020551,
+          "pages": 3581,
+          "predicted_damage": 0.001981247583918369,
+          "predicted_normalized_damage": 0.013622501719060237,
+          "recovery": 0.9818914982297945,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0017207651200677064,
+          "exact_normalized_damage": 0.015290195626397895,
+          "pages": 3828,
+          "predicted_damage": 0.0016822762354378627,
+          "predicted_normalized_damage": 0.011566858728409525,
+          "recovery": 0.9847098043736021,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.0014600101897905954,
+          "exact_normalized_damage": 0.012973206603324313,
+          "pages": 4087,
+          "predicted_damage": 0.0014305965105367471,
+          "predicted_normalized_damage": 0.00983637965403892,
+          "recovery": 0.9870267933966757,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.0012007701944051206,
+          "exact_normalized_damage": 0.010669678831053781,
+          "pages": 4347,
+          "predicted_damage": 0.0011813613862897841,
+          "predicted_normalized_damage": 0.008122708966910737,
+          "recovery": 0.9893303211689463,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0009854009111354798,
+          "exact_normalized_damage": 0.008755972866941526,
+          "pages": 4603,
+          "predicted_damage": 0.0009575930132554356,
+          "predicted_normalized_damage": 0.006584140505768164,
+          "recovery": 0.9912440271330585,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 18,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.03651639759726603,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.03294238064436889,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.0003521434223911653,
+          "exact_normalized_damage": 0.00964343269220867,
+          "pages": 2046,
+          "predicted_damage": 0.0003305790247302649,
+          "predicted_normalized_damage": 0.010035067844642049,
+          "recovery": 0.9903565673077913,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0002892423902592869,
+          "exact_normalized_damage": 0.007920890594118803,
+          "pages": 2304,
+          "predicted_damage": 0.0002709596739464774,
+          "predicted_normalized_damage": 0.008225260853841622,
+          "recovery": 0.9920791094058812,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.00023161042884527953,
+          "exact_normalized_damage": 0.006342641774242817,
+          "pages": 2560,
+          "predicted_damage": 0.00022378854976914304,
+          "predicted_normalized_damage": 0.006793332642988479,
+          "recovery": 0.9936573582257572,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.00018885091749821993,
+          "exact_normalized_damage": 0.0051716743688966504,
+          "pages": 2807,
+          "predicted_damage": 0.00018452816399810028,
+          "predicted_normalized_damage": 0.005601543069706566,
+          "recovery": 0.9948283256311033,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.0001530324643405397,
+          "exact_normalized_damage": 0.004190787547783662,
+          "pages": 3069,
+          "predicted_damage": 0.00014956812285014598,
+          "predicted_normalized_damage": 0.004540294900505707,
+          "recovery": 0.9958092124522163,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.00013850669432788394,
+          "exact_normalized_damage": 0.0037929999518422895,
+          "pages": 3323,
+          "predicted_damage": 0.0001302925004043402,
+          "predicted_normalized_damage": 0.003955163465898818,
+          "recovery": 0.9962070000481578,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.00011392629574378784,
+          "exact_normalized_damage": 0.003119866778762357,
+          "pages": 3582,
+          "predicted_damage": 0.00011204680424451707,
+          "predicted_normalized_damage": 0.003401296507806279,
+          "recovery": 0.9968801332212377,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 9.550252260991455e-05,
+          "exact_normalized_damage": 0.0026153325326117275,
+          "pages": 3834,
+          "predicted_damage": 9.56955250481993e-05,
+          "predicted_normalized_damage": 0.002904936533922217,
+          "recovery": 0.9973846674673883,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 7.915975507032216e-05,
+          "exact_normalized_damage": 0.002167786536431207,
+          "pages": 4096,
+          "predicted_damage": 7.990022332682974e-05,
+          "predicted_normalized_damage": 0.0024254538307172326,
+          "recovery": 0.9978322134635688,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 6.73388554302192e-05,
+          "exact_normalized_damage": 0.0018440717009626613,
+          "pages": 4350,
+          "predicted_damage": 6.579360732335325e-05,
+          "predicted_normalized_damage": 0.0019972329272019353,
+          "recovery": 0.9981559282990373,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 5.766251253840596e-05,
+          "exact_normalized_damage": 0.0015790854611223517,
+          "pages": 4601,
+          "predicted_damage": 5.437803017479662e-05,
+          "predicted_normalized_damage": 0.001650701288465984,
+          "recovery": 0.9984209145388776,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.03651639759726603,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.03294238064436889,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.0003500393226046061,
+          "exact_normalized_damage": 0.009585812008762152,
+          "pages": 2047,
+          "predicted_damage": 0.0003360993384724808,
+          "predicted_normalized_damage": 0.010202642671786775,
+          "recovery": 0.9904141879912378,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.00028177263675822656,
+          "exact_normalized_damage": 0.007716331711190559,
+          "pages": 2301,
+          "predicted_damage": 0.0002747556904924818,
+          "predicted_normalized_damage": 0.008340492858079095,
+          "recovery": 0.9922836682888094,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.00023103493586811683,
+          "exact_normalized_damage": 0.006326881923462635,
+          "pages": 2538,
+          "predicted_damage": 0.00022545098050874712,
+          "predicted_normalized_damage": 0.006843797445685981,
+          "recovery": 0.9936731180765374,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.00018885091749821993,
+          "exact_normalized_damage": 0.0051716743688966504,
+          "pages": 2807,
+          "predicted_damage": 0.00018452816399810028,
+          "predicted_normalized_damage": 0.005601543069706566,
+          "recovery": 0.9948283256311033,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.00015140266322363424,
+          "exact_normalized_damage": 0.004146155513296572,
+          "pages": 3069,
+          "predicted_damage": 0.00015278618445366447,
+          "predicted_normalized_damage": 0.004637982485330229,
+          "recovery": 0.9958538444867034,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.00013035751493191427,
+          "exact_normalized_damage": 0.0035698350195878603,
+          "pages": 3324,
+          "predicted_damage": 0.00013449226576859038,
+          "predicted_normalized_damage": 0.004082651682660956,
+          "recovery": 0.9964301649804121,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.00011365906490415864,
+          "exact_normalized_damage": 0.0031125486735490105,
+          "pages": 3564,
+          "predicted_damage": 0.00011918678178666952,
+          "predicted_normalized_damage": 0.003618037903008782,
+          "recovery": 0.996887451326451,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 9.550252260991455e-05,
+          "exact_normalized_damage": 0.0026153325326117275,
+          "pages": 3834,
+          "predicted_damage": 9.56955250481993e-05,
+          "predicted_normalized_damage": 0.002904936533922217,
+          "recovery": 0.9973846674673883,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 7.84098155710294e-05,
+          "exact_normalized_damage": 0.002147249475038576,
+          "pages": 4089,
+          "predicted_damage": 8.048479955057852e-05,
+          "predicted_normalized_damage": 0.0024431992459639203,
+          "recovery": 0.9978527505249615,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 6.73388554302192e-05,
+          "exact_normalized_damage": 0.0018440717009626613,
+          "pages": 4350,
+          "predicted_damage": 6.579360732335325e-05,
+          "predicted_normalized_damage": 0.0019972329272019353,
+          "recovery": 0.9981559282990373,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 5.519122925550965e-05,
+          "exact_normalized_damage": 0.0015114094731962773,
+          "pages": 4607,
+          "predicted_damage": 5.564589970671968e-05,
+          "predicted_normalized_damage": 0.0016891887780500067,
+          "recovery": 0.9984885905268037,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 19,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.36990053860900923,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.3116899942783717,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00531046729207236,
+          "exact_normalized_damage": 0.014356473532161058,
+          "pages": 2045,
+          "predicted_damage": 0.00538851480295689,
+          "predicted_normalized_damage": 0.017288058333192382,
+          "recovery": 0.9856435264678389,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.004447486209174788,
+          "exact_normalized_damage": 0.012023465080368136,
+          "pages": 2302,
+          "predicted_damage": 0.004513164959919406,
+          "predicted_normalized_damage": 0.014479659414054463,
+          "recovery": 0.9879765349196319,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.0036378139312632433,
+          "exact_normalized_damage": 0.009834573220528534,
+          "pages": 2549,
+          "predicted_damage": 0.0036998214677976897,
+          "predicted_normalized_damage": 0.011870196463519977,
+          "recovery": 0.9901654267794715,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.003003681124151111,
+          "exact_normalized_damage": 0.00812023993110767,
+          "pages": 2813,
+          "predicted_damage": 0.0030976750867381937,
+          "predicted_normalized_damage": 0.009938320586485194,
+          "recovery": 0.9918797600688923,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.002555003919682764,
+          "exact_normalized_damage": 0.0069072727747051055,
+          "pages": 3072,
+          "predicted_damage": 0.002493158425522807,
+          "predicted_normalized_damage": 0.007998840101668956,
+          "recovery": 0.9930927272252948,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0021802839248762046,
+          "exact_normalized_damage": 0.005894243715013347,
+          "pages": 3328,
+          "predicted_damage": 0.002150666974574075,
+          "predicted_normalized_damage": 0.006900019294983544,
+          "recovery": 0.9941057562849867,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0018840158643313924,
+          "exact_normalized_damage": 0.005093303922768351,
+          "pages": 3582,
+          "predicted_damage": 0.0018188950167162543,
+          "predicted_normalized_damage": 0.005835590009642053,
+          "recovery": 0.9949066960772317,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.0015849284424632678,
+          "exact_normalized_damage": 0.004284742186165245,
+          "pages": 3839,
+          "predicted_damage": 0.0015167837348936692,
+          "predicted_normalized_damage": 0.004866321546206013,
+          "recovery": 0.9957152578138347,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.0013315896306812028,
+          "exact_normalized_damage": 0.003599858588172304,
+          "pages": 4096,
+          "predicted_damage": 0.0012569533969998263,
+          "predicted_normalized_damage": 0.004032703712257237,
+          "recovery": 0.9964001414118276,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0011191593334113883,
+          "exact_normalized_damage": 0.0030255682720007004,
+          "pages": 4348,
+          "predicted_damage": 0.0010394218028015613,
+          "predicted_normalized_damage": 0.0033347936150727032,
+          "recovery": 0.9969744317279993,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.000897607183658081,
+          "exact_normalized_damage": 0.0024266176714245503,
+          "pages": 4606,
+          "predicted_damage": 0.0008377820491661216,
+          "predicted_normalized_damage": 0.0026878695644554276,
+          "recovery": 0.9975733823285754,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.36990053860900923,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.3116899942783717,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.00531046729207236,
+          "exact_normalized_damage": 0.014356473532161058,
+          "pages": 2045,
+          "predicted_damage": 0.00538851480295689,
+          "predicted_normalized_damage": 0.017288058333192382,
+          "recovery": 0.9856435264678389,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.004440556416056255,
+          "exact_normalized_damage": 0.012004730873749803,
+          "pages": 2294,
+          "predicted_damage": 0.004628099742983111,
+          "predicted_normalized_damage": 0.01484840651910608,
+          "recovery": 0.9879952691262502,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0036378139312632433,
+          "exact_normalized_damage": 0.009834573220528534,
+          "pages": 2549,
+          "predicted_damage": 0.0036998214677976897,
+          "predicted_normalized_damage": 0.011870196463519977,
+          "recovery": 0.9901654267794715,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.003003681124151111,
+          "exact_normalized_damage": 0.00812023993110767,
+          "pages": 2813,
+          "predicted_damage": 0.0030976750867381937,
+          "predicted_normalized_damage": 0.009938320586485194,
+          "recovery": 0.9918797600688923,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.0025214514320656845,
+          "exact_normalized_damage": 0.006816565992435331,
+          "pages": 3072,
+          "predicted_damage": 0.002530297908921417,
+          "predicted_normalized_damage": 0.00811799530100282,
+          "recovery": 0.9931834340075647,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.002157844662601227,
+          "exact_normalized_damage": 0.005833580753128081,
+          "pages": 3328,
+          "predicted_damage": 0.0021596796584256485,
+          "predicted_normalized_damage": 0.006928934832912311,
+          "recovery": 0.9941664192468719,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.0018125376244402405,
+          "exact_normalized_damage": 0.004900067545876493,
+          "pages": 3584,
+          "predicted_damage": 0.0018217518370493458,
+          "predicted_normalized_damage": 0.005844755592065401,
+          "recovery": 0.9950999324541235,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0015803987445486452,
+          "exact_normalized_damage": 0.004272496467541379,
+          "pages": 3835,
+          "predicted_damage": 0.0015180373752190718,
+          "predicted_normalized_damage": 0.00487034362053761,
+          "recovery": 0.9957275035324586,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.0012839938968987503,
+          "exact_normalized_damage": 0.0034711868810116883,
+          "pages": 4092,
+          "predicted_damage": 0.0012710896017606816,
+          "predicted_normalized_damage": 0.004078057124366546,
+          "recovery": 0.9965288131189883,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.0011004993991325116,
+          "exact_normalized_damage": 0.0029751224566227437,
+          "pages": 4349,
+          "predicted_damage": 0.001069457128117181,
+          "predicted_normalized_damage": 0.003431156430263989,
+          "recovery": 0.9970248775433772,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.000897607183658081,
+          "exact_normalized_damage": 0.0024266176714245503,
+          "pages": 4606,
+          "predicted_damage": 0.0008377820491661216,
+          "predicted_normalized_damage": 0.0026878695644554276,
+          "recovery": 0.9975733823285754,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 19,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.0202090149854986,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.024637102931102006,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00021103768288742068,
+          "exact_normalized_damage": 0.010442749586699558,
+          "pages": 2046,
+          "predicted_damage": 0.000215130136932294,
+          "predicted_normalized_damage": 0.008731957549307171,
+          "recovery": 0.9895572504133004,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0001796416082458308,
+          "exact_normalized_damage": 0.008889181802019364,
+          "pages": 2303,
+          "predicted_damage": 0.0001751549861037212,
+          "predicted_normalized_damage": 0.0071093986412909226,
+          "recovery": 0.9911108181979806,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.0001439719189428019,
+          "exact_normalized_damage": 0.007124143311591978,
+          "pages": 2560,
+          "predicted_damage": 0.00014029056870037165,
+          "predicted_normalized_damage": 0.005694280252540087,
+          "recovery": 0.992875856688408,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.00011560477136412703,
+          "exact_normalized_damage": 0.0057204555218095315,
+          "pages": 2814,
+          "predicted_damage": 0.00011645200459821164,
+          "predicted_normalized_damage": 0.004726692295107556,
+          "recovery": 0.9942795444781904,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 9.695506585825057e-05,
+          "exact_normalized_damage": 0.004797614625345307,
+          "pages": 3070,
+          "predicted_damage": 9.657610513336834e-05,
+          "predicted_normalized_damage": 0.003919945677194463,
+          "recovery": 0.9952023853746547,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 7.907213136512402e-05,
+          "exact_normalized_damage": 0.0039127157568968046,
+          "pages": 3328,
+          "predicted_damage": 8.194770327944192e-05,
+          "predicted_normalized_damage": 0.003326190725776882,
+          "recovery": 0.9960872842431032,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 6.956372403448456e-05,
+          "exact_normalized_damage": 0.003442212501915678,
+          "pages": 3579,
+          "predicted_damage": 7.164056159732058e-05,
+          "predicted_normalized_damage": 0.0029078322154055362,
+          "recovery": 0.9965577874980843,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 6.223754723012633e-05,
+          "exact_normalized_damage": 0.003079692269751207,
+          "pages": 3838,
+          "predicted_damage": 6.090701071499776e-05,
+          "predicted_normalized_damage": 0.002472166101888077,
+          "recovery": 0.9969203077302488,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 5.199240932930449e-05,
+          "exact_normalized_damage": 0.002572733473977466,
+          "pages": 4092,
+          "predicted_damage": 5.120873217299246e-05,
+          "predicted_normalized_damage": 0.002078520851911784,
+          "recovery": 0.9974272665260225,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 4.260524037979212e-05,
+          "exact_normalized_damage": 0.0021082294416805763,
+          "pages": 4350,
+          "predicted_damage": 4.213095727751264e-05,
+          "predicted_normalized_damage": 0.0017100613410323624,
+          "recovery": 0.9978917705583195,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 3.594009670109096e-05,
+          "exact_normalized_damage": 0.0017784190237317616,
+          "pages": 4608,
+          "predicted_damage": 3.494712486087073e-05,
+          "predicted_normalized_damage": 0.0014184754172842822,
+          "recovery": 0.9982215809762682,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.0202090149854986,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.024637102931102006,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.00020799861042513666,
+          "exact_normalized_damage": 0.010292367568354539,
+          "pages": 2044,
+          "predicted_damage": 0.00021860219488360007,
+          "predicted_normalized_damage": 0.008872885561866753,
+          "recovery": 0.9897076324316455,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.0001763076552894646,
+          "exact_normalized_damage": 0.008724208251415412,
+          "pages": 2302,
+          "predicted_damage": 0.0001780324207998434,
+          "predicted_normalized_damage": 0.007226191378820534,
+          "recovery": 0.9912757917485846,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.00013967270100180858,
+          "exact_normalized_damage": 0.006911405682168756,
+          "pages": 2559,
+          "predicted_damage": 0.00014295563604393657,
+          "predicted_normalized_damage": 0.005802453171694495,
+          "recovery": 0.9930885943178313,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.00011359147540736349,
+          "exact_normalized_damage": 0.005620831865821932,
+          "pages": 2799,
+          "predicted_damage": 0.00011882069728555643,
+          "predicted_normalized_damage": 0.004822835607654038,
+          "recovery": 0.994379168134178,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 9.385026959438983e-05,
+          "exact_normalized_damage": 0.0046439804048705015,
+          "pages": 3048,
+          "predicted_damage": 0.00010053875702382301,
+          "predicted_normalized_damage": 0.004080786499329123,
+          "recovery": 0.9953560195951295,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 7.90266736107666e-05,
+          "exact_normalized_damage": 0.003910466376885456,
+          "pages": 3327,
+          "predicted_damage": 8.20220410191903e-05,
+          "predicted_normalized_damage": 0.0033292080342630405,
+          "recovery": 0.9960895336231146,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 6.62943749086618e-05,
+          "exact_normalized_damage": 0.0032804357340638674,
+          "pages": 3582,
+          "predicted_damage": 7.234860142379823e-05,
+          "predicted_normalized_damage": 0.002936570976957887,
+          "recovery": 0.9967195642659361,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 5.7768678555998005e-05,
+          "exact_normalized_damage": 0.0028585598356699288,
+          "pages": 3838,
+          "predicted_damage": 6.236510170072464e-05,
+          "predicted_normalized_damage": 0.002531348830872262,
+          "recovery": 0.99714144016433,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 5.001978639205507e-05,
+          "exact_normalized_damage": 0.002475122435603507,
+          "pages": 4083,
+          "predicted_damage": 5.2922410495438835e-05,
+          "predicted_normalized_damage": 0.002148077663329048,
+          "recovery": 0.9975248775643965,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 4.179611280487065e-05,
+          "exact_normalized_damage": 0.00206819148953387,
+          "pages": 4342,
+          "predicted_damage": 4.355251421173564e-05,
+          "predicted_normalized_damage": 0.0017677611825355783,
+          "recovery": 0.9979318085104661,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 3.41173105151351e-05,
+          "exact_normalized_damage": 0.001688222337388373,
+          "pages": 4606,
+          "predicted_damage": 3.5206222930802244e-05,
+          "predicted_normalized_damage": 0.0014289919975273443,
+          "recovery": 0.9983117776626116,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 20,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.14441243817579544,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.13191984062595277,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.008149723559794275,
+          "exact_normalized_damage": 0.05643366778333521,
+          "pages": 2046,
+          "predicted_damage": 0.008219208536367423,
+          "predicted_normalized_damage": 0.062304566904930345,
+          "recovery": 0.9435663322166647,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0068809758403867265,
+          "exact_normalized_damage": 0.04764808299968186,
+          "pages": 2303,
+          "predicted_damage": 0.006958981039407445,
+          "predicted_normalized_damage": 0.05275158767921066,
+          "recovery": 0.9523519170003182,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.005520564011409827,
+          "exact_normalized_damage": 0.03822775988789526,
+          "pages": 2558,
+          "predicted_damage": 0.005676173999345823,
+          "predicted_normalized_damage": 0.04302744736813411,
+          "recovery": 0.9617722401121047,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.004886201576300132,
+          "exact_normalized_damage": 0.03383504660694175,
+          "pages": 2805,
+          "predicted_damage": 0.004773107619798222,
+          "predicted_normalized_damage": 0.03618187830693302,
+          "recovery": 0.9661649533930583,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.004166690769802397,
+          "exact_normalized_damage": 0.028852713952036608,
+          "pages": 3072,
+          "predicted_damage": 0.00402826608825051,
+          "predicted_normalized_damage": 0.030535710694741574,
+          "recovery": 0.9711472860479634,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0035680958129016265,
+          "exact_normalized_damage": 0.02470767655455086,
+          "pages": 3326,
+          "predicted_damage": 0.003501651932522368,
+          "predicted_normalized_damage": 0.026543785346519615,
+          "recovery": 0.9752923234454491,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.003142143595690113,
+          "exact_normalized_damage": 0.02175812302168276,
+          "pages": 3580,
+          "predicted_damage": 0.003016223238885712,
+          "predicted_normalized_damage": 0.02286406066421768,
+          "recovery": 0.9782418769783172,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.0027698488228024448,
+          "exact_normalized_damage": 0.019180126433643245,
+          "pages": 3836,
+          "predicted_damage": 0.002572895078030218,
+          "predicted_normalized_damage": 0.019503473213899933,
+          "recovery": 0.9808198735663568,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.002290391962678666,
+          "exact_normalized_damage": 0.015860074046326517,
+          "pages": 4096,
+          "predicted_damage": 0.0021551700988747848,
+          "predicted_normalized_damage": 0.016336967120704624,
+          "recovery": 0.9841399259536735,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0018350328786567675,
+          "exact_normalized_damage": 0.012706889391500711,
+          "pages": 4346,
+          "predicted_damage": 0.0017838787269650077,
+          "predicted_normalized_damage": 0.013522444527681326,
+          "recovery": 0.9872931106084993,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.001480845336637582,
+          "exact_normalized_damage": 0.010254278338787734,
+          "pages": 4606,
+          "predicted_damage": 0.0014444534413109776,
+          "predicted_normalized_damage": 0.010949478368508644,
+          "recovery": 0.9897457216612122,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.14441243817579544,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.13191984062595277,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.008149723559794275,
+          "exact_normalized_damage": 0.05643366778333521,
+          "pages": 2046,
+          "predicted_damage": 0.008219208536367423,
+          "predicted_normalized_damage": 0.062304566904930345,
+          "recovery": 0.9435663322166647,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.0068809758403867265,
+          "exact_normalized_damage": 0.04764808299968186,
+          "pages": 2303,
+          "predicted_damage": 0.006958981039407445,
+          "predicted_normalized_damage": 0.05275158767921066,
+          "recovery": 0.9523519170003182,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.005415379017104106,
+          "exact_normalized_damage": 0.037499394688647825,
+          "pages": 2554,
+          "predicted_damage": 0.0058258755184643065,
+          "predicted_normalized_damage": 0.04416223890827059,
+          "recovery": 0.9625006053113522,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.0046783037734687595,
+          "exact_normalized_damage": 0.0323954351340138,
+          "pages": 2803,
+          "predicted_damage": 0.004911367968125415,
+          "predicted_normalized_damage": 0.03722994164351041,
+          "recovery": 0.9676045648659862,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.004082837094218243,
+          "exact_normalized_damage": 0.028272059843267406,
+          "pages": 3065,
+          "predicted_damage": 0.004200879376648484,
+          "predicted_normalized_damage": 0.03184418171455886,
+          "recovery": 0.9717279401567326,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0034727394651763816,
+          "exact_normalized_damage": 0.02404737091239304,
+          "pages": 3326,
+          "predicted_damage": 0.0035737477365977177,
+          "predicted_normalized_damage": 0.027090297559794425,
+          "recovery": 0.9759526290876069,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.003085748487499212,
+          "exact_normalized_damage": 0.02136760881872851,
+          "pages": 3574,
+          "predicted_damage": 0.003030165039114401,
+          "predicted_normalized_damage": 0.022969744541355006,
+          "recovery": 0.9786323911812715,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0026936014880004,
+          "exact_normalized_damage": 0.018652143278139507,
+          "pages": 3829,
+          "predicted_damage": 0.0026523362463745977,
+          "predicted_normalized_damage": 0.020105665939174885,
+          "recovery": 0.9813478567218605,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.0022695588565314305,
+          "exact_normalized_damage": 0.015715812884265982,
+          "pages": 4044,
+          "predicted_damage": 0.0022832631123095633,
+          "predicted_normalized_damage": 0.017307958389546248,
+          "recovery": 0.9842841871157341,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.001830951021382387,
+          "exact_normalized_damage": 0.012678624116528956,
+          "pages": 4345,
+          "predicted_damage": 0.0017846680427731,
+          "predicted_normalized_damage": 0.01352842782635988,
+          "recovery": 0.987321375883471,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0014776082598796638,
+          "exact_normalized_damage": 0.010231862840518966,
+          "pages": 4605,
+          "predicted_damage": 0.00144524275711907,
+          "predicted_normalized_damage": 0.010955461667187198,
+          "recovery": 0.9897681371594811,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 20,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.015546098411468125,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.01299275802026095,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.000287099097831236,
+          "exact_normalized_damage": 0.018467598122204557,
+          "pages": 2041,
+          "predicted_damage": 0.0002724609548441919,
+          "predicted_normalized_damage": 0.02097021697928303,
+          "recovery": 0.9815324018777954,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0002470518284334731,
+          "exact_normalized_damage": 0.0158915646803848,
+          "pages": 2302,
+          "predicted_damage": 0.0002277019301184084,
+          "predicted_normalized_damage": 0.017525295996687482,
+          "recovery": 0.9841084353196152,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.00019329504606279053,
+          "exact_normalized_damage": 0.012433669268438419,
+          "pages": 2559,
+          "predicted_damage": 0.00018668136221242735,
+          "predicted_normalized_damage": 0.014368108905077415,
+          "recovery": 0.9875663307315616,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.0001598348352192408,
+          "exact_normalized_damage": 0.010281347190066225,
+          "pages": 2815,
+          "predicted_damage": 0.00015351076476061636,
+          "predicted_normalized_damage": 0.011815102268604646,
+          "recovery": 0.9897186528099338,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.00013302782550852265,
+          "exact_normalized_damage": 0.008556991084682058,
+          "pages": 3068,
+          "predicted_damage": 0.00012803019655999146,
+          "predicted_normalized_damage": 0.009853966060196053,
+          "recovery": 0.9914430089153179,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.00011181179495588133,
+          "exact_normalized_damage": 0.00719227371373125,
+          "pages": 3327,
+          "predicted_damage": 0.00011024551578817313,
+          "predicted_normalized_damage": 0.008485151160073628,
+          "recovery": 0.9928077262862688,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 9.569493718241686e-05,
+          "exact_normalized_damage": 0.006155559719847401,
+          "pages": 3579,
+          "predicted_damage": 9.386931314828167e-05,
+          "predicted_normalized_damage": 0.007224741121315548,
+          "recovery": 0.9938444402801526,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 8.095464691528916e-05,
+          "exact_normalized_damage": 0.0052073931846186,
+          "pages": 3830,
+          "predicted_damage": 7.968870537035411e-05,
+          "predicted_normalized_damage": 0.006133317132981872,
+          "recovery": 0.9947926068153814,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 6.823698970635016e-05,
+          "exact_normalized_damage": 0.0043893321591231375,
+          "pages": 4087,
+          "predicted_damage": 6.655967480691163e-05,
+          "predicted_normalized_damage": 0.005122828786860977,
+          "recovery": 0.9956106678408768,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 5.623209021976849e-05,
+          "exact_normalized_damage": 0.0036171191466462683,
+          "pages": 4349,
+          "predicted_damage": 5.51424587832517e-05,
+          "predicted_normalized_damage": 0.004244091877741613,
+          "recovery": 0.9963828808533537,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 4.6449459077008344e-05,
+          "exact_normalized_damage": 0.002987853147947608,
+          "pages": 4602,
+          "predicted_damage": 4.48592551750079e-05,
+          "predicted_normalized_damage": 0.0034526353146155904,
+          "recovery": 0.9970121468520524,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.015546098411468125,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.01299275802026095,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.000287099097831236,
+          "exact_normalized_damage": 0.018467598122204557,
+          "pages": 2041,
+          "predicted_damage": 0.0002724609548441919,
+          "predicted_normalized_damage": 0.02097021697928303,
+          "recovery": 0.9815324018777954,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.00023835816403731133,
+          "exact_normalized_damage": 0.015332346272906524,
+          "pages": 2292,
+          "predicted_damage": 0.00022923273084178396,
+          "predicted_normalized_damage": 0.01764311553284666,
+          "recovery": 0.9846676537270935,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.00019329504606279053,
+          "exact_normalized_damage": 0.012433669268438419,
+          "pages": 2559,
+          "predicted_damage": 0.00018668136221242735,
+          "predicted_normalized_damage": 0.014368108905077415,
+          "recovery": 0.9875663307315616,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.00015867498773813535,
+          "exact_normalized_damage": 0.010206740208275228,
+          "pages": 2815,
+          "predicted_damage": 0.00015540248771998252,
+          "predicted_normalized_damage": 0.011960700528528845,
+          "recovery": 0.9897932597917247,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.0001324085889978076,
+          "exact_normalized_damage": 0.0085171588068767,
+          "pages": 3070,
+          "predicted_damage": 0.00013032379407566637,
+          "predicted_normalized_damage": 0.010030494978236262,
+          "recovery": 0.9914828411931234,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.00011021170308970246,
+          "exact_normalized_damage": 0.007089348090605224,
+          "pages": 3328,
+          "predicted_damage": 0.00011126863366446676,
+          "predicted_normalized_damage": 0.008563896402207605,
+          "recovery": 0.9929106519093948,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 9.265992518658165e-05,
+          "exact_normalized_damage": 0.005960333116007281,
+          "pages": 3573,
+          "predicted_damage": 9.569328272693485e-05,
+          "predicted_normalized_damage": 0.007365124677740509,
+          "recovery": 0.9940396668839927,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 7.952520614540026e-05,
+          "exact_normalized_damage": 0.005115444662741599,
+          "pages": 3830,
+          "predicted_damage": 8.024043941040238e-05,
+          "predicted_normalized_damage": 0.006175781869043907,
+          "recovery": 0.9948845553372584,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 6.728141736267777e-05,
+          "exact_normalized_damage": 0.004327865139014253,
+          "pages": 4074,
+          "predicted_damage": 6.711268676731621e-05,
+          "predicted_normalized_damage": 0.005165391879280786,
+          "recovery": 0.9956721348609857,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 5.5334878457237815e-05,
+          "exact_normalized_damage": 0.0035594061604819188,
+          "pages": 4339,
+          "predicted_damage": 5.698695926604209e-05,
+          "predicted_normalized_damage": 0.004386055614764505,
+          "recovery": 0.9964405938395181,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 4.5625196764130343e-05,
+          "exact_normalized_damage": 0.0029348326220856365,
+          "pages": 4602,
+          "predicted_damage": 4.6370421671388865e-05,
+          "predicted_normalized_damage": 0.0035689436837874357,
+          "recovery": 0.9970651673779144,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 21,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.4386008388758345,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.2724063969359477,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.006271733135212233,
+          "exact_normalized_damage": 0.014299409803426586,
+          "pages": 2047,
+          "predicted_damage": 0.00611083364129338,
+          "predicted_normalized_damage": 0.022432783187284148,
+          "recovery": 0.9857005901965734,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0050923923085585705,
+          "exact_normalized_damage": 0.011610539372452497,
+          "pages": 2303,
+          "predicted_damage": 0.004995518523580219,
+          "predicted_normalized_damage": 0.018338477288970718,
+          "recovery": 0.9883894606275475,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.0042386355529766325,
+          "exact_normalized_damage": 0.009663993265130455,
+          "pages": 2560,
+          "predicted_damage": 0.0041445329976607555,
+          "predicted_normalized_damage": 0.0152145215541149,
+          "recovery": 0.9903360067348695,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.0035868264764856612,
+          "exact_normalized_damage": 0.008177883301999502,
+          "pages": 2816,
+          "predicted_damage": 0.0033506506835831703,
+          "predicted_normalized_damage": 0.012300190895924613,
+          "recovery": 0.9918221166980005,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.002999051606873375,
+          "exact_normalized_damage": 0.0068377698833412175,
+          "pages": 3060,
+          "predicted_damage": 0.002743576323465661,
+          "predicted_normalized_damage": 0.010071629573775288,
+          "recovery": 0.9931622301166588,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0026070988330341126,
+          "exact_normalized_damage": 0.005944126417350898,
+          "pages": 3327,
+          "predicted_damage": 0.002388483895427999,
+          "predicted_normalized_damage": 0.008768090332289867,
+          "recovery": 0.9940558735826491,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0022301198817468513,
+          "exact_normalized_damage": 0.005084622928361945,
+          "pages": 3577,
+          "predicted_damage": 0.002058736971134283,
+          "predicted_normalized_damage": 0.007557594073748438,
+          "recovery": 0.994915377071638,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.001887061348569965,
+          "exact_normalized_damage": 0.004302457226043249,
+          "pages": 3837,
+          "predicted_damage": 0.0017467646470666932,
+          "predicted_normalized_damage": 0.006412348119260279,
+          "recovery": 0.9956975427739567,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.0016196111800453694,
+          "exact_normalized_damage": 0.003692676886338269,
+          "pages": 4094,
+          "predicted_damage": 0.0014510131386457892,
+          "predicted_normalized_damage": 0.005326648547783455,
+          "recovery": 0.9963073231136618,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0012479046797007056,
+          "exact_normalized_damage": 0.0028451944663379467,
+          "pages": 4341,
+          "predicted_damage": 0.001192280791842945,
+          "predicted_normalized_damage": 0.004376845790898559,
+          "recovery": 0.9971548055336621,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.0010214392007210967,
+          "exact_normalized_damage": 0.002328858292517449,
+          "pages": 4606,
+          "predicted_damage": 0.0009708797102958557,
+          "predicted_normalized_damage": 0.003564085576610536,
+          "recovery": 0.9976711417074825,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.4386008388758345,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.2724063969359477,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.006271733135212233,
+          "exact_normalized_damage": 0.014299409803426586,
+          "pages": 2047,
+          "predicted_damage": 0.00611083364129338,
+          "predicted_normalized_damage": 0.022432783187284148,
+          "recovery": 0.9857005901965734,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.0050923923085585705,
+          "exact_normalized_damage": 0.011610539372452497,
+          "pages": 2303,
+          "predicted_damage": 0.004995518523580219,
+          "predicted_normalized_damage": 0.018338477288970718,
+          "recovery": 0.9883894606275475,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0042386355529766325,
+          "exact_normalized_damage": 0.009663993265130455,
+          "pages": 2560,
+          "predicted_damage": 0.0041445329976607555,
+          "predicted_normalized_damage": 0.0152145215541149,
+          "recovery": 0.9903360067348695,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.0035868264764856612,
+          "exact_normalized_damage": 0.008177883301999502,
+          "pages": 2816,
+          "predicted_damage": 0.0033506506835831703,
+          "predicted_normalized_damage": 0.012300190895924613,
+          "recovery": 0.9918221166980005,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.002977506428162553,
+          "exact_normalized_damage": 0.0067886473628142536,
+          "pages": 3058,
+          "predicted_damage": 0.0028166569080193007,
+          "predicted_normalized_damage": 0.010339907357908322,
+          "recovery": 0.9932113526371857,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0024895468232124327,
+          "exact_normalized_damage": 0.005676110491702023,
+          "pages": 3319,
+          "predicted_damage": 0.002454877739903727,
+          "predicted_normalized_damage": 0.009011821188916334,
+          "recovery": 0.994323889508298,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.002123934364175023,
+          "exact_normalized_damage": 0.004842522348153322,
+          "pages": 3583,
+          "predicted_damage": 0.002075757605965068,
+          "predicted_normalized_damage": 0.0076200765815831835,
+          "recovery": 0.9951574776518467,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0018417256657556336,
+          "exact_normalized_damage": 0.004199092893839667,
+          "pages": 3836,
+          "predicted_damage": 0.0017730348593548227,
+          "predicted_normalized_damage": 0.0065087856940882535,
+          "recovery": 0.9958009071061603,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.0015155533953632697,
+          "exact_normalized_damage": 0.0034554274890302127,
+          "pages": 4084,
+          "predicted_damage": 0.0014971831401631157,
+          "predicted_normalized_damage": 0.005496137965200413,
+          "recovery": 0.9965445725109698,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.0012130248206714458,
+          "exact_normalized_damage": 0.0027656691760565614,
+          "pages": 4351,
+          "predicted_damage": 0.0012110918773725438,
+          "predicted_normalized_damage": 0.004445901017725784,
+          "recovery": 0.9972343308239434,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0010135478711571033,
+          "exact_normalized_damage": 0.0023108662394602333,
+          "pages": 4601,
+          "predicted_damage": 0.0009952023347800446,
+          "predicted_normalized_damage": 0.0036533735843730995,
+          "recovery": 0.9976891337605398,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 21,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.258898347391854,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.2920435833728026,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00044206317927878385,
+          "exact_normalized_damage": 0.0017074777947875496,
+          "pages": 2046,
+          "predicted_damage": 0.00043648583459367116,
+          "predicted_normalized_damage": 0.001494591422118265,
+          "recovery": 0.9982925222052125,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.0003637950426626786,
+          "exact_normalized_damage": 0.0014051655652790199,
+          "pages": 2296,
+          "predicted_damage": 0.00035759487024941374,
+          "predicted_normalized_damage": 0.0012244572064195394,
+          "recovery": 0.998594834434721,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.000292124771238371,
+          "exact_normalized_damage": 0.0011283377208902278,
+          "pages": 2553,
+          "predicted_damage": 0.00029538666539766093,
+          "predicted_normalized_damage": 0.0010114472024560484,
+          "recovery": 0.9988716622791097,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.00023908488000140077,
+          "exact_normalized_damage": 0.0009234700893611163,
+          "pages": 2816,
+          "predicted_damage": 0.0002360658327399351,
+          "predicted_normalized_damage": 0.0008083239837479661,
+          "recovery": 0.9990765299106389,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.00020111146037742658,
+          "exact_normalized_damage": 0.0007767970031613819,
+          "pages": 3069,
+          "predicted_damage": 0.0001931924462235343,
+          "predicted_normalized_damage": 0.0006615192293984361,
+          "recovery": 0.9992232029968386,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.00017054160501441549,
+          "exact_normalized_damage": 0.0006587203307106989,
+          "pages": 3318,
+          "predicted_damage": 0.00016553523784878965,
+          "predicted_normalized_damage": 0.0005668168974542365,
+          "recovery": 0.9993412796692893,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.00014533399462735721,
+          "exact_normalized_damage": 0.0005613554357973086,
+          "pages": 3583,
+          "predicted_damage": 0.0001422988670883872,
+          "predicted_normalized_damage": 0.0004872521609445475,
+          "recovery": 0.9994386445642027,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.00012190868606277179,
+          "exact_normalized_damage": 0.0004708747170110655,
+          "pages": 3839,
+          "predicted_damage": 0.00012130843920550366,
+          "predicted_normalized_damage": 0.00041537786177157573,
+          "recovery": 0.999529125282989,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.00010476767183906316,
+          "exact_normalized_damage": 0.00040466720971568307,
+          "pages": 4091,
+          "predicted_damage": 0.00010256788486132635,
+          "predicted_normalized_damage": 0.00035120745909488204,
+          "recovery": 0.9995953327902843,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 8.948556346165037e-05,
+          "exact_normalized_damage": 0.0003456397631082984,
+          "pages": 4352,
+          "predicted_damage": 8.542271869108617e-05,
+          "predicted_normalized_damage": 0.00029249989917443743,
+          "recovery": 0.9996543602368917,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 7.116592964769507e-05,
+          "exact_normalized_damage": 0.00027487981427700006,
+          "pages": 4608,
+          "predicted_damage": 6.849270457100838e-05,
+          "predicted_normalized_damage": 0.00023452905138331815,
+          "recovery": 0.999725120185723,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.258898347391854,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.2920435833728026,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.00044189805908141557,
+          "exact_normalized_damage": 0.0017068400147513627,
+          "pages": 2047,
+          "predicted_damage": 0.0004431735374467866,
+          "predicted_normalized_damage": 0.001517491096118561,
+          "recovery": 0.9982931599852486,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.0003508209715964287,
+          "exact_normalized_damage": 0.0013550529585476486,
+          "pages": 2299,
+          "predicted_damage": 0.00036389969733640037,
+          "predicted_normalized_damage": 0.0012460458577234729,
+          "recovery": 0.9986449470414523,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.0002890734746431655,
+          "exact_normalized_damage": 0.0011165520272929364,
+          "pages": 2555,
+          "predicted_damage": 0.00029864204226214404,
+          "predicted_normalized_damage": 0.0010225940895983265,
+          "recovery": 0.9988834479727071,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.00023900516296541943,
+          "exact_normalized_damage": 0.0009231621807290821,
+          "pages": 2815,
+          "predicted_damage": 0.00023757260881537894,
+          "predicted_normalized_damage": 0.0008134834057015052,
+          "recovery": 0.9990768378192709,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.00019671353563348174,
+          "exact_normalized_damage": 0.0007598099316398771,
+          "pages": 3071,
+          "predicted_damage": 0.00019780382903866238,
+          "predicted_normalized_damage": 0.0006773092795062705,
+          "recovery": 0.9992401900683601,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0001629955144503053,
+          "exact_normalized_damage": 0.000629573406289861,
+          "pages": 3321,
+          "predicted_damage": 0.00017078041944486013,
+          "predicted_normalized_damage": 0.0005847771674094742,
+          "recovery": 0.9993704265937101,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.00014159161496224198,
+          "exact_normalized_damage": 0.0005469004201403297,
+          "pages": 3551,
+          "predicted_damage": 0.00014466045687877726,
+          "predicted_normalized_damage": 0.0004953385902477224,
+          "recovery": 0.9994530995798596,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.00012111246442600438,
+          "exact_normalized_damage": 0.0004677992951522991,
+          "pages": 3838,
+          "predicted_damage": 0.0001224282514546491,
+          "predicted_normalized_damage": 0.0004192122629120246,
+          "recovery": 0.9995322007048477,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.0001037063369924061,
+          "exact_normalized_damage": 0.0004005677828272963,
+          "pages": 4095,
+          "predicted_damage": 0.0001052347851201162,
+          "predicted_normalized_damage": 0.0003603393161553587,
+          "recovery": 0.9995994322171727,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 8.663360233077282e-05,
+          "exact_normalized_damage": 0.00033462400669421446,
+          "pages": 4352,
+          "predicted_damage": 8.607309286166745e-05,
+          "predicted_normalized_damage": 0.0002947268755834724,
+          "recovery": 0.9996653759933057,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 6.944226252800125e-05,
+          "exact_normalized_damage": 0.000268222115851892,
+          "pages": 4604,
+          "predicted_damage": 6.946518335654297e-05,
+          "predicted_normalized_damage": 0.00023785896116699997,
+          "recovery": 0.9997317778841481,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 22,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.2639663142031391,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.19780421449829447,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.009392346005952932,
+          "exact_normalized_damage": 0.0355816083363005,
+          "pages": 2037,
+          "predicted_damage": 0.008880640944740482,
+          "predicted_normalized_damage": 0.04489611592586696,
+          "recovery": 0.9644183916636995,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.007627107520774188,
+          "exact_normalized_damage": 0.02889424563054147,
+          "pages": 2297,
+          "predicted_damage": 0.00723834688965005,
+          "predicted_normalized_damage": 0.036593491741362574,
+          "recovery": 0.9711057543694586,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.00615969300033648,
+          "exact_normalized_damage": 0.023335147967388746,
+          "pages": 2557,
+          "predicted_damage": 0.0058599928403826685,
+          "predicted_normalized_damage": 0.02962521731524176,
+          "recovery": 0.9766648520326112,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.005154939511497913,
+          "exact_normalized_damage": 0.0195287778558398,
+          "pages": 2808,
+          "predicted_damage": 0.004897604574824489,
+          "predicted_normalized_damage": 0.024759859577545642,
+          "recovery": 0.9804712221441602,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.004442204348826248,
+          "exact_normalized_damage": 0.01682867892532562,
+          "pages": 3072,
+          "predicted_damage": 0.004095337860546268,
+          "predicted_normalized_damage": 0.02070399698476384,
+          "recovery": 0.9831713210746744,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0037925979997520567,
+          "exact_normalized_damage": 0.014367734804348588,
+          "pages": 3324,
+          "predicted_damage": 0.0035447993386214537,
+          "predicted_normalized_damage": 0.017920747278375195,
+          "recovery": 0.9856322651956514,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0032299297087491174,
+          "exact_normalized_damage": 0.01223614353407033,
+          "pages": 3584,
+          "predicted_damage": 0.0030498402353607494,
+          "predicted_normalized_damage": 0.015418479546031342,
+          "recovery": 0.9877638564659297,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.0026036664666393918,
+          "exact_normalized_damage": 0.009863631556546654,
+          "pages": 3839,
+          "predicted_damage": 0.0025618691524750066,
+          "predicted_normalized_damage": 0.012951539778729516,
+          "recovery": 0.9901363684434533,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.00219915544237502,
+          "exact_normalized_damage": 0.008331197293161535,
+          "pages": 4092,
+          "predicted_damage": 0.002156889370804849,
+          "predicted_normalized_damage": 0.01090416286768979,
+          "recovery": 0.9916688027068384,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0018540732364841562,
+          "exact_normalized_damage": 0.0070239009173622335,
+          "pages": 4343,
+          "predicted_damage": 0.0018012109942799075,
+          "predicted_normalized_damage": 0.009106029408162271,
+          "recovery": 0.9929760990826377,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.001577787677674826,
+          "exact_normalized_damage": 0.005977231157080962,
+          "pages": 4603,
+          "predicted_damage": 0.0015110010830112427,
+          "predicted_normalized_damage": 0.007638872037401766,
+          "recovery": 0.9940227688429191,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.2639663142031391,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.19780421449829447,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.009205451424882643,
+          "exact_normalized_damage": 0.034873583974803904,
+          "pages": 2046,
+          "predicted_damage": 0.008885540374063602,
+          "predicted_normalized_damage": 0.04492088501046683,
+          "recovery": 0.9651264160251961,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.007482803339531585,
+          "exact_normalized_damage": 0.02834756912873771,
+          "pages": 2290,
+          "predicted_damage": 0.007301507540093732,
+          "predicted_normalized_damage": 0.03691280066308541,
+          "recovery": 0.9716524308712623,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.006052913397973071,
+          "exact_normalized_damage": 0.022930628160815113,
+          "pages": 2553,
+          "predicted_damage": 0.00586567636939022,
+          "predicted_normalized_damage": 0.02965395041894214,
+          "recovery": 0.9770693718391849,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.00506746638667738,
+          "exact_normalized_damage": 0.019197397978507356,
+          "pages": 2805,
+          "predicted_damage": 0.0050192954052427395,
+          "predicted_normalized_damage": 0.02537506805895694,
+          "recovery": 0.9808026020214926,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.004369229264630998,
+          "exact_normalized_damage": 0.016552222876698556,
+          "pages": 3068,
+          "predicted_damage": 0.004252862997027138,
+          "predicted_normalized_damage": 0.021500365944244367,
+          "recovery": 0.9834477771233014,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0037925979997520567,
+          "exact_normalized_damage": 0.014367734804348588,
+          "pages": 3324,
+          "predicted_damage": 0.0035447993386214537,
+          "predicted_normalized_damage": 0.017920747278375195,
+          "recovery": 0.9856322651956514,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.0032299297087491174,
+          "exact_normalized_damage": 0.01223614353407033,
+          "pages": 3584,
+          "predicted_damage": 0.0030498402353607494,
+          "predicted_normalized_damage": 0.015418479546031342,
+          "recovery": 0.9877638564659297,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0026036664666393918,
+          "exact_normalized_damage": 0.009863631556546654,
+          "pages": 3839,
+          "predicted_damage": 0.0025618691524750066,
+          "predicted_normalized_damage": 0.012951539778729516,
+          "recovery": 0.9901363684434533,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.00219915544237502,
+          "exact_normalized_damage": 0.008331197293161535,
+          "pages": 4092,
+          "predicted_damage": 0.002156889370804849,
+          "predicted_normalized_damage": 0.01090416286768979,
+          "recovery": 0.9916688027068384,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.0018540732364841562,
+          "exact_normalized_damage": 0.0070239009173622335,
+          "pages": 4343,
+          "predicted_damage": 0.0018012109942799075,
+          "predicted_normalized_damage": 0.009106029408162271,
+          "recovery": 0.9929760990826377,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0015481451791052292,
+          "exact_normalized_damage": 0.00586493463675002,
+          "pages": 4608,
+          "predicted_damage": 0.0015372903256136471,
+          "predicted_normalized_damage": 0.007771777408852439,
+          "recovery": 0.99413506536325,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 22,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.09109598185955628,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.07733980776859282,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.00020128107292217024,
+          "exact_normalized_damage": 0.002209549409462292,
+          "pages": 2042,
+          "predicted_damage": 0.00019851498557532876,
+          "predicted_normalized_damage": 0.002566789229284125,
+          "recovery": 0.9977904505905377,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.00016637767690178248,
+          "exact_normalized_damage": 0.0018263997325182668,
+          "pages": 2302,
+          "predicted_damage": 0.00016050133359695948,
+          "predicted_normalized_damage": 0.002075274534909537,
+          "recovery": 0.9981736002674817,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.000128033370525696,
+          "exact_normalized_damage": 0.0014054776940994667,
+          "pages": 2559,
+          "predicted_damage": 0.00012953588195178367,
+          "predicted_normalized_damage": 0.0016748927323347617,
+          "recovery": 0.9985945223059005,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.00010162462684440181,
+          "exact_normalized_damage": 0.001115577490575574,
+          "pages": 2813,
+          "predicted_damage": 0.00010273456243787882,
+          "predicted_normalized_damage": 0.00132835295822391,
+          "recovery": 0.9988844225094244,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 8.810583030293667e-05,
+          "exact_normalized_damage": 0.0009671758128560538,
+          "pages": 3072,
+          "predicted_damage": 8.573937832841538e-05,
+          "predicted_normalized_damage": 0.0011086060439270133,
+          "recovery": 0.9990328241871439,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 7.673786817992108e-05,
+          "exact_normalized_damage": 0.0008423847749753522,
+          "pages": 3325,
+          "predicted_damage": 7.390137391752364e-05,
+          "predicted_normalized_damage": 0.0009555412154455146,
+          "recovery": 0.9991576152250247,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 6.41946551678558e-05,
+          "exact_normalized_damage": 0.0007046924996848427,
+          "pages": 3582,
+          "predicted_damage": 6.243145569540203e-05,
+          "predicted_normalized_damage": 0.0008072357237065052,
+          "recovery": 0.9992953075003151,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 5.46382761028132e-05,
+          "exact_normalized_damage": 0.0005997879927025723,
+          "pages": 3840,
+          "predicted_damage": 5.3381753362789926e-05,
+          "predicted_normalized_damage": 0.0006902235071816133,
+          "recovery": 0.9994002120072975,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 4.572756656025352e-05,
+          "exact_normalized_damage": 0.0005019712793781863,
+          "pages": 4095,
+          "predicted_damage": 4.417871430379311e-05,
+          "predicted_normalized_damage": 0.0005712286541489671,
+          "recovery": 0.9994980287206218,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 3.791253833777906e-05,
+          "exact_normalized_damage": 0.0004161823338841581,
+          "pages": 4347,
+          "predicted_damage": 3.667285001635243e-05,
+          "predicted_normalized_damage": 0.00047417818940125457,
+          "recovery": 0.9995838176661158,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 3.185183454551277e-05,
+          "exact_normalized_damage": 0.00034965136656212904,
+          "pages": 4606,
+          "predicted_damage": 3.0049425868726853e-05,
+          "predicted_normalized_damage": 0.0003885376332798402,
+          "recovery": 0.9996503486334378,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.09109598185955628,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.07733980776859282,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.0001993074204546762,
+          "exact_normalized_damage": 0.0021878837725460903,
+          "pages": 2043,
+          "predicted_damage": 0.00020066123214690167,
+          "predicted_normalized_damage": 0.00259454009437542,
+          "recovery": 0.9978121162274539,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.00015923382275016712,
+          "exact_normalized_damage": 0.0017479785551426377,
+          "pages": 2294,
+          "predicted_damage": 0.00016341664820081572,
+          "predicted_normalized_damage": 0.0021129694127217384,
+          "recovery": 0.9982520214448574,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.000128033370525696,
+          "exact_normalized_damage": 0.0014054776940994667,
+          "pages": 2559,
+          "predicted_damage": 0.00012953588195178367,
+          "predicted_normalized_damage": 0.0016748927323347617,
+          "recovery": 0.9985945223059005,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.0001009619080654211,
+          "exact_normalized_damage": 0.001108302539853791,
+          "pages": 2812,
+          "predicted_damage": 0.00010458066441533959,
+          "predicted_normalized_damage": 0.0013522229681285696,
+          "recovery": 0.9988916974601462,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 8.667136131904974e-05,
+          "exact_normalized_damage": 0.0009514290262842984,
+          "pages": 3068,
+          "predicted_damage": 8.793302211659707e-05,
+          "predicted_normalized_damage": 0.0011369697527526838,
+          "recovery": 0.9990485709737157,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 7.51174528858433e-05,
+          "exact_normalized_damage": 0.0008245967753182871,
+          "pages": 3325,
+          "predicted_damage": 7.574405479816968e-05,
+          "predicted_normalized_damage": 0.0009793669907326667,
+          "recovery": 0.9991754032246817,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 6.41946551678558e-05,
+          "exact_normalized_damage": 0.0007046924996848427,
+          "pages": 3582,
+          "predicted_damage": 6.243145569540203e-05,
+          "predicted_normalized_damage": 0.0008072357237065052,
+          "recovery": 0.9992953075003151,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 5.421071291497327e-05,
+          "exact_normalized_damage": 0.0005950944466304841,
+          "pages": 3840,
+          "predicted_damage": 5.349470608828466e-05,
+          "predicted_normalized_damage": 0.0006916839804974082,
+          "recovery": 0.9994049055533695,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 4.448666003964048e-05,
+          "exact_normalized_damage": 0.0004883493116987978,
+          "pages": 4087,
+          "predicted_damage": 4.431212262993447e-05,
+          "predicted_normalized_damage": 0.0005729536173986888,
+          "recovery": 0.9995116506883012,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 3.7423000945789295e-05,
+          "exact_normalized_damage": 0.00041080847016375285,
+          "pages": 4350,
+          "predicted_damage": 3.714177680316174e-05,
+          "predicted_normalized_damage": 0.0004802413902332554,
+          "recovery": 0.9995891915298363,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 3.12893637461219e-05,
+          "exact_normalized_damage": 0.0003434768812784857,
+          "pages": 4606,
+          "predicted_damage": 3.094800667131238e-05,
+          "predicted_normalized_damage": 0.00040015623990056207,
+          "recovery": 0.9996565231187216,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 23,
+      "position": 0,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "compressed": [
+        {
+          "exact_damage": 0.14659166339050828,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.1855786455648145,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "compressed_mean_0"
+        },
+        {
+          "exact_damage": 0.009733031666013154,
+          "exact_normalized_damage": 0.0663955332854444,
+          "pages": 2048,
+          "predicted_damage": 0.009431657637758748,
+          "predicted_normalized_damage": 0.0508229683919354,
+          "recovery": 0.9336044667145555,
+          "source": "compressed_mean_256"
+        },
+        {
+          "exact_damage": 0.007700558589789769,
+          "exact_normalized_damage": 0.05253067201561187,
+          "pages": 2300,
+          "predicted_damage": 0.007908012825135206,
+          "predicted_normalized_damage": 0.04261273058151124,
+          "recovery": 0.9474693279843881,
+          "source": "compressed_mean_288"
+        },
+        {
+          "exact_damage": 0.006297779692839923,
+          "exact_normalized_damage": 0.04296137684216837,
+          "pages": 2552,
+          "predicted_damage": 0.006527550865729656,
+          "predicted_normalized_damage": 0.0351740408809583,
+          "recovery": 0.9570386231578316,
+          "source": "compressed_mean_320"
+        },
+        {
+          "exact_damage": 0.005190248389656195,
+          "exact_normalized_damage": 0.035406163417559394,
+          "pages": 2815,
+          "predicted_damage": 0.005292514787110644,
+          "predicted_normalized_damage": 0.02851898595877078,
+          "recovery": 0.9645938365824406,
+          "source": "compressed_mean_352"
+        },
+        {
+          "exact_damage": 0.004242480107520409,
+          "exact_normalized_damage": 0.028940800652618198,
+          "pages": 3071,
+          "predicted_damage": 0.0042750501236814885,
+          "predicted_normalized_damage": 0.023036325708005023,
+          "recovery": 0.9710591993473818,
+          "source": "compressed_mean_384"
+        },
+        {
+          "exact_damage": 0.0036717957357958277,
+          "exact_normalized_damage": 0.025047780009252386,
+          "pages": 3328,
+          "predicted_damage": 0.0036933015750563315,
+          "predicted_normalized_damage": 0.019901543972452494,
+          "recovery": 0.9749522199907477,
+          "source": "compressed_mean_416"
+        },
+        {
+          "exact_damage": 0.0032714266789204364,
+          "exact_normalized_damage": 0.022316594295035876,
+          "pages": 3573,
+          "predicted_damage": 0.0031838359152324583,
+          "predicted_normalized_damage": 0.017156262271137677,
+          "recovery": 0.9776834057049641,
+          "source": "compressed_mean_448"
+        },
+        {
+          "exact_damage": 0.0027996929607463643,
+          "exact_normalized_damage": 0.01909858238860562,
+          "pages": 3835,
+          "predicted_damage": 0.002717179320455603,
+          "predicted_normalized_damage": 0.014641659400982165,
+          "recovery": 0.9809014176113944,
+          "source": "compressed_mean_480"
+        },
+        {
+          "exact_damage": 0.002313159874439655,
+          "exact_normalized_damage": 0.015779614071760584,
+          "pages": 4096,
+          "predicted_damage": 0.002247278344228782,
+          "predicted_normalized_damage": 0.012109574015852519,
+          "recovery": 0.9842203859282395,
+          "source": "compressed_mean_512"
+        },
+        {
+          "exact_damage": 0.0018968289055400994,
+          "exact_normalized_damage": 0.0129395414559633,
+          "pages": 4341,
+          "predicted_damage": 0.0018391456262974591,
+          "predicted_normalized_damage": 0.009910330042015131,
+          "recovery": 0.9870604585440367,
+          "source": "compressed_mean_544"
+        },
+        {
+          "exact_damage": 0.0015477828688551995,
+          "exact_normalized_damage": 0.01055846446555444,
+          "pages": 4608,
+          "predicted_damage": 0.0014956491331210963,
+          "predicted_normalized_damage": 0.008059381663062798,
+          "recovery": 0.9894415355344456,
+          "source": "compressed_mean_576"
+        }
+      ],
+      "exact": [
+        {
+          "exact_damage": 0.14659166339050828,
+          "exact_normalized_damage": 1.0,
+          "pages": 0,
+          "predicted_damage": 0.1855786455648145,
+          "predicted_normalized_damage": 1.0,
+          "recovery": 0.0,
+          "source": "exact_mean_0"
+        },
+        {
+          "exact_damage": 0.009307993296541259,
+          "exact_normalized_damage": 0.06349606165355748,
+          "pages": 2046,
+          "predicted_damage": 0.009780070339753609,
+          "predicted_normalized_damage": 0.05270040801293519,
+          "recovery": 0.9365039383464425,
+          "source": "exact_mean_256"
+        },
+        {
+          "exact_damage": 0.007646486114368624,
+          "exact_normalized_damage": 0.052161807414648174,
+          "pages": 2297,
+          "predicted_damage": 0.008038505636718509,
+          "predicted_normalized_damage": 0.04331589775457765,
+          "recovery": 0.9478381925853518,
+          "source": "exact_mean_288"
+        },
+        {
+          "exact_damage": 0.006297779692839923,
+          "exact_normalized_damage": 0.04296137684216837,
+          "pages": 2552,
+          "predicted_damage": 0.006527550865729656,
+          "predicted_normalized_damage": 0.0351740408809583,
+          "recovery": 0.9570386231578316,
+          "source": "exact_mean_320"
+        },
+        {
+          "exact_damage": 0.005190248389656195,
+          "exact_normalized_damage": 0.035406163417559394,
+          "pages": 2815,
+          "predicted_damage": 0.005292514787110644,
+          "predicted_normalized_damage": 0.02851898595877078,
+          "recovery": 0.9645938365824406,
+          "source": "exact_mean_352"
+        },
+        {
+          "exact_damage": 0.0041968125625415,
+          "exact_normalized_damage": 0.028629271716233497,
+          "pages": 3068,
+          "predicted_damage": 0.004352218571858168,
+          "predicted_normalized_damage": 0.023452151828202285,
+          "recovery": 0.9713707282837665,
+          "source": "exact_mean_384"
+        },
+        {
+          "exact_damage": 0.0036063907436023083,
+          "exact_normalized_damage": 0.024601608714918368,
+          "pages": 3325,
+          "predicted_damage": 0.003751710761820837,
+          "predicted_normalized_damage": 0.020216284855417425,
+          "recovery": 0.9753983912850817,
+          "source": "exact_mean_416"
+        },
+        {
+          "exact_damage": 0.0031964850199784766,
+          "exact_normalized_damage": 0.021805367004147435,
+          "pages": 3576,
+          "predicted_damage": 0.003342948392284547,
+          "predicted_normalized_damage": 0.01801364797178133,
+          "recovery": 0.9781946329958525,
+          "source": "exact_mean_448"
+        },
+        {
+          "exact_damage": 0.0027190739777816337,
+          "exact_normalized_damage": 0.018548626264907313,
+          "pages": 3836,
+          "predicted_damage": 0.0027752698578378697,
+          "predicted_normalized_damage": 0.014954683225493148,
+          "recovery": 0.9814513737350927,
+          "source": "exact_mean_480"
+        },
+        {
+          "exact_damage": 0.002313159874439655,
+          "exact_normalized_damage": 0.015779614071760584,
+          "pages": 4096,
+          "predicted_damage": 0.002247278344228782,
+          "predicted_normalized_damage": 0.012109574015852519,
+          "recovery": 0.9842203859282395,
+          "source": "exact_mean_512"
+        },
+        {
+          "exact_damage": 0.0018888423088703923,
+          "exact_normalized_damage": 0.01288505952646618,
+          "pages": 4351,
+          "predicted_damage": 0.0018910811664504031,
+          "predicted_normalized_damage": 0.010190187349922927,
+          "recovery": 0.9871149404735338,
+          "source": "exact_mean_544"
+        },
+        {
+          "exact_damage": 0.0015119328020155329,
+          "exact_normalized_damage": 0.010313907128455639,
+          "pages": 4606,
+          "predicted_damage": 0.00153445402031978,
+          "predicted_normalized_damage": 0.00826848377758993,
+          "recovery": 0.9896860928715444,
+          "source": "exact_mean_576"
+        }
+      ],
+      "layer": 23,
+      "position": 1,
+      "request_id": "mxfp4-confirm-006"
+    }
+  ],
+  "schema": "half_bpw_cross_layer_compact_probe_v1",
+  "scope": {
+    "groups": 16,
+    "groups_per_layer": 2,
+    "layers": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "mean_correction_bpw": 0.5,
+    "mean_correction_pages_per_expert": 384,
+    "tokens": 2
+  },
+  "summaries": {
+    "compressed": {
+      "actual_pages_total": 49120,
+      "allowed_pages_total": 49152,
+      "cross_layer_average_0p5": {
+        "mean": 0.9893648142285884,
+        "median": 0.9920993365398819,
+        "p10": 0.9778033864720963,
+        "p90": 0.9978369340883272
+      },
+      "paired_recovery_delta": {
+        "mean": 0.0011632634186782287,
+        "median": 0.00044055272319903915,
+        "p10": -0.0030075715428587446,
+        "p90": 0.004739200100173646
+      },
+      "uniform_0p5": {
+        "mean": 0.9882015508099101,
+        "median": 0.9931274786709768,
+        "p10": 0.9733308200559021,
+        "p90": 0.9990761417941376
+      }
+    },
+    "exact": {
+      "actual_pages_total": 49091,
+      "allowed_pages_total": 49152,
+      "cross_layer_average_0p5": {
+        "mean": 0.9896142828111089,
+        "median": 0.9916252952017457,
+        "p10": 0.9799410586793988,
+        "p90": 0.9978477669067853
+      },
+      "paired_recovery_delta": {
+        "mean": 0.0012085498271708975,
+        "median": 0.0009699325822576377,
+        "p10": -0.005077968771210584,
+        "p90": 0.004903507557832698
+      },
+      "uniform_0p5": {
+        "mean": 0.988405732983938,
+        "median": 0.9931973933223752,
+        "p10": 0.9738544596501668,
+        "p90": 0.999085551641079
+      }
+    }
+  }
+}

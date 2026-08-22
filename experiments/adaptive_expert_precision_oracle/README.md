@@ -385,3 +385,17 @@ python experiments/adaptive_expert_precision_oracle/scripts/analyze_average_rate
 
 See `AVERAGE_RATE_ALLOCATION_REPRODUCIBILITY.md` for the complete execution,
 hash, accounting, worker, and scientific-boundary contract.
+
+## Compact 0.5-bpw follow-up
+
+The post-PR #13 compact screen keeps the same 73,856-byte top-8 geometry and
+0.5 streamed correction bpw while pooling rate over 40 layers. On an 80-group
+two-token screen, the compressed tail-aware policy reaches 97.855% p10 and the
+exact H0 allocation ceiling reaches 98.353%, versus 97.060% and 97.107%
+uniform baselines. The result is materially positive but remains future-aware,
+noncausal, and below the 99% target. Exact byte accounting, execution scope,
+negative static-schedule control, hashes, and caveats are recorded in
+[`HALF_BPW_COMPACT_EXPLORATION_20260822.md`](HALF_BPW_COMPACT_EXPLORATION_20260822.md).
+A full 1,536-page/expert burst extension leaves those fourth-power quantiles
+unchanged; on the harder token, even exact H0 selection needs 10.70% more pages
+than the 0.5-bpw budget to place 37/40 layers above 99% recovery.
