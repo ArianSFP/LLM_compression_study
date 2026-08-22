@@ -1,0 +1,70 @@
+{
+  "completed": true,
+  "inputs": {
+    "analyzer": {
+      "path": "/root/refinement_transform_study/experiment/scripts/analyze_refinement_rotation_audit.py",
+      "sha256": "2f4f69227a52971c098ffbd6337ef9a98c7eab84e2db1a787dc31397002879a6"
+    },
+    "config": {
+      "path": "configs/qwen36_mxfp4_refinement_rotation_audit.json",
+      "sha256": "b10c7e77ef4de7bd598b3455283585547d751f2262cf3f0ea3286836bb2e1889"
+    },
+    "evaluation_facts": {
+      "path": "/root/refinement_transform_study/results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/validation_exact_h4/refinement_rotation_evaluation_facts.json",
+      "sha256": "4f8082276444c7fab7c5c91514338b5d103a6b1dbb3ceb481871a0ae872363ec"
+    },
+    "fit_facts": {
+      "path": "/root/refinement_transform_study/results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/fit/refinement_rotation_fit_facts.json",
+      "sha256": "8c65a56b9924754118464a62fdfb4e8557fa52787918a2ed91776ec020d0fb72"
+    },
+    "omp": {
+      "path": "/root/refinement_transform_study/results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/validation_exact_h4/refinement_rotation_omp_audit.parquet",
+      "sha256": "a054f46be7102e57db0ebd1fb1cc357e322a56e060862f1c1550949c7c8347d9"
+    },
+    "validation": {
+      "path": "/root/refinement_transform_study/results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/validation_exact_h4/refinement_rotation_validation.parquet",
+      "sha256": "3793a6392f5b8e5b0b6ebfcfb3cf0ec7ed62aa4fd5a298b6470b3f9c31f6c682"
+    }
+  },
+  "outputs": {
+    "REFINEMENT_ROTATION_REPORT.md": {
+      "bytes": 54932,
+      "sha256": "c4c17f898f658c5d76a1d56ceb71188df94b1b65483fe58d399a0c57f19f0465"
+    },
+    "refinement_rotation_actions_to_target.csv": {
+      "bytes": 3131,
+      "sha256": "6c1686ae3fb864a96e47e8cab6b5378a0b8b18566d462732f10c2d7ed9ca7fac"
+    },
+    "refinement_rotation_fit_summary.csv": {
+      "bytes": 691,
+      "sha256": "f48a6b3b5597335971c80fcfb39c035b5483c5dab20c35c83a2088ea4b98844e"
+    },
+    "refinement_rotation_frontier.png": {
+      "bytes": 460104,
+      "sha256": "43d0346f8870c2b989ccfe55241bf065d381b4230925cc39bebef7864d96ae5e"
+    },
+    "refinement_rotation_frontier.svg": {
+      "bytes": 104517,
+      "sha256": "c0549f7ed4c289f29f505a159da0ca0080b1bb16780b0a95a45ce30a59f4fc36"
+    },
+    "refinement_rotation_frontier_summary.csv": {
+      "bytes": 42279,
+      "sha256": "bbabe64d4a6d74f1d95feb270f175e319eafb33be994f2ad6573167e5b5c67a3"
+    },
+    "refinement_rotation_layer_summary.csv": {
+      "bytes": 89551,
+      "sha256": "b9090978ae2cffac07495adff1b4ec3927cab9176721f6dd3c43c38064c5193a"
+    },
+    "refinement_rotation_omp_gap.csv": {
+      "bytes": 1078,
+      "sha256": "2e52bc3f0c526232d4628c490b10237d4a7a663637545e33fa4ce17f5e8bc675"
+    },
+    "refinement_rotation_storage_compute.csv": {
+      "bytes": 2684,
+      "sha256": "e16a28b34f09026a9f2e6f306c0a1f01012788b9c567a8f171254b50904c233b"
+    }
+  },
+  "run_id": "qwen36_mxfp4_refinement_rotation_audit_20260822_v3",
+  "selection_split": "validation",
+  "test_rows_admitted_or_used": false
+}

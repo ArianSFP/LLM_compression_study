@@ -1,0 +1,125 @@
+{
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "config_sha256": "b10c7e77ef4de7bd598b3455283585547d751f2262cf3f0ea3286836bb2e1889",
+  "device": "cuda:0",
+  "fit_split": "train",
+  "layers": {
+    "0": {
+      "activation_top_rank_energy_fraction": 1.0000001081162437,
+      "ajd": {
+        "block_size": 32,
+        "blocks": 64,
+        "maximum_sweeps": 3,
+        "mean_final_offdiagonal_fraction": 0.08425563598093007,
+        "mean_initial_offdiagonal_fraction": 0.09109280594935737,
+        "rotations": 95232
+      },
+      "bytes": 35348450,
+      "decode_seconds": 12.564947731792927,
+      "experts_fit": 256,
+      "file": "refinement_rotation_layer_0.npz",
+      "gram_seconds": 0.38439515978097916,
+      "layer": 0,
+      "router_top_rank_energy_fraction": 0.6051233339189793,
+      "sha256": "1a2eca81feda5f56718e81d7d8bd31ff3d2938f9806cb1dc1580a1db1d5f5b28",
+      "train_rows": 70,
+      "uniform_top_rank_energy_fraction": 0.5689117922502827,
+      "wall_seconds": 24.077656745910645
+    },
+    "20": {
+      "activation_top_rank_energy_fraction": 1.0000001516499428,
+      "ajd": {
+        "block_size": 32,
+        "blocks": 64,
+        "maximum_sweeps": 3,
+        "mean_final_offdiagonal_fraction": 0.050810829072800996,
+        "mean_initial_offdiagonal_fraction": 0.06626432070348806,
+        "rotations": 95232
+      },
+      "bytes": 35320794,
+      "decode_seconds": 12.885976763442159,
+      "experts_fit": 256,
+      "file": "refinement_rotation_layer_20.npz",
+      "gram_seconds": 0.37961753085255623,
+      "layer": 20,
+      "router_top_rank_energy_fraction": 0.63458741383527,
+      "sha256": "6308eb73c99d3c2f73d1b052f90b80b6f73a2e107a42393b395aac28e5aae3ed",
+      "train_rows": 70,
+      "uniform_top_rank_energy_fraction": 0.5538354670245178,
+      "wall_seconds": 23.683027744293213
+    },
+    "39": {
+      "activation_top_rank_energy_fraction": 1.00000034679197,
+      "ajd": {
+        "block_size": 32,
+        "blocks": 64,
+        "maximum_sweeps": 3,
+        "mean_final_offdiagonal_fraction": 0.05688960991928902,
+        "mean_initial_offdiagonal_fraction": 0.06252211485227317,
+        "rotations": 95232
+      },
+      "bytes": 35319373,
+      "decode_seconds": 12.937032524496317,
+      "experts_fit": 256,
+      "file": "refinement_rotation_layer_39.npz",
+      "gram_seconds": 0.37581659108400345,
+      "layer": 39,
+      "router_top_rank_energy_fraction": 0.5990320951454182,
+      "sha256": "50e2048566a0991a4521d2b06115893511f3ffb57cd69def126e5b0efb4778f6",
+      "train_rows": 70,
+      "uniform_top_rank_energy_fraction": 0.5491725232178691,
+      "wall_seconds": 23.065059661865234
+    },
+    "4": {
+      "activation_top_rank_energy_fraction": 1.0000001993919045,
+      "ajd": {
+        "block_size": 32,
+        "blocks": 64,
+        "maximum_sweeps": 3,
+        "mean_final_offdiagonal_fraction": 0.05496424840214935,
+        "mean_initial_offdiagonal_fraction": 0.059284922946776286,
+        "rotations": 95232
+      },
+      "bytes": 35322312,
+      "decode_seconds": 12.88398396782577,
+      "experts_fit": 256,
+      "file": "refinement_rotation_layer_4.npz",
+      "gram_seconds": 0.3819225188344717,
+      "layer": 4,
+      "router_top_rank_energy_fraction": 0.6031268440249796,
+      "sha256": "46cae05336f0814280c93c23b5227d8733988f22b5144fd0cf114a3a7ea66047",
+      "train_rows": 70,
+      "uniform_top_rank_energy_fraction": 0.5479691057046652,
+      "wall_seconds": 25.877803325653076
+    }
+  },
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "phase": "fit",
+  "rotation_core_sha256": "f2d3dec9eba1511c1d63c482fd155b7e2e9c9dd2111090c7f148bc4436bc4c56",
+  "run_id": "qwen36_mxfp4_refinement_rotation_audit_20260822_v3",
+  "runner_sha256": "325ec293d44cd018d3ec70a4f402acdec1a6b901e75749190d1b1000c44c5705",
+  "test_rows_admitted_or_used": false,
+  "torch": "2.13.0+cu130",
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_rows_admitted_or_used": false
+}

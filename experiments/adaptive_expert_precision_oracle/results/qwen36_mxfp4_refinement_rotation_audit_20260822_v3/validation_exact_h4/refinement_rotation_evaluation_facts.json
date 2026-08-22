@@ -1,0 +1,115 @@
+{
+  "capture_sha256": "52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931",
+  "checkpoint_audit": {
+    "checkpoint": "/root/qwen36_mxfp4_candidate",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      4,
+      20,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 6144
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "config_sha256": "b10c7e77ef4de7bd598b3455283585547d751f2262cf3f0ea3286836bb2e1889",
+  "device": "cuda:0",
+  "fit_facts_sha256": "8c65a56b9924754118464a62fdfb4e8557fa52787918a2ed91776ec020d0fb72",
+  "layers": {
+    "0": {
+      "expert_id": 62,
+      "proxy_facts": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0859375,
+          0.09375,
+          0.09375,
+          0.09375
+        ],
+        "rank": 4,
+        "ridge": 2.5276365340687337e-06,
+        "train_samples": 70
+      },
+      "rows": 1666,
+      "validation_invocations": 7,
+      "wall_seconds": 29.335872173309326
+    },
+    "20": {
+      "expert_id": 191,
+      "proxy_facts": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0006710012257099151,
+        "train_samples": 70
+      },
+      "rows": 3808,
+      "validation_invocations": 16,
+      "wall_seconds": 55.776890993118286
+    },
+    "39": {
+      "expert_id": 108,
+      "proxy_facts": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 0.0008361098170280457,
+        "train_samples": 70
+      },
+      "rows": 3808,
+      "validation_invocations": 16,
+      "wall_seconds": 55.76126170158386
+    },
+    "4": {
+      "expert_id": 154,
+      "proxy_facts": {
+        "beta": 512.0,
+        "kind": "ridge gradients of H1-H4 same-layer router top8 boundary margins w.r.t. captured post-MoE state",
+        "margin_medians": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "rank": 4,
+        "ridge": 1.0406021028757096e-05,
+        "train_samples": 70
+      },
+      "rows": 3808,
+      "validation_invocations": 16,
+      "wall_seconds": 55.95242667198181
+    }
+  },
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "observed_rows": 13090,
+  "observed_validation_invocations": 55,
+  "omp_rows": 84,
+  "phase": "evaluate",
+  "rotation_core_sha256": "f2d3dec9eba1511c1d63c482fd155b7e2e9c9dd2111090c7f148bc4436bc4c56",
+  "run_id": "qwen36_mxfp4_refinement_rotation_audit_20260822_v3",
+  "runner_sha256": "325ec293d44cd018d3ec70a4f402acdec1a6b901e75749190d1b1000c44c5705",
+  "selection_split": "validation",
+  "test_rows_admitted_or_used": false,
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+}

@@ -385,3 +385,57 @@ python experiments/adaptive_expert_precision_oracle/scripts/analyze_average_rate
 
 See `AVERAGE_RATE_ALLOCATION_REPRODUCIBILITY.md` for the complete execution,
 hash, accounting, worker, and scientific-boundary contract.
+
+## Refinement-aware activation rotation (stacked on PR #13)
+
+This continuation tests whether the streamed gate/up Q2-to-Q4 correction can
+be made more top-k compressible by rotating only the refinement path. The
+resident Q2 base is unchanged. Shared bases are fit on train rows across all
+256 experts in layers 0/4/20/39; evaluation uses 55 matched validation
+invocations of the four locked hot experts. Down is held at exact Q4 so this is
+an isolated gate/up basis ceiling, not a replacement for PR #13's combined
+gate/up/down top-8 allocation result.
+
+Reviewer entry points:
+
+- [Canonical report](results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/analysis/REFINEMENT_ROTATION_REPORT.md),
+  [frontier table](results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/analysis/refinement_rotation_frontier_summary.csv),
+  and [analysis manifest](results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/analysis/refinement_rotation_analysis_manifest.json).
+- [Interaction-gap table](results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/analysis/refinement_rotation_omp_gap.csv),
+  [storage/compute accounting](results/qwen36_mxfp4_refinement_rotation_audit_20260822_v3/analysis/refinement_rotation_storage_compute.csv),
+  and [reproducibility protocol](REFINEMENT_ROTATION_REPRODUCIBILITY.md).
+
+There is substantial per-expert headroom. At 95% exact gate/up correction
+recovery, the symmetric-INT4 per-expert joint correction basis needs a median
+581 physical pages versus 875 for native diagonal selection, a 1.51x action
+reduction; separate per-projection INT8 needs 531 pages. The unquantized joint
+eigenbasis makes diagonal and exact fixed-coefficient greedy identical. INT4
+requantization reintroduces only a 1.067x median diagonal-to-greedy gap at 95%,
+versus 1.468x for identity INT4.
+
+That gain does not survive the current deployability constraints. A dense
+per-expert basis costs about 10.67 equivalent bpw before correction traffic and
+therefore receives zero actions in the strict one-total-bpw storage control.
+The best layer-shared 768-page method, the train-router-weighted full-rank INT2
+basis, reaches 0.8531 median isolated correction recovery; native diagonal
+reaches 0.9065. After charging basis/scales, the best strict shared INT2 point
+has 0.8336/0.8469 isolated/expert-output recovery at 688 pages, versus
+0.9065/0.9953 for native at 768. Block joint diagonalization is also negative.
+Full-rank INT2 uses all four signed codewords and two predetermined coordinate
+pairs per indivisible 512-byte page. Even at all 1,024 pages its best median
+correction endpoint is 0.8785, and no INT2 method reaches 90% on any validation
+invocation. Arbitrary half-page repacking is never assumed.
+
+The decision is **do not promote a shared rotation to H4 prediction yet**.
+The positive oracle/shared gap motivates a small expert-cluster transform
+codebook or a layer-shared structured basis with a cheap expert-specific
+butterfly/Householder correction, optimized directly for quantized page
+rate-distortion. A future run should first beat native rows after basis,
+scale, and transform costs; only then should it repeat support selection from
+H4-predicted rather than exact activations.
+
+The exact capture was independently regenerated and is byte-identical to the
+locked PR #13 artifact (SHA-256 `52bc9eb2d726e014efef77f24e2f6eaf4401b5f7abd7dddb2d84f1a55483a931`).
+All fits are train-only, analysis is validation-only, and test rows are sealed.
+No H4 predictor, causal replay, latency, routing/logit agreement, token quality,
+perplexity, downstream accuracy, or deployment claim is made.

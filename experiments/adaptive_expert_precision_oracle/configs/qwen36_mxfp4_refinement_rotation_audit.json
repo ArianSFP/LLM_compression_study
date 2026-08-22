@@ -1,0 +1,63 @@
+{
+  "run_id": "qwen36_mxfp4_refinement_rotation_audit_20260822_v3",
+  "seed": 20260822,
+  "base_pr13_commit": "dfba3748e51d6916dc1f28cb1d3b3250188adbbe",
+  "fit_split": "train",
+  "selection_split": "validation",
+  "no_test_rows_admitted": true,
+  "layers": [0, 4, 20, 39],
+  "input_width": 2048,
+  "expert_width": 512,
+  "experts_per_layer": 256,
+  "shared_rank": 1024,
+  "block_size": 32,
+  "ajd_sweeps": 3,
+  "ajd_experts_per_layer": 16,
+  "router_uniform_mixture": 0.05,
+  "physical_page_bytes": 512,
+  "paired_gate_up_bits": 4,
+  "full_rank_paired_bits": 2,
+  "coordinates_per_int2_page": 2,
+  "separate_projection_bits": 8,
+  "physical_page_budgets": [64, 128, 256, 384, 512, 688, 728, 750, 752, 758, 760, 764, 768, 1024],
+  "recovery_targets": [0.9, 0.95, 0.99],
+  "maximum_validation_invocations_per_expert": 16,
+  "pilot_expert_per_layer": {
+    "0": 62,
+    "4": 154,
+    "20": 191,
+    "39": 108
+  },
+  "shared_methods": [
+    "activation_pca_rank1024_int4",
+    "refinement_uniform_rank1024_int4",
+    "refinement_router_rank1024_int4",
+    "block_ajd_rank1024_int4",
+    "activation_pca_full_int2",
+    "refinement_uniform_full_int2",
+    "refinement_router_full_int2",
+    "block_ajd_full_int2"
+  ],
+  "oracle_methods": [
+    "per_expert_joint_rank1024_fp32_oracle",
+    "per_expert_joint_rank1024_int4",
+    "per_expert_joint_rank1024_int2",
+    "per_expert_output_jacobian_train_rank1024_int4",
+    "per_expert_separate_rank512_int8"
+  ],
+  "controls": [
+    "native_row_diagonal",
+    "native_row_exact_greedy",
+    "identity_paired_int4",
+    "identity_full_int2"
+  ],
+  "reference": {
+    "repository": "pahajokiconsulting/Qwen3.6-35B-A3B-MXFP4",
+    "revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+    "config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "format": "compressed-tensors mxfp4-pack-quantized"
+  },
+  "locked_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "scope": "train-fit validation-only matched hot-expert basis ceiling; exact gate/up Q2-to-Q4 residuals with Q4 down held fixed; no test, H4 predictor, causal replay, latency, logits, tokens, perplexity, or deployment claim"
+}
