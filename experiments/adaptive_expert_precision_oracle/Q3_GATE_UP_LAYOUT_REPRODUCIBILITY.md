@@ -1,5 +1,11 @@
 # Rank-4 gate/up Q3 physical-layout reproducibility
 
+> **Superseded attribution.** This file preserves PR #14's original evidence.
+> The same-solver exact-self-DP closure in
+> [Q3_DP_DOMINANCE_REPRODUCIBILITY.md](Q3_DP_DOMINANCE_REPRODUCIBILITY.md)
+> supersedes the `-0.231 bpw` comparison and freezes the final gate/up-Q3
+> decision as `stop_embedded_gate_up_q3`.
+
 ## Scope and outcome
 
 This study is stacked directly on PR #13 commit

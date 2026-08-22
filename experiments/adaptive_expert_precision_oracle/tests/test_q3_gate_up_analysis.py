@@ -7,7 +7,7 @@ from oracle_study.q3_gate_up_analysis import (
     accuracy_table, promotion_payload, threshold_table,
 )
 
-from analyze_q3_gate_up_layout import EXPERIMENT, _experiment_path, _report
+from analyze_q3_gate_up_layout import EXPERIMENT, _experiment_path, _normalize_svg, _report
 
 
 
@@ -23,6 +23,13 @@ def test_analyzer_resolves_repository_relative_cli_paths():
     assert _experiment_path(relative) == (EXPERIMENT / relative).resolve()
     absolute = Path("/tmp/q3-analysis-output")
     assert _experiment_path(absolute) == absolute.resolve()
+
+
+def test_svg_normalization_removes_trailing_whitespace(tmp_path):
+    path = tmp_path / "plot.svg"
+    path.write_text("<svg>  \n  <path /> \t\n</svg>\n")
+    _normalize_svg(path)
+    assert path.read_text() == "<svg>\n  <path />\n</svg>\n"
 
 
 def _rows():

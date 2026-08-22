@@ -444,3 +444,33 @@ are the [report](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/Q3_
 [promotion decision](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/q3_gate_up_promotions.json),
 [analysis manifest](results/qwen36_mxfp4_q3_gate_up_layout_20260821_v1/analysis/q3_analysis_manifest.json),
 and [reproducibility contract](Q3_GATE_UP_LAYOUT_REPRODUCIBILITY.md).
+
+## Gate/up-Q3 exact-self DP and dominance closure
+
+This stacked continuation restores PR #13's exact-self dynamic-programming
+seed in both the 18-state Q3 and restricted inherited-eight-state paths, then
+runs the same incremental coordinate/local solver. It also injects every final
+Q2/Q4 state into every physical Q3 frontier and every final physical state into
+the ideal frontier at its ideal cost.
+
+The restored control reproduces PR #13 at strict rate: 99.5855% p10 / 99.8824%
+median versus the frozen 99.5903% / 99.8869%. The best physical result, two
+train-only co-selection replicas, reaches 99.6281% / 99.8955%, reducing median
+residual damage by 7.57%. It matches both PR #13 targets at 0.989705 total bpw,
+only a -0.009033-bpw shift. The best physical shift is -0.009074 bpw from the
+single-layout control. Both miss the frozen 20%-damage and -0.1-bpw gates, so
+the decision is `stop_embedded_gate_up_q3`; down-Q3 remains deferred.
+
+The nonphysical ideal 256-byte-plane control reaches 99.7775% / 99.9352% and
+reduces median residual damage by 42.71%. Q3 therefore retains a strong
+representation signal, but the present 512-byte page packing realizes too
+little of it. This supersedes PR #14's confounded -0.231-bpw headline.
+
+The canonical bundle contains 190,080 group rows, 506,880 expert rows, all 99
+overall-average-rate points, exact page unions, the frozen stop decision, and
+the complete fail-closed manifest. Reviewer entry points are the
+[report](results/qwen36_mxfp4_q3_dp_dominance_20260822_v1/analysis/Q3_GATE_UP_LAYOUT_REPORT.md),
+[full accuracy table](results/qwen36_mxfp4_q3_dp_dominance_20260822_v1/analysis/q3_accuracy_by_bpw.csv),
+[promotion decision](results/qwen36_mxfp4_q3_dp_dominance_20260822_v1/analysis/q3_gate_up_promotions.json),
+[analysis manifest](results/qwen36_mxfp4_q3_dp_dominance_20260822_v1/analysis/q3_analysis_manifest.json),
+and [reproducibility contract](Q3_DP_DOMINANCE_REPRODUCIBILITY.md).

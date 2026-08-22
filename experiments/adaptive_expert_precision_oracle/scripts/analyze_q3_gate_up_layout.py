@@ -52,6 +52,10 @@ def _experiment_path(path: Path) -> Path:
     return path.resolve() if path.is_absolute() else (EXPERIMENT / path).resolve()
 
 
+def _normalize_svg(path: Path) -> None:
+    path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+
+
 
 
 def _report(
@@ -204,7 +208,9 @@ def main() -> None:
     axis.grid(alpha=.25); axis.legend(fontsize=7)
     figure.tight_layout()
     figure.savefig(args.output / "q3_rate_curve.png", dpi=180)
-    figure.savefig(args.output / "q3_rate_curve.svg", metadata={"Date": None})
+    svg_path = args.output / "q3_rate_curve.svg"
+    figure.savefig(svg_path, metadata={"Date": None})
+    _normalize_svg(svg_path)
     plt.close(figure)
     inputs = [args.config, args.layout_dir / "q3_layout_fit_facts.json",
               args.layout_dir / "q3_layout_manifest.json",
