@@ -74,7 +74,7 @@ def _report(
         f"The restored restricted-eight-state DP control reaches {100*reproduction['recovery_p10']:.4f}% p10 / {100*reproduction['recovery_median']:.4f}% median; reproduction gate: **{reproduction['reproduction_pass']}**.",
         "Every Q3 candidate frontier includes the reproduced Q2/Q4 states. The ideal candidate frontier additionally includes every physical candidate after re-costing it in 256-byte quanta.",
         "The ideal row remains a heuristic solver result rather than a globally certified exact-recovery ceiling; constructive inclusion certifies compressed-objective dominance, not exact-qenergy ordering.",
-        f"At strict rate the heuristic ideal solve trails the `{diagnostic['strict_feasible_witness_layout']}` feasible witness by {100*diagnostic['solver_median_recovery_gap_to_feasible_witness']:.4f} median pp and {100*diagnostic['solver_p10_recovery_gap_to_feasible_witness']:.4f} p10 pp; this is optimizer headroom.", "",
+        f"At strict rate, witness-minus-ideal recovery gaps versus `{diagnostic['strict_feasible_witness_layout']}` are {100*diagnostic['solver_median_recovery_gap_to_feasible_witness']:.4f} median pp and {100*diagnostic['solver_p10_recovery_gap_to_feasible_witness']:.4f} p10 pp (positive means the ideal solver trails); this diagnoses optimizer headroom without reversing the sign.", "",
         "## Frozen-target all-in comparison", "",
         "| Layout | p10 recovery | Median recovery | Median remaining-damage ratio vs frozen PR #13 | Total bpw |",
         "|---|---:|---:|---:|---:|",

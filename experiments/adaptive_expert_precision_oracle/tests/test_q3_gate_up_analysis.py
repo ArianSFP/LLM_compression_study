@@ -7,7 +7,7 @@ from oracle_study.q3_gate_up_analysis import (
     accuracy_table, promotion_payload, threshold_table,
 )
 
-from analyze_q3_gate_up_layout import EXPERIMENT, _experiment_path
+from analyze_q3_gate_up_layout import EXPERIMENT, _experiment_path, _report
 
 
 
@@ -90,6 +90,24 @@ def test_promotion_uses_residual_ratio_or_matched_rate_shift():
     assert diagnostic["strict_feasible_witness_layout"] == "q3_physical_fixed_gate_up_pairing"
     assert np.isclose(diagnostic["solver_median_recovery_gap_to_feasible_witness"], .001)
     assert payload["schema_version"] == 3
+    runtime = pd.DataFrame([
+        {
+            "layout_id": layout,
+            "wall_ms_p50": 1.0,
+            "frontier_ms_p50": 1.0,
+            "allocation_ms_p50": 1.0,
+            "wall_ms_p90": 1.0,
+            "wall_ms_p99": 1.0,
+            "coordinate_sweeps_median": 1.0,
+            "local_passes_median": 1.0,
+            "diagonal_dp_tables_median": 1.0,
+            "diagonal_dp_state_updates_median": 1.0,
+        }
+        for layout in sorted(accuracy.layout_id.unique())
+    ])
+    report = _report(accuracy, pd.DataFrame(), payload, runtime, config)
+    assert "witness-minus-ideal recovery gaps" in report
+    assert "positive means the ideal solver trails" in report
 
 
 def test_layout_accounting_is_derived_from_frozen_payloads():
