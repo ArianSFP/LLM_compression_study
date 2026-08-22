@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Any
@@ -118,8 +119,8 @@ def _report(bundle: Any, tables: dict[str, Any], promotion: dict[str, Any]) -> s
         "",
         f"Continuation status: **{promotion['status']}**.",
         "",
-        "This remains an exact-H4 interaction-geometry ceiling over 128 "
-        "validation token/layer groups (1,024 routed expert invocations). "
+        f"This remains an exact-H4 interaction-geometry ceiling over {config['expected_validation_groups']:,} "
+        f"validation token/layer groups ({config['expected_validation_expert_invocations']:,} routed expert invocations). "
         "The extension isolates selected-column repair, quantizes the rank-4 "
         "exact-proxy factor, and brackets the finite-frontier global group "
         "objective. No row is deployable or promotable.",
@@ -294,6 +295,24 @@ def _plot(tables: dict[str, Any], config: dict[str, Any], output: Path) -> None:
     plt.close(fig)
 
 
+def _runner_source(config_path: Path) -> Path:
+    config = json.loads(Path(config_path).read_text())
+    runner = (
+        "run_average_rate_all_layers.py"
+        if config.get("base_pr13_runner_sha256") is not None
+        else "run_average_rate_allocation.py"
+    )
+    return EXPERIMENT / "scripts" / runner
+
+
+def _manifest_root(*paths: Path) -> Path:
+    resolved = [str(Path(path).resolve()) for path in paths]
+    root = Path(os.path.commonpath(resolved))
+    if root == Path(root.anchor):
+        raise RuntimeError("analysis inputs do not share a scoped manifest root")
+    return root
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
@@ -304,7 +323,7 @@ def main() -> None:
     if args.output.exists():
         raise FileExistsError(args.output)
     source_paths = {
-        "runner_sha256": EXPERIMENT / "scripts/run_average_rate_allocation.py",
+        "runner_sha256": _runner_source(args.config),
         "allocator_core_sha256": EXPERIMENT / "src/oracle_study/average_rate_allocator.py",
         "split_core_sha256": EXPERIMENT / "src/oracle_study/split_interaction_field.py",
         "interaction_core_sha256": EXPERIMENT / "src/oracle_study/interaction_field.py",
@@ -333,8 +352,12 @@ def main() -> None:
     _atomic_text(args.output / REPORT_MD, _report(bundle, tables, promotion))
     _plot(tables, bundle.config, args.output)
 
+    manifest_root = _manifest_root(
+        args.config, args.fit_dir, args.validation_dir, args.output,
+    )
+
     def relative(path: Path) -> str:
-        return Path(path).resolve().relative_to(EXPERIMENT.resolve()).as_posix()
+        return Path(path).resolve().relative_to(manifest_root).as_posix()
 
     inputs = []
     for name, path in bundle.input_paths.items():

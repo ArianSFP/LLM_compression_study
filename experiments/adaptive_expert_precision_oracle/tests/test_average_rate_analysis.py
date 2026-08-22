@@ -173,6 +173,31 @@ def test_report_discloses_frontier_repair_quantization_and_global_bound():
 
 
 
+def test_wrapper_selects_the_runner_recorded_by_each_config():
+    assert wrapper._runner_source(
+        ROOT / "configs/qwen36_mxfp4_average_rate_allocation.json"
+    ).name == "run_average_rate_allocation.py"
+    assert wrapper._runner_source(
+        ROOT / "configs/qwen36_mxfp4_average_rate_all_layers.json"
+    ).name == "run_average_rate_all_layers.py"
+
+
+def test_manifest_root_supports_in_tree_and_external_archives(tmp_path: Path):
+    assert wrapper._manifest_root(
+        ROOT / "configs/config.json",
+        ROOT / "results/run/fit",
+        ROOT / "results/run/validation",
+        ROOT / "results/run/analysis",
+    ) == ROOT.resolve()
+    archive = tmp_path / "archive"
+    assert wrapper._manifest_root(
+        archive / "code/experiment/configs/config.json",
+        archive / "results/fit",
+        archive / "results/validation",
+        archive / "results/analysis",
+    ) == archive.resolve()
+
+
 def test_quantiles_fail_closed_on_nonfinite_values():
     with pytest.raises(ValueError, match="finite"):
         quantiles([.1, np.nan])

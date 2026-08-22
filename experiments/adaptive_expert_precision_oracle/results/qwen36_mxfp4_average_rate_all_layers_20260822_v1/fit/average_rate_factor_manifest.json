@@ -1,0 +1,1182 @@
+{
+  "allocator_core_sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b",
+  "base_pr12_config_sha256": "e61aae7b38a76b95c858f00344d0d9cc9e6d59fa4c686d8f28dbac170f877557",
+  "base_pr12_core_sha256": "311365d169dd8c5c1d041ab023130d4d5e08980f0ab50b12afe331c5a16e2c1e",
+  "base_pr12_frontier_sha256": "9b38c9056551de2ba14b462230c432f612b9ac5b0ebdd820b9118ffbfa9a2b24",
+  "base_pr12_run_facts_sha256": "56a838c271cf3c3bd54584fbf42d1f60fae0e1b1f1926eabc001b08c374a2e77",
+  "base_pr12_runner_sha256": "24735d86459d3c4d0aa7fb10c69259210efb2abf79ad759665054b406999173b",
+  "base_pr13_commit": "dfba3748e51d6916dc1f28cb1d3b3250188adbbe",
+  "base_pr13_config_sha256": "a889dbf9c5ebdf79de0e7e7b7d65165d9f39782d72d669e073c80966e5d83edf",
+  "base_pr13_runner_sha256": "55dd6f1b28b3dea36913943d5094b007176ddeabf8c12925dfbcf200118acaae",
+  "capture_sha256": "40c06b1495e52f689f4d95217ccec70711a69166d63067c3dcdcb4589078cc4d",
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "compute_control_factor_payload_bytes": 16384,
+  "config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+  "execution_provenance_by_layer": {
+    "0": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "1": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "10": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c-tail"
+    },
+    "11": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "12": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "13": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "14": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "15": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "16": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "17": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "18": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "19": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "2": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "20": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "21": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "22": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "23": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "24": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "25": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "26": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "27": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "28": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "29": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "3": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "30": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "31": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "32": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "33": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "34": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "35": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "36": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "37": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "38": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "39": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "4": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "5": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "6": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "7": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "8": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "9": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    }
+  },
+  "experts_per_layer": 256,
+  "factor_fit_scope": "all_256_experts_in_each_locked_layer_without_validation_value_selection",
+  "factor_ids": [
+    "matrix_free_joint_rank8_int4_per_row_hadamard",
+    "exact_proxy_rank4_fp32",
+    "exact_proxy_rank4_fp16",
+    "exact_proxy_rank4_int8_per_row",
+    "exact_proxy_rank4_int4_per_row_hadamard",
+    "exact_proxy_rank4_int8_plus_euclidean_tail4_int4"
+  ],
+  "factor_payload_bytes": {
+    "exact_proxy_rank4_fp16": 8196,
+    "exact_proxy_rank4_fp32": 16384,
+    "exact_proxy_rank4_int4_per_row_hadamard": 4100,
+    "exact_proxy_rank4_int8_per_row": 6148,
+    "exact_proxy_rank4_int8_plus_euclidean_tail4_int4": 10244,
+    "matrix_free_joint_rank8_int4_per_row_hadamard": 6148
+  },
+  "fit_split": "train",
+  "interaction_core_sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab",
+  "layers": {
+    "0": {
+      "bytes": 10101292,
+      "file": "average_rate_factor_layer_0.npz",
+      "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84",
+      "sidecar": "average_rate_factor_layer_0.json",
+      "sidecar_sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+    },
+    "1": {
+      "bytes": 11823526,
+      "file": "average_rate_factor_layer_1.npz",
+      "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299",
+      "sidecar": "average_rate_factor_layer_1.json",
+      "sidecar_sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+    },
+    "10": {
+      "bytes": 11862198,
+      "file": "average_rate_factor_layer_10.npz",
+      "sha256": "246637c0d9cb1a0a10ac9fecff507266a170a867becf4c74ad7797c859c1fbfb",
+      "sidecar": "average_rate_factor_layer_10.json",
+      "sidecar_sha256": "379a0447e9e90945f52878d3f75a2205f8a00480c140a7edf2b45f05a7e4b62f"
+    },
+    "11": {
+      "bytes": 11858479,
+      "file": "average_rate_factor_layer_11.npz",
+      "sha256": "5873b12253faf97e362773aa30344550526a01d4ae9b94c991780293813928ec",
+      "sidecar": "average_rate_factor_layer_11.json",
+      "sidecar_sha256": "bb2d879a4e2b05cfe6ae4fbb3a0031aaa5fe8746732088ecbff389a9bd3ff6ed"
+    },
+    "12": {
+      "bytes": 11865526,
+      "file": "average_rate_factor_layer_12.npz",
+      "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594",
+      "sidecar": "average_rate_factor_layer_12.json",
+      "sidecar_sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+    },
+    "13": {
+      "bytes": 11860252,
+      "file": "average_rate_factor_layer_13.npz",
+      "sha256": "aea98864b37264f24a16dddd768fc6792edffb4a869649c370a9af7972749f0c",
+      "sidecar": "average_rate_factor_layer_13.json",
+      "sidecar_sha256": "9c3266536686ad1115a8e4495e7b39bae1f622b910dc8510a497fc1daa6c882e"
+    },
+    "14": {
+      "bytes": 11860497,
+      "file": "average_rate_factor_layer_14.npz",
+      "sha256": "1e059d46a71e290e5429262f9d46dfa68323a6fb1e5aae0083e277f68bfedecb",
+      "sidecar": "average_rate_factor_layer_14.json",
+      "sidecar_sha256": "0cd92ffa37038f41b78b010322285f05dfd686dfd287387dc5328952cb274f29"
+    },
+    "15": {
+      "bytes": 11861740,
+      "file": "average_rate_factor_layer_15.npz",
+      "sha256": "340f7a290c5e65945b6d3cfbf205ea022df927937c9cd275d7211aa1347d4791",
+      "sidecar": "average_rate_factor_layer_15.json",
+      "sidecar_sha256": "239f0810ab52bcebe7d76c69ace8153491ef2e43628d7b9386fa7f9c7c5b34da"
+    },
+    "16": {
+      "bytes": 11860458,
+      "file": "average_rate_factor_layer_16.npz",
+      "sha256": "bce1e75aa9e51440d7464b3784740b7955ac90175a326e0a1f4ed0ccb16498bb",
+      "sidecar": "average_rate_factor_layer_16.json",
+      "sidecar_sha256": "4e1b86ec2497b28c3c33dfb35aa587f8c99f01356d9f44206ad09c31da5634aa"
+    },
+    "17": {
+      "bytes": 11865495,
+      "file": "average_rate_factor_layer_17.npz",
+      "sha256": "52c5ca5d32caf9715c5dc6478ff59117d93ca95d863fe4238f24fa39fde0f71f",
+      "sidecar": "average_rate_factor_layer_17.json",
+      "sidecar_sha256": "0c29d11aee3f0e9fe5c160b22b5326311beffb4c98cc8baaa772ae84a3272eb3"
+    },
+    "18": {
+      "bytes": 11860926,
+      "file": "average_rate_factor_layer_18.npz",
+      "sha256": "8f2819523bc40db15273de79bb3b5a5e59569a57a812c026773d9421fe9c7197",
+      "sidecar": "average_rate_factor_layer_18.json",
+      "sidecar_sha256": "d642be7205c8080f1d2efe2e57608f18361dec97a8c2668d5d168521eab9daf5"
+    },
+    "19": {
+      "bytes": 11860315,
+      "file": "average_rate_factor_layer_19.npz",
+      "sha256": "2cd5168d93c7cf709ac686d08f2ae4183a649a4d8c61c29dd3db2fb2f3562575",
+      "sidecar": "average_rate_factor_layer_19.json",
+      "sidecar_sha256": "1346fe8ca2d9eb8e73388df3b0d3bb2e9e442fced375b96a233948fc03f77bc6"
+    },
+    "2": {
+      "bytes": 11845128,
+      "file": "average_rate_factor_layer_2.npz",
+      "sha256": "d39cfbc00814e81afa77b589548202615836fdf058e2aee70f0f6bc1790fdb07",
+      "sidecar": "average_rate_factor_layer_2.json",
+      "sidecar_sha256": "c6e5f79076cb362bde5de5854224c74d5b56b7073b7fdf466ba9727ce92f1101"
+    },
+    "20": {
+      "bytes": 11861764,
+      "file": "average_rate_factor_layer_20.npz",
+      "sha256": "a7348065486a7eb7a0e718d6733206314728a00fc32affdc4134308a151b450c",
+      "sidecar": "average_rate_factor_layer_20.json",
+      "sidecar_sha256": "cfdac013604d25d7cf07986df566237c6fc85d14217c20eb52904075454928a8"
+    },
+    "21": {
+      "bytes": 11860320,
+      "file": "average_rate_factor_layer_21.npz",
+      "sha256": "ce0fcc0239da2a9aafcb6cb12240ef29c353efb71bb8f8dfc13794047ad15bf5",
+      "sidecar": "average_rate_factor_layer_21.json",
+      "sidecar_sha256": "124c5aece8a06d08c1a2ea061570149a282b69a21995a5b10721904ab433c711"
+    },
+    "22": {
+      "bytes": 11863100,
+      "file": "average_rate_factor_layer_22.npz",
+      "sha256": "e00f0a84b17c175325d0ad504aeb96bb1ee232277b7271617693f206c1140c15",
+      "sidecar": "average_rate_factor_layer_22.json",
+      "sidecar_sha256": "8e250be8e17c6221c1299c79fcb2a21a822d9c664a2507180cafe0a7292808ee"
+    },
+    "23": {
+      "bytes": 11864033,
+      "file": "average_rate_factor_layer_23.npz",
+      "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6",
+      "sidecar": "average_rate_factor_layer_23.json",
+      "sidecar_sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+    },
+    "24": {
+      "bytes": 11865338,
+      "file": "average_rate_factor_layer_24.npz",
+      "sha256": "24648ede1eecc71c9e209cb8b84f2644eae9de1cb9cfeaef5c9deee7685fd581",
+      "sidecar": "average_rate_factor_layer_24.json",
+      "sidecar_sha256": "a87195f7ca992c0ec97d1563b3015ec966f8c019355ff6415a8dd11fe28a1de8"
+    },
+    "25": {
+      "bytes": 11864075,
+      "file": "average_rate_factor_layer_25.npz",
+      "sha256": "1f62e341f41ab5093195f1991998d9c3541fa96c10449d76f6e77e40ce1b03d1",
+      "sidecar": "average_rate_factor_layer_25.json",
+      "sidecar_sha256": "fa3b2054caa762a29522bd2ad0899608e2dc7324b261c996601c95baa876e072"
+    },
+    "26": {
+      "bytes": 11866142,
+      "file": "average_rate_factor_layer_26.npz",
+      "sha256": "38d4b07e82868885e9dedbb552759537dabe2984a0d0d80fcd98895207f01c21",
+      "sidecar": "average_rate_factor_layer_26.json",
+      "sidecar_sha256": "252ee423f8150a7b95fdb156e36b554550b38d022bf312484c15dedad597bb77"
+    },
+    "27": {
+      "bytes": 11867276,
+      "file": "average_rate_factor_layer_27.npz",
+      "sha256": "677cb27d71c52641d044d49d7be87869108bb6d7912b7ba64c812a63a7c349e9",
+      "sidecar": "average_rate_factor_layer_27.json",
+      "sidecar_sha256": "c98c5f5e8cce07094db3613d84b510767142eab851e20f5421c6f9ba94369454"
+    },
+    "28": {
+      "bytes": 11870375,
+      "file": "average_rate_factor_layer_28.npz",
+      "sha256": "96ad63f4ca92a620933100bf226c70f03cc39ff458a617f26ed4b011a9071dca",
+      "sidecar": "average_rate_factor_layer_28.json",
+      "sidecar_sha256": "75d87c5ddc9403d43791c4380a5e80804ebe04c660029a987ee8d83cdd51e990"
+    },
+    "29": {
+      "bytes": 11870214,
+      "file": "average_rate_factor_layer_29.npz",
+      "sha256": "e19d27fe4cf4f2636b4b6aa78c4590853393ea107c3c9b0265c10ee2c42c3231",
+      "sidecar": "average_rate_factor_layer_29.json",
+      "sidecar_sha256": "22ede22c4fca79ad1fdf6127110db151531435bd4a964a66c2e838a1b7881e9e"
+    },
+    "3": {
+      "bytes": 11858015,
+      "file": "average_rate_factor_layer_3.npz",
+      "sha256": "249a072777269a5d5cfc87e8e40a1cf5f6cdd3e7cf930d9f6c5779776914e477",
+      "sidecar": "average_rate_factor_layer_3.json",
+      "sidecar_sha256": "3ec6d384c4da700d12889ee1eef3cf7ababafd821def53ee0c7a4411bebcfbed"
+    },
+    "30": {
+      "bytes": 11870569,
+      "file": "average_rate_factor_layer_30.npz",
+      "sha256": "948928f4575c5da17f233b9ab77711cd8d85b8fb99036b24901cd51ca36325b0",
+      "sidecar": "average_rate_factor_layer_30.json",
+      "sidecar_sha256": "16d68646b7c7714649cb233c4f01f393cdd59b4da02443f01f9a54f93619edb1"
+    },
+    "31": {
+      "bytes": 11872630,
+      "file": "average_rate_factor_layer_31.npz",
+      "sha256": "91695b19b196b71d064dfd622e3eff249bc8bb0133a5469f6300f0206a273440",
+      "sidecar": "average_rate_factor_layer_31.json",
+      "sidecar_sha256": "6d502fc136e594a127f07600f4bf75f564e29c7d3a7718cbf8f90cba1b483456"
+    },
+    "32": {
+      "bytes": 11876430,
+      "file": "average_rate_factor_layer_32.npz",
+      "sha256": "ffb04e80275ec5e67d1fba084d739ac262935900632fc67764ecf5208fce9273",
+      "sidecar": "average_rate_factor_layer_32.json",
+      "sidecar_sha256": "a314a219bc8279978b7dde91c9e1ae23cea50cac84ba0091baea7909af2c6479"
+    },
+    "33": {
+      "bytes": 11881149,
+      "file": "average_rate_factor_layer_33.npz",
+      "sha256": "8987de2213424fb43a8fcad7f436dd7f7a76facbcc4302cbf90d505256fc6c59",
+      "sidecar": "average_rate_factor_layer_33.json",
+      "sidecar_sha256": "0918ea723f7b0b6ca78b1252a1e957554317c25694c77cb4e427f3f2637c1155"
+    },
+    "34": {
+      "bytes": 11880427,
+      "file": "average_rate_factor_layer_34.npz",
+      "sha256": "c7c98f661df8be5f61f12d7dc3c7266ca758d666a36cc252724bba91958a4318",
+      "sidecar": "average_rate_factor_layer_34.json",
+      "sidecar_sha256": "77179b97fd37b87972ff19468072b697805fa98663b51a0ce9fc40d06ff4d19b"
+    },
+    "35": {
+      "bytes": 11875151,
+      "file": "average_rate_factor_layer_35.npz",
+      "sha256": "52000d6ba5a62029e757c88b1a9a61feb9fc95335dd56cfbb55b7f04cff710ef",
+      "sidecar": "average_rate_factor_layer_35.json",
+      "sidecar_sha256": "b3b3fb4464c90c05835561dfc4df2f39f7b77ccb0a77e6c0f48357268a137def"
+    },
+    "36": {
+      "bytes": 11882083,
+      "file": "average_rate_factor_layer_36.npz",
+      "sha256": "fcad21e53a2c3dd1547c6ba8e2baf13ae33c141b0545a8cd8887f8920c549b86",
+      "sidecar": "average_rate_factor_layer_36.json",
+      "sidecar_sha256": "ea3563bf67c4200f7ff194a8c8982438c711690eac5589f02df098aeb0eaf6df"
+    },
+    "37": {
+      "bytes": 11880402,
+      "file": "average_rate_factor_layer_37.npz",
+      "sha256": "f287029cd28f4bc845d79bd9de4fedf43b95165b069506366d4ff2e58d939cab",
+      "sidecar": "average_rate_factor_layer_37.json",
+      "sidecar_sha256": "7d294e503d4d183d60fe55f267c71a737fe2ed7dab1a5710d462f9234ad11fe0"
+    },
+    "38": {
+      "bytes": 11884892,
+      "file": "average_rate_factor_layer_38.npz",
+      "sha256": "5ec7260a197732a4c30ac9aed4c2a76a08e445c69198790218d91b393abf2dc2",
+      "sidecar": "average_rate_factor_layer_38.json",
+      "sidecar_sha256": "4888f2eafc899d310835023c617dcc38ef1cbf7f77ba34943a99272ff70247e7"
+    },
+    "39": {
+      "bytes": 11879453,
+      "file": "average_rate_factor_layer_39.npz",
+      "sha256": "cfee3462278a9de9847df806d5050d079a27893c41b9ea5d369fc0163a762a07",
+      "sidecar": "average_rate_factor_layer_39.json",
+      "sidecar_sha256": "e17965b32c94ae08aeddd380906b78c8aed7e70c111ac721b509ae7e5ed280a4"
+    },
+    "4": {
+      "bytes": 11862595,
+      "file": "average_rate_factor_layer_4.npz",
+      "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5",
+      "sidecar": "average_rate_factor_layer_4.json",
+      "sidecar_sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+    },
+    "5": {
+      "bytes": 11863499,
+      "file": "average_rate_factor_layer_5.npz",
+      "sha256": "c1d29402e2f3cac19c78f0f1d87da77cba28d59a0551ed2f4291875f00d749be",
+      "sidecar": "average_rate_factor_layer_5.json",
+      "sidecar_sha256": "c1cc678ab7b5f8466dbc2b51552f474460b10d803422c88043397d76e7218e6e"
+    },
+    "6": {
+      "bytes": 11864427,
+      "file": "average_rate_factor_layer_6.npz",
+      "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b",
+      "sidecar": "average_rate_factor_layer_6.json",
+      "sidecar_sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+    },
+    "7": {
+      "bytes": 11860807,
+      "file": "average_rate_factor_layer_7.npz",
+      "sha256": "68f34435f0da5ece223a46c851ed20d03d3d9c7f68361766aca1f0883085c232",
+      "sidecar": "average_rate_factor_layer_7.json",
+      "sidecar_sha256": "c6f2220c48522c7ad242ee5f7f36dcc4ce528a376374fc18fdaa73d3f2147002"
+    },
+    "8": {
+      "bytes": 11857112,
+      "file": "average_rate_factor_layer_8.npz",
+      "sha256": "a7c99bc3f864ad1af08a92b335a84574b2eb84922994d8dcea1fd580a55eaff4",
+      "sidecar": "average_rate_factor_layer_8.json",
+      "sidecar_sha256": "941661c57e1d6b90c3f217dee9b613e8ef261c762451185f72911566d1227936"
+    },
+    "9": {
+      "bytes": 11858411,
+      "file": "average_rate_factor_layer_9.npz",
+      "sha256": "604b0553132ba5429a108af6dab2a3dcc80d03853e3f0995c51a94f706b4ea16",
+      "sidecar": "average_rate_factor_layer_9.json",
+      "sidecar_sha256": "957e753905dd091533f3814919068eb49e756fbd9981a7b701f31f76c12871d8"
+    }
+  },
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "primary_factor_payload_bytes": 6148,
+  "run_id": "qwen36_mxfp4_average_rate_all_layers_20260822_v1",
+  "runner_sha256": "431ac2abfdc1a1662d85ae019d63adfea1f90f19420cd359cbd56d9cf7a7cd07",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "schema": "average_rate_all_layers_distributed_v1",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "schema": "average_rate_all_layers_distributed_v1",
+  "selector_core_sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94",
+  "set_utility_runner_sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73",
+  "sparse_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "split_core_sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82",
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+}

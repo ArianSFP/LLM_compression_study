@@ -1,0 +1,171 @@
+{
+  "exact_h4_geometry_ceiling_only": true,
+  "generated": [
+    {
+      "bytes": 6142,
+      "path": "results/analysis/AVERAGE_RATE_ALLOCATION_REPORT.md",
+      "sha256": "e6445cfba375ba875d1d19651ed631d94cb2d29457e14188ab0a189fec506b87"
+    },
+    {
+      "bytes": 184601,
+      "path": "results/analysis/average_rate_accuracy.png",
+      "sha256": "499441777f75d3969199a89a3f62148f28e7f7a8b983f2c616e329202fcc0790"
+    },
+    {
+      "bytes": 75834,
+      "path": "results/analysis/average_rate_accuracy.svg",
+      "sha256": "ea6a30b669400a689ba41f310ab7de24e0941add7e93dcf75591e9579efa4ee6"
+    },
+    {
+      "bytes": 37290,
+      "path": "results/analysis/average_rate_accuracy_by_bpw.csv",
+      "sha256": "10c6046cb1517884df01a85e8dcd3e9c6d9b2fc51cd3bc6fd467f1d228b9da0d"
+    },
+    {
+      "bytes": 3370581,
+      "path": "results/analysis/average_rate_allocation_distribution.csv",
+      "sha256": "95a8f91c00d100d9a3331e65df71f6c07d323e2bcae9c6846d98c3ce904264c4"
+    },
+    {
+      "bytes": 7200,
+      "path": "results/analysis/average_rate_frontier_closure.csv",
+      "sha256": "e98bf47386a69b32c3a1e210f8ec1e1eae913cf0feb514f0286036ba8646107d"
+    },
+    {
+      "bytes": 490,
+      "path": "results/analysis/average_rate_global_bound.csv",
+      "sha256": "c4a1f1bde69d17737789455f20dd33c6846796e5a1fefcc82988725fa1dfff5c"
+    },
+    {
+      "bytes": 686325,
+      "path": "results/analysis/average_rate_layer_accuracy.csv",
+      "sha256": "f92ed85fe163d156e8a7c3021b2f3293e6bc4f733e79268a899a418f4fdfdc7a"
+    },
+    {
+      "bytes": 2548,
+      "path": "results/analysis/average_rate_promotions.json",
+      "sha256": "c7335bb0ef1093f18a3fa46b5c33e81f7449fd7ffc75039ceebe39fe90bdcc5e"
+    },
+    {
+      "bytes": 10229,
+      "path": "results/analysis/average_rate_runtime.csv",
+      "sha256": "bbcab24331b6f48f77cde0e04bf251c4ceeacac60b5d9380cedea406ef7173e9"
+    }
+  ],
+  "inputs": [
+    {
+      "bytes": 37106,
+      "name": "allocator_core_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/src/oracle_study/average_rate_allocator.py",
+      "sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b"
+    },
+    {
+      "bytes": 36739,
+      "name": "analyzer_core_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/src/oracle_study/average_rate_analysis.py",
+      "sha256": "54d743b4f68ec1dbc9e624c259a85a8c9de8ee9f2c37196dba661ff115e5e05e"
+    },
+    {
+      "bytes": 16921,
+      "name": "analyzer_wrapper_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/scripts/analyze_average_rate_allocation.py",
+      "sha256": "996a9f783c5fcc1d2ce97b2a7e4137d504647b49511a9fab21006401a38d8010"
+    },
+    {
+      "bytes": 7280,
+      "name": "config",
+      "path": "code/experiments/adaptive_expert_precision_oracle/configs/qwen36_mxfp4_average_rate_all_layers.json",
+      "sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006"
+    },
+    {
+      "bytes": 275809057,
+      "name": "expert_allocation",
+      "path": "results/validation/average_rate_expert_allocation.parquet",
+      "sha256": "19c2dc0f94cd9a8237dd866b1a1997c4edcdf6a66457f5b924c4a1e9604fb0c4"
+    },
+    {
+      "bytes": 29364,
+      "name": "fit_facts",
+      "path": "results/fit/average_rate_fit_facts.json",
+      "sha256": "0a417361b9c7b8f3ce19bade23aaa2b06ea6420aa12d703b356cf6359628fd4d"
+    },
+    {
+      "bytes": 41761,
+      "name": "fit_manifest",
+      "path": "results/fit/average_rate_factor_manifest.json",
+      "sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069"
+    },
+    {
+      "bytes": 9019668,
+      "name": "group_frontier",
+      "path": "results/validation/average_rate_group_frontier.parquet",
+      "sha256": "f74e1225789c6502ed7818caa2cad2c50e74633254297b0fb6ebb5c5886f4db6"
+    },
+    {
+      "bytes": 36898,
+      "name": "interaction_core_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/src/oracle_study/interaction_field.py",
+      "sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab"
+    },
+    {
+      "bytes": 17083,
+      "name": "mxfp4_core_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/src/oracle_study/mxfp4_embed.py",
+      "sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742"
+    },
+    {
+      "bytes": 13376352,
+      "name": "run_facts",
+      "path": "results/validation/average_rate_run_facts.json",
+      "sha256": "e0f58de6c5345885488068d5efb24c063f7a910d4b7fc32fb050f9d0f5e79d19"
+    },
+    {
+      "bytes": 41241,
+      "name": "runner_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/scripts/run_average_rate_all_layers.py",
+      "sha256": "431ac2abfdc1a1662d85ae019d63adfea1f90f19420cd359cbd56d9cf7a7cd07"
+    },
+    {
+      "bytes": 24504,
+      "name": "selector_core_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/src/oracle_study/neuron_selector.py",
+      "sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94"
+    },
+    {
+      "bytes": 162308,
+      "name": "set_utility_runner_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/scripts/run_set_utility_distillation.py",
+      "sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73"
+    },
+    {
+      "bytes": 101665,
+      "name": "sparse_runner_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/scripts/run_sparse_streaming_study.py",
+      "sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01"
+    },
+    {
+      "bytes": 34466,
+      "name": "split_core_sha256",
+      "path": "code/experiments/adaptive_expert_precision_oracle/src/oracle_study/split_interaction_field.py",
+      "sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82"
+    },
+    {
+      "bytes": 13348257,
+      "name": "validation_accounting",
+      "path": "results/validation/average_rate_accounting.json",
+      "sha256": "ff971cab8701c03194c085e56edf6cee1862e01d3d81af7959b72d0a320bedb4"
+    }
+  ],
+  "promotion_sha256": "c7335bb0ef1093f18a3fa46b5c33e81f7449fd7ffc75039ceebe39fe90bdcc5e",
+  "row_counts": {
+    "accuracy_summary": 66,
+    "expert_allocation": 675840,
+    "frontier_closure_summary": 27,
+    "global_bound_summary": 1,
+    "group_frontier": 84480,
+    "layer_summary": 2640
+  },
+  "run_id": "qwen36_mxfp4_average_rate_all_layers_20260822_v1",
+  "schema_version": 2,
+  "test_scientific_rows_admitted_or_used": false
+}

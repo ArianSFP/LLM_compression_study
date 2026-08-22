@@ -1,0 +1,2 @@
+factor_config_id,mean_budget_pages_per_expert,burst_cap_pages_per_expert,groups,certified_fraction,relative_gap_p10,relative_gap_median,relative_gap_p90,relative_gap_max,absolute_gap_p10,absolute_gap_median,absolute_gap_p90,iterations_median,exchange_evaluations_median
+matrix_free_joint_rank8_int4_per_row_hadamard,749,1536,1280,0.0,0.31256913754769095,0.33950207252620557,0.3667513274092651,0.6313658861483947,1.740127232129884e-05,0.0001610700215974769,0.0009948684299748022,128.0,126.0

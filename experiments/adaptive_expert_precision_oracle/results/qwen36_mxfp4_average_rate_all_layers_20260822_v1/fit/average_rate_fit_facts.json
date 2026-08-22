@@ -1,0 +1,981 @@
+{
+  "allocator_core_sha256": "30ef9e95970533903754b2e68d299f8113a1c2c00f583a981bc3cc89498ba75b",
+  "base_pr12_config_sha256": "e61aae7b38a76b95c858f00344d0d9cc9e6d59fa4c686d8f28dbac170f877557",
+  "base_pr12_core_sha256": "311365d169dd8c5c1d041ab023130d4d5e08980f0ab50b12afe331c5a16e2c1e",
+  "base_pr12_frontier_sha256": "9b38c9056551de2ba14b462230c432f612b9ac5b0ebdd820b9118ffbfa9a2b24",
+  "base_pr12_run_facts_sha256": "56a838c271cf3c3bd54584fbf42d1f60fae0e1b1f1926eabc001b08c374a2e77",
+  "base_pr12_runner_sha256": "24735d86459d3c4d0aa7fb10c69259210efb2abf79ad759665054b406999173b",
+  "base_pr13_commit": "dfba3748e51d6916dc1f28cb1d3b3250188adbbe",
+  "base_pr13_config_sha256": "a889dbf9c5ebdf79de0e7e7b7d65165d9f39782d72d669e073c80966e5d83edf",
+  "base_pr13_runner_sha256": "55dd6f1b28b3dea36913943d5094b007176ddeabf8c12925dfbcf200118acaae",
+  "capture_sha256": "40c06b1495e52f689f4d95217ccec70711a69166d63067c3dcdcb4589078cc4d",
+  "checkpoint_audit": {
+    "checkpoint": "/root/pr13_average_rate_all_layers_20260822_v1/checkpoint",
+    "errors": [],
+    "experts_per_layer": 256,
+    "format": "mxfp4-pack-quantized",
+    "group_size": 32,
+    "layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39
+    ],
+    "missing_count": 0,
+    "missing_sample": [],
+    "passed": true,
+    "required_tensor_entries": 61440
+  },
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "completed_layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+  "execution_provenance_by_layer": {
+    "0": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "1": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "10": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c-tail"
+    },
+    "11": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "12": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "13": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "14": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "15": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "16": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "17": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "18": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "19": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "2": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "20": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "21": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "22": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "23": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "24": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "25": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "26": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "27": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "28": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "29": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "321b0bfb27f4",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.126.20",
+      "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-c"
+    },
+    "3": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "30": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "31": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "32": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "33": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "34": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "35": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "36": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "37": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "38": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "39": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "f70ffae0b7b7",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "580.159.03",
+      "platform": "Linux-6.8.0-110-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-d"
+    },
+    "4": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "0432ad970a10",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-b"
+    },
+    "5": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "6": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "7": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "8": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    },
+    "9": {
+      "cpu_capacity": {
+        "affinity_logical_cpus": 256,
+        "cpu_quota_raw": "2720000 100000",
+        "os_cpu_count": 256,
+        "quota_cores": 27.2
+      },
+      "cpu_model": "AMD EPYC 7H12 64-Core Processor",
+      "device": "cuda:0",
+      "gpu_names_used": [
+        "NVIDIA GeForce RTX 3090"
+      ],
+      "host": "5b4397f85a07",
+      "numpy_version": "2.1.2",
+      "nvidia_driver": "595.71.05",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "python_version": "3.12.3",
+      "torch_cuda_runtime": "12.8",
+      "torch_version": "2.8.0+cu128",
+      "worker_id": "pod-a"
+    }
+  },
+  "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+  "failure_history": [],
+  "failures": [],
+  "fit_split": "train",
+  "interaction_core_sha256": "0c88acc60264466baa48b01e99882c89adedfad2c6599b81e95a817972a34eab",
+  "mxfp4_core_sha256": "0995ff58fc1b33c2324e7daccd0c5cbbc76d0e6c9930a2dba7e70b90e524b742",
+  "phase": "fit",
+  "run_id": "qwen36_mxfp4_average_rate_all_layers_20260822_v1",
+  "runner_sha256": "431ac2abfdc1a1662d85ae019d63adfea1f90f19420cd359cbd56d9cf7a7cd07",
+  "runtime_provenance": {
+    "device": "cuda:0",
+    "gpu_names_used": [
+      "NVIDIA GeForce RTX 3090"
+    ],
+    "numpy_version": "2.1.2",
+    "python_version": "3.12.3",
+    "schema": "average_rate_all_layers_distributed_v1",
+    "torch_cuda_runtime": "12.8",
+    "torch_version": "2.8.0+cu128"
+  },
+  "schema": "average_rate_all_layers_distributed_v1",
+  "selector_core_sha256": "29b691289ac82694144c412caeef4e44ee98f6bd6e1e9ef66731c6a269123f94",
+  "set_utility_runner_sha256": "90b78f665f40ded98d6b17b28bc36ef163e53aee14233cb92acd6aa5cd61eb73",
+  "sparse_runner_sha256": "614260de159cb2715910caedc6d3794ba1d7eec0b2ebe89b2fada916f4efea01",
+  "split_core_sha256": "8928574b12c87553d21e1bda0c80dbb7d412d50e52da91273cdff408455eca82",
+  "test_scientific_rows_admitted_or_used": false,
+  "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "validation_rows_admitted_or_used": false
+}
