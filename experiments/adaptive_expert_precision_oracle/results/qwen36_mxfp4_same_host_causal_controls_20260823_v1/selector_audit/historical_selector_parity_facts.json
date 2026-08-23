@@ -1,0 +1,50 @@
+{
+  "completed": true,
+  "historical_reconstructed_deltas_bit_identical": true,
+  "historical_selected_states_bit_identical": true,
+  "layers": [
+    0
+  ],
+  "results": {
+    "0": {
+      "active_experts": 111,
+      "all_q4_max_abs_error": 1.6653345369377348e-16,
+      "allocation": {
+        "exact_fields": [
+          "request_id",
+          "position",
+          "mean_budget_pages_per_expert",
+          "router_rank",
+          "expert_id",
+          "selected_pages",
+          "selected_states"
+        ],
+        "max_float_abs_error": {
+          "exact_qenergy_damage": 2.3852447794681098e-18,
+          "router_weight": 0.0
+        },
+        "rows": 1024
+      },
+      "max_execution_router_sum_error": 1.043081283569336e-07,
+      "max_execution_selector_weight_abs_difference": 0.0,
+      "max_group_qenergy_abs_error": 2.710505431213761e-20,
+      "reconstruction": {
+        "bit_identical": true,
+        "max_delta_abs_error": 0.0,
+        "reconstructions": 128
+      }
+    }
+  },
+  "run_id": "qwen36_mxfp4_same_host_causal_controls_20260823_v1",
+  "runtime": {
+    "host": "d3549a80df55",
+    "numpy": "2.1.2",
+    "pandas": "3.0.5",
+    "python": "3.12.3",
+    "selector_backend": "fork",
+    "selector_workers": 24
+  },
+  "same_host_schema_under_audit": "pr13_same_host_causal_controls_v1",
+  "schema": "pr13_same_host_selector_historical_parity_v1",
+  "test_rows_admitted_or_used": false
+}

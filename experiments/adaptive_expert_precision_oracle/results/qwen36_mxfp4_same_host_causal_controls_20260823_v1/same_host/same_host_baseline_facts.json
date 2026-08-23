@@ -1,0 +1,76 @@
+{
+  "capture_seconds": 1.9873707527294755,
+  "completed": true,
+  "model_load_seconds": 140.79325336962938,
+  "repeat_max_abs": {
+    "mxfp4-confirm-006": {
+      "hidden": 0.0,
+      "logits": 0.0,
+      "residual": 0.0,
+      "routed": 0.0,
+      "router_ids": 0.0,
+      "router_logits": 0.0,
+      "router_scores": 0.0,
+      "x": 0.0
+    },
+    "mxfp4-confirm-007": {
+      "hidden": 0.0,
+      "logits": 0.0,
+      "residual": 0.0,
+      "routed": 0.0,
+      "router_ids": 0.0,
+      "router_logits": 0.0,
+      "router_scores": 0.0,
+      "x": 0.0
+    },
+    "mxfp4-confirm-008": {
+      "hidden": 0.0,
+      "logits": 0.0,
+      "residual": 0.0,
+      "routed": 0.0,
+      "router_ids": 0.0,
+      "router_logits": 0.0,
+      "router_scores": 0.0,
+      "x": 0.0
+    }
+  },
+  "requests": {
+    "mxfp4-confirm-006": {
+      "bytes": 10510809,
+      "file": "baseline/mxfp4-confirm-006.npz",
+      "sha256": "6b0eab21a9628c725805e48d03dfb93f0d2fafc8e4ec5e7ae60b467834b06c98",
+      "tokens": 15
+    },
+    "mxfp4-confirm-007": {
+      "bytes": 9147496,
+      "file": "baseline/mxfp4-confirm-007.npz",
+      "sha256": "7c11e840eee8fc09a574f35718fd5291cf8de363b0557ee796c60e3796c3b33e",
+      "tokens": 13
+    },
+    "mxfp4-confirm-008": {
+      "bytes": 11324361,
+      "file": "baseline/mxfp4-confirm-008.npz",
+      "sha256": "0e3bdc7d9314582291eb5f3aaf9efc32871dd5c9a0d6a5c0214b4a3daa304185",
+      "tokens": 16
+    }
+  },
+  "run_id": "qwen36_mxfp4_same_host_causal_controls_20260823_v1",
+  "runtime_provenance": {
+    "cpu_count": 256,
+    "cuda_runtime": "12.8",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "gpu_capability": [
+      12,
+      0
+    ],
+    "host": "d3549a80df55",
+    "numpy": "2.1.2",
+    "pandas": "3.0.5",
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128"
+  },
+  "same_process_model_residency": true,
+  "schema": "pr13_same_host_causal_controls_v1",
+  "test_rows_admitted_or_used": false
+}

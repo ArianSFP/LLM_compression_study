@@ -1,0 +1,58 @@
+{
+  "analysis_script_sha256": "f2d5d8f45bdc65d820035d6e024a39a6230b6d26cf8214fa3d75d2bf0529a54b",
+  "completed": true,
+  "input_hashes": {
+    "historical_selector_parity_facts.json": "8beacb1cd9776a8cbea7b44d689b269e85505c654d18ef71ad01e13ad14fdb33",
+    "same_host_baseline_facts.json": "2b3589619884d5b1a5266b4fd2735decca2ba13332f50d565f8d81aafa8611c9",
+    "same_host_control_propagation.parquet": "a011cbe04987a5f9604b41b8dd2a492c3bd0a3cc98775892dd826c2a0e6c2cf4",
+    "same_host_control_quality.parquet": "d66017821bdfef9bde84f8ca9b65acce603294db6f3b36fbd5c1f6edad42a2cd",
+    "same_host_control_run_facts.json": "c71b143fa19c87aee1abd2079d8c18c62f788f286db5a9b7aad45c60d28a7ca2",
+    "same_host_zero_dose_gates.parquet": "5fdfa8a4eb664bd8feda1bb31caeaf61f660d01df35a1bee4679d3a0ae1825c9"
+  },
+  "outputs": {
+    "SAME_HOST_CAUSAL_CONTROLS_REPORT.md": {
+      "bytes": 5356,
+      "sha256": "fb874d082a1518266fe74d8f341c9caf415502c6dc6613e5ae973f8cb6a6dd2d"
+    },
+    "same_host_alpha1_layer_summary.csv": {
+      "bytes": 5672,
+      "sha256": "c713d4a39832dc251abe37a02e8c1dedd25134c7446deeb7e98ec66f69bcc4c1"
+    },
+    "same_host_dose_response.png": {
+      "bytes": 130527,
+      "sha256": "bb14146992289b9c5e493541fccbda51822e70878b3b98ad45b75258ff051700"
+    },
+    "same_host_dose_response.svg": {
+      "bytes": 70153,
+      "sha256": "2828787efe96bb7f9c41dd4dca3714ae9beace20970dda80876ce5ec5260e560"
+    },
+    "same_host_dose_summary.csv": {
+      "bytes": 14701,
+      "sha256": "9dc6d1ce28ed8b3fab93ae243ed0371bbca4ebbd985c8884600311dedb70c7eb"
+    },
+    "same_host_final_propagation_summary.csv": {
+      "bytes": 113171,
+      "sha256": "b9564ec59a563e6ac24e04ed4bde82cea9e2b0e6861ac3f00cdf721cd66149b2"
+    },
+    "same_host_injection_control_summary.csv": {
+      "bytes": 2823,
+      "sha256": "ffcd6edf927f84b04e4947f2feff14e17c1f7531d2d72a1627bacabdb67cb0b9"
+    },
+    "same_host_quality_summary.csv": {
+      "bytes": 132121,
+      "sha256": "18c8354d7eec7e06a2abef07f9b74bb6518f714b7a314f44d33c62998f388ce4"
+    },
+    "same_host_routing_control.png": {
+      "bytes": 106172,
+      "sha256": "983008bdc2aa790db2e35b047bf811232f46363c6968a1523466c644ad111610"
+    },
+    "same_host_routing_control.svg": {
+      "bytes": 58155,
+      "sha256": "5b27574ef8b823bcccf722d0880d01a09100e3b4604fa6d6e84285929923d8d6"
+    }
+  },
+  "run_id": "qwen36_mxfp4_same_host_causal_controls_20260823_v1",
+  "schema": "pr13_same_host_causal_controls_analysis_v1",
+  "scientific_boundary": "Same-host validation sentinel only: exact baseline capture, frozen PR13 live-activation allocation, true routed-MoE replacement before shared/residual composition, dose response, and downstream routing controls. This is not an end-to-end all-layer streamed quality curve.",
+  "test_rows_admitted_or_used": false
+}
