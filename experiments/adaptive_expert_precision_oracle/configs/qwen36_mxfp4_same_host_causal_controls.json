@@ -49,6 +49,8 @@
   "selector_worker_backend": "fork",
   "live_zero_dose_max_abs_atol": 0.0,
   "selector_all_q4_atol": 5e-14,
+  "historical_router_sum_atol": 5e-7,
+  "same_host_execution_router_sum_atol": 0.003,
   "selector_qenergy_rtol": 1e-9,
   "selector_qenergy_atol": 1e-10,
   "test_rows_admitted_or_used": false,

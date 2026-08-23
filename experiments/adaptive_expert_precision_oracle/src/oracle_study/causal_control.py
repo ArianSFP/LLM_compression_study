@@ -61,6 +61,43 @@ def build_control_cases(
     return tuple(cases)
 
 
+def selector_and_execution_router_weights(
+    weights: Sequence[float] | np.ndarray,
+    *,
+    historical_sum_atol: float,
+    execution_sum_atol: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Separate PR #13 normalized weights from BF16 backend execution weights."""
+
+    execution = np.asarray(weights, np.float64).reshape(-1)
+    if (
+        execution.shape != (8,)
+        or np.any(~np.isfinite(execution))
+        or np.any(execution <= 0.0)
+    ):
+        raise ValueError("router execution weights must be eight positive finite values")
+    if (
+        not np.isfinite(historical_sum_atol)
+        or historical_sum_atol < 0.0
+        or not np.isfinite(execution_sum_atol)
+        or execution_sum_atol < historical_sum_atol
+    ):
+        raise ValueError("router sum tolerances are invalid")
+    total = float(execution.sum())
+    error = abs(total - 1.0)
+    if error <= historical_sum_atol:
+        selector = execution.copy()
+    elif error <= execution_sum_atol:
+        selector = execution / total
+    else:
+        raise ValueError(
+            f"router execution weights exceed the sum tolerance: {error:.9g}",
+        )
+    if not np.isclose(selector.sum(), 1.0, rtol=0.0, atol=historical_sum_atol):
+        raise RuntimeError("normalized selector weights do not sum to one")
+    return selector, execution
+
+
 def _ordered_bfloat16(bits: np.ndarray) -> np.ndarray:
     value = np.asarray(bits, np.uint16)
     unsigned = value.astype(np.uint32)

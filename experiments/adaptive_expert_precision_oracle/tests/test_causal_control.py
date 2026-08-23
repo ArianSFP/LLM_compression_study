@@ -22,6 +22,7 @@ from oracle_study.causal_control import (
     bfloat16_ulp_metrics,
     build_control_cases,
     first_changed_layer,
+    selector_and_execution_router_weights,
 )
 from run_same_host_causal_controls import _pre_residual_start
 
@@ -66,6 +67,36 @@ def test_first_changed_layer_validation() -> None:
     assert first_changed_layer([(7, 0.0), (9, 0.0)]) is None
     with pytest.raises(ValueError, match=r"\[0,1\]"):
         first_changed_layer([(0, 1.1)])
+
+
+def test_selector_and_execution_router_weights_preserve_backend_values() -> None:
+    historical = np.full(8, 0.125, np.float64)
+    selector, execution = selector_and_execution_router_weights(
+        historical,
+        historical_sum_atol=5e-7,
+        execution_sum_atol=0.003,
+    )
+    assert np.array_equal(selector, historical)
+    assert np.array_equal(execution, historical)
+
+    rounded = np.asarray(
+        [0.25, 0.20, 0.15, 0.125, 0.10, 0.075, 0.05, 0.048],
+        np.float64,
+    )
+    selector, execution = selector_and_execution_router_weights(
+        rounded,
+        historical_sum_atol=5e-7,
+        execution_sum_atol=0.003,
+    )
+    assert np.array_equal(execution, rounded)
+    assert np.isclose(selector.sum(), 1.0, rtol=0.0, atol=5e-7)
+    assert not np.array_equal(selector, execution)
+    with pytest.raises(ValueError, match="sum tolerance"):
+        selector_and_execution_router_weights(
+            rounded * 0.9,
+            historical_sum_atol=5e-7,
+            execution_sum_atol=0.003,
+        )
 
 
 class _DummyExperts(torch.nn.Module):

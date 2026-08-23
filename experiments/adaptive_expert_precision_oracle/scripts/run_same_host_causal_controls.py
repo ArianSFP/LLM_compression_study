@@ -41,6 +41,7 @@ from oracle_study.causal_control import (  # noqa: E402
     bfloat16_ulp_metrics,
     build_control_cases,
     first_changed_layer,
+    selector_and_execution_router_weights,
 )
 from oracle_study.causal_replay import (  # noqa: E402
     cosine_distance,
@@ -464,6 +465,8 @@ class SelectorResult:
     group_damage: np.ndarray
     max_group_damage_error: float
     all_q4_max_abs_error: float
+    max_execution_router_sum_error: float
+    max_execution_selector_weight_abs_difference: float
     active_experts: int
 
 
@@ -508,17 +511,19 @@ def _selector_groups(
             ids = np.asarray(
                 capture["router_ids"][layer, position], np.int64,
             )
-            weights = np.asarray(
-                capture["router_scores"][layer, position], np.float64,
+            selector_weights, execution_weights = (
+                selector_and_execution_router_weights(
+                    capture["router_scores"][layer, position],
+                    historical_sum_atol=float(
+                        config["historical_router_sum_atol"],
+                    ),
+                    execution_sum_atol=float(
+                        config["same_host_execution_router_sum_atol"],
+                    ),
+                )
             )
             if ids.shape != (8,) or len(set(ids.tolist())) != 8:
                 raise RuntimeError("same-host router did not produce eight unique experts")
-            if (
-                weights.shape != (8,)
-                or np.any(weights <= 0.0)
-                or not np.isclose(weights.sum(), 1.0, rtol=0.0, atol=5e-7)
-            ):
-                raise RuntimeError("same-host normalized router weights changed")
             groups.append({
                 "capture_source": "same_host_exact_gpu",
                 "evaluation_split": "validation",
@@ -528,7 +533,8 @@ def _selector_groups(
                 "layer": int(layer),
                 "record": record,
                 "experts": ids.tolist(),
-                "router_weights": weights.tolist(),
+                "router_weights": selector_weights.tolist(),
+                "execution_router_weights": execution_weights.tolist(),
             })
             activation.append(np.asarray(capture["x"][layer][position], np.float32))
     if len(groups) != int(config["expected_groups_per_layer"]):
@@ -721,6 +727,40 @@ def _select_layer(
         ],
         kind="stable",
     ).reset_index(drop=True)
+    group_lookup = {
+        (str(group["request_id"]), int(group["position"])): group
+        for group in groups
+    }
+    selector_values = []
+    execution_values = []
+    for row in selected_experts.itertuples(index=False):
+        group = group_lookup[(str(row.request_id), int(row.position))]
+        stored_rank = int(row.router_rank)
+        if stored_rank < 1 or stored_rank > 8:
+            raise RuntimeError("PR #13 router rank is outside one through eight")
+        rank = stored_rank - 1
+        selector_values.append(float(group["router_weights"][rank]))
+        execution_values.append(
+            float(group["execution_router_weights"][rank]),
+        )
+    selector_values_array = np.asarray(selector_values, np.float64)
+    execution_values_array = np.asarray(execution_values, np.float64)
+    if not np.array_equal(
+        selected_experts["router_weight"].to_numpy(np.float64),
+        selector_values_array,
+    ):
+        raise RuntimeError("selected PR #13 router weights changed")
+    selected_experts["execution_router_weight"] = execution_values_array
+    selected_experts["execution_selector_weight_abs_difference"] = np.abs(
+        execution_values_array - selector_values_array,
+    )
+    max_execution_router_sum_error = max(
+        abs(sum(group["execution_router_weights"]) - 1.0)
+        for group in groups
+    )
+    max_execution_selector_weight_abs_difference = float(
+        np.max(np.abs(execution_values_array - selector_values_array)),
+    )
     rates = np.asarray(config["mean_budget_pages_per_expert"], np.int64)
     expected_groups = len(groups) * len(rates)
     if len(selected_groups) != expected_groups or len(selected_experts) != 8 * expected_groups:
@@ -775,7 +815,20 @@ def _select_layer(
                 expert_rows_for_rate["selected_pages"].to_numpy(np.int64),
             ):
                 raise RuntimeError("same-host selector page reconstruction failed")
-            deltas[rate_index, group_index] = result.delta.astype(np.float32)
+            selector_weights = np.asarray(
+                group["router_weights"], np.float64,
+            )
+            execution_weights = np.asarray(
+                group["execution_router_weights"], np.float64,
+            )
+            if np.array_equal(execution_weights, selector_weights):
+                execution_delta = result.delta
+            else:
+                execution_delta = -np.einsum(
+                    "e,eo->o", execution_weights,
+                    result.expert_residuals, optimize=True,
+                )
+            deltas[rate_index, group_index] = execution_delta.astype(np.float32)
             damage[rate_index, group_index] = result.group_damage
     if all_q4_maximum > float(config["selector_all_q4_atol"]):
         raise RuntimeError(
@@ -794,6 +847,12 @@ def _select_layer(
         group_damage=damage,
         max_group_damage_error=maximum_error,
         all_q4_max_abs_error=all_q4_maximum,
+        max_execution_router_sum_error=float(
+            max_execution_router_sum_error,
+        ),
+        max_execution_selector_weight_abs_difference=(
+            max_execution_selector_weight_abs_difference
+        ),
         active_experts=len(active),
     )
 
@@ -1424,6 +1483,12 @@ def run(args: argparse.Namespace) -> None:
                     "active_experts": selector.active_experts,
                     "max_group_qenergy_abs_error": selector.max_group_damage_error,
                     "all_q4_max_abs_error": selector.all_q4_max_abs_error,
+                    "max_execution_router_sum_error": (
+                        selector.max_execution_router_sum_error
+                    ),
+                    "max_execution_selector_weight_abs_difference": (
+                        selector.max_execution_selector_weight_abs_difference
+                    ),
                     "allocation_rows": len(selector.allocation),
                     "propagation_rows": len(propagation),
                     "quality_rows": len(quality),

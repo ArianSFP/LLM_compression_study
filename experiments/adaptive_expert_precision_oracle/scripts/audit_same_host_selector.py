@@ -273,6 +273,12 @@ def main() -> None:
             "reconstruction": reconstruction,
             "max_group_qenergy_abs_error": selector.max_group_damage_error,
             "all_q4_max_abs_error": selector.all_q4_max_abs_error,
+            "max_execution_router_sum_error": (
+                selector.max_execution_router_sum_error
+            ),
+            "max_execution_selector_weight_abs_difference": (
+                selector.max_execution_selector_weight_abs_difference
+            ),
             "active_experts": selector.active_experts,
         }
         atomic_json(args.output / f"historical_selector_parity_layer_{layer:02d}.json", {
