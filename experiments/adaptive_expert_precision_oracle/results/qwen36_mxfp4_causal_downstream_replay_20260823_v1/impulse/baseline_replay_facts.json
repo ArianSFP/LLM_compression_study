@@ -1,0 +1,51 @@
+{
+  "capture_route_exact_fraction": 0.4625,
+  "capture_router_max_abs": 0.421875,
+  "capture_rows": 1280.0,
+  "capture_xplus_max_abs": 0.40625,
+  "capture_xplus_rmse": 0.005481352338462325,
+  "completed": true,
+  "cuda_allocated_gib": 65.46350812911987,
+  "cuda_peak_allocated_gib": 65.77887058258057,
+  "cuda_reserved_gib": 81.43359375,
+  "forward_seconds": {
+    "mxfp4-confirm-006": 1.0586727899499238,
+    "mxfp4-confirm-007": 0.4881633098702878,
+    "mxfp4-confirm-008": 0.5391332327853888
+  },
+  "gates": {
+    "capture_route_exact_fraction": false,
+    "capture_router_max_abs": false,
+    "capture_xplus_max_abs": false,
+    "capture_xplus_rmse": true,
+    "no_op_hidden": true,
+    "no_op_logits": true,
+    "no_op_router": true
+  },
+  "model_load_seconds": 51.137882399139926,
+  "no_op_hidden_max_abs": 0.0,
+  "no_op_logit_max_abs": 0.0,
+  "no_op_router_max_abs": 0.0,
+  "phase": "baseline-replay",
+  "reference_bytes": 27309955,
+  "reference_file": "baseline_reference.npz",
+  "reference_sha256": "3a0f3b553caf1d22daf753e3b96331937945910de184567fcd723482b873d1f9",
+  "replay_admitted": false,
+  "run_id": "qwen36_mxfp4_causal_downstream_replay_20260823_v1",
+  "runtime_provenance": {
+    "cuda_driver": null,
+    "cuda_runtime": "12.8",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "gpu_capability": [
+      12,
+      0
+    ],
+    "host": "f88688572da4",
+    "numpy": "2.1.2",
+    "pandas": "3.0.5",
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128"
+  },
+  "schema": "pr13_causal_single_layer_impulse_v1",
+  "test_scientific_rows_admitted_or_used": false
+}

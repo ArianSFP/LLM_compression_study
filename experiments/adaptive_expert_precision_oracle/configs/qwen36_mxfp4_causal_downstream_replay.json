@@ -1,0 +1,70 @@
+{
+  "run_id": "qwen36_mxfp4_causal_downstream_replay_20260823_v1",
+  "base_all_layer_commit": "089deb4bd41eb71864779ced0cbb3db41e9dcb63",
+  "base_pr13_commit": "dfba3748e51d6916dc1f28cb1d3b3250188adbbe",
+  "checkpoint_revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "capture_schema": "exact_mxfp4_all_layer_sharded_v1",
+  "capture_manifest_sha256": "40c06b1495e52f689f4d95217ccec70711a69166d63067c3dcdcb4589078cc4d",
+  "capture_identity_grid_sha256": "075c851bbda32ad3009d4bfe56815a03458524b304ecb4165bb4c8f119538f00",
+  "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "expert_allocation_sha256": "19c2dc0f94cd9a8237dd866b1a1997c4edcdf6a66457f5b924c4a1e9604fb0c4",
+  "group_frontier_sha256": "f74e1225789c6502ed7818caa2cad2c50e74633254297b0fb6ebb5c5886f4db6",
+  "average_rate_run_facts_sha256": "e0f58de6c5345885488068d5efb24c063f7a910d4b7fc32fb050f9d0f5e79d19",
+  "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+  "layers": [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+  ],
+  "selection_split": "validation",
+  "validation_request_ids": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "expected_validation_groups_per_layer": 32,
+  "expected_validation_groups": 1280,
+  "no_test_rows_admitted_or_used": true,
+  "factor_config_id": "matrix_free_joint_rank8_int4_per_row_hadamard",
+  "allocation_policy": "pooled_router_square_column_generated",
+  "burst_cap_pages_per_expert": 1536,
+  "mean_budget_pages_per_expert": [384, 576, 749, 768],
+  "charged_bpw": {
+    "384": 0.5234781901041666,
+    "576": 0.7734781901041666,
+    "749": 0.9987386067708334,
+    "768": 1.0234781901041666
+  },
+  "initial_impulse_mean_pages": [384, 749],
+  "experts_per_group": 8,
+  "units_per_expert": 512,
+  "hidden_size": 2048,
+  "vocab_size": 248320,
+  "page_bytes": 512,
+  "reconstruction_damage_rtol": 1e-9,
+  "reconstruction_damage_atol": 1e-10,
+  "all_q4_max_abs_atol": 1e-12,
+  "baseline_capture_xplus_rmse_atol": 0.01,
+  "baseline_capture_xplus_max_abs_atol": 0.125,
+  "baseline_capture_router_max_abs_atol": 0.125,
+  "baseline_capture_route_exact_fraction_min": 1.0,
+  "no_op_replay_max_abs_atol": 0.0,
+  "reference_dtype": "bfloat16",
+  "attention_implementation": "eager",
+  "experts_implementation": "eager",
+  "replay_modes_in_scope": [
+    "audit_reconstruction",
+    "single_layer_frozen_error_impulse"
+  ],
+  "deferred_modes": [
+    "frozen_route_frozen_allocation_end_to_end",
+    "live_route_live_allocation_oracle",
+    "repair_one_layer",
+    "predicted_h1_selector"
+  ],
+  "predicted_h4_mode_in_scope": false,
+  "scientific_boundary": "The initial replay is a validation-cohort reconstruction audit and isolated frozen-error impulse response. It is not yet an end-to-end streamed-model quality curve. Test rows and predicted-H4 values are not admitted."
+}

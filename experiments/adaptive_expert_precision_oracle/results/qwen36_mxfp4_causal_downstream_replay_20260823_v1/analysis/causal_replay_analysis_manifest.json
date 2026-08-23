@@ -1,0 +1,65 @@
+{
+  "bootstrap_samples": 10000,
+  "bootstrap_unit": "validation_sequence",
+  "completed": true,
+  "input_hashes": {
+    "baseline_facts": "3a6e625000ff0a951479528ba84e54f05d76353d50172da43d9d8c8b26659088",
+    "config": "44f4234bee0d9a9b26a72df07fcf39161f55c51558bd835d268bac946360c636",
+    "impulse_facts": "010ef206e7140184078c67b48fabf1887b1fca053b98206abb89beac058807fe",
+    "propagation": "429abe5a5cda87c41825dc410db96bee5b76a6cd3a2e8a421a3114183585bc40",
+    "quality": "343b324908506b725092e1ff478ac6e43c0f4ba86841bdf5e36185ae055f943a",
+    "reconstruction_facts": "98bd3ab5b32884cc69b2e4a57d62b9f31d7e6e841c44397d64187d75cc390f83"
+  },
+  "outputs": {
+    "CAUSAL_DOWNSTREAM_REPLAY_REPORT.md": {
+      "bytes": 3935,
+      "sha256": "a8fdfd79d9414c110841a9e512858f2cb15f980bcaa6c972df1c6f5fcc2fbd48"
+    },
+    "causal_impulse_heatmap_pages_384.png": {
+      "bytes": 154911,
+      "sha256": "16c51f87d160efb20fc86d6e9c9fc9f07544ff5c1f1a8d5b60ad24dc17c459b7"
+    },
+    "causal_impulse_heatmap_pages_384.svg": {
+      "bytes": 123006,
+      "sha256": "0cfbe4886715e3744724c4571c45455533f8973f99b166e10bcca9bd6da457b4"
+    },
+    "causal_impulse_heatmap_pages_749.png": {
+      "bytes": 142318,
+      "sha256": "dde3f96b5121ff1a1b27e145d266cf238847c756421d386d2db4d3991bff31b7"
+    },
+    "causal_impulse_heatmap_pages_749.svg": {
+      "bytes": 117585,
+      "sha256": "34afc4f9a595722f712ab593d95923ce611861a6d637f772d367f4807c42f949"
+    },
+    "causal_propagation_summary.csv": {
+      "bytes": 495973,
+      "sha256": "dbd6b8eba4f53b28ccdb6a09ee0fd3bc3e1fc026941775589d6b48c0dbf0aa78"
+    },
+    "causal_quality_by_layer.csv": {
+      "bytes": 19945,
+      "sha256": "2cf0073a6b5a96236565a7c119ab9babc2656a9ba044ca90905538d6e095c6ce"
+    },
+    "causal_quality_by_layer.png": {
+      "bytes": 256053,
+      "sha256": "e5eccada705a23db673d941a3c2f0968cc2968e03199ed6707fb95a4f6ea3b7b"
+    },
+    "causal_quality_by_layer.svg": {
+      "bytes": 70115,
+      "sha256": "0d0719506d58ab2830201831bf2b85637e1ebd8f2aca84ba111d0935db23a245"
+    },
+    "causal_rate_summary.csv": {
+      "bytes": 809,
+      "sha256": "1c527e9ca3c3bafbdd5a8a28fefa96e778daa9462e0af1e22b4f97d67d7f52ce"
+    }
+  },
+  "run_id": "qwen36_mxfp4_causal_downstream_replay_20260823_v1",
+  "schema": "pr13_causal_replay_analysis_v1",
+  "scientific_boundary": "Isolated paired-tail frozen-error impulse replay on the three validation prompts. Candidate and reference use one GPU process; old CPU-capture drift remains a separate control. This is not an end-to-end streamed model or population perplexity estimate.",
+  "source_hashes": {
+    "analysis_runner": "b5f13d74fa21b172bace9925aa13f1aa8b671d9760fed7b0e3f389d462830a2a",
+    "causal_replay": "d6ceba0228a0c43394aae7e9e6c62a31c31b9bb4b0a84af778f37e493e229eb7",
+    "impulse_runner": "2ae712b4ba0f2810e17477c20f7cacefe7776e7a3fb065d73aa1706fdf0ba7ef",
+    "reconstruction_runner": "6a23446a8e61d2a34f29b31f7de2430227971601d5d9e6c16b839d1a74760a9a"
+  },
+  "test_scientific_rows_admitted_or_used": false
+}

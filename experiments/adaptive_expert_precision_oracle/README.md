@@ -4,6 +4,32 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+
+## PR #13 causal downstream replay pilot
+
+This continuation reconstructs the local routed-MoE errors selected by the
+PR #13 all-layer allocator and measures causal propagation through complete
+downstream sequence tails for all 40 MoE layers at 0.523478 and 0.998739
+charged bpw.
+
+Reviewer entry points:
+
+- [Canonical report](results/qwen36_mxfp4_causal_downstream_replay_20260823_v1/analysis/CAUSAL_DOWNSTREAM_REPLAY_REPORT.md),
+  [analysis manifest](results/qwen36_mxfp4_causal_downstream_replay_20260823_v1/analysis/causal_replay_analysis_manifest.json),
+  and [execution ledger](EXECUTION_LEDGER_CAUSAL_REPLAY_20260823.md).
+- [Combined propagation table](results/qwen36_mxfp4_causal_downstream_replay_20260823_v1/impulse/impulse_propagation.parquet),
+  [isolated-layer quality table](results/qwen36_mxfp4_causal_downstream_replay_20260823_v1/impulse/impulse_quality.parquet),
+  and [reconstruction facts](results/qwen36_mxfp4_causal_downstream_replay_20260823_v1/reconstruction/reconstruction_run_facts.json).
+
+Reconstruction parity passes at approximately `1e-15`, all-Q4 is exact,
+selected pages match, and repeated paired tails are bit-exact. Pairing is
+required because newly loaded BF16 CPU and GPU trajectories do not
+bit-reproduce the historical capture; that drift remains a separate control.
+This three-sequence isolated-impulse pilot is not yet an end-to-end streamed
+NLL/PPL curve. A full-sequence held-out capture and sequential four-rate run
+are the next gate. Predicted-H4 remains excluded; later prediction begins at
+H1.
+
 ## Split gate/up/down interaction field (stacked on PR #11)
 
 This follow-on separates the physically distinct gate and up refinement pages.
