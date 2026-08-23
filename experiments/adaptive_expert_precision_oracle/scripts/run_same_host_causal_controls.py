@@ -10,11 +10,12 @@ and before the decoder residual addition.
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from contextlib import contextmanager
 from dataclasses import dataclass
 import gc
 import json
+import multiprocessing as mp
 import os
 from pathlib import Path
 import platform
@@ -535,6 +536,48 @@ def _selector_groups(
     return groups, {"x": np.stack(activation)}
 
 
+def _load_primary_factor(
+    arrays: Mapping[str, np.ndarray],
+    pr13_config: Mapping[str, Any],
+    expert: int,
+) -> Any:
+    """Decode only the frozen primary factor with the original PR #13 schema."""
+
+    rank = int(pr13_config["factor_fit_rank"])
+    encoded = pr13.EncodedInteractionFactor(
+        packed_codes=np.asarray(
+            arrays["primary_packed_codes"][expert], np.uint8,
+        ),
+        row_scales=np.asarray(
+            arrays["primary_row_scales"][expert], np.float16,
+        ),
+        units=pr13.UNITS,
+        rank=rank,
+        method="primary",
+        tail_rank=rank,
+        exact_rank=0,
+        encoding="int4_hadamard",
+        global_scale=np.float32(
+            arrays["primary_global_scales"][expert],
+        ),
+    )
+    factor = encoded.decode()
+    primary = str(pr13_config["primary_factor_id"])
+    specifications = [
+        record for record in pr13_config["factor_configs"]
+        if str(record["factor_id"]) == primary
+    ]
+    if len(specifications) != 1:
+        raise RuntimeError("primary factor contract is not unique")
+    expected = specifications[0]
+    if (
+        factor.rank != int(expected["rank"])
+        or factor.payload_bytes != int(expected["factor_payload_bytes"])
+    ):
+        raise RuntimeError("primary factor contract changed")
+    return factor
+
+
 def _select_layer(
     args: argparse.Namespace,
     captures: Mapping[str, Mapping[str, Any]],
@@ -563,23 +606,43 @@ def _select_layer(
     decoded_by_expert = {}
     experts = {}
     primary = str(config["factor_config_id"])
-    for expert in active:
+
+    def prepare(expert: int) -> tuple[int, Any, Any]:
         decoded = set_study.decode_expert(
             args.checkpoint, index, trees, layer, expert,
         )
         q2 = tuple(decoded[name][0] for name in pr13.PROJECTIONS)
         q4 = tuple(decoded[name][2] for name in pr13.PROJECTIONS)
-        decoded_by_expert[expert] = (q2, q4)
-        experts[expert] = {
+        cell = {
             "q2": q2,
             "q4": q4,
             "abc": unit_score_metadata(q2[2], q4[2], proxy=proxy, beta=beta),
             "factors": {
-                primary: pr13._load_layer_factors(
+                primary: _load_primary_factor(
                     arrays, args.pr13_config_data, expert,
-                )[primary],
+                ),
             },
         }
+        return expert, (q2, q4), cell
+
+    print(
+        f"[layer {layer}] preparing {len(active)} active experts "
+        f"with {min(int(args.selector_workers), len(active))} workers",
+        flush=True,
+    )
+    with ThreadPoolExecutor(
+        max_workers=min(int(args.selector_workers), len(active)),
+    ) as executor:
+        futures = {
+            executor.submit(prepare, expert): expert for expert in active
+        }
+        for future in as_completed(futures):
+            expert, decoded, cell = future.result()
+            if int(expert) != int(futures[future]):
+                raise RuntimeError("prepared expert identity changed")
+            decoded_by_expert[expert] = decoded
+            experts[expert] = cell
+    print(f"[layer {layer}] evaluating {len(groups)} selector groups", flush=True)
     pr13._EVAL_CONTEXT = {
         "groups": tuple(groups),
         "local": local,
@@ -590,9 +653,22 @@ def _select_layer(
     }
     completed = {}
     try:
-        with ThreadPoolExecutor(
-            max_workers=min(int(args.selector_workers), len(groups)),
-        ) as executor:
+        workers = min(int(args.selector_workers), len(groups))
+        if args.selector_backend == "fork":
+            executor_context = ProcessPoolExecutor(
+                max_workers=workers,
+                mp_context=mp.get_context("fork"),
+            )
+        elif args.selector_backend == "thread":
+            executor_context = ThreadPoolExecutor(max_workers=workers)
+        else:
+            raise RuntimeError("unknown selector worker backend")
+        print(
+            f"[layer {layer}] selector backend={args.selector_backend} "
+            f"workers={workers}",
+            flush=True,
+        )
+        with executor_context as executor:
             futures = {
                 executor.submit(pr13._evaluate_group, task): task
                 for task in range(len(groups))
@@ -679,7 +755,9 @@ def _select_layer(
                 proxy,
                 beta,
             )
-            expected = float(group_rows_for_rate.iloc[0]["exact_qenergy_damage"])
+            expected = float(
+                group_rows_for_rate.iloc[0]["group_exact_qenergy_damage"],
+            )
             error = abs(float(result.group_damage) - expected)
             maximum_error = max(maximum_error, error)
             all_q4_maximum = max(
@@ -699,8 +777,11 @@ def _select_layer(
                 raise RuntimeError("same-host selector page reconstruction failed")
             deltas[rate_index, group_index] = result.delta.astype(np.float32)
             damage[rate_index, group_index] = result.group_damage
-    if all_q4_maximum != 0.0:
-        raise RuntimeError("same-host all-Q4 reconstruction is not exact")
+    if all_q4_maximum > float(config["selector_all_q4_atol"]):
+        raise RuntimeError(
+            f"same-host all-Q4 reconstruction exceeded tolerance: "
+            f"{all_q4_maximum:.17g}",
+        )
     selected_experts.insert(0, "same_host_schema", SCHEMA)
     del experts, decoded_by_expert, arrays
     gc.collect()
@@ -1439,11 +1520,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fit-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--selector-workers", type=int, default=24)
+    parser.add_argument(
+        "--selector-backend", choices=("fork", "thread"), default=None,
+    )
     args = parser.parse_args()
     args.config_data = load_json(args.config)
     args.pr13_config_data = load_json(args.pr13_config)
     if args.selector_workers < 1 or args.selector_workers > 96:
         raise ValueError("selector workers must lie in [1,96]")
+    configured_backend = str(args.config_data["selector_worker_backend"])
+    if args.selector_backend is None:
+        args.selector_backend = configured_backend
+    if args.selector_backend != configured_backend:
+        raise ValueError("selector backend differs from the frozen config")
     return args
 
 

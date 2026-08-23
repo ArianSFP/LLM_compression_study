@@ -206,6 +206,9 @@ def main() -> None:
     parser.add_argument("--reconstruction-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--selector-workers", type=int, default=24)
+    parser.add_argument(
+        "--selector-backend", choices=("fork", "thread"), default=None,
+    )
     parser.add_argument("--layers", type=int, nargs="*")
     args = parser.parse_args()
     config = load_json(args.config)
@@ -229,6 +232,11 @@ def main() -> None:
         raise RuntimeError("historical reconstruction manifest changed")
     capture_manifest = load_json(capture_manifest_path)
     reconstruction_manifest = load_json(reconstruction_manifest_path)
+    configured_backend = str(config["selector_worker_backend"])
+    if args.selector_backend is None:
+        args.selector_backend = configured_backend
+    if args.selector_backend != configured_backend:
+        raise RuntimeError("selector backend differs from the frozen config")
     selected_layers = list(
         map(int, args.layers if args.layers else config["sentinel_layers"]),
     )
@@ -243,6 +251,7 @@ def main() -> None:
         trees=args.trees,
         fit_dir=args.fit_dir,
         selector_workers=args.selector_workers,
+        selector_backend=args.selector_backend,
     )
     results = {}
     for layer in selected_layers:
@@ -288,6 +297,7 @@ def main() -> None:
             "numpy": np.__version__,
             "pandas": pd.__version__,
             "selector_workers": args.selector_workers,
+            "selector_backend": args.selector_backend,
         },
     })
 
