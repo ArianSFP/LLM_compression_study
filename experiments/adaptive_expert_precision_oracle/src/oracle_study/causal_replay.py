@@ -246,6 +246,57 @@ def route_metrics(
     }
 
 
+def route_boundary_metrics(
+    reference_logits: np.ndarray,
+    candidate_logits: np.ndarray,
+    top_k: int = TOP_K,
+) -> dict[str, float]:
+    """Describe discrete route changes and probability mass moved between experts.
+
+    The existing :func:`route_metrics` intentionally preserves the pilot schema.
+    This companion provides the more diagnostic decomposition needed by the
+    same-host frozen-route controls.
+    """
+
+    reference = np.asarray(reference_logits, np.float64)
+    candidate = np.asarray(candidate_logits, np.float64)
+    if reference.shape != candidate.shape or reference.ndim != 2:
+        raise ValueError("router logits must be equal [tokens,experts] matrices")
+    if top_k < 1 or top_k >= reference.shape[1]:
+        raise ValueError("top_k must lie in [1, experts-1]")
+
+    reference_ids = np.argsort(reference, axis=1, kind="stable")[:, -top_k:][:, ::-1]
+    candidate_ids = np.argsort(candidate, axis=1, kind="stable")[:, -top_k:][:, ::-1]
+    same_order = np.all(reference_ids == candidate_ids, axis=1)
+    same_set = np.asarray([
+        set(first.tolist()) == set(second.tolist())
+        for first, second in zip(reference_ids, candidate_ids)
+    ])
+    same_top1 = reference_ids[:, 0] == candidate_ids[:, 0]
+
+    reference_probability = softmax(reference)
+    candidate_probability = softmax(candidate)
+    reference_top = np.take_along_axis(reference_probability, reference_ids, axis=1)
+    candidate_top = np.take_along_axis(candidate_probability, candidate_ids, axis=1)
+    reference_top /= reference_top.sum(axis=1, keepdims=True)
+    candidate_top /= candidate_top.sum(axis=1, keepdims=True)
+    reference_sparse = np.zeros_like(reference_probability)
+    candidate_sparse = np.zeros_like(candidate_probability)
+    np.put_along_axis(reference_sparse, reference_ids, reference_top, axis=1)
+    np.put_along_axis(candidate_sparse, candidate_ids, candidate_top, axis=1)
+    mass_churn = 0.5 * np.sum(
+        np.abs(reference_sparse - candidate_sparse), axis=1,
+    )
+
+    return {
+        "route_no_change_fraction": float(np.mean(same_order)),
+        "route_order_only_change_fraction": float(np.mean(same_set & ~same_order)),
+        "route_membership_change_fraction": float(np.mean(~same_set)),
+        "route_top1_change_fraction": float(np.mean(~same_top1)),
+        "router_mass_churn": float(np.mean(mass_churn)),
+    }
+
+
 def token_quality_metrics(
     reference_logits: np.ndarray,
     candidate_logits: np.ndarray,

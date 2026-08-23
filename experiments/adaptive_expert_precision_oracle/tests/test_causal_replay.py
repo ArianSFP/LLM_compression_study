@@ -18,6 +18,7 @@ from oracle_study.causal_replay import (
     qenergy_damage,
     reconstruct_group_from_responses,
     rms_normalize,
+    route_boundary_metrics,
     route_metrics,
     selected_pages,
     token_quality_metrics,
@@ -105,3 +106,31 @@ def test_metric_shape_validation() -> None:
         route_metrics(np.ones((2, 3)), np.ones((2, 3)), top_k=3)
     with pytest.raises(ValueError, match="labels"):
         token_quality_metrics(np.ones((2, 3)), np.ones((2, 3)), np.ones(1))
+
+
+def test_route_boundary_decomposition_and_mass_churn() -> None:
+    reference = np.asarray([
+        [4.0, 3.0, 2.0, 1.0],
+        [4.0, 3.0, 2.0, 1.0],
+        [4.0, 3.0, 2.0, 1.0],
+    ])
+    candidate = np.asarray([
+        [4.0, 3.0, 2.0, 1.0],
+        [3.0, 4.0, 2.0, 1.0],
+        [4.0, 1.0, 3.0, 2.0],
+    ])
+    metrics = route_boundary_metrics(reference, candidate, top_k=2)
+    assert metrics["route_no_change_fraction"] == pytest.approx(1.0 / 3.0)
+    assert metrics["route_order_only_change_fraction"] == pytest.approx(1.0 / 3.0)
+    assert metrics["route_membership_change_fraction"] == pytest.approx(1.0 / 3.0)
+    assert metrics["route_top1_change_fraction"] == pytest.approx(1.0 / 3.0)
+    assert 0.0 < metrics["router_mass_churn"] < 1.0
+
+    identity = route_boundary_metrics(reference, reference, top_k=2)
+    assert identity == {
+        "route_no_change_fraction": 1.0,
+        "route_order_only_change_fraction": 0.0,
+        "route_membership_change_fraction": 0.0,
+        "route_top1_change_fraction": 0.0,
+        "router_mass_churn": 0.0,
+    }
