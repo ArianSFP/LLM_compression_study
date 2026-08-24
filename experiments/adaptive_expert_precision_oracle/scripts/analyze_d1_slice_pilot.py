@@ -239,6 +239,7 @@ def _aggregate(frame: pd.DataFrame) -> pd.DataFrame:
 def _report(
     layer_summary: pd.DataFrame,
     aggregate: pd.DataFrame,
+    fixed_aggregate: pd.DataFrame,
     choices: pd.DataFrame,
     facts: dict[str, Any],
 ) -> str:
@@ -252,6 +253,13 @@ def _report(
         "local_damage_ratio_to_pr13",
     ]
     table = _markdown(comparison[columns])
+    fixed_table = _markdown(fixed_aggregate[
+        fixed_aggregate["policy"].str.startswith("d1_strict_")
+    ][[
+        "rate_pages_per_expert", "policy", "groups", "exact_d1_crossings",
+        "exact_d1_crossing_rate", "mean_local_qenergy_damage",
+        "local_damage_ratio_to_pr13",
+    ]])
     by_layer = _markdown(layer_summary[
         layer_summary["policy"].isin([PR13, RERANKED, REPAIRED])
         | layer_summary["policy"].str.startswith(LOCAL_PREFIX)
@@ -276,7 +284,27 @@ def _report(
             f"{tensor['p90_ms']:.3f} ms p90 per refresh."
         )
     layers_text = ", ".join(str(layer) for layer in facts["layers"])
-    return f"""# D1 layer-slice pilot report
+    mixer_text = (
+        "The layer-6 slice crosses into the model's full-attention layer 7; "
+        "the other sampled D1 boundaries use linear attention."
+        if 6 in facts["layers"]
+        else "The sampled D1 boundaries use the checkpoint's native next-layer mixers."
+    )
+    result_sentences = []
+    for rate in sorted(aggregate["rate_pages_per_expert"].unique()):
+        rate_rows = aggregate[aggregate["rate_pages_per_expert"].eq(rate)]
+        pr13_crossings = int(
+            rate_rows[rate_rows["policy"].eq(PR13)]["exact_d1_crossings"].iloc[0]
+        )
+        repaired_crossings = int(
+            rate_rows[rate_rows["policy"].eq(REPAIRED)]["exact_d1_crossings"].iloc[0]
+        )
+        result_sentences.append(
+            f"At {int(rate)} pages/expert, repair reduces {pr13_crossings} PR #13 "
+            f"crossings to {repaired_crossings}."
+        )
+    result_text = " ".join(result_sentences)
+    return f"""# D1 stratified layer-slice report
 
 ## Scientific boundary
 
@@ -285,6 +313,8 @@ This is a paired RTX 3090, validation-only D1 oracle pilot over layers
 complete PR #13 frontier options and performs true pre-residual routed-output
 replacement, but executes only through the next router. It makes no terminal
 KL, D2-D4, all-layer, or production-controller claim.
+
+{mixer_text}
 
 The immutable PRO 6000 captures remain the activation/allocation foundation.
 Small cross-device BF16 differences are measured separately. Every policy is
@@ -305,6 +335,15 @@ one-sided finalists when an exact replay exposes a causal-prefix interaction.
 Its pair search is restricted to source positions at or before the earliest
 remaining crossing. This repair is a scientific upper-bound/reranking step,
 not part of the measured deployable scorer.
+
+### Fixed one-sided policies
+
+{fixed_table}
+
+This table applies one eta to every request and layer at each displayed rate.
+It is therefore a stricter mechanism check than request-level exact reranking;
+the reranker and repair rows above are oracle upper bounds, not deployable
+controller measurements.
 
 ### By layer
 
@@ -332,12 +371,14 @@ budget.
 
 ## Interpretation
 
-Across the supplied slices, changing which complete refinement options are
-selected can remove the observed D1 membership changes at matched page caps
-while retaining a tight additive local-qenergy guard. This establishes the D1
-allocation mechanism on the sampled layers; it does not yet establish final
-KL improvement. The next scientific gate is exact downstream replay of the
-reranked finalists, followed only then by predictor/controller work.
+{result_text} Thus, changing which complete refinement options are selected
+removes nearly all sampled D1 membership changes at matched page caps while
+retaining a tight additive local-qenergy guard. The single residual low-rate
+crossing is on the layer-6 to full-attention-layer-7 boundary. This establishes
+the D1 allocation mechanism on the sampled layers; it does not yet establish
+final KL improvement or runtime predictor accuracy. The next scientific gate
+is exact downstream replay of the repaired finalists, followed only then by
+the separate sequential predictor/controller experiment.
 """
 
 
@@ -366,6 +407,11 @@ def main() -> None:
     ], ignore_index=True)
     layer_summary = _summarize(comparison)
     aggregate = _aggregate(comparison)
+    fixed_comparison = metrics[
+        metrics["policy"].eq(PR13)
+        | metrics["policy"].str.startswith("d1_strict_")
+    ].copy()
+    fixed_aggregate = _aggregate(fixed_comparison)
     accounting = controller_accounting(CHARGED_BPW).to_dict()
     benchmark = None
     if args.benchmark is not None:
@@ -375,6 +421,9 @@ def main() -> None:
     atomic_parquet(args.output_dir / "d1_exact_reranked_metrics.parquet", reranked)
     atomic_parquet(args.output_dir / "d1_layer_policy_summary.parquet", layer_summary)
     atomic_parquet(args.output_dir / "d1_aggregate_policy_summary.parquet", aggregate)
+    atomic_parquet(
+        args.output_dir / "d1_fixed_policy_aggregate.parquet", fixed_aggregate,
+    )
     atomic_parquet(args.output_dir / "d1_vjp_summary.parquet", vjps)
     atomic_parquet(args.output_dir / "d1_paired_parity_summary.parquet", parity)
     facts = {
@@ -414,7 +463,7 @@ def main() -> None:
     }
     if args.benchmark is not None:
         facts["input_hashes"][str(args.benchmark)] = sha256(args.benchmark)
-    report = _report(layer_summary, aggregate, choices, facts)
+    report = _report(layer_summary, aggregate, fixed_aggregate, choices, facts)
     report_path = args.output_dir / "D1_LAYER_SLICE_PILOT_REPORT.md"
     report_path.write_text(report)
     facts["outputs"] = {

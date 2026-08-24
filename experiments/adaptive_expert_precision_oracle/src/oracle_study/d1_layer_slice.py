@@ -23,6 +23,7 @@ import numpy as np
 __all__ = [
     "D1SliceParity",
     "SliceTensorLoader",
+    "load_d1_layer_slice",
     "load_linear_d1_layer_slice",
     "slice_parity",
     "topk_membership",
@@ -131,8 +132,8 @@ class SliceTensorLoader:
         return result["weight"]
 
 
-class _LinearD1LayerSlice:
-    """Standalone current composition and next linear-attention router."""
+class _D1LayerSlice:
+    """Standalone current composition and next-layer pre-MoE/router path."""
 
     def __init__(
         self,
@@ -142,6 +143,9 @@ class _LinearD1LayerSlice:
         current_shared_gate: Any,
         next_input_norm: Any,
         next_mixer: Any,
+        next_mixer_type: str,
+        next_config: Any,
+        next_rotary: Any | None,
         next_post_norm: Any,
         next_router: Any,
         device: Any,
@@ -151,13 +155,16 @@ class _LinearD1LayerSlice:
         self.current_shared_gate = current_shared_gate
         self.next_input_norm = next_input_norm
         self.next_mixer = next_mixer
+        self.next_mixer_type = str(next_mixer_type)
+        self.next_config = next_config
+        self.next_rotary = next_rotary
         self.next_post_norm = next_post_norm
         self.next_router = next_router
         self.device = device
 
     @property
     def modules(self) -> tuple[Any, ...]:
-        return (
+        modules = (
             self.current_shared,
             self.current_shared_gate,
             self.next_input_norm,
@@ -165,6 +172,7 @@ class _LinearD1LayerSlice:
             self.next_post_norm,
             self.next_router,
         )
+        return modules + (() if self.next_rotary is None else (self.next_rotary,))
 
     def compose_current_output(
         self,
@@ -232,11 +240,43 @@ class _LinearD1LayerSlice:
         if mask is not None and mask.ndim == 1:
             mask = mask.unsqueeze(0)
         residual = hidden
-        mixed = self.next_mixer(
-            hidden_states=self.next_input_norm(hidden),
-            cache_params=None,
-            attention_mask=mask,
-        )
+        normalized_input = self.next_input_norm(hidden)
+        if self.next_mixer_type == "linear_attention":
+            mixed = self.next_mixer(
+                hidden_states=normalized_input,
+                cache_params=None,
+                attention_mask=mask,
+            )
+        elif self.next_mixer_type == "full_attention":
+            from transformers.models.qwen3_5_moe.modeling_qwen3_5_moe import (
+                create_causal_mask,
+            )
+
+            batch, sequence = hidden.shape[:2]
+            position_ids = torch.arange(
+                sequence, device=hidden.device, dtype=torch.long,
+            ).view(1, 1, -1).expand(4, batch, -1)
+            text_position_ids = position_ids[0]
+            rope_position_ids = position_ids[1:]
+            causal_mask = create_causal_mask(
+                config=self.next_config,
+                inputs_embeds=hidden,
+                attention_mask=mask,
+                past_key_values=None,
+                position_ids=text_position_ids,
+            )
+            if self.next_rotary is None:
+                raise RuntimeError("full-attention D1 slice omitted rotary embeddings")
+            position_embeddings = self.next_rotary(hidden, rope_position_ids)
+            mixed, _ = self.next_mixer(
+                hidden_states=normalized_input,
+                position_embeddings=position_embeddings,
+                attention_mask=causal_mask,
+                position_ids=text_position_ids,
+                past_key_values=None,
+            )
+        else:
+            raise RuntimeError(f"unsupported D1 next mixer: {self.next_mixer_type}")
         pre_moe = residual + mixed
         normalized = self.next_post_norm(pre_moe)
         logits, scores, expert_ids = self.next_router(normalized)
@@ -265,20 +305,22 @@ def _copy_state(module: Any, state: Mapping[str, Any]) -> None:
         )
 
 
-def load_linear_d1_layer_slice(
+def load_d1_layer_slice(
     checkpoint: str | Path,
     layer: int,
     *,
     device: str = "cuda",
-) -> _LinearD1LayerSlice:
-    """Load a current layer and its next linear-attention D1 router slice."""
+) -> _D1LayerSlice:
+    """Load a current layer and its next linear/full-attention D1 slice."""
 
     import torch
     from transformers import AutoConfig
     from transformers.models.qwen3_5_moe.modeling_qwen3_5_moe import (
         Qwen3_5MoeGatedDeltaNet,
+        Qwen3_5MoeAttention,
         Qwen3_5MoeMLP,
         Qwen3_5MoeRMSNorm,
+        Qwen3_5MoeTextRotaryEmbedding,
         Qwen3_5MoeTopKRouter,
     )
 
@@ -291,8 +333,9 @@ def load_linear_d1_layer_slice(
     following = current + 1
     if current < 0 or following >= int(config.num_hidden_layers):
         raise ValueError("D1 slice requires layer in [0,num_hidden_layers-2]")
-    if str(config.layer_types[following]) != "linear_attention":
-        raise ValueError("this compact slice currently supports a linear-attention D1 layer")
+    next_mixer_type = str(config.layer_types[following])
+    if next_mixer_type not in ("linear_attention", "full_attention"):
+        raise ValueError(f"unsupported D1 next mixer: {next_mixer_type}")
     config._attn_implementation = "eager"
     config._experts_implementation = "eager"
     loader = SliceTensorLoader(checkpoint_path)
@@ -322,9 +365,6 @@ def load_linear_d1_layer_slice(
         int(config.hidden_size), eps=float(config.rms_norm_eps),
     ).to(device=target, dtype=dtype)
     router = Qwen3_5MoeTopKRouter(config).to(device=target, dtype=dtype)
-    mixer = Qwen3_5MoeGatedDeltaNet(config, following).to(
-        device=target, dtype=dtype,
-    )
     _copy_state(input_norm, {
         "weight": loader.tensor(f"{next_prefix}.input_layernorm.weight"),
     })
@@ -334,30 +374,79 @@ def load_linear_d1_layer_slice(
     _copy_state(router, {
         "weight": loader.linear_weight(f"{next_prefix}.mlp.gate"),
     })
-    mixer_prefix = f"{next_prefix}.linear_attn"
+    rotary = None
     mixer_state: dict[str, Any] = {}
-    for name in mixer.state_dict():
-        prefix = f"{mixer_prefix}.{name[:-7]}" if name.endswith(".weight") else ""
-        if name in {"out_proj.weight", "in_proj_qkv.weight", "in_proj_z.weight", "in_proj_b.weight", "in_proj_a.weight"}:
-            mixer_state[name] = loader.linear_weight(prefix)
-        else:
-            mixer_state[name] = loader.tensor(f"{mixer_prefix}.{name}")
+    if next_mixer_type == "linear_attention":
+        mixer = Qwen3_5MoeGatedDeltaNet(config, following).to(
+            device=target, dtype=dtype,
+        )
+        mixer_prefix = f"{next_prefix}.linear_attn"
+        linear_weights = {
+            "out_proj.weight", "in_proj_qkv.weight", "in_proj_z.weight",
+            "in_proj_b.weight", "in_proj_a.weight",
+        }
+        for name in mixer.state_dict():
+            prefix = (
+                f"{mixer_prefix}.{name[:-7]}" if name.endswith(".weight") else ""
+            )
+            if name in linear_weights:
+                mixer_state[name] = loader.linear_weight(prefix)
+            else:
+                mixer_state[name] = loader.tensor(f"{mixer_prefix}.{name}")
+    else:
+        mixer = Qwen3_5MoeAttention(config, following).to(
+            device=target, dtype=dtype,
+        )
+        rotary = Qwen3_5MoeTextRotaryEmbedding(config).to(
+            device=target, dtype=dtype,
+        )
+        mixer_prefix = f"{next_prefix}.self_attn"
+        projection_weights = {
+            "q_proj.weight", "k_proj.weight", "v_proj.weight", "o_proj.weight",
+        }
+        for name in mixer.state_dict():
+            if name in projection_weights:
+                mixer_state[name] = loader.linear_weight(
+                    f"{mixer_prefix}.{name[:-7]}",
+                )
+            else:
+                mixer_state[name] = loader.tensor(f"{mixer_prefix}.{name}")
     _copy_state(mixer, mixer_state)
 
-    modules = (shared, shared_gate, input_norm, mixer, post_norm, router)
+    modules = (
+        shared, shared_gate, input_norm, mixer, post_norm, router,
+        *((rotary,) if rotary is not None else ()),
+    )
     for module in modules:
         module.eval()
         module.requires_grad_(False)
-    return _LinearD1LayerSlice(
+    return _D1LayerSlice(
         layer=current,
         current_shared=shared,
         current_shared_gate=shared_gate,
         next_input_norm=input_norm,
         next_mixer=mixer,
+        next_mixer_type=next_mixer_type,
+        next_config=config,
+        next_rotary=rotary,
         next_post_norm=post_norm,
         next_router=router,
         device=target,
     )
+
+
+def load_linear_d1_layer_slice(
+    checkpoint: str | Path,
+    layer: int,
+    *,
+    device: str = "cuda",
+) -> _D1LayerSlice:
+    """Compatibility loader that retains the historical linear-only guard."""
+
+    result = load_d1_layer_slice(checkpoint, layer, device=device)
+    if result.next_mixer_type != "linear_attention":
+        raise ValueError("requested D1 layer is followed by full attention")
+    return result
 
 
 def slice_parity(

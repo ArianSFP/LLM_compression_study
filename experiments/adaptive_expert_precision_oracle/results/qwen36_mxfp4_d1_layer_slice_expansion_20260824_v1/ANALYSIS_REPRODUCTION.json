@@ -1,0 +1,27 @@
+{
+  "after": {
+    "D1_LAYER_SLICE_PILOT_REPORT.md": "25824011782900f1cbe5a99063722a4c13168198f0db125f0cc01ddbf42e088a",
+    "d1_aggregate_policy_summary.parquet": "5a4c22a7f88b060d9b469ef02597cb8df198248cb0ae7ffdd968671ec1e16adb",
+    "d1_exact_reranked_metrics.parquet": "8f3f5868954b49aeba0d25f7b1419cfb49436bd99f8d87b4dab9b4562bac0b3b",
+    "d1_exact_reranked_request_choices.parquet": "fcda912eb06b481ab1c8d5c4470f1c66f3d2fcd642f78c1be2fb2fb9d494af06",
+    "d1_fixed_policy_aggregate.parquet": "52c492b681400c874438bc810f896a3c510675f1b95e5ce1fb29204604ab2969",
+    "d1_layer_policy_summary.parquet": "5932f76392a66e869fe7495caf9afdf70b1e35fbbf2b818578883eb7f36e14c0",
+    "d1_paired_parity_summary.parquet": "559152e0882d4f670a47ce9a6311f0cdeb34344791162c10334ad909543ae1ef",
+    "d1_slice_analysis_facts.json": "11db1416a78c29abf1915fb77452daac8f112deea0a32132d8cad5ccf29f6f12",
+    "d1_vjp_summary.parquet": "a2988373d7885e2337c779b0c92850817221bb07cd64d6cfede276860fcc774d"
+  },
+  "before": {
+    "D1_LAYER_SLICE_PILOT_REPORT.md": "25824011782900f1cbe5a99063722a4c13168198f0db125f0cc01ddbf42e088a",
+    "d1_aggregate_policy_summary.parquet": "5a4c22a7f88b060d9b469ef02597cb8df198248cb0ae7ffdd968671ec1e16adb",
+    "d1_exact_reranked_metrics.parquet": "8f3f5868954b49aeba0d25f7b1419cfb49436bd99f8d87b4dab9b4562bac0b3b",
+    "d1_exact_reranked_request_choices.parquet": "fcda912eb06b481ab1c8d5c4470f1c66f3d2fcd642f78c1be2fb2fb9d494af06",
+    "d1_fixed_policy_aggregate.parquet": "52c492b681400c874438bc810f896a3c510675f1b95e5ce1fb29204604ab2969",
+    "d1_layer_policy_summary.parquet": "5932f76392a66e869fe7495caf9afdf70b1e35fbbf2b818578883eb7f36e14c0",
+    "d1_paired_parity_summary.parquet": "559152e0882d4f670a47ce9a6311f0cdeb34344791162c10334ad909543ae1ef",
+    "d1_slice_analysis_facts.json": "11db1416a78c29abf1915fb77452daac8f112deea0a32132d8cad5ccf29f6f12",
+    "d1_vjp_summary.parquet": "a2988373d7885e2337c779b0c92850817221bb07cd64d6cfede276860fcc774d"
+  },
+  "byte_identical": true,
+  "completed": true,
+  "schema": "pr13_d1_analysis_reproduction_v2"
+}

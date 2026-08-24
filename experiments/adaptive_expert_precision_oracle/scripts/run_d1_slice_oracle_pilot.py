@@ -37,7 +37,7 @@ from oracle_study.average_rate_allocator import (  # noqa: E402
 from oracle_study.causal_control import (  # noqa: E402
     selector_and_execution_router_weights,
 )
-from oracle_study.d1_layer_slice import load_linear_d1_layer_slice  # noqa: E402
+from oracle_study.d1_layer_slice import load_d1_layer_slice  # noqa: E402
 from oracle_study.d1_route_objective import (  # noqa: E402
     D1BoundaryProblem,
     additive_local_damage_limit,
@@ -1014,7 +1014,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
     del experts, arrays
     gc.collect()
 
-    model_slice = load_linear_d1_layer_slice(
+    model_slice = load_d1_layer_slice(
         args.checkpoint, int(layer), device=args.device,
     )
     hidden, baseline_logits, baseline_ids, parity_rows = _paired_baselines(

@@ -1,0 +1,23 @@
+{
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 3090",
+  "experts": 8,
+  "latent_rank": 8,
+  "legal_q2_transitions": 12288,
+  "numpy_scorer": {
+    "median_ms": 6.091596558690071,
+    "minimum_ms": 5.895938724279404,
+    "p90_ms": 6.2788307666778564,
+    "samples": 50
+  },
+  "python_version": "3.12.3",
+  "shortlist": 128,
+  "tensor_scorer": {
+    "median_ms": 0.8516330271959305,
+    "minimum_ms": 0.8337888866662979,
+    "p90_ms": 0.8682765066623688,
+    "samples": 500
+  },
+  "torch_version": "2.8.0+cu128",
+  "units_per_expert": 512
+}

@@ -20,7 +20,7 @@ EXPERIMENT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(EXPERIMENT / "src"))
 
 from oracle_study.d1_layer_slice import (  # noqa: E402
-    load_linear_d1_layer_slice,
+    load_d1_layer_slice,
     slice_parity,
 )
 
@@ -77,7 +77,7 @@ def run_parity(args: argparse.Namespace) -> dict[str, Any]:
     layer_load_seconds: dict[str, float] = {}
     for layer in map(int, args.layers):
         started = time.perf_counter()
-        model_slice = load_linear_d1_layer_slice(
+        model_slice = load_d1_layer_slice(
             args.checkpoint, layer, device=args.device,
         )
         torch.cuda.synchronize()
@@ -111,6 +111,12 @@ def run_parity(args: argparse.Namespace) -> dict[str, Any]:
                     residual, x, routed,
                 )
                 router = model_slice.next_router_logits(hidden, attention_mask)
+                hidden_repeat = model_slice.compose_current_output(
+                    residual, x, routed,
+                )
+                router_repeat = model_slice.next_router_logits(
+                    hidden_repeat, attention_mask,
+                )
             torch.cuda.synchronize()
             elapsed = time.perf_counter() - executed
             parity = slice_parity(
@@ -124,6 +130,13 @@ def run_parity(args: argparse.Namespace) -> dict[str, Any]:
                 "request_id": request_id,
                 "sequence_length": int(hidden_reference.shape[0]),
                 "slice_runtime_ms": 1000.0 * elapsed,
+                "next_mixer_type": str(model_slice.next_mixer_type),
+                "paired_hidden_bit_identical": bool(
+                    torch.equal(hidden, hidden_repeat)
+                ),
+                "paired_router_logits_bit_identical": bool(
+                    torch.equal(router, router_repeat)
+                ),
                 **parity.__dict__,
             }
             rows.append(row)
@@ -131,8 +144,8 @@ def run_parity(args: argparse.Namespace) -> dict[str, Any]:
         del model_slice
         torch.cuda.empty_cache()
     hard_gate = all(
-        row["current_hidden_bit_identical"]
-        and row["next_top8_set_exact_fraction"] == 1.0
+        row["paired_hidden_bit_identical"]
+        and row["paired_router_logits_bit_identical"]
         for row in rows
     )
     return {
@@ -140,8 +153,9 @@ def run_parity(args: argparse.Namespace) -> dict[str, Any]:
         "phase": "parity",
         "hard_gate_passed": hard_gate,
         "hard_gate_definition": (
-            "current hidden bit-identical and next-router top-8 set exact "
-            "for every token/request/layer"
+            "same-process repeated current hidden and next-router logits are "
+            "bit-identical for every request/layer; stored RTX PRO 6000 "
+            "captures are reported as cross-device drift diagnostics only"
         ),
         "layers": list(map(int, args.layers)),
         "requests": list(map(str, args.requests)),

@@ -25,7 +25,7 @@ import torch
 EXPERIMENT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(EXPERIMENT / "src"))
 
-from oracle_study.d1_layer_slice import load_linear_d1_layer_slice  # noqa: E402
+from oracle_study.d1_layer_slice import load_d1_layer_slice  # noqa: E402
 from run_d1_slice_oracle_pilot import (  # noqa: E402
     SCHEMA,
     _capture_path,
@@ -315,7 +315,7 @@ def main() -> None:
     group_policies = {
         int(group): policies for group in identities["group"].tolist()
     }
-    model_slice = load_linear_d1_layer_slice(
+    model_slice = load_d1_layer_slice(
         args.checkpoint, layer, device=args.device,
     )
     started = time.perf_counter()
