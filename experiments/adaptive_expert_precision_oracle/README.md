@@ -4,6 +4,27 @@ This directory contains a reproducible, cost-bounded oracle study of activation-
 
 The principal deployment x-axis is actual bytes read after 4 KiB page accounting, normalized as physical streamed bits per original expert weight. The locally resident W1 base is 1.250488 effective bpw including FP16 group scales and a header. Q2 sensitivity is 2.250488 effective bpw by the same accounting convention.
 
+## D1 route-objective continuation
+
+The next continuation is split into an exact scientific objective oracle and a
+separate target-free sequential controller. D1 means only the same token's
+next-layer router. Token-dependent page effects are represented explicitly as
+`d_p(x) ~= U_l c_p(x)`; exact Q4 routes, exact option deltas, and exact D1 VJPs
+remain oracle labels.
+
+See [the frozen protocol](D1_ROUTE_OBJECTIVE_PROTOCOL.md), the
+[Experiment A configuration](configs/qwen36_mxfp4_d1_objective_oracle.json),
+and the [Experiment B configuration](configs/qwen36_mxfp4_d1_runtime_controller.json).
+The implementation supplies objective/search, dynamic-latent, certification,
+metric, accounting, vectorized reference, and tensor-resident shortlist
+primitives. It contains no D2--D4 objective or runtime model. Reproduce the
+synthetic allocator microbenchmark with:
+
+```bash
+python scripts/benchmark_d1_transition_scorer.py \
+  --device cuda --warmup 20 --samples 200 --numpy-samples 50 --shortlist 128
+```
+
 
 ## PR #13 causal downstream replay pilot
 
