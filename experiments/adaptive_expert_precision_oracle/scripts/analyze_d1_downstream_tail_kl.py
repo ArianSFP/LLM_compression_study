@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 from typing import Any, Mapping
 
+import numpy as np
 import pandas as pd
 
 
@@ -29,6 +30,10 @@ REPORT = "D1_CACHED_DECODE_TAIL_KL_SMOKE_REPORT.md"
 SUMMARY = "d1_cached_decode_tail_policy_summary.parquet"
 PAIRED = "d1_cached_decode_tail_pr13_paired_delta.parquet"
 ROUTES = "d1_cached_decode_tail_route_summary.parquet"
+D1 = "d1_cached_decode_tail_d1_summary.parquet"
+CONDITIONAL = "d1_cached_decode_tail_crossing_event_summary.parquet"
+CANDIDATE_ORACLE = "d1_cached_decode_tail_exact_d1_candidate_oracle.parquet"
+PROMOTION = "d1_cached_decode_tail_promotion_decision.json"
 ANALYSIS_FACTS = "d1_cached_decode_tail_analysis_facts.json"
 
 
@@ -132,10 +137,172 @@ def _summaries(
     return summary, paired_summary, routes
 
 
+def _d1_diagnostics(
+    quality: pd.DataFrame,
+    propagation: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, dict[str, Any]]:
+    """Measure immediate crossings and freeze the Experiment B promotion gate."""
+
+    keys = ["rate_pages_per_expert", "injection_layer", "group", "policy"]
+    live = quality[quality["route_mode"].eq("live")].copy()
+    immediate = propagation[
+        propagation["route_mode"].eq("live")
+        & propagation["distance_from_injection"].eq(1)
+    ][keys + ["route_membership_change_fraction", "router_mass_churn"]]
+    joined = live.merge(immediate, on=keys, validate="one_to_one")
+    d1 = (
+        joined.groupby(["rate_pages_per_expert", "policy"], sort=True)
+        .agg(
+            tokens=("group", "size"),
+            mean_logit_kl=("logit_kl", "mean"),
+            mean_live_minus_frozen_kl=("live_minus_frozen_logit_kl", "mean"),
+            d1_crossing_rate=("route_membership_change_fraction", "mean"),
+            mean_d1_router_mass_churn=("router_mass_churn", "mean"),
+            mean_local_qenergy=("live_selected_local_qenergy_damage", "mean"),
+        )
+        .reset_index()
+    )
+    reference = d1[d1["policy"].eq(PR13_POLICY)][[
+        "rate_pages_per_expert", "mean_logit_kl", "mean_live_minus_frozen_kl",
+        "d1_crossing_rate", "mean_d1_router_mass_churn",
+    ]].rename(columns={
+        "mean_logit_kl": "pr13_mean_logit_kl",
+        "mean_live_minus_frozen_kl": "pr13_mean_live_minus_frozen_kl",
+        "d1_crossing_rate": "pr13_d1_crossing_rate",
+        "mean_d1_router_mass_churn": "pr13_mean_d1_router_mass_churn",
+    })
+    d1 = d1.merge(reference, on="rate_pages_per_expert", validate="many_to_one")
+    d1["mean_logit_kl_minus_pr13"] = d1["mean_logit_kl"] - d1["pr13_mean_logit_kl"]
+    d1["live_minus_frozen_kl_minus_pr13"] = (
+        d1["mean_live_minus_frozen_kl"] - d1["pr13_mean_live_minus_frozen_kl"]
+    )
+    d1["d1_crossing_rate_minus_pr13"] = (
+        d1["d1_crossing_rate"] - d1["pr13_d1_crossing_rate"]
+    )
+
+    identity = ["rate_pages_per_expert", "injection_layer", "group"]
+    pr13 = joined[joined["policy"].eq(PR13_POLICY)][
+        identity + ["logit_kl", "route_membership_change_fraction"]
+    ].rename(columns={
+        "logit_kl": "pr13_logit_kl",
+        "route_membership_change_fraction": "pr13_d1_crossed",
+    })
+    paired = joined[~joined["policy"].eq(PR13_POLICY)].merge(
+        pr13, on=identity, validate="many_to_one",
+    )
+    paired["logit_kl_minus_pr13"] = paired["logit_kl"] - paired["pr13_logit_kl"]
+    candidate_crossed = paired["route_membership_change_fraction"].to_numpy() > 0
+    pr13_crossed = paired["pr13_d1_crossed"].to_numpy() > 0
+    paired["crossing_event"] = np.where(
+        pr13_crossed & ~candidate_crossed,
+        "prevented",
+        np.where(~pr13_crossed & candidate_crossed, "introduced", "same"),
+    )
+    conditional = (
+        paired.groupby(["rate_pages_per_expert", "policy", "crossing_event"], sort=True)
+        .agg(
+            tokens=("group", "size"),
+            mean_logit_kl_minus_pr13=("logit_kl_minus_pr13", "mean"),
+            improved_token_fraction=(
+                "logit_kl_minus_pr13", lambda values: float((values < 0).mean())
+            ),
+        )
+        .reset_index()
+    )
+
+    oracle = (
+        joined.sort_values(
+            identity + [
+                "route_membership_change_fraction", "router_mass_churn",
+                "live_selected_local_qenergy_damage", "selected_group_pages", "policy",
+            ],
+            kind="stable",
+        )
+        .groupby(identity, sort=False)
+        .head(1)
+        .merge(pr13[identity + ["pr13_logit_kl"]], on=identity, validate="one_to_one")
+    )
+    oracle["logit_kl_minus_pr13"] = oracle["logit_kl"] - oracle["pr13_logit_kl"]
+    candidate_oracle = (
+        oracle.groupby("rate_pages_per_expert", sort=True)
+        .agg(
+            tokens=("group", "size"),
+            mean_logit_kl=("logit_kl", "mean"),
+            pr13_mean_logit_kl=("pr13_logit_kl", "mean"),
+            mean_logit_kl_minus_pr13=("logit_kl_minus_pr13", "mean"),
+            improved_token_fraction=(
+                "logit_kl_minus_pr13", lambda values: float((values < 0).mean())
+            ),
+            d1_crossing_rate=("route_membership_change_fraction", "mean"),
+            mean_d1_router_mass_churn=("router_mass_churn", "mean"),
+        )
+        .reset_index()
+    )
+
+    fixed = d1[d1["policy"].eq("calibration_selected_fixed_d1")].copy()
+    fixed["passes_same_rate_gate"] = (
+        (fixed["mean_logit_kl_minus_pr13"] < 0)
+        & (fixed["live_minus_frozen_kl_minus_pr13"] < 0)
+        & (fixed["d1_crossing_rate_minus_pr13"] < 0)
+    )
+    fixed_events = paired[
+        paired["policy"].eq("calibration_selected_fixed_d1")
+    ].groupby("crossing_event")["logit_kl_minus_pr13"].agg(["size", "mean"])
+    decision = {
+        "status": "not_promoted_pause_before_experiment_b",
+        "experiment_b_started": False,
+        "requests": int(live["request_id"].nunique()),
+        "minimum_requests_before_quality_claim": 64,
+        "same_rate_gate": fixed[[
+            "rate_pages_per_expert", "mean_logit_kl_minus_pr13",
+            "live_minus_frozen_kl_minus_pr13", "d1_crossing_rate_minus_pr13",
+            "passes_same_rate_gate",
+        ]].to_dict(orient="records"),
+        "rates_passing_all_three_gate_terms": fixed.loc[
+            fixed["passes_same_rate_gate"], "rate_pages_per_expert"
+        ].astype(int).tolist(),
+        "fixed_d1_crossing_event_mean_kl_delta": {
+            str(event): {
+                "tokens": int(row["size"]),
+                "mean_logit_kl_minus_pr13": float(row["mean"]),
+            }
+            for event, row in fixed_events.iterrows()
+        },
+        "interpretation": (
+            "Preventing a PR13 D1 crossing is directionally favorable for the fixed "
+            "policy, but fixed D1, source-slice token oracle, and exact combined "
+            "local are non-monotonic across the four rates. The same-rate KL, "
+            "live-minus-frozen, and D1-crossing gate does not support formal "
+            "Experiment B promotion."
+        ),
+        "required_before_promotion": [
+            "prove a same-host full-model D1 rerank or repair lowers both live KL and live-minus-frozen KL at matched rates",
+            "separate route-direction gain from exact-combined local-qenergy gain",
+            "retain the three-request result as smoke evidence only",
+        ],
+    }
+    return d1, conditional, candidate_oracle, decision
+
+
 def _markdown_table(frame: pd.DataFrame) -> str:
     if frame.empty:
         return "(no rows)"
-    return frame.to_markdown(index=False, floatfmt=".8g")
+    columns = [str(column) for column in frame.columns]
+
+    def render(value: Any) -> str:
+        if isinstance(value, float):
+            result = f"{value:.8g}"
+        else:
+            result = str(value)
+        return result.replace("|", "\\|").replace("\n", " ")
+
+    header = "| " + " | ".join(columns) + " |"
+    rule = "| " + " | ".join("---" for _ in columns) + " |"
+    rows = [
+        "| " + " | ".join(render(value) for value in row) + " |"
+        for row in frame.itertuples(index=False, name=None)
+    ]
+    return "\n".join((header, rule, *rows))
 
 
 def _report(
@@ -144,6 +311,10 @@ def _report(
     summary: pd.DataFrame,
     paired: pd.DataFrame,
     zero: pd.DataFrame,
+    d1: pd.DataFrame,
+    conditional: pd.DataFrame,
+    candidate_oracle: pd.DataFrame,
+    decision: Mapping[str, Any],
 ) -> str:
     live = summary[summary["route_mode"].eq("live")]
     aggregate = (
@@ -159,6 +330,15 @@ def _report(
     heldout = paired[
         paired["layer_cohort"].eq("held_out") & paired["route_mode"].eq("live")
     ]
+    d1_compact = d1[[
+        "rate_pages_per_expert", "policy", "mean_logit_kl_minus_pr13",
+        "live_minus_frozen_kl_minus_pr13", "d1_crossing_rate",
+        "d1_crossing_rate_minus_pr13", "mean_local_qenergy",
+    ]]
+    fixed_events = conditional[
+        conditional["policy"].eq("calibration_selected_fixed_d1")
+    ]
+    gate = pd.DataFrame(decision["same_rate_gate"])
     return f"""# Cached-decode D1 downstream-tail KL smoke report
 
 ## Scientific boundary
@@ -185,6 +365,46 @@ mode.
 
 {_markdown_table(heldout)}
 
+## Immediate D1 and amplification result
+
+All deltas below are paired to PR #13 at the same rate, layer, and token.
+A deployable D1 policy was required to lower live KL, live-minus-frozen KL,
+and immediate crossing rate at the same rate.
+
+{_markdown_table(d1_compact)}
+
+## Conditional crossing evidence
+
+For the frozen fixed-D1 policy, preventing a crossing is directionally
+favorable while introducing one is harmful. This supports the amplifier
+mechanism, but it does not rescue a policy that is inconsistent by rate.
+
+{_markdown_table(fixed_events)}
+
+## Exact full-model label diagnostic over executed candidates
+
+This post-hoc diagnostic uses exact full-model D1 crossing, then router-mass
+churn, local qenergy, pages, and policy name to choose among the five already
+executed allocations. It is not a runtime policy and never selects on terminal
+KL.
+
+{_markdown_table(candidate_oracle)}
+
+## Experiment B promotion decision
+
+Status: **{decision["status"]}**
+
+Only these page rates pass all three fixed-policy terms:
+{decision["rates_passing_all_three_gate_terms"]}.
+
+{_markdown_table(gate)}
+
+Experiment B did not start. The directional crossing evidence is promising,
+but fixed D1 and the source-slice token oracle are non-monotonic across rates,
+and exact-combined local is at least as competitive. A same-host full-model D1
+rerank or repair must separate route-direction benefit from combined-local
+benefit before promotion.
+
 ## Validation gates
 
 - Zero-dose logical rows: {len(zero)}
@@ -208,14 +428,28 @@ def main() -> None:
     config["_config_path"] = str(args.config)
     quality, propagation, zero, run_facts = _load_verified(args.input, config)
     summary, paired, routes = _summaries(quality, propagation, config)
+    d1, conditional, candidate_oracle, decision = _d1_diagnostics(
+        quality, propagation,
+    )
     args.output.mkdir(parents=True, exist_ok=True)
     atomic_parquet(args.output / SUMMARY, summary)
     atomic_parquet(args.output / PAIRED, paired)
     atomic_parquet(args.output / ROUTES, routes)
+    atomic_parquet(args.output / D1, d1)
+    atomic_parquet(args.output / CONDITIONAL, conditional)
+    atomic_parquet(args.output / CANDIDATE_ORACLE, candidate_oracle)
+    atomic_json(args.output / PROMOTION, decision)
     report = args.output / REPORT
-    report.write_text(_report(config, quality, summary, paired, zero))
+    report.write_text(_report(
+        config, quality, summary, paired, zero, d1, conditional,
+        candidate_oracle, decision,
+    ))
     outputs = {}
-    for path in (args.output / SUMMARY, args.output / PAIRED, args.output / ROUTES, report):
+    for path in (
+        args.output / SUMMARY, args.output / PAIRED, args.output / ROUTES,
+        args.output / D1, args.output / CONDITIONAL,
+        args.output / CANDIDATE_ORACLE, args.output / PROMOTION, report,
+    ):
         outputs[path.name] = {"sha256": sha256(path), "bytes": path.stat().st_size}
     atomic_json(args.output / ANALYSIS_FACTS, {
         "completed": True,

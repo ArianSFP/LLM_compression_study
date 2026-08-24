@@ -1,0 +1,396 @@
+{
+  "admitted_groups_per_layer": 29,
+  "baseline_seconds": 4.199474327731878,
+  "candidate_state_or_delta_used": false,
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "completed": true,
+  "config": "configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json",
+  "config_sha256": "d576278c63e9db97ce4272e971bd83ff27df30d0286457f8823d34018c6ad12f",
+  "environment": {
+    "cuda": "12.8",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "gpu_memory_gib": 94.96832275390625,
+    "host": "77eef4de1648",
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128"
+  },
+  "exact_prefix_progression": true,
+  "files": {
+    "same_host_allocation_layer_00.npz": {
+      "bytes": 525371,
+      "records": 32,
+      "sha256": "7c665d6b1e5ef8f3d458ea6195e42c7cd979fa5d88316a4da2489733e258045a"
+    },
+    "same_host_allocation_layer_01.npz": {
+      "bytes": 523459,
+      "records": 32,
+      "sha256": "f4bf4a866348f1fd835244541db14eb248a8573026f800ad68daa4ea30e7a1b9"
+    },
+    "same_host_allocation_layer_04.npz": {
+      "bytes": 522462,
+      "records": 32,
+      "sha256": "bce73edb081e290574211959854148109e0957bfae1468cd4e4ac6de77edbc74"
+    },
+    "same_host_allocation_layer_06.npz": {
+      "bytes": 522968,
+      "records": 32,
+      "sha256": "879d00f238f0d22343cc9d33cd2898300aa7d02f0b0845907ce44ee50ee21fba"
+    },
+    "same_host_allocation_layer_12.npz": {
+      "bytes": 526013,
+      "records": 32,
+      "sha256": "35d63f2cf79fa47d4013ace8e964e6e7c56ba6fd02ab1946364da85f27d2b832"
+    },
+    "same_host_allocation_layer_23.npz": {
+      "bytes": 527048,
+      "records": 32,
+      "sha256": "a2e6bfa2a7f48e06f20520e94954ffb6c21dee9060cb64ad961eaf85ee889b14"
+    }
+  },
+  "layers": [
+    0,
+    1,
+    4,
+    6,
+    12,
+    23
+  ],
+  "mismatches": [
+    {
+      "group": 6,
+      "layer": 12,
+      "live_ids": [
+        242,
+        203,
+        207,
+        50,
+        1,
+        160,
+        208,
+        56
+      ],
+      "position": 7,
+      "request_id": "mxfp4-confirm-006",
+      "source_ids": [
+        242,
+        203,
+        207,
+        50,
+        208,
+        1,
+        160,
+        225
+      ]
+    },
+    {
+      "group": 8,
+      "layer": 1,
+      "live_ids": [
+        66,
+        13,
+        43,
+        123,
+        81,
+        162,
+        223,
+        198
+      ],
+      "position": 9,
+      "request_id": "mxfp4-confirm-006",
+      "source_ids": [
+        66,
+        13,
+        43,
+        123,
+        81,
+        162,
+        223,
+        169
+      ]
+    },
+    {
+      "group": 12,
+      "layer": 23,
+      "live_ids": [
+        204,
+        85,
+        215,
+        108,
+        145,
+        222,
+        3,
+        107
+      ],
+      "position": 3,
+      "request_id": "mxfp4-confirm-007",
+      "source_ids": [
+        204,
+        85,
+        215,
+        145,
+        108,
+        222,
+        3,
+        14
+      ]
+    },
+    {
+      "group": 13,
+      "layer": 23,
+      "live_ids": [
+        66,
+        204,
+        108,
+        145,
+        142,
+        42,
+        107,
+        56
+      ],
+      "position": 4,
+      "request_id": "mxfp4-confirm-007",
+      "source_ids": [
+        204,
+        66,
+        108,
+        145,
+        142,
+        42,
+        107,
+        215
+      ]
+    },
+    {
+      "group": 14,
+      "layer": 12,
+      "live_ids": [
+        221,
+        1,
+        68,
+        139,
+        145,
+        28,
+        106,
+        60
+      ],
+      "position": 5,
+      "request_id": "mxfp4-confirm-007",
+      "source_ids": [
+        221,
+        1,
+        68,
+        139,
+        145,
+        28,
+        106,
+        130
+      ]
+    },
+    {
+      "group": 16,
+      "layer": 23,
+      "live_ids": [
+        87,
+        83,
+        97,
+        19,
+        177,
+        119,
+        37,
+        26
+      ],
+      "position": 7,
+      "request_id": "mxfp4-confirm-007",
+      "source_ids": [
+        87,
+        83,
+        97,
+        19,
+        177,
+        119,
+        58,
+        37
+      ]
+    },
+    {
+      "group": 20,
+      "layer": 23,
+      "live_ids": [
+        34,
+        213,
+        85,
+        220,
+        204,
+        152,
+        60,
+        239
+      ],
+      "position": 3,
+      "request_id": "mxfp4-confirm-008",
+      "source_ids": [
+        213,
+        34,
+        85,
+        220,
+        204,
+        152,
+        60,
+        145
+      ]
+    },
+    {
+      "group": 22,
+      "layer": 6,
+      "live_ids": [
+        64,
+        235,
+        196,
+        125,
+        92,
+        90,
+        204,
+        98
+      ],
+      "position": 5,
+      "request_id": "mxfp4-confirm-008",
+      "source_ids": [
+        64,
+        235,
+        196,
+        125,
+        92,
+        90,
+        204,
+        12
+      ]
+    },
+    {
+      "group": 25,
+      "layer": 6,
+      "live_ids": [
+        64,
+        39,
+        144,
+        196,
+        204,
+        120,
+        100,
+        216
+      ],
+      "position": 8,
+      "request_id": "mxfp4-confirm-008",
+      "source_ids": [
+        64,
+        39,
+        144,
+        196,
+        204,
+        120,
+        100,
+        125
+      ]
+    },
+    {
+      "group": 27,
+      "layer": 23,
+      "live_ids": [
+        142,
+        18,
+        246,
+        194,
+        130,
+        75,
+        61,
+        125
+      ],
+      "position": 10,
+      "request_id": "mxfp4-confirm-008",
+      "source_ids": [
+        142,
+        18,
+        246,
+        194,
+        130,
+        75,
+        61,
+        217
+      ]
+    },
+    {
+      "group": 28,
+      "layer": 6,
+      "live_ids": [
+        120,
+        74,
+        64,
+        243,
+        33,
+        5,
+        159,
+        186
+      ],
+      "position": 11,
+      "request_id": "mxfp4-confirm-008",
+      "source_ids": [
+        120,
+        74,
+        64,
+        243,
+        33,
+        5,
+        159,
+        49
+      ]
+    },
+    {
+      "group": 28,
+      "layer": 12,
+      "live_ids": [
+        224,
+        196,
+        185,
+        13,
+        91,
+        23,
+        38,
+        31
+      ],
+      "position": 11,
+      "request_id": "mxfp4-confirm-008",
+      "source_ids": [
+        224,
+        196,
+        185,
+        91,
+        13,
+        38,
+        23,
+        105
+      ]
+    }
+  ],
+  "model_load_seconds": 270.9501906710211,
+  "observed_layers": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    6,
+    7,
+    12,
+    13,
+    23,
+    24
+  ],
+  "records_per_layer": 32,
+  "requests": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "schema": "pr13_d1_tail_same_host_allocation_capture_v1",
+  "source_route_set_mismatches": 12,
+  "test_rows_admitted_or_used": false,
+  "wall_seconds": 299.6583803258836
+}

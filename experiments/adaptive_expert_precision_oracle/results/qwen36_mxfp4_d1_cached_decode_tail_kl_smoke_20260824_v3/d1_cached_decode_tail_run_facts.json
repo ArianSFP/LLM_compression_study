@@ -1,0 +1,997 @@
+{
+  "cells": {
+    "layer_00_rate_360": {
+      "baseline_seconds": 7.490569265559316,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 46.433310601860285,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 278235,
+          "sha256": "e49fd6a59c06c7ed22a3e6d6a449b50b38c91d8f641c04b80e260f8c7d90ca8a"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67771,
+          "sha256": "dac40657d5ee8ca13151a160858feb5333c1b86929ed3b6b423c962a33e83254"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "441112f1d7cb5fbed1bec5724a75739d11dbdacf4479cafe1f8db17f05823731"
+        }
+      },
+      "groups": 29,
+      "layer": 0,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11310,
+      "quality_rows": 290,
+      "rate": 360,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_00_rate_384": {
+      "baseline_seconds": 6.899020314682275,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 46.08082279399969,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 274966,
+          "sha256": "e08fa8ffc81825b56a61f71b7402d78339e88a65e1b8f9c7e00710d7f7f9c0d1"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67196,
+          "sha256": "6013414f3dfa35338101f4fa9cbc509f6d52a00310407ff0a585a592fb75cc12"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "b6dd56194d328026aa32f02f2714c52ab7713fe8a22b4afd0700349f908df0f6"
+        }
+      },
+      "groups": 29,
+      "layer": 0,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11310,
+      "quality_rows": 290,
+      "rate": 384,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_00_rate_725": {
+      "baseline_seconds": 6.837440765695646,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 45.91779063967988,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 286816,
+          "sha256": "a5e6feb79a14d3711781a091c0e8ad75a0b9e36e407b46027f1aca24ca9f346e"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68877,
+          "sha256": "a86b4a31a9e4dd4805690519614636dc2f98516ef2d0bcf25ee94c29a38913a9"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "a66546c050ff56241e575affc0070ac1b5e11cfb38db8988ec66baffa8ae6276"
+        }
+      },
+      "groups": 29,
+      "layer": 0,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11310,
+      "quality_rows": 290,
+      "rate": 725,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_00_rate_749": {
+      "baseline_seconds": 6.855311668245122,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 45.81240284512751,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 276734,
+          "sha256": "0a76ac7545f1b989e0eb4043d07733721e340517c8a53fac73e88dbc4de6dbca"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67858,
+          "sha256": "5f6c653db228a0713707712f7f913f6633107ae0dc485aecae5cb69494f772cd"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "0f18399263e7fbb04e054b9d2d1082ebcfb6c9d77c48e6017409c96ffaa7a29f"
+        }
+      },
+      "groups": 29,
+      "layer": 0,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11310,
+      "quality_rows": 290,
+      "rate": 749,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_01_rate_360": {
+      "baseline_seconds": 7.054239118238911,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.71558754495345,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 266461,
+          "sha256": "bf277f05c0838eca8a782ad99731b7bfc21b827cf19b189e935a4cc3727de0d2"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67229,
+          "sha256": "80d80ee03fed91972e9886563ae6e586236563b4c2200736fc1b8c61763d1938"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "d149575fe88ed5cf0ddfe3a55354b99467740942f26639268de500e3cdce58f0"
+        }
+      },
+      "groups": 29,
+      "layer": 1,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11020,
+      "quality_rows": 290,
+      "rate": 360,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_01_rate_384": {
+      "baseline_seconds": 6.571226853411645,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.89040901721455,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 277754,
+          "sha256": "feef532d85759b4798ab96bce31e637797586e861783bdb1d6247f575782338b"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68231,
+          "sha256": "89031f07ff3b749e262a3f644423242d65ebd5e0b61cd541419ce2e173bd2e69"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "7904addc05b88ede9042042b95f4bf4648d17c0821a9ec6b4fae7def7738e76e"
+        }
+      },
+      "groups": 29,
+      "layer": 1,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11020,
+      "quality_rows": 290,
+      "rate": 384,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_01_rate_725": {
+      "baseline_seconds": 6.625496679218486,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.39871592563577,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 272329,
+          "sha256": "ba487c4cc507c3aa8538e460c87af06e93c9d9bcf508fb5373a1467e299614d6"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67986,
+          "sha256": "cf98ddf3b06416806a703647b68bbbef5ffc6af13b1195ec4b136d02245ef58d"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "07c35b27e30ee5db3ada20e660552abfacb2dc5ab748ca3087c7b1f9b4114aca"
+        }
+      },
+      "groups": 29,
+      "layer": 1,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11020,
+      "quality_rows": 290,
+      "rate": 725,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_01_rate_749": {
+      "baseline_seconds": 6.5703559156972915,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.4435459736269,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 264944,
+          "sha256": "64ba7d13d30fdac584acb3951e4753aab7f2cb3a50f83ebd327ed32e480852e0"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67445,
+          "sha256": "af24d20bb157b5b8360112a0eed2c7a1c485c7216fa5c200ff3850213d24bb62"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "90d0433ae33bb6ff2d68de64c4ac1aae89d616e4fe483dba7e603ac7fdb82898"
+        }
+      },
+      "groups": 29,
+      "layer": 1,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 11020,
+      "quality_rows": 290,
+      "rate": 749,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_04_rate_360": {
+      "baseline_seconds": 6.551054861862212,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.05543064977974,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 257236,
+          "sha256": "7872dbd9839aa978ccb239f784d4e63027ca0788b970ae41c4a52426415086b2"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68684,
+          "sha256": "43741bb4bd2abde8b742f476b7c89f813739a9c97efc922a0b9d0ab816877a2b"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "677e5db3474c28787faefd1620eaee3f7caadbf826a1af86a557fc38ee969382"
+        }
+      },
+      "groups": 29,
+      "layer": 4,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 10150,
+      "quality_rows": 290,
+      "rate": 360,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_04_rate_384": {
+      "baseline_seconds": 6.548137842444703,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.32734918524511,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 257004,
+          "sha256": "88e1a424de2e23d5ebb795b0192d0955b76e53aaf53ad373978f9431ad12cc4e"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68635,
+          "sha256": "feac93e25b56e95a1fe8dbaa1dcd185b016447fc852fc32c80185f11ccdb7996"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "e7b9e388616f34bf26c7361b1582fd9e1de83a856b16e59bc2873c960df9691d"
+        }
+      },
+      "groups": 29,
+      "layer": 4,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 10150,
+      "quality_rows": 290,
+      "rate": 384,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_04_rate_725": {
+      "baseline_seconds": 6.5190935409627855,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.17625877424143,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 249760,
+          "sha256": "700199e42fa3af794e8444758b576da490d36f0c7b6752c73698fc0d36af6979"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67958,
+          "sha256": "6321ffb7e357a790193f076a2eaf2857bbd03a78838f18fbe775e90e870ffcb8"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "3f69b12d6588203719f7cc2ad25a0af8b4b7902cec72af285e9cb06677bff6a3"
+        }
+      },
+      "groups": 29,
+      "layer": 4,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 10150,
+      "quality_rows": 290,
+      "rate": 725,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_04_rate_749": {
+      "baseline_seconds": 6.584756140131503,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.06639369088225,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 245999,
+          "sha256": "6f991b599c302874e6991279e299e4d9241115464c4d1c85c29f946f0d51c834"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67586,
+          "sha256": "a22376f7b933246eb7caaa80800af9a2ecce2e97e133f3e0b4e143c8161d184e"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "fa3ea50e59aa89da52ab97e6e7b7c19649d54ba24c65a446b3d59f8c1e390d04"
+        }
+      },
+      "groups": 29,
+      "layer": 4,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 10150,
+      "quality_rows": 290,
+      "rate": 749,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_06_rate_360": {
+      "baseline_seconds": 6.523338026134297,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.2875048245769,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 253199,
+          "sha256": "1df1de4a58226436cb25d81c64ac9d0e02188850e901b198dd628e5addb52395"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 69705,
+          "sha256": "7f5c21a6db5fa86c9b779602d749c45c9545b63636410947fad45b715674aea5"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "318e1676ec74e77c9e4ff9bf94ad443c232af62e993b4055f04e67994af84886"
+        }
+      },
+      "groups": 29,
+      "layer": 6,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 9570,
+      "quality_rows": 290,
+      "rate": 360,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_06_rate_384": {
+      "baseline_seconds": 6.527151210233569,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 42.999740042258054,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 244957,
+          "sha256": "12959d8a6f1fa3d624f7a03031d6516a42a55f7a6c63392c629388de983bd73d"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68732,
+          "sha256": "512326f56a8654edd6b6f23e79c7240157d60f561c893c75350a0b1b2b43cce3"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "d1fbdb20e88f77322076fe5e106cf9b2ae3395f5e63e2cc16ed9d0c6dd222636"
+        }
+      },
+      "groups": 29,
+      "layer": 6,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 9570,
+      "quality_rows": 290,
+      "rate": 384,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_06_rate_725": {
+      "baseline_seconds": 6.561059247236699,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 42.546591229503974,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 239693,
+          "sha256": "930aaccebfe4d7f5e061ad58367ce2d20e0008f2d0543daea20a53f0e0cac181"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68258,
+          "sha256": "b636d5608df46c6dcf389c6f3eb7bf871c729369393fe258c7b7f66a03e85489"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "1184ff1a60605514b0406d67642fbdbc3d519613d2a4fd9b1b2925239bf62881"
+        }
+      },
+      "groups": 29,
+      "layer": 6,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 9570,
+      "quality_rows": 290,
+      "rate": 725,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_06_rate_749": {
+      "baseline_seconds": 6.5339573747478426,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.06976901576854,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 231896,
+          "sha256": "f31fdb658e96e2202112537d2c29ff39d90b1d35969883402511090fc6b01cbf"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67211,
+          "sha256": "b8c556a24f7917edfc84952bd932e76c99484e4428fd45cfec3aa85f4f2c659d"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "1f5ea4118539aa94305698233d723a22808768298230d95f5d4a53bb72aabc8a"
+        }
+      },
+      "groups": 29,
+      "layer": 6,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 9570,
+      "quality_rows": 290,
+      "rate": 749,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_12_rate_360": {
+      "baseline_seconds": 6.571092227241024,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.74522628914565,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 199775,
+          "sha256": "652ea45976181f8c051da5d243ff65aa21d1e99e0b3867e54866c1647b51f1b2"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68034,
+          "sha256": "0d95062470f9a16ffb43e4fc1216df72dd23dc87685b63a2dde51309c532f331"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "83e3bc784918e70ddc6f7481593d4504f0d0d7038a445ee52bca91bc0581c72d"
+        }
+      },
+      "groups": 29,
+      "layer": 12,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 7830,
+      "quality_rows": 290,
+      "rate": 360,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_12_rate_384": {
+      "baseline_seconds": 6.529803751735017,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 42.74631384923123,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 196349,
+          "sha256": "13dbd12b53620360fb36de3448715d4f462fbd3354e57ec1589c75e12dc4f565"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67378,
+          "sha256": "9ed117ac2b68244d7f0f929643cd09bae88ee7ef69d62cfcc6c20e6c2f3133d3"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "7eb03cbf3d46449be73c072d381f9f1fa937147813688fdc3d4ea9d38c42a0f7"
+        }
+      },
+      "groups": 29,
+      "layer": 12,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 7830,
+      "quality_rows": 290,
+      "rate": 384,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_12_rate_725": {
+      "baseline_seconds": 6.566385202342644,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 42.71682167635299,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 199726,
+          "sha256": "9137e15c910b487a7622b0c52cabea35ff1987483531234d70dfd4949aa6133c"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 68625,
+          "sha256": "fd0e02ac7e7b2561433c0c2c2f856e72bdc808cb4a0a410432cee6b71fc83eea"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "d1181dcd5ba84e849fe592b37a3399694651c62db4a939f34b249ca3311b4790"
+        }
+      },
+      "groups": 29,
+      "layer": 12,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 7830,
+      "quality_rows": 290,
+      "rate": 725,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_12_rate_749": {
+      "baseline_seconds": 6.52263183449395,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.56504243123345,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 196238,
+          "sha256": "3330d2fa69ed5f95fde248a2f87b40324e07005ae22b88b045baf02bfb9c9016"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67978,
+          "sha256": "a8e0a2cf8188adff2cf7ac1f566f2bc01d553215151b88ddd5f2d1066469ae93"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "cf1cf41c3dabf9ef585a12a94c25878b2c4f132d408bd5b0d3ee9c82283e692b"
+        }
+      },
+      "groups": 29,
+      "layer": 12,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 7830,
+      "quality_rows": 290,
+      "rate": 749,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_23_rate_360": {
+      "baseline_seconds": 6.5712102288380265,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.77365191816352,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 116836,
+          "sha256": "6dd3a6b415488b31021fce18f87913c2217bcae812f6595151f917ce344196ea"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67504,
+          "sha256": "9c69e37345b3dec615734797464e6f7aebbe51a647ea0019009f481a6e145822"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "ec4ea3ee8e8e35399972c284ca1c00f2cd08a36a480481e5282391c78dafdc92"
+        }
+      },
+      "groups": 29,
+      "layer": 23,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 4640,
+      "quality_rows": 290,
+      "rate": 360,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_23_rate_384": {
+      "baseline_seconds": 6.66261141654104,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.67911823000759,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 115442,
+          "sha256": "c997f149bca340d7b9e8124ed836bcfecfea5e21cb274e659f4d8639eb118296"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67388,
+          "sha256": "98edee4fc7abba3a91df0b72b81f1f627a5da22c962202b78ffdebd6d04842c2"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "8190311ab61bd25fc2e621f58261a1dc318f4597b3b0ca71b856907c8f617432"
+        }
+      },
+      "groups": 29,
+      "layer": 23,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 4640,
+      "quality_rows": 290,
+      "rate": 384,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_23_rate_725": {
+      "baseline_seconds": 6.559838214889169,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 42.95686253788881,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 112494,
+          "sha256": "4f758f2c578f65c448cebcab7050a7c173f59c053e16545144ccf926cfd0a554"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67228,
+          "sha256": "5d8aa42e3c74be80e4c1bcb2b93b07d30969a1f34a3608ed82b7f2ff35751d01"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "99d0be88247478a4c2189a19e11d2fc88c61a7e87a0b704593050c4deff3efe1"
+        }
+      },
+      "groups": 29,
+      "layer": 23,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 4640,
+      "quality_rows": 290,
+      "rate": 725,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    },
+    "layer_23_rate_749": {
+      "baseline_seconds": 6.5541572326328605,
+      "candidate_cache_reused": false,
+      "candidate_seconds": 43.23463867907412,
+      "completed": true,
+      "delta_execution": "selected_states_reconstructed_on_live_cached_activation",
+      "files": {
+        "d1_cached_decode_tail_propagation.parquet": {
+          "bytes": 111649,
+          "sha256": "a4af058efeda7ee5a5345c64ebbc8e287047cf78f8148ca89d3ba53acba35bc2"
+        },
+        "d1_cached_decode_tail_quality.parquet": {
+          "bytes": 67120,
+          "sha256": "34e6f5c6d8442fa23e1548d5c66fa48a73f1a7201ffabd840d46fd72cba01902"
+        },
+        "d1_cached_decode_tail_zero_gates.parquet": {
+          "bytes": 28229,
+          "sha256": "c6283d7f49b61f419c79618cb7594fc25fbd8933b860eb4a45b43382098d346b"
+        }
+      },
+      "groups": 29,
+      "layer": 23,
+      "policies": [
+        "pr13_router_square",
+        "exact_combined_local",
+        "calibration_selected_fixed_d1",
+        "frontier_companion_d1",
+        "exact_token_oracle"
+      ],
+      "propagation_rows": 4640,
+      "quality_rows": 290,
+      "rate": 749,
+      "route_modes": [
+        "live",
+        "fully_frozen"
+      ],
+      "schema": "pr13_d1_cached_decode_tail_kl_v2",
+      "sequence_shaped_delta_constructed": false,
+      "zero_rows": 58
+    }
+  },
+  "completed": true,
+  "config_sha256": "4fb569a6c0a0b7cde5a3267bb8571bedd0e82e5a690e8bac452bfb51e41a6e4a",
+  "counts": {
+    "logical_zero_dose_rows": 1392,
+    "physical_zero_dose_executions_if_rate_deduplicated": 348,
+    "propagation_rows": 218080,
+    "quality_rows": 6960
+  },
+  "exact_prefix_cache_cloned_per_candidate": true,
+  "outputs": {
+    "d1_cached_decode_tail_propagation.parquet": {
+      "bytes": 5012225,
+      "rows": 218080,
+      "sha256": "1058848b2985af307dfa6a0a54b1fca85568752aa648fb15260ec32aea03a984"
+    },
+    "d1_cached_decode_tail_quality.parquet": {
+      "bytes": 827373,
+      "rows": 6960,
+      "sha256": "ae626e499721639a2cd426ae452eeb2e3634787d1ae84c2a58ec2ab9d7e8b39d"
+    },
+    "d1_cached_decode_tail_zero_gates.parquet": {
+      "bytes": 28866,
+      "rows": 1392,
+      "sha256": "c383c4207911aa0e4ff4df007d65b8e033b83882087540d074759fdfaf779e66"
+    }
+  },
+  "post_token_cache_retained_and_audited": true,
+  "schema": "pr13_d1_cached_decode_tail_kl_v2",
+  "scientific_boundary": "Three-request exact-prefix cached single-token smoke study. One injected layer per candidate; no joint all-layer compression, generated rollout, deployable predictor, or quality claim.",
+  "sequence_shaped_delta_constructed": false,
+  "terminal_metric_scope": "current_token_only",
+  "test_rows_admitted_or_used": false,
+  "zero_dose_all_exact": true
+}

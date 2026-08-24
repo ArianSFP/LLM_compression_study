@@ -37,6 +37,12 @@ HISTORICAL_PR13 = "pr13_router_square_column_generated"
 REGENERATED_PR13 = "regenerated_router_square_column_generated"
 LOCAL_SOURCE = "exact_combined_local_column_generated_frontier"
 D1_PREFIX = "d1_strict_"
+SAME_HOST_PATCH_SCHEMA = "pr13_d1_tail_same_host_allocation_patch_v1"
+SAME_HOST_PATCH_GROUPS = "d1_tail_same_host_patch_groups.parquet"
+SAME_HOST_PATCH_EXPERTS = "d1_tail_same_host_patch_experts.parquet"
+SAME_HOST_PATCH_PARITY = "d1_tail_same_host_patch_parity.parquet"
+SAME_HOST_PATCH_DELTAS = "d1_tail_same_host_patch_deltas.npz"
+SAME_HOST_PATCH_FACTS = "d1_tail_same_host_patch_facts.json"
 
 
 @dataclass(frozen=True)
@@ -68,8 +74,31 @@ class DecodePolicyBank:
 def validate_cached_decode_tail_config(config: Mapping[str, Any]) -> None:
     """Reject the old full-sequence contract and validate the decode grid."""
 
-    if config.get("schema") != "pr13_d1_cached_decode_tail_kl_config_v2":
+    schema = str(config.get("schema"))
+    if schema not in {
+        "pr13_d1_cached_decode_tail_kl_config_v2",
+        "pr13_d1_cached_decode_tail_kl_config_v3",
+    }:
         raise ValueError("unexpected cached-decode tail config schema")
+    if schema.endswith("_v3"):
+        patch = config.get("same_host_allocation_patch")
+        if not isinstance(patch, Mapping):
+            raise ValueError("v3 cached-decode tail requires a same-host allocation patch")
+        if int(patch.get("mismatched_groups", -1)) != 12:
+            raise ValueError("same-host allocation patch group count changed")
+        if len(str(patch.get("facts_sha256", ""))) != 64:
+            raise ValueError("same-host allocation patch digest is missing")
+        reuse = config.get("reused_completed_cells")
+        if not isinstance(reuse, Mapping):
+            raise ValueError("v3 cached-decode tail requires reused-cell provenance")
+        cells = list(reuse.get("cells", ()))
+        identities = sorted(
+            (int(cell["layer"]), int(cell["rate"])) for cell in cells
+        )
+        if identities != [(0, 360), (0, 384), (0, 725), (0, 749)]:
+            raise ValueError("v3 reusable cell grid changed")
+        if any(len(str(cell.get("facts_sha256", ""))) != 64 for cell in cells):
+            raise ValueError("a reusable cell digest is missing")
     if list(map(int, config["injection_layers"])) != [0, 1, 4, 6, 12, 23]:
         raise ValueError("cached-decode injection-layer grid changed")
     if list(map(int, config["page_caps"])) != [360, 384, 725, 749]:
@@ -493,6 +522,192 @@ def assemble_decode_policy_bank(
             "exact_token_oracle_source_policy_by_group": oracle_sources,
         },
     )
+
+
+def apply_same_host_allocation_patch(
+    banks: Mapping[tuple[int, int], DecodePolicyBank],
+    patch_root: str | Path,
+    *,
+    expected_facts_sha256: str,
+    expected_mismatched_groups: int,
+) -> dict[tuple[int, int], DecodePolicyBank]:
+    """Replace only audited route-incompatible groups with same-host states."""
+
+    root = Path(patch_root)
+    facts_path = root / SAME_HOST_PATCH_FACTS
+    if sha256(facts_path) != str(expected_facts_sha256):
+        raise RuntimeError("same-host allocation patch facts changed")
+    facts = json.loads(facts_path.read_text())
+    if (
+        facts.get("schema") != SAME_HOST_PATCH_SCHEMA
+        or not bool(facts.get("completed"))
+        or not bool(facts.get("allocation_patch_gate_passed"))
+        or not bool(facts.get("baseline_router_logit_anchor_applied"))
+    ):
+        raise RuntimeError("same-host allocation patch did not pass exact parity")
+    if int(facts.get("mismatched_groups", -1)) != int(expected_mismatched_groups):
+        raise RuntimeError("same-host allocation patch group count changed")
+
+    paths = {
+        "groups": root / SAME_HOST_PATCH_GROUPS,
+        "experts": root / SAME_HOST_PATCH_EXPERTS,
+        "parity": root / SAME_HOST_PATCH_PARITY,
+        "deltas": root / SAME_HOST_PATCH_DELTAS,
+    }
+    outputs = facts.get("outputs", {})
+    for path in paths.values():
+        recorded = outputs.get(path.name)
+        if (
+            not path.is_file()
+            or not isinstance(recorded, Mapping)
+            or str(recorded.get("sha256")) != sha256(path)
+        ):
+            raise RuntimeError(f"same-host allocation patch artifact changed: {path}")
+
+    groups = pd.read_parquet(paths["groups"]).sort_values(
+        ["layer", "rate_pages_per_expert", "group", "policy"],
+        kind="stable",
+    ).reset_index(drop=True)
+    experts = pd.read_parquet(paths["experts"]).sort_values(
+        ["layer", "rate_pages_per_expert", "group", "policy", "router_rank"],
+        kind="stable",
+    ).reset_index(drop=True)
+    parity = pd.read_parquet(paths["parity"])
+    if (
+        len(parity) != int(expected_mismatched_groups)
+        or not parity["current_hidden_bit_identical"].all()
+        or not parity["d1_route_ids_order_equal"].all()
+        or float(parity["d1_router_max_abs"].max())
+        > float(facts["slice_router_anchor_max_abs"])
+    ):
+        raise RuntimeError("same-host allocation patch parity table changed")
+    patch_rates = tuple(map(int, facts.get("rates", ())))
+    if not patch_rates:
+        raise RuntimeError("same-host allocation patch rate grid is empty")
+    if (
+        len(groups)
+        != int(expected_mismatched_groups) * len(DECODE_POLICIES) * len(patch_rates)
+        or len(experts) != len(groups) * 8
+    ):
+        raise RuntimeError("same-host allocation patch table grid changed")
+
+    with np.load(paths["deltas"], allow_pickle=False) as loaded:
+        delta_identity = pd.DataFrame({
+            "layer": np.asarray(loaded["layer"], np.int64),
+            "rate_pages_per_expert": np.asarray(
+                loaded["rate_pages_per_expert"], np.int64,
+            ),
+            "group": np.asarray(loaded["group"], np.int64),
+            "policy": np.asarray(loaded["policy"]).astype(str),
+        })
+        selected_deltas = np.asarray(loaded["selected_deltas"], np.float32)
+    identity_columns = ["layer", "rate_pages_per_expert", "group", "policy"]
+    if (
+        not groups[identity_columns].reset_index(drop=True).equals(delta_identity)
+        or selected_deltas.shape != (len(groups), 2048)
+        or np.any(~np.isfinite(selected_deltas))
+    ):
+        raise RuntimeError("same-host patched delta identity or shape changed")
+
+    result: dict[tuple[int, int], DecodePolicyBank] = {}
+    consumed = 0
+    for key, bank in sorted(banks.items()):
+        layer, rate = map(int, key)
+        selected = groups[
+            groups["layer"].eq(layer)
+            & groups["rate_pages_per_expert"].eq(rate)
+        ]
+        if selected.empty:
+            result[key] = bank
+            continue
+
+        deltas = {
+            policy: np.asarray(values, np.float32).copy()
+            for policy, values in bank.deltas.items()
+        }
+        local = {
+            policy: np.asarray(values, np.float64).copy()
+            for policy, values in bank.local_qenergy_damage.items()
+        }
+        pages = {
+            policy: np.asarray(values, np.int64).copy()
+            for policy, values in bank.selected_group_pages.items()
+        }
+        expert_ids = np.asarray(bank.expert_ids, np.int64).copy()
+        states = {
+            policy: np.asarray(values, np.int8).copy()
+            for policy, values in bank.selected_states.items()
+        }
+        route_by_group: dict[int, np.ndarray] = {}
+        for row_index, row in selected.iterrows():
+            policy = str(row["policy"])
+            group = int(row["group"])
+            if policy not in DECODE_POLICIES:
+                raise RuntimeError("same-host patch contains an unknown policy")
+            identity = bank.identity[bank.identity["group"].eq(group)]
+            if (
+                len(identity) != 1
+                or str(identity.iloc[0]["request_id"]) != str(row["request_id"])
+                or int(identity.iloc[0]["position"]) != int(row["position"])
+            ):
+                raise RuntimeError("same-host patch token identity changed")
+            selected_experts = experts[
+                experts["layer"].eq(layer)
+                & experts["rate_pages_per_expert"].eq(rate)
+                & experts["group"].eq(group)
+                & experts["policy"].astype(str).eq(policy)
+            ].sort_values("router_rank", kind="stable")
+            if (
+                len(selected_experts) != 8
+                or not np.array_equal(
+                    selected_experts["router_rank"].to_numpy(np.int64),
+                    np.arange(1, 9, dtype=np.int64),
+                )
+            ):
+                raise RuntimeError("same-host patched expert rows are incomplete")
+            route = selected_experts["expert_id"].to_numpy(np.int64)
+            prior = route_by_group.setdefault(group, route)
+            if not np.array_equal(prior, route):
+                raise RuntimeError("same-host patched policy routes disagree")
+            parsed_states = np.stack([
+                np.asarray(json.loads(value), np.int8)
+                for value in selected_experts["selected_states"].astype(str)
+            ])
+            if (
+                parsed_states.shape != (8, 512)
+                or np.any(parsed_states < 0)
+                or np.any(parsed_states > 7)
+            ):
+                raise RuntimeError("same-host patched state vector is invalid")
+            deltas[policy][group] = selected_deltas[int(row_index)]
+            local[policy][group] = float(row["local_qenergy_damage"])
+            pages[policy][group] = int(row["selected_group_pages"])
+            states[policy][group] = parsed_states
+            expert_ids[group] = route
+            consumed += 1
+
+        provenance = dict(bank.provenance)
+        provenance["same_host_allocation_patch"] = {
+            "root": str(root),
+            "facts_sha256": str(expected_facts_sha256),
+            "groups": sorted(route_by_group),
+            "source": "exact_PRO_cached_decode_trajectory",
+        }
+        result[key] = DecodePolicyBank(
+            layer=bank.layer,
+            rate=bank.rate,
+            identity=bank.identity.copy(),
+            deltas=deltas,
+            local_qenergy_damage=local,
+            selected_group_pages=pages,
+            expert_ids=expert_ids,
+            selected_states=states,
+            provenance=provenance,
+        )
+
+    if consumed != len(groups):
+        raise RuntimeError("same-host allocation patch contains an unconsumed cell")
+    return result
 
 
 def token_delta(

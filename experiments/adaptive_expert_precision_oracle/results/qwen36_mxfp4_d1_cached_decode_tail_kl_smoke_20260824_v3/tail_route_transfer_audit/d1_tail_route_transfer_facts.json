@@ -1,0 +1,41 @@
+{
+  "allocation_transfer_admitted": false,
+  "baseline_seconds": 4.291471854085103,
+  "completed": true,
+  "config": "configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json",
+  "config_sha256": "d576278c63e9db97ce4272e971bd83ff27df30d0286457f8823d34018c6ad12f",
+  "environment": {
+    "cuda": "12.8",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "gpu_memory_gib": 94.96832275390625,
+    "host": "77eef4de1648",
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128"
+  },
+  "fixed_d1_source_policy_by_rate": {
+    "360": "d1_strict_tau_0.0625_eta_0.001",
+    "384": "d1_strict_tau_0.0625_eta_0.001",
+    "725": "d1_strict_tau_0.0625_eta_0.0001",
+    "749": "d1_strict_tau_0.0625_eta_5e-05"
+  },
+  "layers_with_set_mismatch": [
+    1,
+    6,
+    12,
+    23
+  ],
+  "minimum_source_labeled_margin": -0.0625,
+  "model_load_seconds": 336.25594196887687,
+  "route_order_mismatches": 46,
+  "route_set_mismatch_rate": 0.06896551724137931,
+  "route_set_mismatches": 12,
+  "rows": 174,
+  "schema": "pr13_d1_tail_route_transfer_audit_v1",
+  "table": {
+    "bytes": 18151,
+    "path": "/workspace/pr13_d1_runtime_controller_20260824_v1/evidence/tail_route_transfer_audit/d1_tail_route_transfer.parquet",
+    "sha256": "1f7c904eec9b7f90b27d687d9b093cdbfc31ec25f6609ef7e0e99870df45fa91"
+  },
+  "test_rows_admitted_or_used": false,
+  "wall_seconds": 380.94756661797874
+}

@@ -1,0 +1,59 @@
+{
+  "experiment_b_started": false,
+  "fixed_d1_crossing_event_mean_kl_delta": {
+    "introduced": {
+      "mean_logit_kl_minus_pr13": 0.0009797565975306216,
+      "tokens": 28
+    },
+    "prevented": {
+      "mean_logit_kl_minus_pr13": -0.0014305333667354652,
+      "tokens": 22
+    },
+    "same": {
+      "mean_logit_kl_minus_pr13": -9.952303365208787e-05,
+      "tokens": 646
+    }
+  },
+  "interpretation": "Preventing a PR13 D1 crossing is directionally favorable for the fixed policy, but fixed D1, source-slice token oracle, and exact combined local are non-monotonic across the four rates. The same-rate KL, live-minus-frozen, and D1-crossing gate does not support formal Experiment B promotion.",
+  "minimum_requests_before_quality_claim": 64,
+  "rates_passing_all_three_gate_terms": [
+    360
+  ],
+  "requests": 3,
+  "required_before_promotion": [
+    "prove a same-host full-model D1 rerank or repair lowers both live KL and live-minus-frozen KL at matched rates",
+    "separate route-direction gain from exact-combined local-qenergy gain",
+    "retain the three-request result as smoke evidence only"
+  ],
+  "same_rate_gate": [
+    {
+      "d1_crossing_rate_minus_pr13": -0.005747126436781616,
+      "live_minus_frozen_kl_minus_pr13": -0.0003696597046453957,
+      "mean_logit_kl_minus_pr13": -0.0004336814284055816,
+      "passes_same_rate_gate": true,
+      "rate_pages_per_expert": 360
+    },
+    {
+      "d1_crossing_rate_minus_pr13": 0.028735632183908053,
+      "live_minus_frozen_kl_minus_pr13": 0.00012914501358723116,
+      "mean_logit_kl_minus_pr13": 0.00011630455817484772,
+      "passes_same_rate_gate": false,
+      "rate_pages_per_expert": 384
+    },
+    {
+      "d1_crossing_rate_minus_pr13": 0.005747126436781609,
+      "live_minus_frozen_kl_minus_pr13": -0.0006329137889310298,
+      "mean_logit_kl_minus_pr13": -0.0005606989700952414,
+      "passes_same_rate_gate": false,
+      "rate_pages_per_expert": 725
+    },
+    {
+      "d1_crossing_rate_minus_pr13": 0.005747126436781609,
+      "live_minus_frozen_kl_minus_pr13": 0.0004550883601437874,
+      "mean_logit_kl_minus_pr13": 0.00048537222494337987,
+      "passes_same_rate_gate": false,
+      "rate_pages_per_expert": 749
+    }
+  ],
+  "status": "not_promoted_pause_before_experiment_b"
+}

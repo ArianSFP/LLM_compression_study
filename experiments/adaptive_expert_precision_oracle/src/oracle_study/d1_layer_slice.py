@@ -320,41 +320,37 @@ class _D1LayerSlice:
         sequence = int(hidden.shape[1])
         if sequence == 0:
             return cache
-        normalized = self.next_input_norm(hidden)
-        if self.next_mixer_type == "linear_attention":
-            self.next_mixer(
-                hidden_states=normalized,
-                cache_params=cache,
-                attention_mask=None,
-            )
-        elif self.next_mixer_type == "full_attention":
-            from transformers.models.qwen3_5_moe.modeling_qwen3_5_moe import (
-                create_causal_mask,
-            )
-
-            positions = torch.arange(
-                sequence, device=hidden.device, dtype=torch.long,
-            ).view(1, 1, -1).expand(4, 1, -1)
-            text_positions = positions[0]
-            rope_positions = positions[1:]
-            mask = create_causal_mask(
-                config=self.next_config,
-                inputs_embeds=hidden,
-                attention_mask=None,
-                past_key_values=None,
-                position_ids=text_positions,
-            )
-            if self.next_rotary is None:
-                raise RuntimeError("full-attention decode slice omitted rotary embeddings")
-            self.next_mixer(
-                hidden_states=normalized,
-                position_embeddings=self.next_rotary(hidden, rope_positions),
-                attention_mask=mask,
-                position_ids=text_positions,
-                past_key_values=cache,
-            )
-        else:
-            raise RuntimeError(f"unsupported D1 next mixer: {self.next_mixer_type}")
+        for token_position in range(sequence):
+            token = hidden[:, token_position : token_position + 1]
+            normalized = self.next_input_norm(token)
+            if self.next_mixer_type == "linear_attention":
+                self.next_mixer(
+                    hidden_states=normalized,
+                    cache_params=cache,
+                    attention_mask=None,
+                )
+            elif self.next_mixer_type == "full_attention":
+                positions = torch.full(
+                    (4, 1, 1),
+                    token_position,
+                    device=hidden.device,
+                    dtype=torch.long,
+                )
+                if self.next_rotary is None:
+                    raise RuntimeError(
+                        "full-attention decode slice omitted rotary embeddings"
+                    )
+                self.next_mixer(
+                    hidden_states=normalized,
+                    position_embeddings=self.next_rotary(token, positions[1:]),
+                    attention_mask=None,
+                    position_ids=positions[0],
+                    past_key_values=cache,
+                )
+            else:
+                raise RuntimeError(
+                    f"unsupported D1 next mixer: {self.next_mixer_type}"
+                )
         return cache
 
     def next_router_outputs_decode(

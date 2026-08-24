@@ -19,6 +19,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import shutil
 import sys
 import time
 from typing import Any, Iterator, Mapping, Sequence
@@ -38,6 +39,7 @@ from oracle_study.d1_decode_tail import (  # noqa: E402
     DECODE_POLICIES,
     DecodePolicyBank,
     add_live_minus_frozen,
+    apply_same_host_allocation_patch,
     assemble_decode_policy_bank,
     calibrate_fixed_d1_policy,
     classified_cache_metrics,
@@ -68,6 +70,7 @@ QUALITY = "d1_cached_decode_tail_quality.parquet"
 PROPAGATION = "d1_cached_decode_tail_propagation.parquet"
 ZERO = "d1_cached_decode_tail_zero_gates.parquet"
 RUN_FACTS = "d1_cached_decode_tail_run_facts.json"
+REUSED_CELLS = "d1_cached_decode_tail_reused_cells.json"
 
 
 def load_json(path: Path) -> Any:
@@ -398,6 +401,14 @@ def _policy_banks(config: Mapping[str, Any]) -> tuple[
         )
         for key, cell in cells.items()
     }
+    if str(config["schema"]).endswith("_v3"):
+        patch = config["same_host_allocation_patch"]
+        banks = apply_same_host_allocation_patch(
+            banks,
+            patch["root"],
+            expected_facts_sha256=str(patch["facts_sha256"]),
+            expected_mismatched_groups=int(patch["mismatched_groups"]),
+        )
     first_identity = None
     for key, bank in sorted(banks.items()):
         identity = bank.identity[["group", "request_id", "position"]].reset_index(drop=True)
@@ -513,6 +524,46 @@ def _completed_cell(paths: Mapping[str, Path], layer: int, rate: int) -> bool:
         if not path.is_file() or sha256(path) != facts["files"][path.name]["sha256"]:
             return False
     return True
+
+
+def _reuse_declared_cells(
+    config: Mapping[str, Any],
+    output: Path,
+) -> list[dict[str, Any]]:
+    if not str(config["schema"]).endswith("_v3"):
+        return []
+    specification = config["reused_completed_cells"]
+    source_root = Path(str(specification["source_output_root"]))
+    records = []
+    for declared in specification["cells"]:
+        layer = int(declared["layer"])
+        rate = int(declared["rate"])
+        source = _cell_paths(source_root, layer, rate)
+        if sha256(source["facts"]) != str(declared["facts_sha256"]):
+            raise RuntimeError("declared reusable cell facts changed")
+        if not _completed_cell(source, layer, rate):
+            raise RuntimeError("declared reusable source cell is incomplete")
+        destination = _cell_paths(output, layer, rate)
+        if destination["root"].exists():
+            if not _completed_cell(destination, layer, rate):
+                raise RuntimeError("destination reusable cell exists but is incomplete")
+        else:
+            destination["root"].parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(source["root"], destination["root"])
+        if not _completed_cell(destination, layer, rate):
+            raise RuntimeError("reused destination cell failed its recorded hashes")
+        records.append({
+            "layer": layer,
+            "rate": rate,
+            "source_root": str(source["root"]),
+            "source_facts_sha256": str(declared["facts_sha256"]),
+            "destination_root": str(destination["root"]),
+            "copied_bytes": int(sum(
+                destination[name].stat().st_size
+                for name in ("quality", "propagation", "zero", "facts")
+            )),
+        })
+    return records
 
 
 def _request_rows(bank: DecodePolicyBank, request_id: str) -> pd.DataFrame:
@@ -860,6 +911,14 @@ def run_phase(args: argparse.Namespace) -> None:
         raise RuntimeError("checkpoint index changed")
     if sha256(args.trees) != str(args.config_data["selected_tree_sha256"]):
         raise RuntimeError("selected-tree file changed")
+    reused = _reuse_declared_cells(args.config_data, args.output)
+    if reused:
+        atomic_json(args.output / REUSED_CELLS, {
+            "completed": True,
+            "schema": SCHEMA,
+            "config_sha256": sha256(args.config),
+            "cells": reused,
+        })
     _, _, _, banks = _policy_banks(args.config_data)
     model, tokenizer, load_seconds = _load_model(args.checkpoint)
     encoded = _encoded_requests(tokenizer, model, args.config_data)
@@ -872,6 +931,10 @@ def run_phase(args: argparse.Namespace) -> None:
         "torch": torch.__version__,
         "cuda": torch.version.cuda,
         "host": platform.node(),
+        "reused_completed_cells": len(reused),
+        "reuse_manifest_sha256": (
+            sha256(args.output / REUSED_CELLS) if reused else None
+        ),
     })
     try:
         for layer in map(int, args.config_data["injection_layers"]):

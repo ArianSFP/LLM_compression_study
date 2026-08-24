@@ -73,7 +73,7 @@ approximate-minus-Q4 correction.
 ## Frozen allocation inputs
 
 The immutable config is
-configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json.
+configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json.
 
 It freezes:
 
@@ -99,6 +99,48 @@ Their immutable network root is:
 Its 132-file manifest SHA-256 is:
 
 650fcffbd1e07f859764ab76003fc22d655f338e595f97da04097bcf1c3dc3a2
+
+## V3 route-transfer and same-host repair
+
+The original allocation packages were produced on an RTX 3090. Before using
+them for PRO 6000 tail replay, v3 audits the routed expert identity for all 174
+layer/token groups. Twelve groups in layers 1, 6, 12, and 23 changed top-8
+membership on the target host. Their complete allocation banks were therefore
+regenerated on the same PRO 6000 trajectory; no allocation state vector was
+silently reassigned to a different expert.
+
+The repair capture advances every request token sequentially through the exact
+full model and stores current-layer hidden state, post-mixer activation,
+residual, native routed output, current router, and D1 router. Recomposition of
+the current hidden state is bit-identical for every repaired group.
+
+The next-layer slice uses the exact cached prefix and exact current hidden.
+Raw slice logits can differ from the full-model capture by BF16 execution-order
+rounding (observed maximum 0.03125, frozen gate 0.0625), while the ordered top-8
+route is exact. Candidate logits are therefore anchored as:
+
+    exact full-model baseline logits
+    + (same-host slice candidate logits - same-host slice baseline logits).
+
+This retains the exact full-model baseline and uses only the candidate change
+from the differentiable slice. It is a bounded VJP approximation, not an exact
+full-model VJP. Exact complete-option replay then chooses the diagnostic token
+oracle among the frozen eta candidates.
+
+Only four layer-0 cells are reused from v2. The route-transfer audit has zero
+set and order mismatches at layer 0, those cells completed before the first v2
+failure, and v3 verifies each cell-facts hash before copying. Every other cell
+is executed anew. The immutable v3 config freezes the audit, capture, patch,
+and reused-cell hashes.
+
+The complete raw evidence and code snapshot remain on network storage at:
+
+    /workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3
+    /workspace/pr13_d1_runtime_controller_20260824_v1
+
+The checked-in compact package contains the finalized tables, analysis,
+transfer audit, same-host repair tables and deltas, capture tensors, and all
+hash manifests needed to audit them.
 
 ## Page accounting
 
@@ -238,6 +280,44 @@ The three current requests are a smoke cohort only. A generated multi-token
 rollout, cache drift across future decode steps, joint all-layer allocation,
 and the sequential runtime certificate remain later experiments.
 
+## Completed smoke result and promotion decision
+
+The finalized v3 grid contains 6,960 quality rows, 218,080 propagation rows,
+and 1,392 logical zero-dose rows. All 1,392 zero-dose rows are exact in current
+hidden state, every downstream router, terminal logits, and the complete
+post-token hybrid cache.
+
+For the calibration-selected fixed D1 policy, paired mean live-KL changes
+relative to PR #13 are:
+
+| Pages/expert | Mean live KL change | Live-minus-frozen KL change | D1 crossing-rate change | All three improve |
+| ---: | ---: | ---: | ---: | --- |
+| 360 | -0.0004336814 | -0.0003696597 | -0.0057471264 | yes |
+| 384 | +0.0001163046 | +0.0001291450 | +0.0287356322 | no |
+| 725 | -0.0005606990 | -0.0006329138 | +0.0057471264 | no |
+| 749 | +0.0004853722 | +0.0004550884 | +0.0057471264 | no |
+
+The causal direction is nevertheless visible conditionally. Among fixed-policy
+tokens, 22 prevented PR13 D1 crossings have mean KL change -0.0014305334,
+whereas 28 newly introduced crossings have mean KL change +0.0009797566.
+This supports discrete membership as an amplifier and identifies policy
+selection/transfer as a bottleneck.
+
+It does not establish the proposed objective as a reliable allocator. Fixed
+D1 is non-monotonic by rate, the source-slice exact-token diagnostic is also
+non-monotonic, and exact-combined local is at least as competitive. Even a
+post-hoc exact full-model D1 selector over the five executed allocations
+improves KL at 360 and 725 pages but regresses at 384 and 749 pages.
+
+The immutable promotion status is therefore:
+
+> **Experiment B not promoted; paused after Experiment A.**
+
+Before promotion, a same-host full-model D1 rerank or repair must lower both
+live KL and live-minus-frozen KL at matched rates and separate route-direction
+benefit from combined-local benefit. The three requests remain smoke evidence;
+no terminal-quality claim is made.
+
 ## Reproduction
 
 Validation needs no full model and succeeds on the current 3090:
@@ -245,7 +325,7 @@ Validation needs no full model and succeeds on the current 3090:
 ~~~bash
 PYTHONPATH=src python scripts/run_d1_downstream_tail_kl.py \
   --phase validate \
-  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json
+  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json
 ~~~
 
 The quality phase requires the PRO 6000:
@@ -253,7 +333,7 @@ The quality phase requires the PRO 6000:
 ~~~bash
 PYTHONPATH=src python scripts/run_d1_downstream_tail_kl.py \
   --phase run \
-  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json \
+  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json \
   --checkpoint /workspace/pr13_average_rate_all_layers_20260822_v1/inputs/checkpoint \
   --trees /workspace/codebook_granularity_study/locked/selected_trees.json \
   --fit-dir /workspace/pr13_average_rate_all_layers_20260822_v1/results/fit
@@ -264,12 +344,12 @@ After all 24 cells complete:
 ~~~bash
 PYTHONPATH=src python scripts/run_d1_downstream_tail_kl.py \
   --phase finalize \
-  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json
+  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json
 
 PYTHONPATH=src python scripts/analyze_d1_downstream_tail_kl.py \
-  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json \
-  --input /workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v2 \
-  --output /workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v2/analysis
+  --config configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json \
+  --input /workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3 \
+  --output /workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/analysis
 ~~~
 
 The 3090 is sufficient for allocation generation, artifact validation, and

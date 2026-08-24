@@ -20,13 +20,21 @@ from oracle_study.d1_decode_tail import (
     LOCAL_SOURCE,
     PR13_POLICY,
     TOKEN_ORACLE_POLICY,
+    SAME_HOST_PATCH_DELTAS,
+    SAME_HOST_PATCH_EXPERTS,
+    SAME_HOST_PATCH_FACTS,
+    SAME_HOST_PATCH_GROUPS,
+    SAME_HOST_PATCH_PARITY,
+    SAME_HOST_PATCH_SCHEMA,
     add_live_minus_frozen,
+    apply_same_host_allocation_patch,
     assemble_decode_policy_bank,
     calibrate_fixed_d1_policy,
     classified_cache_metrics,
     current_token_quality_metrics,
     downstream_route_rows,
     expected_grid_counts,
+    sha256,
     token_delta,
     validate_cached_decode_tail_config,
 )
@@ -193,6 +201,28 @@ def test_cached_decode_config_rejects_sequence_coupling_and_legacy_inputs() -> N
     with np.testing.assert_raises_regex(ValueError, "legacy full-sequence inputs"):
         validate_cached_decode_tail_config(legacy)
 
+def test_cached_decode_v3_freezes_patch_and_reused_cells() -> None:
+    config = _config()
+    config["schema"] = "pr13_d1_cached_decode_tail_kl_config_v3"
+    config["same_host_allocation_patch"] = {
+        "root": "/immutable/patch",
+        "facts_sha256": "b" * 64,
+        "mismatched_groups": 12,
+    }
+    config["reused_completed_cells"] = {
+        "source_output_root": "/immutable/v2",
+        "cells": [
+            {"layer": 0, "rate": rate, "facts_sha256": "c" * 64}
+            for rate in (360, 384, 725, 749)
+        ],
+    }
+    validate_cached_decode_tail_config(config)
+    changed = deepcopy(config)
+    changed["reused_completed_cells"]["cells"].pop()
+    with np.testing.assert_raises_regex(ValueError, "cell grid changed"):
+        validate_cached_decode_tail_config(changed)
+
+
 
 def test_decode_grid_counts_include_five_policies_and_isolated_positions() -> None:
     counts = expected_grid_counts(_config())
@@ -311,3 +341,124 @@ def test_checked_in_cached_decode_tail_config_is_immutable_contract() -> None:
     ).read_text())
     validate_cached_decode_tail_config(config)
     assert expected_grid_counts(config)["quality_rows"] == 6960
+def test_same_host_patch_replaces_only_audited_policy_group(tmp_path: Path) -> None:
+    cell = _synthetic_cell()
+    bank = assemble_decode_policy_bank(
+        cell,
+        fixed_source_policy=f"{D1_PREFIX}eta_b",
+        companion_source_policy=f"{D1_PREFIX}eta_a",
+    )
+    group = 2
+    route = np.arange(240, 248, dtype=np.int64)
+    group_rows = []
+    expert_rows = []
+    delta_values = {}
+    for policy_index, policy in enumerate(DECODE_POLICIES):
+        group_rows.append({
+            "schema": SAME_HOST_PATCH_SCHEMA,
+            "layer": 0,
+            "rate_pages_per_expert": 384,
+            "group": group,
+            "request_id": "request-0",
+            "position": 3,
+            "policy": policy,
+            "source_policy": f"source_{policy_index}",
+            "selected_group_pages": 3000 + policy_index,
+            "local_qenergy_damage": 0.5 + policy_index,
+        })
+        delta_values[policy] = 20.0 + policy_index
+        for router_rank, expert_id in enumerate(route, start=1):
+            expert_rows.append({
+                "schema": SAME_HOST_PATCH_SCHEMA,
+                "layer": 0,
+                "rate_pages_per_expert": 384,
+                "group": group,
+                "request_id": "request-0",
+                "position": 3,
+                "policy": policy,
+                "source_policy": f"source_{policy_index}",
+                "router_rank": router_rank,
+                "expert_id": int(expert_id),
+                "selected_states": json.dumps(
+                    [policy_index + 1] * 512, separators=(",", ":"),
+                ),
+            })
+    groups = pd.DataFrame(group_rows).sort_values(
+        ["layer", "rate_pages_per_expert", "group", "policy"],
+        kind="stable",
+    ).reset_index(drop=True)
+    experts = pd.DataFrame(expert_rows).sort_values(
+        ["layer", "rate_pages_per_expert", "group", "policy", "router_rank"],
+        kind="stable",
+    ).reset_index(drop=True)
+    parity = pd.DataFrame([{
+        "layer": 0,
+        "group": group,
+        "current_hidden_bit_identical": True,
+        "d1_router_logits_bit_identical": False,
+        "d1_router_max_abs": 0.03125,
+        "d1_route_ids_order_equal": True,
+    }])
+    groups.to_parquet(tmp_path / SAME_HOST_PATCH_GROUPS, index=False)
+    experts.to_parquet(tmp_path / SAME_HOST_PATCH_EXPERTS, index=False)
+    parity.to_parquet(tmp_path / SAME_HOST_PATCH_PARITY, index=False)
+    selected_deltas = np.stack([
+        np.full(2048, delta_values[str(policy)], np.float32)
+        for policy in groups["policy"]
+    ])
+    np.savez_compressed(
+        tmp_path / SAME_HOST_PATCH_DELTAS,
+        layer=groups["layer"].to_numpy(np.int64),
+        rate_pages_per_expert=groups["rate_pages_per_expert"].to_numpy(np.int64),
+        group=groups["group"].to_numpy(np.int64),
+        policy=np.asarray(groups["policy"].astype(str).tolist(), dtype="<U64"),
+        selected_deltas=selected_deltas,
+    )
+    artifact_paths = [
+        tmp_path / SAME_HOST_PATCH_GROUPS,
+        tmp_path / SAME_HOST_PATCH_EXPERTS,
+        tmp_path / SAME_HOST_PATCH_PARITY,
+        tmp_path / SAME_HOST_PATCH_DELTAS,
+    ]
+    facts = {
+        "completed": True,
+        "schema": SAME_HOST_PATCH_SCHEMA,
+        "allocation_patch_gate_passed": True,
+        "baseline_router_logit_anchor_applied": True,
+        "slice_router_anchor_max_abs": 0.0625,
+        "mismatched_groups": 1,
+        "rates": [384],
+        "outputs": {
+            path.name: {
+                "sha256": sha256(path),
+                "bytes": path.stat().st_size,
+            }
+            for path in artifact_paths
+        },
+    }
+    facts_path = tmp_path / SAME_HOST_PATCH_FACTS
+    facts_path.write_text(json.dumps(facts, sort_keys=True))
+
+    patched = apply_same_host_allocation_patch(
+        {(0, 384): bank},
+        tmp_path,
+        expected_facts_sha256=sha256(facts_path),
+        expected_mismatched_groups=1,
+    )[(0, 384)]
+    assert np.array_equal(patched.expert_ids[group], route)
+    assert np.array_equal(patched.expert_ids[1], bank.expert_ids[1])
+    for policy_index, policy in enumerate(DECODE_POLICIES):
+        assert np.all(patched.deltas[policy][group] == 20.0 + policy_index)
+        assert np.array_equal(
+            patched.selected_states[policy][group],
+            np.full((8, 512), policy_index + 1, np.int8),
+        )
+        assert patched.selected_group_pages[policy][group] == 3000 + policy_index
+        assert patched.local_qenergy_damage[policy][group] == 0.5 + policy_index
+        assert np.array_equal(
+            patched.selected_states[policy][1],
+            bank.selected_states[policy][1],
+        )
+    provenance = patched.provenance["same_host_allocation_patch"]
+    assert provenance["groups"] == [group]
+    assert provenance["source"] == "exact_PRO_cached_decode_trajectory"

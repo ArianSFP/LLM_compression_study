@@ -1,0 +1,13 @@
+{
+  "completed": true,
+  "cuda": "12.8",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "gpu_memory_gib": 94.96832275390625,
+  "host": "77eef4de1648",
+  "model_load_seconds": 310.86368490592577,
+  "python": "3.12.3",
+  "reuse_manifest_sha256": "6a9dd94d829739abde80aac41b3a71d125a78626c94ece7232a60b88355a5666",
+  "reused_completed_cells": 4,
+  "schema": "pr13_d1_cached_decode_tail_kl_v2",
+  "torch": "2.8.0+cu128"
+}

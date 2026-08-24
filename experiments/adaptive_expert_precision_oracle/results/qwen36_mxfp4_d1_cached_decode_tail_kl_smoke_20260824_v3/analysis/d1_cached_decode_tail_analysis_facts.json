@@ -1,0 +1,41 @@
+{
+  "completed": true,
+  "config_sha256": "4fb569a6c0a0b7cde5a3267bb8571bedd0e82e5a690e8bac452bfb51e41a6e4a",
+  "outputs": {
+    "D1_CACHED_DECODE_TAIL_KL_SMOKE_REPORT.md": {
+      "bytes": 10632,
+      "sha256": "cc429ce93fb9b304cec1fe82581d06760e979beb9f63d35f8d8101395cef9830"
+    },
+    "d1_cached_decode_tail_crossing_event_summary.parquet": {
+      "bytes": 5260,
+      "sha256": "81bff453053926bf2e15eb69f28e153e66e4bd695235efe3d243709ff7100465"
+    },
+    "d1_cached_decode_tail_d1_summary.parquet": {
+      "bytes": 12081,
+      "sha256": "159d16dc22f9c366ed755792021e25b2342f9a18a7ca0291b13ad5df26615acf"
+    },
+    "d1_cached_decode_tail_exact_d1_candidate_oracle.parquet": {
+      "bytes": 6015,
+      "sha256": "dec6e19aa532f5a93108641476d5bf1e5c90dbe6440db6a1271938b7e58ac8fb"
+    },
+    "d1_cached_decode_tail_policy_summary.parquet": {
+      "bytes": 18989,
+      "sha256": "e1c888baec818d7cd1374927785c4c52fcf90cdba8498ed45808dfa03cdfca28"
+    },
+    "d1_cached_decode_tail_pr13_paired_delta.parquet": {
+      "bytes": 5976,
+      "sha256": "95b0b6a4313cbe486a60c559e64aabacf690f930a8dc009e8b31ad9a998797ed"
+    },
+    "d1_cached_decode_tail_promotion_decision.json": {
+      "bytes": 2268,
+      "sha256": "a13381f5f30a95741b3546f2dd690996338f235c10f384b1ecddc5981607a631"
+    },
+    "d1_cached_decode_tail_route_summary.parquet": {
+      "bytes": 219570,
+      "sha256": "639e426012b9e70466a6a6ddac019e37ca309e3f1667bee7e8911e23dd840e1a"
+    }
+  },
+  "run_facts_sha256": "7e68e32975e91bc8516b944294548716f35c1e4fc3cd60fbe5cc53cea37178c3",
+  "schema": "pr13_d1_cached_decode_tail_kl_v2",
+  "test_rows_admitted_or_used": false
+}

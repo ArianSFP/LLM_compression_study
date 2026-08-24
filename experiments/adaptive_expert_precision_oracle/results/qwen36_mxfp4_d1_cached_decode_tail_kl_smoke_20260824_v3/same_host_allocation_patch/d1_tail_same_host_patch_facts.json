@@ -1,0 +1,94 @@
+{
+  "all_current_hidden_bit_identical": true,
+  "all_raw_slice_router_logits_bit_identical": false,
+  "all_slice_route_ids_order_equal": true,
+  "allocation_patch_gate_passed": true,
+  "baseline_router_logit_anchor_applied": true,
+  "capture_facts_sha256": "d425731345fa9016a92f73fbb87a08293590e271fcb2ab90ce62b505d7efbbc3",
+  "completed": true,
+  "environment": {
+    "cuda": "12.8",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "host": "77eef4de1648",
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128"
+  },
+  "eta": [
+    0.0,
+    5e-05,
+    0.0001,
+    0.00025,
+    0.0005,
+    0.001
+  ],
+  "exact_q4_route_runtime_input": false,
+  "groups_by_layer": {
+    "1": [
+      8
+    ],
+    "12": [
+      6,
+      14,
+      28
+    ],
+    "23": [
+      12,
+      13,
+      16,
+      20,
+      27
+    ],
+    "6": [
+      22,
+      25,
+      28
+    ]
+  },
+  "maximum_raw_slice_router_max_abs": 0.03125,
+  "mismatched_groups": 12,
+  "oracle_scope": "same_host_tail_allocation_compatibility_only",
+  "outputs": {
+    "d1_tail_same_host_patch_deltas.npz": {
+      "bytes": 1377324,
+      "rows": 240,
+      "sha256": "46049a42c9214ea1d12b2a7b04e7d205157328f37c906eec30c077897f015829"
+    },
+    "d1_tail_same_host_patch_experts.parquet": {
+      "bytes": 323319,
+      "rows": 1920,
+      "sha256": "faa0ac6cc5d216b80427152c3cc3986e7fc5cc54ce2872c5142a9e456a764718"
+    },
+    "d1_tail_same_host_patch_groups.parquet": {
+      "bytes": 15291,
+      "rows": 240,
+      "sha256": "b749d0f4bbd7264a54a40d8ba258fd35db860a66ea8b62218b52330696dbc483"
+    },
+    "d1_tail_same_host_patch_parity.parquet": {
+      "bytes": 9019,
+      "rows": 12,
+      "sha256": "3817c511ddce12ba820580a1670abd5132420b1a7d4e04e233a532a599eeb62e"
+    }
+  },
+  "policies": [
+    "pr13_router_square",
+    "exact_combined_local",
+    "calibration_selected_fixed_d1",
+    "frontier_companion_d1",
+    "exact_token_oracle"
+  ],
+  "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+  "rates": [
+    360,
+    384,
+    725,
+    749
+  ],
+  "route_audit_sha256": "1f7c904eec9b7f90b27d687d9b093cdbfc31ec25f6609ef7e0e99870df45fa91",
+  "same_host_config_sha256": "26129897498205d1d496d00539f66495406d7a4353a02d2304df314eadbca714",
+  "schema": "pr13_d1_tail_same_host_allocation_patch_v1",
+  "slice_router_anchor_max_abs": 0.0625,
+  "tail_config_sha256": "d576278c63e9db97ce4272e971bd83ff27df30d0286457f8823d34018c6ad12f",
+  "temperature": 0.0625,
+  "test_rows_admitted_or_used": false,
+  "wall_seconds": 1082.5960238620173
+}
