@@ -1,0 +1,131 @@
+{
+  "run_id": "qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1",
+  "experiment": "single_injected_layer_full_downstream_tail_d1_policy_smoke",
+  "schema": "pr13_d1_downstream_tail_kl_config_v1",
+  "base_d1_expansion_config": "configs/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json",
+  "base_d1_expansion_config_sha256": "de00bd6ada308a7693fc7816fdee3e1e6de1b2d6206a26a7f1dd61a094d0adfd",
+  "base_d1_expansion_commit": "197028e8759148aa6fc8548c50db4f6319fc53bb",
+  "base_same_host_controls_commit": "64e94ace22f42734941bb3b4fd6702b8ff380295",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "injection_layers": [0, 1, 4, 6, 12, 23],
+  "validation_request_ids": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "exclude_final_positions": 4,
+  "expected_groups_per_layer": 32,
+  "mechanism_page_caps": [384, 749],
+  "matched_runtime_metadata_page_caps": [360, 725],
+  "page_cap_accounting": {
+    "384": {
+      "point_type": "oracle_mechanism_unadjusted_metadata",
+      "traffic_equivalent_pr13_pages": 384,
+      "charged_bpw": 0.5234781901041666
+    },
+    "360": {
+      "point_type": "d1_joint_plus_uncertainty_metadata_matched",
+      "traffic_equivalent_pr13_pages": 384,
+      "charged_bpw": 0.5234781901041666
+    },
+    "749": {
+      "point_type": "oracle_mechanism_unadjusted_metadata",
+      "traffic_equivalent_pr13_pages": 749,
+      "charged_bpw": 0.9987386067708334
+    },
+    "725": {
+      "point_type": "d1_joint_plus_uncertainty_metadata_matched",
+      "traffic_equivalent_pr13_pages": 749,
+      "charged_bpw": 0.9987386067708334
+    }
+  },
+  "policies": [
+    "pr13_router_square",
+    "exact_combined_local",
+    "calibration_selected_fixed_d1",
+    "exact_request_reranked_d1",
+    "exact_request_repaired_d1"
+  ],
+  "fixed_d1_calibration": {
+    "candidate_eta": [0.0, 0.00005, 0.0001, 0.00025, 0.0005, 0.001],
+    "temperature": 0.0625,
+    "calibration_layers": [0, 12, 23],
+    "held_out_expansion_layers": [1, 4, 6],
+    "selection_order": [
+      "fewest_exact_d1_crossings",
+      "fewest_membership_pairs_changed",
+      "lowest_routing_mass_lost",
+      "lowest_local_qenergy",
+      "fewest_pages",
+      "deterministic_policy_name"
+    ],
+    "interpret_fixed_policy_on_held_out_layers_separately": true
+  },
+  "route_modes": ["live", "fully_frozen"],
+  "injection_mode": "pre_residual_routed_replacement",
+  "dose_alpha": 1.0,
+  "delta_sign": "approximate_minus_exact_q4",
+  "quality_metrics": [
+    "q4_to_candidate_final_logit_kl",
+    "delta_nll",
+    "ppl_ratio",
+    "selected_local_qenergy_damage",
+    "injected_delta_mse",
+    "realized_injected_layer_output_mse",
+    "final_layer_hidden_mse",
+    "downstream_route_membership_churn",
+    "downstream_router_mass_churn",
+    "first_route_membership_change_layer",
+    "live_minus_fully_frozen_logit_kl"
+  ],
+  "zero_dose_hidden_router_and_logits_max_abs_atol": 0.0,
+  "same_process_repeated_baseline_required": true,
+  "source_capture_exact_parity_required_for_residual_x_routed_input_ids_and_mask": true,
+  "test_rows_admitted_or_used": false,
+  "smoke_request_count": 3,
+  "minimum_requests_before_quality_claim": 64,
+  "preferred_requests_before_quality_claim": 128,
+  "hardware_execution_path": {
+    "required_gpu_class": "NVIDIA_RTX_PRO_6000_96GB_same_host_class",
+    "required_gpu_name_substring": "RTX PRO 6000",
+    "minimum_gpu_memory_gib": 90,
+    "full_model_load": "dequantized_bfloat16_device_map_cuda0",
+    "attention_implementation": "eager",
+    "experts_implementation": "eager",
+    "tail_start": "captured_true_pre_residual_moe_output_replacement_then_native_layers_l_plus_1_through_39",
+    "final_logits": "native_final_norm_and_lm_head_from_the_same_tail_execution"
+  },
+  "existing_oracle_cell_dirs": [
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_384_layer01/layer_01",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_384_layer04/layer_04",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_384_layer06/layer_06",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_749_layer00/layer_00",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_749_layer01/layer_01",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_749_layer04/layer_04",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/oracle_refined/rate_749_layer06/layer_06",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23"
+  ],
+  "existing_repair_cell_dirs": [
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_384_layer01",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_384_layer04",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_384_layer06",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_749_layer00",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_749_layer01",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_749_layer04",
+    "/workspace/pr13_d1_layer_slice_expansion_20260824_v1/results/exact_repair/rate_749_layer06",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23"
+  ],
+  "matched_oracle_dir_template": "/workspace/pr13_d1_downstream_tail_kl_smoke_20260824_v1/allocations/rate_{rate}_layer{layer:02d}/layer_{layer:02d}",
+  "matched_repair_dir_template": "/workspace/pr13_d1_downstream_tail_kl_smoke_20260824_v1/repairs/rate_{rate}_layer{layer:02d}",
+  "source_capture_dir": "/workspace/pr13_same_host_causal_controls_20260823_v1/results/same_host/baseline",
+  "output_root": "/workspace/pr13_d1_downstream_tail_kl_smoke_20260824_v1",
+  "scientific_boundary": "Three-request smoke test of one injected layer at a time. Exact rerank and repair are oracle upper bounds. A quality claim requires at least 64 independent requests and an independently calibrated fixed policy."
+}

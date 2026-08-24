@@ -157,6 +157,13 @@ fixed-policy results, runtime accounting, artifacts, and limitations are in
 The following paragraphs document the earlier promotion sequence and remain
 useful provenance for the expansion.
 
+The immutable reproduction configuration for the promoted result is
+[qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json](configs/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json).
+The generic all-layer/four-rate objective configuration above remains a design
+envelope and must not be cited as the executed six-layer experiment. The next
+single-injection downstream-tail quality gate is frozen independently in
+[qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json).
+
 The implemented paired slice runner evaluated complete column-generated PR #13
 frontiers at layers 0, 12, and 23. It used all 32 validation groups per layer,
 true pre-residual replacement, BF16 execution weights, exact full-VJP labels,
@@ -202,9 +209,11 @@ is separately demonstrated.
 The repository contains the objective/search, token-dependent latent,
 certificate, prediction metrics, exhaustive/vectorized/device-resident
 transition ranking, safe batch application, exact-once replay API, and
-compute/byte accounting. `run_d1_slice_oracle_pilot.py` now supplies the Qwen
+compute/byte accounting. `run_d1_slice_oracle_pilot.py` supplies the Qwen
 model-host exact VJP and paired pre-residual D1 replay path;
 `run_d1_exact_request_repair.py` performs the explicitly oracle-only
-causal-prefix finalist repair. The deployable signed-effect predictor,
-uncertainty calibration, sequential certificate study, and exact downstream
-KL replay remain future gates.
+causal-prefix finalist repair. Exact downstream-tail replay is implemented and
+frozen in [the tail methodology](D1_DOWNSTREAM_TAIL_KL_METHODS_20260824.md);
+terminal results remain a pending hardware gate. The deployable signed-effect
+predictor, uncertainty calibration, and sequential certificate study remain
+future gates.

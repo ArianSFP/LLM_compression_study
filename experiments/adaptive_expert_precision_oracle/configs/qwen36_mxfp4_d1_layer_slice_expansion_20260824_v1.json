@@ -1,0 +1,121 @@
+{
+  "run_id": "qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1",
+  "experiment": "A_exact_d1_objective_oracle_stratified_layer_slice_expansion",
+  "schema": "pr13_d1_layer_slice_expansion_config_v1",
+  "implementation_commit": "febd7d8",
+  "base_same_host_controls_commit": "64e94ace22f42734941bb3b4fd6702b8ff380295",
+  "base_all_layer_pr13_commit": "089deb4bd41eb71864779ced0cbb3db41e9dcb63",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "d1_definition": "same_token_next_layer_router_(t,l)_to_(t,l+1)",
+  "injection_layers": [0, 1, 4, 6, 12, 23],
+  "next_layer_mixer_path": {
+    "0": "native_linear_attention_layer_1",
+    "1": "native_linear_attention_layer_2",
+    "4": "native_linear_attention_layer_5",
+    "6": "native_full_attention_layer_7_with_official_causal_mask_four_axis_position_ids_and_rotary_embeddings",
+    "12": "native_linear_attention_layer_13",
+    "23": "native_linear_attention_layer_24"
+  },
+  "mean_budget_pages_per_expert": [384, 749],
+  "charged_bpw": {
+    "384": 0.5234781901041666,
+    "749": 0.9987386067708334
+  },
+  "group_page_budget_multiplier": 8,
+  "burst_cap_pages_per_expert": 1536,
+  "frontier_mode": "column_generated_rate_specific_complete_options",
+  "complete_frontier_options_only": true,
+  "validation_request_ids": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "position_mask": {
+    "rule": "range(sequence_length-exclude_final_positions)",
+    "exclude_final_positions": 4,
+    "request_sequence_lengths": {
+      "mxfp4-confirm-006": 15,
+      "mxfp4-confirm-007": 13,
+      "mxfp4-confirm-008": 16
+    },
+    "admitted_positions_per_request": {
+      "mxfp4-confirm-006": 11,
+      "mxfp4-confirm-007": 9,
+      "mxfp4-confirm-008": 12
+    },
+    "expected_groups_per_layer": 32
+  },
+  "boundary_candidates": {
+    "selected_router_ranks_one_indexed": [6, 7, 8],
+    "outsider_router_ranks_one_indexed": [9, 10, 11, 12, 13, 14, 15, 16],
+    "pair_count_per_group": 24,
+    "selection_rule": "exact_q4_stable_top8_then_closest_eight_outsiders"
+  },
+  "loss": {
+    "name": "one_sided_softplus_on_exact_q4_d1_margins",
+    "temperature": 0.0625,
+    "safety_margin": 0.0,
+    "severity": "unit_strict_top8",
+    "precision_effect_sign": "approximate_minus_exact_q4"
+  },
+  "local_guard": {
+    "form": "J_local_le_J_local_star_plus_eta_times_J_q2",
+    "eta_sweep": [0.0, 0.00005, 0.0001, 0.00025, 0.0005, 0.001],
+    "weight_representation": "fp32_normalized_selector_weights"
+  },
+  "d1_weight_representation": "bf16_execution_weights",
+  "search": {
+    "frontier_coordinate_sweeps": 8,
+    "frontier_local_shortlist": 8,
+    "frontier_local_swap_units": 3,
+    "frontier_local_max_passes": 6,
+    "column_generation_max_rounds": 3,
+    "column_generation_price_multipliers": [0.5, 2.0],
+    "d1_group_coordinate_sweeps": 8,
+    "d1_group_pair_passes": 8,
+    "exact_request_repair_coordinate_sweeps": 2,
+    "exact_request_repair_pair_passes": 2,
+    "exact_request_repair_max_pair_evaluations": 10000,
+    "exact_request_repair_causal_pair_scope": "source_position_at_or_before_earliest_crossing"
+  },
+  "hardware_execution_path": {
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_memory_gib": 24,
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128",
+    "cuda_runtime": "12.8",
+    "transformers": "5.15.0",
+    "attention_implementation": "eager",
+    "experts_implementation": "eager",
+    "frontier_workers": 16,
+    "frontier_worker_start_method": "fork",
+    "worker_blas_threads": 1,
+    "checkpoint_loading": "tensor_local_only_for_current_shared_expert_and_native_next_layer_pre_moe_router_slice",
+    "scientific_injection": "pre_residual_routed_replacement_fp32_add_then_single_bf16_round"
+  },
+  "comparison_policies": [
+    "pr13_router_square_column_generated",
+    "exact_combined_local_column_generated_frontier",
+    "d1_strict_fixed_eta",
+    "d1_exact_request_reranked",
+    "d1_exact_request_group_repaired"
+  ],
+  "oracle_labels": [
+    "exact_q4_d1_route",
+    "exact_token_dependent_complete_option_delta",
+    "exact_d1_full_vjp_margin_sensitivity",
+    "exact_request_level_d1_replay_for_rerank_and_repair"
+  ],
+  "s0_in_scope": false,
+  "speculative_execution_in_scope": false,
+  "route_certification_in_scope": false,
+  "d2_d4_objectives_models_or_evaluation_in_scope": false,
+  "terminal_tail_quality_in_scope": false,
+  "test_rows_admitted_or_used": false,
+  "raw_result_root": "/workspace/pr13_d1_layer_slice_expansion_20260824_v1",
+  "raw_result_manifest_files": 595,
+  "raw_result_manifest_sha256": "c8f9372ea7ada003a089638e7b3bcfc0caa6871636c7a8ff671113a6c3865367",
+  "scientific_boundary": "Six-layer, two-rate, three-request exact D1 layer-slice mechanism study. It stops after the next router and makes no terminal-KL or runtime-controller claim."
+}

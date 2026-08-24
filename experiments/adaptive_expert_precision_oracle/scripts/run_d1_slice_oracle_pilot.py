@@ -117,6 +117,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--workers", type=int, default=12)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--column-generated-frontiers", action="store_true")
+    parser.add_argument(
+        "--historical-pr13-mode",
+        choices=("required", "if_available", "omit"),
+        default="required",
+        help=(
+            "Whether preserved historical PR13 deltas must be replayed. Use "
+            "'omit' for explicitly non-historical matched-metadata page caps."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -860,6 +869,7 @@ def _exact_replays(
     baseline_logits: Mapping[str, torch.Tensor],
     baseline_ids: Mapping[str, torch.Tensor],
     allocation_group_rows: Sequence[Mapping[str, Any]],
+    historical_pr13_mode: str = "required",
 ) -> tuple[list[dict[str, Any]], dict[str, np.ndarray]]:
     allocation_lookup = {
         (
@@ -881,16 +891,23 @@ def _exact_replays(
         int(rate): index for index, rate in enumerate(historical_rates.tolist())
     }
 
+    if historical_pr13_mode not in ("required", "if_available", "omit"):
+        raise ValueError("invalid historical PR13 replay mode")
     delta_by_policy: dict[str, np.ndarray] = {}
-    policies = sorted({policy for policy, _ in selections} | {POLICY_PR13})
+    generated_policies = sorted({policy for policy, _ in selections})
     metric_rows = []
     groups_by_request = {
         request_id: [group for group in groups if group["request_id"] == request_id]
         for request_id in captures
     }
     for rate in rates:
-        if int(rate) not in historical_rate_index:
+        historical_available = int(rate) in historical_rate_index
+        if historical_pr13_mode == "required" and not historical_available:
             raise RuntimeError(f"historical delta omits rate {rate}")
+        policies = list(generated_policies)
+        if historical_pr13_mode != "omit" and historical_available:
+            policies.append(POLICY_PR13)
+        policies = sorted(policies)
         for policy in policies:
             complete = np.zeros((len(groups), 2048), np.float32)
             local_damage_by_group: dict[int, float] = {}
@@ -1054,6 +1071,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         baseline_logits,
         baseline_ids,
         allocation_rows,
+        args.historical_pr13_mode,
     )
     layer_dir = args.output_dir / f"layer_{int(layer):02d}"
     atomic_parquet(layer_dir / "d1_exact_route_metrics.parquet", exact_rows)
@@ -1096,6 +1114,11 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         "temperature": list(map(float, args.temperature)),
         "frontier_mode": (
             "column_generated" if args.column_generated_frontiers else "coarse"
+        ),
+        "historical_pr13_mode": str(args.historical_pr13_mode),
+        "historical_pr13_replayed": bool(
+            str(args.historical_pr13_mode) != "omit"
+            and all(int(rate) in (384, 576, 749, 768) for rate in args.rates)
         ),
         "policies": sorted(exact_frame["policy"].unique().tolist()),
         "paired_local_baseline_required": True,
@@ -1148,8 +1171,8 @@ def main() -> None:
     args = parse_args()
     if args.workers < 1 or args.workers > 32:
         raise ValueError("workers must lie in [1,32]")
-    if any(rate not in (384, 576, 749, 768) for rate in args.rates):
-        raise ValueError("rates must be PR #13 operating points")
+    if any(rate < 1 or rate > 1536 for rate in args.rates):
+        raise ValueError("rates must lie in the physical [1,1536] page range")
     if any(value < 0.0 for value in args.eta):
         raise ValueError("eta must be nonnegative")
     if any(value <= 0.0 for value in args.temperature):

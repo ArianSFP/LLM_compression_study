@@ -37,6 +37,19 @@ The study is stacked on the following immutable foundations:
 - initial D1 slice pilot commit `dced412`;
 - six-layer/full-attention expansion commit `febd7d8`.
 
+The exact promoted experiment is frozen in
+[qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json](configs/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json),
+SHA-256 `de00bd6ada308a7693fc7816fdee3e1e6de1b2d6206a26a7f1dd61a094d0adfd`.
+It records the actual six layers, two rates, six eta values, requests,
+position mask, candidate ranks, temperature, search passes, and native 3090
+linear/full-attention execution path. The earlier
+`qwen36_mxfp4_d1_objective_oracle.json` is a prospective all-layer/four-rate
+design envelope, not the reproduction config for this completed expansion.
+
+The standalone artifact validator checked all 12 raw layer/rate cells against
+the immutable config, including required hashes, and retained its evidence at
+`/workspace/pr13_d1_downstream_tail_kl_smoke_20260824_v1/evidence/d1_expansion_config_validation.json`.
+
 The checkpoint index SHA-256 is
 `842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb`.
 The three immutable baseline-capture hashes are retained in
@@ -641,3 +654,11 @@ can identify that combination without exact labels.
 
 Only after the downstream-KL gate succeeds should this work be described as a
 quality improvement to PR #13 rather than a successful immediate-route oracle.
+
+That gate is frozen separately in
+[qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json).
+It replays the five policy tiers through the exact downstream tail in live and
+fully frozen routing, reports layers 1/4/6 separately from the 0/12/23 eta
+calibration layers, and includes the metadata-matched 360/725 page caps. The
+three-request output remains a smoke result; at least 64 independent requests
+are required before a quality claim.

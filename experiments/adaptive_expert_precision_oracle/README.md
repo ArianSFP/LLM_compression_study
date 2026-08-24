@@ -23,8 +23,16 @@ The promoted stratified slice result covers layers 0, 1, 4, 6, 12, and 23 at
 384 and 749 pages/expert. Historical PR #13 changes 20/192 and 11/192 exact D1
 top-8 sets; the exact request-coupled D1 oracle changes 1/192 and 0/192. See
 the [complete methodology and evidence ledger](D1_STRATIFIED_LAYER_SLICE_EXPANSION_20260824.md),
+the [immutable expansion configuration](configs/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json),
 the [generated report](results/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1/analysis/D1_LAYER_SLICE_PILOT_REPORT.md),
 and the [compact artifact package](results/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1/README.md).
+
+The next gate is the separately configured
+[single-injection downstream-tail KL smoke study](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json).
+Its fixed eta is calibrated on layers 0/12/23 and evaluated separately on
+layers 1/4/6; exact request rerank and repair remain oracle upper bounds.
+The complete frozen execution and analysis protocol is in
+[D1_DOWNSTREAM_TAIL_KL_METHODS_20260824.md](D1_DOWNSTREAM_TAIL_KL_METHODS_20260824.md).
 
 Reproduce the synthetic allocator microbenchmark with:
 
