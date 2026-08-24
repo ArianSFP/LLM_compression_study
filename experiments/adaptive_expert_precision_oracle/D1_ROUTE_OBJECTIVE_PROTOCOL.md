@@ -144,6 +144,39 @@ refreshes would therefore still cost roughly 5 ms before transfer or
 provisional execution; batching, overlap, CUDA graphs/fusion, and actual model
 latency must be measured before a non-bottleneck claim.
 
+## RTX 3090 layer-slice result (2026-08-24)
+
+The implemented paired slice runner evaluated complete column-generated PR #13
+frontiers at layers 0, 12, and 23. It used all 32 validation groups per layer,
+true pre-residual replacement, BF16 execution weights, exact full-VJP labels,
+and exact execution through the next router. The promoted screen covered the
+384-page rate on all three layers and the 749-page rate on layers 12 and 23.
+
+At 384 pages, historical PR #13 changed the exact paired top-8 set in 6/96
+groups. At 749 pages it changed 3/64. The exact-combined local oracle still
+changed 5/96 and 3/64, respectively. The final exact request-coupled D1
+reranker changed 0 groups at both rates while its mean local-qenergy damage was
+0.981479 and 0.981571 times PR #13. Thus the sampled result did not purchase
+route agreement by worsening aggregate local qenergy.
+
+Layer 0 exposed an important prefill boundary. At an exact BF16 rank-8/rank-9
+tie, the current-token and causal-prefix perturbations were separately safe but
+crossed when replayed together. A global per-request choice among the D1
+policies left 1/96 crossings at 384 pages. A deterministic exact repair over
+mixtures of complete finalists removed it. That repair is an oracle-only
+upper-bound and identifies causal-prefix coupling as a required training/eval
+feature; it is not deployable controller work.
+
+On the runs that emitted a regenerated router-square comparator, its selected
+delta was bit-identical to the preserved historical PR #13 delta. Repeated
+paired 3090 zero-dose slices were also bit-identical. Cross-device BF16 drift
+against the PRO 6000 captures was measured separately and never counted as an
+allocator-induced switch.
+
+This result establishes exact D1 membership control only on the sampled
+layer/rate slices. It contains no final-logit KL, D2--D4, all-layer, or runtime
+certificate evidence.
+
 ## Later latent next-layer update ablation
 
 After the initial controller is measured, fit or precompute projections such
@@ -155,9 +188,12 @@ is separately demonstrated.
 
 ## Current implementation boundary
 
-The repository now contains the objective/search, token-dependent latent,
+The repository contains the objective/search, token-dependent latent,
 certificate, prediction metrics, exhaustive/vectorized/device-resident
 transition ranking, safe batch application, exact-once replay API, and
-compute/byte accounting. A model-host runner must supply exact D1 VJP labels
-and the validated same-host pre-residual replay callback. Full Qwen execution
-remains a GPU experiment and is not simulated by these pure helpers.
+compute/byte accounting. `run_d1_slice_oracle_pilot.py` now supplies the Qwen
+model-host exact VJP and paired pre-residual D1 replay path;
+`run_d1_exact_request_repair.py` performs the explicitly oracle-only
+causal-prefix finalist repair. The deployable signed-effect predictor,
+uncertainty calibration, sequential certificate study, and exact downstream
+KL replay remain future gates.

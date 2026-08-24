@@ -1,0 +1,28 @@
+{
+  "after": {
+    "D1_LAYER_SLICE_PILOT_REPORT.md": "22dfa7fc7f1d7ac9cd543201729459ebe443efcf96a551ec9c132e2e113c5c43",
+    "d1_aggregate_policy_summary.parquet": "26431357a477bb47e9b51d8d49ceaa63e2fbb8ce711f31d9ccd9dcf82bf9da54",
+    "d1_exact_reranked_metrics.parquet": "a4984fb3b16bc8e76d166c615dade5a0298675aa592a65dc511c56da272ff2b2",
+    "d1_exact_reranked_request_choices.parquet": "3dfed0efcd622d36b1f0e61cacc2569a18f84b40cd05cabe3bcf02628a6aa270",
+    "d1_layer_policy_summary.parquet": "54171cd56873e19b7f7a4a6e00b0320f55e214ca2818c339b6d994bd59adc39e",
+    "d1_paired_parity_summary.parquet": "d9f6b25197b9c25f9a9b4057a745bfc6b88ef3da375c1d039430ec157e690a01",
+    "d1_slice_analysis_facts.json": "3064b22c4b1505914d6439c40565dfbc652e4d8d46ea40c1f1b48a6e2b29fdb1",
+    "d1_vjp_summary.parquet": "88492c7f8f8309d98f83021f2b74cd4e043048dda0e6f63f2ed0e74ebf4ec0e4",
+    "regenerated_pr13_audit.json": "4990188411e40640010904c9da10c5faf08128b183bca3c7381be00d1250ca40"
+  },
+  "before": {
+    "D1_LAYER_SLICE_PILOT_REPORT.md": "22dfa7fc7f1d7ac9cd543201729459ebe443efcf96a551ec9c132e2e113c5c43",
+    "d1_aggregate_policy_summary.parquet": "26431357a477bb47e9b51d8d49ceaa63e2fbb8ce711f31d9ccd9dcf82bf9da54",
+    "d1_exact_reranked_metrics.parquet": "a4984fb3b16bc8e76d166c615dade5a0298675aa592a65dc511c56da272ff2b2",
+    "d1_exact_reranked_request_choices.parquet": "3dfed0efcd622d36b1f0e61cacc2569a18f84b40cd05cabe3bcf02628a6aa270",
+    "d1_layer_policy_summary.parquet": "54171cd56873e19b7f7a4a6e00b0320f55e214ca2818c339b6d994bd59adc39e",
+    "d1_paired_parity_summary.parquet": "d9f6b25197b9c25f9a9b4057a745bfc6b88ef3da375c1d039430ec157e690a01",
+    "d1_slice_analysis_facts.json": "3064b22c4b1505914d6439c40565dfbc652e4d8d46ea40c1f1b48a6e2b29fdb1",
+    "d1_vjp_summary.parquet": "88492c7f8f8309d98f83021f2b74cd4e043048dda0e6f63f2ed0e74ebf4ec0e4",
+    "regenerated_pr13_audit.json": "4990188411e40640010904c9da10c5faf08128b183bca3c7381be00d1250ca40"
+  },
+  "byte_identical": true,
+  "completed": true,
+  "schema": "pr13_d1_analysis_reproduction_v1",
+  "stdout_sha256": "71db67bdd3c875e07c8759bc14eb40a5ed310c391ed356530772db8c01ae2b67"
+}

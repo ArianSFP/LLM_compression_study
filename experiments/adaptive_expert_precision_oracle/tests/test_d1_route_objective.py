@@ -52,6 +52,19 @@ def _one_boundary() -> D1BoundaryProblem:
     )
 
 
+def test_boundary_problem_accepts_exact_bf16_topk_tie() -> None:
+    problem = D1BoundaryProblem(
+        selected_expert_ids=np.asarray([7]),
+        outsider_expert_ids=np.asarray([8]),
+        q4_margins=np.asarray([0.0]),
+        margin_sensitivities=np.asarray([[1.0, -1.0]]),
+        severity=np.asarray([1.0]),
+        temperature=np.asarray([0.0625]),
+        safety_margin=np.asarray([0.0]),
+    )
+    assert problem.q4_margins[0] == 0.0
+
+
 def test_boundary_problem_uses_exact_q4_rank_pairs_and_unique_logit_gradients() -> None:
     logits = np.asarray([9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.9, 1.8])
     gradients = np.arange(30, dtype=np.float64).reshape(10, 3)

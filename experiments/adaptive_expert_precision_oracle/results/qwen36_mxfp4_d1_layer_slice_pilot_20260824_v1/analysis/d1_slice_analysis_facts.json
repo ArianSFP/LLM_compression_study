@@ -1,0 +1,198 @@
+{
+  "completed": true,
+  "controller_accounting": {
+    "candidate_logits": 16,
+    "current_group_metadata_kib": 72.125,
+    "current_metadata_bpw": 0.023478190104166668,
+    "current_model_metadata_mib": 90.15625,
+    "direct_candidate_macs": 9699328,
+    "direct_fraction_of_pr13": 0.19050658157159953,
+    "direct_total_macs": 9781248,
+    "joint_group_metadata_kib": 155.125,
+    "joint_metadata_bpw": 0.050496419270833336,
+    "joint_model_metadata_mib": 193.90625,
+    "joint_uncertainty_group_metadata_kib": 167.625,
+    "joint_uncertainty_metadata_bpw": 0.0545654296875,
+    "joint_uncertainty_model_metadata_mib": 209.53125,
+    "matched_pages": {
+      "0.523478190104": 363,
+      "0.773478190104": 555,
+      "0.998738606771": 728,
+      "1.0234781901": 747
+    },
+    "matched_pages_with_uncertainty": {
+      "0.523478190104": 360,
+      "0.773478190104": 552,
+      "0.998738606771": 725,
+      "1.0234781901": 744
+    },
+    "one_adjoint_fraction_of_pr13": 0.018189070602313524,
+    "one_adjoint_macs": 851968,
+    "one_adjoint_total_macs": 933888,
+    "pr13_primary_selector_macs": 51343360,
+    "rank": 8,
+    "refreshes": 6,
+    "response_synthesis_macs": 81920
+  },
+  "d2_d4_in_scope": false,
+  "exact_vjp_label_median_ms": 238.36325202137232,
+  "exact_vjp_label_p90_ms": 256.5087530761957,
+  "groups_per_layer": 32,
+  "input_hashes": {
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_allocation_experts.parquet": "2f97e0aba6fb5417d9100eed8411e3f3fb982731b7460ebfe739a57bc6e61f6a",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_allocation_groups.parquet": "9f36bbca83a4e861308a79fef59a8c96355fc6326cf3e11ad80e0b24c07d0612",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_exact_route_metrics.parquet": "1b76f43bfab66cb1890119407879c863c44dd9cb65f2fab2c07ddd43a7db9071",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_layer_facts.json": "7e9198670a5313c712a2be97213161421c756b28a313dc8fadd84330dda70e90",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_paired_parity.parquet": "9baf0074c7d1a7b1f3fc1a7df067f38fc600c479fd43abe2c9d1a7c1f05faa92",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_policy_summary.parquet": "4ebe18daafb8fe47227b070405a1f3263402e95bd37be8ecb83cc57527ce045e",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_selected_deltas.npz": "7ae7a26295cb91afe3a1801918db48a1b87a320c0107ec470d084a6add2e33aa",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384/layer_12/d1_vjp_metrics.parquet": "b2d91dddcc5500d5a41a99b2112ac699aefb31fd5714c655cc05e603ffd1b478",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_allocation_experts.parquet": "c6dc00f624780fb732133dc62c0a0a1df88afd6c5828b5edb7b37fef70dd9ebc",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_allocation_groups.parquet": "de72d9ce0cd7b979d6aa5982e2b604d84f73bb2fc45bf3bab1d2ca01f02fb032",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_exact_route_metrics.parquet": "15ea7e479bfd8c748868230f29e3f9fc3697264089bebb9cbd35ff5e88ce6b63",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_layer_facts.json": "7b01746fe19b636838d6d195a1bdf177c9314c55636d9a7c9ef07710b5d2a955",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_paired_parity.parquet": "99694a74ad6b146ec49ae366830efc6a0462aac232366f1b7e94af3439a3e558",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_policy_summary.parquet": "4fb9af5a3cd963beace061d5532456e670a7c7bfefe1731c9288721151309a6f",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_selected_deltas.npz": "4a0bc234bc562ae27ee1caf7362f64728e3385dc83a62b754c5026e4186d391f",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer00/layer_00/d1_vjp_metrics.parquet": "568efe20ef24326f2c7c5e60fd97c54ff2d93078ade3dd05b40b7130909b22e4",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_allocation_experts.parquet": "0b7ae2c2403b967a8b766759fbf0117ddf07be0a8183bf6e60a9a44a86c6e020",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_allocation_groups.parquet": "f242f7390b4f8711fa3cce48e48c224ace496536dfb66aca418b822ec54e8371",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_exact_route_metrics.parquet": "e6343b29eef894defb3e30bbf717df126021f2cf4df8ae8006ab9615ec996565",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_layer_facts.json": "39cd147fe466f4294243b8e43127131491803cd75f8d6eb20a32953d4bd5fd00",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_paired_parity.parquet": "41ea54bac06f016260bbe53fc140e9522c6fb640a1f2ea6bd0cfbe1f1d9fcbe9",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_policy_summary.parquet": "c9a1a611aaf56753dbf5f519df623628ee06fdc6cfd55ec745b775743fdb1460",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_selected_deltas.npz": "a9e1609dd00020feeca6512f57f8f34a6d777f0eabd1629a93508896d34eaee0",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_384_layer23/layer_23/d1_vjp_metrics.parquet": "144863e2df05c9bc918a41072c87ee80747981ab659f5e16a9977ac93a274b12",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_allocation_experts.parquet": "ac5d2ea5675dcc8f8d79b5fc76e06b5bcf2d8efd2d6dc0ef13822d69e614a182",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_allocation_groups.parquet": "3d6779aca37f667c5a91b6e0db8a10e2aa507b2d71eb230424be8a0a6a8b5ff8",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_exact_route_metrics.parquet": "96378a4b0879a80dd51941eb7548e4548a9c511f2a1f51d567923248334b1721",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_layer_facts.json": "b6f872017e3b3c2d28c8cada486baf982f985288400148c2801d3fa72621885d",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_paired_parity.parquet": "9baf0074c7d1a7b1f3fc1a7df067f38fc600c479fd43abe2c9d1a7c1f05faa92",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_policy_summary.parquet": "dac5841f23f9593f657f8c1b610538b9e959028573835bfdd7005853f5073709",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_selected_deltas.npz": "54b47bf35eb532f9e3e0fce11190b458411d80975af2598a8f453fa8904206cf",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749/layer_12/d1_vjp_metrics.parquet": "49a96732818fe4177ed35f0c5fd7c05556c3fa19ebfdfde501d785d056ad30fe",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_allocation_experts.parquet": "8d9ef7fecda6b27671aae6acce907f0c18a6dfb250399fc3bd91bf140c2126d9",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_allocation_groups.parquet": "889e1a5789269d9031b9a13213f3614130b67382719b4ef3c388ecdc678f581a",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_exact_route_metrics.parquet": "61bc15abc618ec375b059564b413eb9703002ef2874c5faa5b732825b448e241",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_layer_facts.json": "80f9d712d5f11d7e0aaa1891bdf9baeda6468e8e7233831f09a3026b142d3e80",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_paired_parity.parquet": "41ea54bac06f016260bbe53fc140e9522c6fb640a1f2ea6bd0cfbe1f1d9fcbe9",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_policy_summary.parquet": "09199eedcd7073afbbfe5b708f04f8ffc4af343c8c8ec0d15a4b856ef2156dc1",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_selected_deltas.npz": "15c498b7d4b0468e15a3b60890babef26e709399cf713d4976d7d78e0027614a",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/oracle_refined_749_layer23/layer_23/d1_vjp_metrics.parquet": "76ffdaae741e514ee61932e64ab7d491c99962ac34cced4d45fd8a167f25da17",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/runtime/d1_transition_scorer_3090.json": "eaa665ceb2d0bae216643abcea89cf7019f365c57454bedd179574be21548ea0"
+  },
+  "layers": [
+    0,
+    12,
+    23
+  ],
+  "outputs": {
+    "D1_LAYER_SLICE_PILOT_REPORT.md": {
+      "bytes": 5868,
+      "sha256": "22dfa7fc7f1d7ac9cd543201729459ebe443efcf96a551ec9c132e2e113c5c43"
+    },
+    "d1_aggregate_policy_summary.parquet": {
+      "bytes": 8882,
+      "sha256": "26431357a477bb47e9b51d8d49ceaa63e2fbb8ce711f31d9ccd9dcf82bf9da54"
+    },
+    "d1_exact_reranked_metrics.parquet": {
+      "bytes": 14011,
+      "sha256": "a4984fb3b16bc8e76d166c615dade5a0298675aa592a65dc511c56da272ff2b2"
+    },
+    "d1_exact_reranked_request_choices.parquet": {
+      "bytes": 7062,
+      "sha256": "3dfed0efcd622d36b1f0e61cacc2569a18f84b40cd05cabe3bcf02628a6aa270"
+    },
+    "d1_layer_policy_summary.parquet": {
+      "bytes": 9844,
+      "sha256": "54171cd56873e19b7f7a4a6e00b0320f55e214ca2818c339b6d994bd59adc39e"
+    },
+    "d1_paired_parity_summary.parquet": {
+      "bytes": 4699,
+      "sha256": "d9f6b25197b9c25f9a9b4057a745bfc6b88ef3da375c1d039430ec157e690a01"
+    },
+    "d1_vjp_summary.parquet": {
+      "bytes": 6367,
+      "sha256": "88492c7f8f8309d98f83021f2b74cd4e043048dda0e6f63f2ed0e74ebf4ec0e4"
+    },
+    "regenerated_pr13_audit.json": {
+      "bytes": 643,
+      "sha256": "4990188411e40640010904c9da10c5faf08128b183bca3c7381be00d1250ca40"
+    }
+  },
+  "rates": [
+    384,
+    749
+  ],
+  "repair_input_hashes": {
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00/d1_exact_repair_allocation_experts.parquet": "17b9971352d7d9af545e535a39f92074be015ee4544c583a31b8ab6da2820e3e",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00/d1_exact_repair_allocation_groups.parquet": "30e3bc58a7c3b6cf48f38626637b6b7030b1c1b402f792fc4ce262c06adc494a",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00/d1_exact_repair_choices.parquet": "25179d5dd986ac2748b789e998b677c33f29a54931295276c3d36c9f48fbf439",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00/d1_exact_repair_delta.npz": "01135e1ff7a92c0bae1ec7c8d894efb77d9ce80f338fd49913b611dd110a9bce",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00/d1_exact_repair_facts.json": "5febf50f98bf09a58c385c97323920c7d7c5c3f057a80f5b2d68b09e8a2c1f2f",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer00/d1_exact_repair_metrics.parquet": "c18cf26ad6b3ccf09f935f7d5cdd981dc8a897eabf0afdd77da7bdf5cbdaceb7",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12/d1_exact_repair_allocation_experts.parquet": "63794e032ff0c77e20fb81e6914c347b595afef302021a7263eec465ea1041ce",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12/d1_exact_repair_allocation_groups.parquet": "a536fa47133720ce310885861c42fbde9399b65383e6361e25c2198baab955bc",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12/d1_exact_repair_choices.parquet": "3d7a2fab7a1ef2cca739557f5e3ed5b78b2f7ad5d80b2ad4b42537a404f38ad9",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12/d1_exact_repair_delta.npz": "266ed2ac9eef261c7b34036006376996aef8adaec4615106e2f775b8677a7012",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12/d1_exact_repair_facts.json": "c2637f43594b7ec0164cb199b762654adcd87ef652c7e668711fb9607d5a168e",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer12/d1_exact_repair_metrics.parquet": "2e504150b23fb70721d65715bf6f1da65ac866a2b68fb8c5c9d66a1bbc4fba58",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23/d1_exact_repair_allocation_experts.parquet": "5cabe483c43eff4b82aab0714a43f8a779cc341aac0d60d3bc3efea999a2c24d",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23/d1_exact_repair_allocation_groups.parquet": "7e5426cc2b78c7c83606a9303d9022b5497c0372439d19684ecfca94b5fbc789",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23/d1_exact_repair_choices.parquet": "fbadbe14d4760d1bf39adaa8bdb4384da97dc7691a1f6a41141cf24f10b4f463",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23/d1_exact_repair_delta.npz": "ac96967c2999cf4554f1432fd4187b8ace49d915813bd84d72d197fd2a3e4346",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23/d1_exact_repair_facts.json": "0baf982b077eacb3b849ff068609bf83df043685b73ece48391d7dafb15e884f",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_384_layer23/d1_exact_repair_metrics.parquet": "49a4e540f20931f72f41376bc3cf2ce5f71e77e05de7f38f82da2b8f28cfa995",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12/d1_exact_repair_allocation_experts.parquet": "045135c1db8b787e844dabd3e654b6f97ddae52d93f645f13f38b509058e5d66",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12/d1_exact_repair_allocation_groups.parquet": "c629f4a17389179a519b05c088270bc5a4748669af2754b011bafb73c07f8ae9",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12/d1_exact_repair_choices.parquet": "b68ee9277dc52b3a7791d771ec18254738f8d6faf70fbe089bd35b15d0643994",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12/d1_exact_repair_delta.npz": "1f52e538146a781644c07b8be6d3e93876e86e4ea8fc927ddc00ff7b078fe700",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12/d1_exact_repair_facts.json": "9d50bb510de4154a7c6d16606212577fc869380714a10e4c7c14e9cddc671ac9",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer12/d1_exact_repair_metrics.parquet": "ccfaa8cc6775b2b3a5368b941e07d28e30e084714fe65e041618358fb5f05422",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23/d1_exact_repair_allocation_experts.parquet": "2d7336f0e24b884c6201697b5ef56ecb3ec94c1779c3ea3e74de6d6b8fc05745",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23/d1_exact_repair_allocation_groups.parquet": "8166be3e5d184316c22e6a0a7deba4ed839a687c7d899b007fba8ffd9c104393",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23/d1_exact_repair_choices.parquet": "613e72885945c7504e217ab350a23bdd91c74acad0c92930b3b3e9fde4935aae",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23/d1_exact_repair_delta.npz": "fcb6477520c6724efc2066e75bc94a67078343fd26972ad0880a43ef439d2002",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23/d1_exact_repair_facts.json": "979e00bf5e006c6524a04ea2562ef9bffe6698a3bda9885ad173506412a6fc44",
+    "/workspace/pr13_d1_layer_slice_pilot_20260824_v1/results/exact_repair_749_layer23/d1_exact_repair_metrics.parquet": "2c21062d059e078e3f745ca6dea9e433990c91dfbc8667bf24e9923bff478e87"
+  },
+  "requests": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "reranking_order": [
+    "fewest_exact_d1_crossings",
+    "lowest_local_qenergy",
+    "lowest_routing_mass_loss",
+    "fewest_pages",
+    "deterministic_policy_name"
+  ],
+  "reranking_scope": "exact_request_level_d1_finalists_oracle_only",
+  "runtime_benchmark": {
+    "device": "cuda",
+    "device_name": "NVIDIA GeForce RTX 3090",
+    "experts": 8,
+    "latent_rank": 8,
+    "legal_q2_transitions": 12288,
+    "numpy_scorer": {
+      "median_ms": 6.091596558690071,
+      "minimum_ms": 5.895938724279404,
+      "p90_ms": 6.2788307666778564,
+      "samples": 50
+    },
+    "python_version": "3.12.3",
+    "shortlist": 128,
+    "tensor_scorer": {
+      "median_ms": 0.8516330271959305,
+      "minimum_ms": 0.8337888866662979,
+      "p90_ms": 0.8682765066623688,
+      "samples": 500
+    },
+    "torch_version": "2.8.0+cu128",
+    "units_per_expert": 512
+  },
+  "schema": "pr13_d1_layer_slice_analysis_v1",
+  "terminal_kl_claim": false,
+  "test_rows_admitted_or_used": false
+}

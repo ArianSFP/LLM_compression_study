@@ -1,0 +1,26 @@
+{
+  "rows": [
+    {
+      "delta_bit_identical": true,
+      "max_abs_delta": 0.0,
+      "path": "results/oracle_refined_384_layer00/layer_00",
+      "rate": 384,
+      "regenerated_expert_rows": 256
+    },
+    {
+      "delta_bit_identical": true,
+      "max_abs_delta": 0.0,
+      "path": "results/oracle_refined_384_layer23/layer_23",
+      "rate": 384,
+      "regenerated_expert_rows": 256
+    },
+    {
+      "delta_bit_identical": true,
+      "max_abs_delta": 0.0,
+      "path": "results/oracle_refined_749_layer23/layer_23",
+      "rate": 749,
+      "regenerated_expert_rows": 256
+    }
+  ],
+  "schema": "pr13_d1_regeneration_audit_v1"
+}

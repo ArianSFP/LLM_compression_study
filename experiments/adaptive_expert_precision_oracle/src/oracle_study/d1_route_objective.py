@@ -90,8 +90,11 @@ class D1BoundaryProblem:
             margins, gradients, severity, temperature, safety,
         )):
             raise ValueError("D1 boundary values must be finite")
-        if np.any(margins <= 0.0):
-            raise ValueError("exact-Q4 selected/outsider margins must be positive")
+        # BF16 router logits can tie exactly at the top-k boundary. The
+        # baseline top-k operation still supplies a deterministic membership
+        # label, so zero is a valid (maximally fragile) boundary.
+        if np.any(margins < 0.0):
+            raise ValueError("exact-Q4 selected/outsider margins must be nonnegative")
         if np.any(severity < 0.0) or np.any(temperature <= 0.0) or np.any(safety < 0.0):
             raise ValueError("D1 loss scales are invalid")
 
