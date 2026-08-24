@@ -656,7 +656,7 @@ Only after the downstream-KL gate succeeds should this work be described as a
 quality improvement to PR #13 rather than a successful immediate-route oracle.
 
 That gate is frozen separately in
-[qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json).
+[qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json](configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json).
 It replays the five policy tiers through the exact downstream tail in live and
 fully frozen routing, reports layers 1/4/6 separately from the 0/12/23 eta
 calibration layers, and includes the metadata-matched 360/725 page caps. The

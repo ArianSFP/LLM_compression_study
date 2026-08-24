@@ -38,7 +38,7 @@ def test_frozen_expansion_and_tail_configs_validate() -> None:
         EXPERIMENT / "configs/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1.json"
     ).read_text())
     tail = json.loads((
-        EXPERIMENT / "configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json"
+        EXPERIMENT / "configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json"
     ).read_text())
     validate_expansion_config(expansion)
     validate_tail_config(tail)

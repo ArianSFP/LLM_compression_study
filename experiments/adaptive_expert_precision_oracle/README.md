@@ -36,13 +36,20 @@ The completed six-layer/two-rate expansion, all compact artifacts, and the
 held-out result are in the
 [exact-prefill decode result package](results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/README.md)
 and [methodology report](results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/analysis/D1_EXACT_PREFILL_DECODE_SLICE_REPORT.md).
-The next product-facing gate is current-token downstream-tail KL from a true
-exact-prefix full-model cache.
-The older
-[single-injection downstream-tail configuration](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json)
-and [methodology](D1_DOWNSTREAM_TAIL_KL_METHODS_20260824.md) remain immutable
-provenance for the no-cache full-sequence formulation, but must not be run
-unchanged as product-facing decode evidence.
+The product-facing terminal-quality gate is now frozen in the
+[cached-decode tail config](configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json)
+and [methodology](D1_CACHED_DECODE_TAIL_KL_METHODS_20260824.md). It processes
+one token behind a private exact-prefix cache, retains the post-token hybrid
+cache, and reevaluates complete selected precision states on the live cached
+activation. The matched 360/725 cells and evidence are in the
+[matched-rate package](results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/README.md).
+Allocation validation is complete on the 3090; terminal execution requires an
+RTX PRO 6000 96 GB.
+
+The older [full-sequence tail config](configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json)
+and [legacy methodology](D1_FULL_SEQUENCE_TAIL_KL_LEGACY_METHODS_20260824.md)
+remain provenance only. They inject all admitted positions without a decode
+cache and must not be cited as product-facing decode evidence.
 
 Reproduce the synthetic allocator microbenchmark with:
 

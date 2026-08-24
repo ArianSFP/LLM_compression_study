@@ -162,7 +162,7 @@ The immutable reproduction configuration for the promoted result is
 The generic all-layer/four-rate objective configuration above remains a design
 envelope and must not be cited as the executed six-layer experiment. The next
 single-injection downstream-tail quality gate is frozen independently in
-[qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json).
+[qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json](configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json).
 
 The implemented paired slice runner evaluated complete column-generated PR #13
 frontiers at layers 0, 12, and 23. It used all 32 validation groups per layer,
@@ -213,11 +213,13 @@ compute/byte accounting. `run_d1_slice_oracle_pilot.py` supplies the Qwen
 model-host exact VJP and paired pre-residual D1 replay path;
 `run_d1_exact_request_repair.py` performs the explicitly oracle-only
 causal-prefix finalist repair. Exact downstream-tail replay is implemented and
-frozen in [the tail methodology](D1_DOWNSTREAM_TAIL_KL_METHODS_20260824.md);
-terminal results remain a pending hardware gate for the older no-cache
-full-sequence formulation. Because the product now supplies exact prefill,
-that pending run is not the next product-facing gate and must not be launched
-unchanged. Its decode-only successor is frozen in
+frozen in [the cached-decode tail methodology](D1_CACHED_DECODE_TAIL_KL_METHODS_20260824.md);
+terminal results remain a pending PRO 6000 hardware gate. The cached runner
+uses one current token behind a private full hybrid prefix cache and
+reevaluates selected precision states on the live activation. The older
+no-cache full-sequence implementation remains explicit legacy provenance and
+must not be launched as product-facing evidence. The decode-only mechanism
+foundation is frozen in
 [the exact-prefill decode protocol](D1_EXACT_PREFILL_DECODE_PROTOCOL_20260824.md).
 The deployable signed-effect predictor, uncertainty calibration, and
 sequential certificate study remain future gates.

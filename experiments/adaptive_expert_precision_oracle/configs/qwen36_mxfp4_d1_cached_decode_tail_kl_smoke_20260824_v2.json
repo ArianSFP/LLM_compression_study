@@ -1,0 +1,184 @@
+{
+  "run_id": "qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2",
+  "experiment": "exact_prefix_cached_single_token_downstream_tail_d1_policy_smoke",
+  "schema": "pr13_d1_cached_decode_tail_kl_config_v2",
+  "implementation_parent_commit": "cf88653723308498d8349b6919486322718f6ad4",
+  "base_decode_slice_config": "configs/qwen36_mxfp4_d1_exact_prefill_decode_slice_pilot_20260824_v2.json",
+  "base_decode_slice_config_sha256": "540bd2eef524680cdc3036c59149ab67f82363ec38f691fe3755aa176f63f243",
+  "base_decode_compact_package_manifest_sha256": "443e3bf124a137e1132fc292d720a6551248074f2725d7a96c922d3f695bd89e",
+  "base_same_host_controls_commit": "64e94ace22f42734941bb3b4fd6702b8ff380295",
+  "base_all_layer_pr13_commit": "089deb4bd41eb71864779ced0cbb3db41e9dcb63",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "injection_layers": [0, 1, 4, 6, 12, 23],
+  "validation_request_ids": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "position_mask": {
+    "source": "teacher_forced_validation_tokens_used_only_as_isolated_decode_surrogates",
+    "rule": "range(1,sequence_length-exclude_final_positions)",
+    "minimum_exact_prefix_tokens": 1,
+    "exclude_final_positions": 4,
+    "request_sequence_lengths": {
+      "mxfp4-confirm-006": 15,
+      "mxfp4-confirm-007": 13,
+      "mxfp4-confirm-008": 16
+    },
+    "admitted_positions_per_request": {
+      "mxfp4-confirm-006": 10,
+      "mxfp4-confirm-007": 8,
+      "mxfp4-confirm-008": 11
+    },
+    "expected_groups_per_layer": 29,
+    "cross_position_delta_coupling": false
+  },
+  "mechanism_page_caps": [384, 749],
+  "matched_runtime_metadata_page_caps": [360, 725],
+  "page_caps": [360, 384, 725, 749],
+  "page_cap_accounting": {
+    "360": {
+      "point_type": "d1_joint_plus_uncertainty_metadata_matched",
+      "traffic_equivalent_pr13_pages": 384,
+      "charged_bpw": 0.5234781901041666
+    },
+    "384": {
+      "point_type": "oracle_mechanism_unadjusted_metadata",
+      "traffic_equivalent_pr13_pages": 384,
+      "charged_bpw": 0.5234781901041666
+    },
+    "725": {
+      "point_type": "d1_joint_plus_uncertainty_metadata_matched",
+      "traffic_equivalent_pr13_pages": 749,
+      "charged_bpw": 0.9987386067708334
+    },
+    "749": {
+      "point_type": "oracle_mechanism_unadjusted_metadata",
+      "traffic_equivalent_pr13_pages": 749,
+      "charged_bpw": 0.9987386067708334
+    }
+  },
+  "policies": [
+    "pr13_router_square",
+    "exact_combined_local",
+    "calibration_selected_fixed_d1",
+    "frontier_companion_d1",
+    "exact_token_oracle"
+  ],
+  "d1_source_policy_by_rate": {
+    "360": {
+      "fixed": "d1_strict_tau_0.0625_eta_0.001",
+      "companion": "d1_strict_tau_0.0625_eta_0.0005",
+      "companion_reason": "adjacent_lower_local_damage_policy"
+    },
+    "384": {
+      "fixed": "d1_strict_tau_0.0625_eta_0.001",
+      "companion": "d1_strict_tau_0.0625_eta_0.0005",
+      "companion_reason": "adjacent_lower_local_damage_policy"
+    },
+    "725": {
+      "fixed": "d1_strict_tau_0.0625_eta_0.0001",
+      "companion": "d1_strict_tau_0.0625_eta_0.0005",
+      "companion_reason": "zero_crossing_six_layer_frontier_policy"
+    },
+    "749": {
+      "fixed": "d1_strict_tau_0.0625_eta_5e-05",
+      "companion": "d1_strict_tau_0.0625_eta_0.00025",
+      "companion_reason": "zero_crossing_six_layer_frontier_policy"
+    }
+  },
+  "fixed_d1_calibration": {
+    "candidate_eta": [0.0, 0.00005, 0.0001, 0.00025, 0.0005, 0.001],
+    "temperature": 0.0625,
+    "calibration_layers": [0, 12, 23],
+    "held_out_layers": [1, 4, 6],
+    "selection_order": [
+      "fewest_exact_d1_crossings",
+      "fewest_membership_pairs_changed",
+      "lowest_routing_mass_lost",
+      "lowest_mean_local_qenergy",
+      "fewest_mean_pages",
+      "deterministic_policy_name"
+    ],
+    "held_out_labels_not_used_for_fixed_policy": true
+  },
+  "decode_execution": {
+    "prefix": "native_full_model_exact_q4_sequential_cached_decode",
+    "query_length": 1,
+    "candidate_prefix_cache": "deep_clone_complete_exact_prefix",
+    "process_before_injection": "current_token_exactly_through_layers_0_to_l_minus_1",
+    "injection": "replace_only_current_token_routed_moe_output_before_shared_expert_and_residual",
+    "process_after_injection": "same_current_token_through_layers_l_plus_1_to_39",
+    "terminal_metric_scope": "current_token_only",
+    "retain_post_token_cache": true,
+    "candidate_cache_reused": false,
+    "provisional_or_speculative_pass": false
+  },
+  "live_reconstruction": {
+    "candidate_delta": "complete_selected_states_reevaluated_on_live_cached_activation",
+    "stored_slice_delta": "transfer_diagnostic_only",
+    "activation_dependence": "d_p(x)_is_recomputed_for_each_current_token",
+    "router_weights": "actual_live_bf16_execution_weights",
+    "route_set_match_required": true,
+    "q4_routed_max_abs_atol": 0.125,
+    "expert_decode_workers": 8
+  },
+  "route_modes": ["live", "fully_frozen"],
+  "dose_alpha": 1.0,
+  "delta_sign": "approximate_minus_exact_q4",
+  "exact_token_oracle_scope": "exact_3090_slice_D1_label_transfer_diagnostic_not_terminal_KL_upper_bound",
+  "zero_dose_gates": {
+    "same_process_repeated_baseline_bit_identical": true,
+    "current_injection_hidden_max_abs_atol": 0.0,
+    "all_downstream_router_logits_max_abs_atol": 0.0,
+    "terminal_logits_max_abs_atol": 0.0,
+    "full_attention_key_value_cache_max_abs_atol": 0.0,
+    "deltanet_convolution_cache_max_abs_atol": 0.0,
+    "deltanet_recurrent_cache_max_abs_atol": 0.0
+  },
+  "metrics": [
+    "q4_to_candidate_current_token_logit_kl",
+    "current_token_delta_nll",
+    "current_token_final_hidden_mse",
+    "downstream_route_churn",
+    "live_minus_frozen_logit_kl",
+    "post_token_attention_kv_cache_error",
+    "post_token_deltanet_convolution_cache_error",
+    "post_token_deltanet_recurrent_cache_error",
+    "source_and_live_delta_mse_and_cosine",
+    "live_local_qenergy"
+  ],
+  "expected_grid": {
+    "quality_rows": 6960,
+    "propagation_rows": 218080,
+    "logical_zero_dose_rows": 1392,
+    "full_model_current_token_forwards_current_implementation": 9816
+  },
+  "mechanism_cell_dir_template": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_{rate}_layer{layer:02d}/layer_{layer:02d}",
+  "matched_cell_dir_template": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_{rate}_layer{layer:02d}/layer_{layer:02d}",
+  "matched_raw_manifest": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/artifact_hashes.sha256",
+  "matched_raw_manifest_sha256": "650fcffbd1e07f859764ab76003fc22d655f338e595f97da04097bcf1c3dc3a2",
+  "matched_raw_manifest_files": 132,
+  "output_root": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v2",
+  "hardware_execution_path": {
+    "required_gpu_class": "NVIDIA_RTX_PRO_6000_96GB_same_host_class",
+    "required_gpu_name_substring": "RTX PRO 6000",
+    "minimum_gpu_memory_gib": 90,
+    "full_model_load": "dequantized_bfloat16_device_map_cuda0",
+    "attention_implementation": "eager",
+    "experts_implementation": "eager",
+    "cache": "complete_native_hybrid_cache_with_KV_conv_and_recurrent_state"
+  },
+  "smoke_request_count": 3,
+  "minimum_requests_before_quality_claim": 64,
+  "preferred_requests_before_quality_claim": 128,
+  "s0_in_scope": false,
+  "signed_effect_predictor_in_scope": false,
+  "route_certification_in_scope": false,
+  "d2_d4_objectives_models_or_evaluation_in_scope": false,
+  "joint_all_layer_compression_in_scope": false,
+  "generated_multi_token_rollout_in_scope": false,
+  "test_rows_admitted_or_used": false,
+  "scientific_boundary": "Three-request exact-prefix cached single-token smoke test. One layer is injected per candidate. It tests allocation policy effects on D1 and terminal quality, not a deployable predictor, joint all-layer model, generated rollout, or general quality claim."
+}

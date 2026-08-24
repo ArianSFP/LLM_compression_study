@@ -1,4 +1,12 @@
-# D1 single-injection downstream-tail KL methodology
+# Legacy D1 no-cache full-sequence tail methodology
+
+> **Legacy provenance only.** This design injects all admitted request
+> positions together, executes without a decode cache, and averages quality
+> over the whole request. It predates the exact-prefill product contract and
+> must not be run or cited as product-facing cached-decode evidence. See
+> [the cached-decode methodology](D1_CACHED_DECODE_TAIL_KL_METHODS_20260824.md)
+> for the replacement experiment.
+
 
 ## Question and scientific boundary
 
@@ -43,7 +51,7 @@ the completed expansion. The standalone validator checks the complete 12-cell
 raw grid, sidecar hashes, request order and masks, candidate width, eta,
 temperature, frontier mode, and GPU identity.
 
-[The downstream-tail config](configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json)
+[The downstream-tail config](configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json)
 cryptographically binds that expansion config and freezes the tail comparison,
 quality gate, hardware path, and artifact locations. Its SHA-256 is
 `87a272351f6b87ca4e838730bfcf1103432755cc08865d874fa03b581ce621e0`.
@@ -196,21 +204,21 @@ descriptors, not confidence intervals.
 After the matched 360/725 allocation and repair cells exist on network storage:
 
 ```bash
-PYTHONPATH=src python scripts/run_d1_downstream_tail_kl.py \
+PYTHONPATH=src python scripts/run_d1_full_sequence_tail_kl_legacy.py \
   --phase validate \
-  --config configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json
+  --config configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json
 
-PYTHONPATH=src python scripts/run_d1_downstream_tail_kl.py \
+PYTHONPATH=src python scripts/run_d1_full_sequence_tail_kl_legacy.py \
   --phase run \
-  --config configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json \
+  --config configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json \
   --checkpoint /workspace/pr13_average_rate_all_layers_20260822_v1/inputs/checkpoint
 
-PYTHONPATH=src python scripts/run_d1_downstream_tail_kl.py \
+PYTHONPATH=src python scripts/run_d1_full_sequence_tail_kl_legacy.py \
   --phase finalize \
-  --config configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json
+  --config configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json
 
-PYTHONPATH=src python scripts/analyze_d1_downstream_tail_kl.py \
-  --config configs/qwen36_mxfp4_d1_downstream_tail_kl_smoke_20260824_v1.json \
+PYTHONPATH=src python scripts/analyze_d1_full_sequence_tail_kl_legacy.py \
+  --config configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json \
   --input /workspace/pr13_d1_downstream_tail_kl_smoke_20260824_v1 \
   --output /workspace/pr13_d1_downstream_tail_kl_smoke_20260824_v1/analysis
 ```
