@@ -17,8 +17,16 @@ See [the frozen protocol](D1_ROUTE_OBJECTIVE_PROTOCOL.md), the
 and the [Experiment B configuration](configs/qwen36_mxfp4_d1_runtime_controller.json).
 The implementation supplies objective/search, dynamic-latent, certification,
 metric, accounting, vectorized reference, and tensor-resident shortlist
-primitives. It contains no D2--D4 objective or runtime model. Reproduce the
-synthetic allocator microbenchmark with:
+primitives. It contains no D2--D4 objective or runtime model.
+
+The promoted stratified slice result covers layers 0, 1, 4, 6, 12, and 23 at
+384 and 749 pages/expert. Historical PR #13 changes 20/192 and 11/192 exact D1
+top-8 sets; the exact request-coupled D1 oracle changes 1/192 and 0/192. See
+the [complete methodology and evidence ledger](D1_STRATIFIED_LAYER_SLICE_EXPANSION_20260824.md),
+the [generated report](results/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1/analysis/D1_LAYER_SLICE_PILOT_REPORT.md),
+and the [compact artifact package](results/qwen36_mxfp4_d1_layer_slice_expansion_20260824_v1/README.md).
+
+Reproduce the synthetic allocator microbenchmark with:
 
 ```bash
 python scripts/benchmark_d1_transition_scorer.py \

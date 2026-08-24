@@ -146,6 +146,17 @@ latency must be measured before a non-bottleneck claim.
 
 ## RTX 3090 layer-slice result (2026-08-24)
 
+The original three-layer result below was subsequently expanded to layers 0,
+1, 4, 6, 12, and 23 at both 384 and 749 pages/expert. In the balanced
+six-layer result, PR #13 changes 20/192 and 11/192 exact D1 top-8 sets; the
+exact request-coupled repair changes 1/192 and 0/192. Layer 6 exercises a
+full-attention next-layer path. The complete sampling, implementation, parity,
+fixed-policy results, runtime accounting, artifacts, and limitations are in
+[the stratified expansion methodology and evidence ledger](D1_STRATIFIED_LAYER_SLICE_EXPANSION_20260824.md).
+
+The following paragraphs document the earlier promotion sequence and remain
+useful provenance for the expansion.
+
 The implemented paired slice runner evaluated complete column-generated PR #13
 frontiers at layers 0, 12, and 23. It used all 32 validation groups per layer,
 true pre-residual replacement, BF16 execution weights, exact full-VJP labels,
