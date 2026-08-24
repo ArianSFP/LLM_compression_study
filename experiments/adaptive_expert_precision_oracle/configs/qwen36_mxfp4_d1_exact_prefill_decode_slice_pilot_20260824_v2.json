@@ -1,0 +1,177 @@
+{
+  "run_id": "qwen36_mxfp4_d1_exact_prefill_decode_slice_pilot_20260824_v2",
+  "experiment": "A_exact_prefill_cached_single_token_decode_d1_objective_oracle",
+  "schema": "pr13_d1_exact_prefill_decode_slice_config_v2",
+  "implementation_parent_commit": "dec1c513f7e68aac399e5120e7c78f24564d1329",
+  "base_d1_expansion_commit": "197028e8759148aa6fc8548c50db4f6319fc53bb",
+  "base_same_host_controls_commit": "64e94ace22f42734941bb3b4fd6702b8ff380295",
+  "base_all_layer_pr13_commit": "089deb4bd41eb71864779ced0cbb3db41e9dcb63",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "product_contract": {
+    "prefill": "separate_exact_mechanism_populates_the_complete_decoder_cache",
+    "compression_begins": "first_generated_decode_token",
+    "d1_definition": "same_generated_token_next_layer_router_(t,l)_to_(t,l+1)",
+    "prefix_mutation_by_candidate": false,
+    "temporal_cache_drift": "future_outcome_metric_not_a_D2_D4_objective"
+  },
+  "reference_endpoint": {
+    "pilot": "all_q4_reconstructed_model_boundary",
+    "production_exact_prefill": "bf16_or_other_exact_mechanism_must_be_rebased_with_a_new_full_model_capture",
+    "caveat": "the_pilot_uses_existing_all_q4_validation_states_as_an_exact_prefix_surrogate"
+  },
+  "pilot_layers": [0, 6],
+  "promotable_expansion_layers": [0, 1, 4, 6, 12, 23],
+  "next_layer_mixer_path": {
+    "0": "native_linear_attention_layer_1_cached_decode",
+    "1": "native_linear_attention_layer_2_cached_decode",
+    "4": "native_linear_attention_layer_5_cached_decode",
+    "6": "native_full_attention_layer_7_cached_decode",
+    "12": "native_linear_attention_layer_13_cached_decode",
+    "23": "native_linear_attention_layer_24_cached_decode"
+  },
+  "mechanism_page_caps": [384, 749],
+  "matched_runtime_metadata_page_caps": [360, 725],
+  "charged_bpw": {
+    "384": 0.5234781901041666,
+    "749": 0.9987386067708334
+  },
+  "group_page_budget_multiplier": 8,
+  "burst_cap_pages_per_expert": 1536,
+  "frontier_mode": "column_generated_rate_specific_complete_options",
+  "complete_frontier_options_only": true,
+  "validation_request_ids": [
+    "mxfp4-confirm-006",
+    "mxfp4-confirm-007",
+    "mxfp4-confirm-008"
+  ],
+  "position_mask": {
+    "source": "existing_teacher_forced_validation_tokens_used_only_as_isolated_decode_surrogates",
+    "rule": "range(1,sequence_length-exclude_final_positions)",
+    "minimum_exact_prefix_tokens": 1,
+    "exclude_final_positions": 4,
+    "request_sequence_lengths": {
+      "mxfp4-confirm-006": 15,
+      "mxfp4-confirm-007": 13,
+      "mxfp4-confirm-008": 16
+    },
+    "admitted_positions_per_request": {
+      "mxfp4-confirm-006": 10,
+      "mxfp4-confirm-007": 8,
+      "mxfp4-confirm-008": 11
+    },
+    "expected_groups_per_layer": 29,
+    "cross_position_delta_coupling": false
+  },
+  "decode_execution": {
+    "cache_type": "transformers_DynamicCache_created_from_text_config",
+    "prefix": "exact_reconstructed_current_layer_outputs_before_the_current_token",
+    "current_query_length": 1,
+    "use_cache": true,
+    "candidate_cache_policy": "deep_clone_exact_prefix_for_every_baseline_and_candidate",
+    "vjp_autograd": "native_cached_forward_with_private_saved_tensor_clones_before_in_place_cache_commits",
+    "linear_attention_state": "conv_and_recurrent_state_cloned_and_compared",
+    "full_attention_state": "key_and_value_cache_cloned_and_compared",
+    "paired_cached_baseline_bit_identical_required": true,
+    "candidate_prefix_state_must_remain_identical": true,
+    "cached_vs_full_sequence_router_difference": "reported_diagnostic_not_a_failure_gate",
+    "provisional_or_speculative_pass": false
+  },
+  "boundary_candidates": {
+    "selected_router_ranks_one_indexed": [6, 7, 8],
+    "outsider_router_ranks_one_indexed": [9, 10, 11, 12, 13, 14, 15, 16],
+    "pair_count_per_group": 24,
+    "selection_rule": "paired_cached_q4_top8_then_closest_eight_outsiders"
+  },
+  "loss": {
+    "name": "one_sided_softplus_on_paired_cached_q4_D1_margins",
+    "temperature": 0.0625,
+    "safety_margin": 0.0,
+    "severity": "unit_strict_top8",
+    "precision_effect_sign": "approximate_minus_exact_q4"
+  },
+  "local_guard": {
+    "form": "J_local_le_J_local_star_plus_eta_times_J_q2",
+    "eta_sweep": [0.0, 0.00005, 0.0001, 0.00025, 0.0005, 0.001],
+    "weight_representation": "fp32_normalized_selector_weights"
+  },
+  "fixed_d1_calibration": {
+    "calibration_layers": [0, 12, 23],
+    "held_out_layers": [1, 4, 6],
+    "selection_order": [
+      "fewest_exact_d1_crossings",
+      "fewest_membership_pairs_changed",
+      "lowest_total_routing_mass_lost",
+      "lowest_mean_local_qenergy_damage",
+      "fewest_mean_selected_pages",
+      "deterministic_policy_name"
+    ],
+    "select_independently_per_rate": true
+  },
+  "d1_weight_representation": "bf16_execution_weights",
+  "search": {
+    "coarse_geometry_cache": "rate_independent_pickle_with_exact_group_and_input_hash_identity_then_rate_specific_column_generation",
+    "frontier_coordinate_sweeps": 8,
+    "frontier_local_shortlist": 8,
+    "frontier_local_swap_units": 3,
+    "frontier_local_max_passes": 6,
+    "column_generation_max_rounds": 3,
+    "column_generation_price_multipliers": [0.5, 2.0],
+    "d1_group_coordinate_sweeps": 8,
+    "d1_group_pair_passes": 8,
+    "frontier_workers": 16
+  },
+  "comparison_policies": [
+    "pr13_router_square",
+    "exact_combined_local",
+    "d1_strict_fixed_eta",
+    "d1_exact_token_reranked"
+  ],
+  "oracle_labels": [
+    "paired_cached_q4_D1_route",
+    "exact_token_dependent_complete_option_delta",
+    "exact_cache_conditioned_D1_full_vjp_margin_sensitivity"
+  ],
+  "metrics": [
+    "exact_D1_top8_crossing",
+    "membership_pairs_changed",
+    "routing_mass_lost",
+    "router_logit_mse",
+    "current_hidden_mse",
+    "next_mixer_cache_mse",
+    "local_qenergy_damage",
+    "paired_cache_repeat_parity",
+    "cached_vs_full_sequence_router_diagnostic"
+  ],
+  "hardware_execution_path": {
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_memory_gib": 24,
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128",
+    "cuda_runtime": "12.8",
+    "transformers": "5.15.0",
+    "attention_implementation": "eager",
+    "experts_implementation": "eager",
+    "checkpoint_loading": "tensor_local_current_shared_expert_and_native_next_layer_cached_pre_moe_router_slice"
+  },
+  "future_exact_prefill_handoff_requirements": [
+    "per_layer_attention_KV_cache",
+    "per_layer_DeltaNet_convolution_state",
+    "per_layer_DeltaNet_recurrent_state",
+    "absolute_decode_position_and_cache_position",
+    "attention_mask_and_position_id_convention",
+    "RoPE_parameters",
+    "dtype_and_backend",
+    "reference_current_hidden_and_router_logits_for_parity"
+  ],
+  "s0_in_scope": false,
+  "signed_effect_predictor_in_scope": false,
+  "route_certification_in_scope": false,
+  "d2_d4_objectives_models_or_evaluation_in_scope": false,
+  "terminal_tail_quality_in_scope": false,
+  "temporal_multi_token_rollout_in_scope": false,
+  "test_rows_admitted_or_used": false,
+  "raw_result_root": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2",
+  "scientific_boundary": "Three-request cached single-token decode layer-slice mechanism pilot. Existing prompt tokens are isolated as decode surrogates behind an exact reconstructed prefix cache. It makes no generated-rollout, terminal-KL, full-model exact-prefill-handoff, all-layer, or runtime-controller claim."
+}

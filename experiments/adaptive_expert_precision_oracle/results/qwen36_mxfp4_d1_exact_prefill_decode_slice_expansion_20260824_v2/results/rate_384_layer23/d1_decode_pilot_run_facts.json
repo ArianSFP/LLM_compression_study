@@ -1,0 +1,242 @@
+{
+  "completed": true,
+  "decode_core_sha256": "bc5b93741dd0459b037fef3fd1a722991f29513b074a14cfdaa2d9e5c535e421",
+  "layers": {
+    "23": {
+      "cache_state_parity_required": true,
+      "coarse_geometry_cache": {
+        "identity": {
+          "group_identity": [
+            [
+              "mxfp4-confirm-006",
+              1
+            ],
+            [
+              "mxfp4-confirm-006",
+              2
+            ],
+            [
+              "mxfp4-confirm-006",
+              3
+            ],
+            [
+              "mxfp4-confirm-006",
+              4
+            ],
+            [
+              "mxfp4-confirm-006",
+              5
+            ],
+            [
+              "mxfp4-confirm-006",
+              6
+            ],
+            [
+              "mxfp4-confirm-006",
+              7
+            ],
+            [
+              "mxfp4-confirm-006",
+              8
+            ],
+            [
+              "mxfp4-confirm-006",
+              9
+            ],
+            [
+              "mxfp4-confirm-006",
+              10
+            ],
+            [
+              "mxfp4-confirm-007",
+              1
+            ],
+            [
+              "mxfp4-confirm-007",
+              2
+            ],
+            [
+              "mxfp4-confirm-007",
+              3
+            ],
+            [
+              "mxfp4-confirm-007",
+              4
+            ],
+            [
+              "mxfp4-confirm-007",
+              5
+            ],
+            [
+              "mxfp4-confirm-007",
+              6
+            ],
+            [
+              "mxfp4-confirm-007",
+              7
+            ],
+            [
+              "mxfp4-confirm-007",
+              8
+            ],
+            [
+              "mxfp4-confirm-008",
+              1
+            ],
+            [
+              "mxfp4-confirm-008",
+              2
+            ],
+            [
+              "mxfp4-confirm-008",
+              3
+            ],
+            [
+              "mxfp4-confirm-008",
+              4
+            ],
+            [
+              "mxfp4-confirm-008",
+              5
+            ],
+            [
+              "mxfp4-confirm-008",
+              6
+            ],
+            [
+              "mxfp4-confirm-008",
+              7
+            ],
+            [
+              "mxfp4-confirm-008",
+              8
+            ],
+            [
+              "mxfp4-confirm-008",
+              9
+            ],
+            [
+              "mxfp4-confirm-008",
+              10
+            ],
+            [
+              "mxfp4-confirm-008",
+              11
+            ]
+          ],
+          "input_hashes": {
+            "base_runner": "bb9a9fce9bd5ca2a568616ac27cb4c7825e5479d5a3c130180d0e3ff60bcdb1c",
+            "capture_mxfp4-confirm-006": "6b0eab21a9628c725805e48d03dfb93f0d2fafc8e4ec5e7ae60b467834b06c98",
+            "capture_mxfp4-confirm-007": "7c11e840eee8fc09a574f35718fd5291cf8de363b0557ee796c60e3796c3b33e",
+            "capture_mxfp4-confirm-008": "0e3bdc7d9314582291eb5f3aaf9efc32871dd5c9a0d6a5c0214b4a3daa304185",
+            "factor": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6",
+            "pr13_config": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+            "trees": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+          },
+          "layer": 23,
+          "schema": "pr13_d1_coarse_complete_option_geometry_cache_v1"
+        },
+        "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/cache/coarse_geometry_layer_23.pkl",
+        "sha256": "2853cc8264d8d461dcc3b91a6eb527dfd4024383e4f906d1570f82217cf4f1ea",
+        "status": "created"
+      },
+      "completed": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA GeForce RTX 3090",
+        "host": "1c286b37431c",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta": [
+        0.0,
+        5e-05,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 226200,
+          "sha256": "7c20236fdde0895f95149370ba18b0787c3b0bf1a828ff412aef410c19132326"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14440,
+          "sha256": "eb67819c7b0f60f328bd16ec106dfcbb2b0268711d9950f97505a624358b1a78"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "ce551fd1af2378c247356cbbff71ff045547ad24a06339441f9738178b1df9b8"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23308,
+          "sha256": "fa0f0d0bf1c9d0779b6674936b9464b0e2c2fd9fc02f310f452decbf2e33e8b2"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6132,
+          "sha256": "45b2a4488b8bceef02dca70d857f96389e53c94f281032b286bcb2183a114ad4"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1988230,
+          "sha256": "95fb46c0f9659c9c639cd32d4851a8528c4859192d0ed2a72a0357877f1ff174"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19604,
+          "sha256": "cc967f7301caef0b1dae2c36867f0a4ce354b3760c544c2e468e103cfa8a4765"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9510,
+          "sha256": "694f7eab66995a085a486930f808d20cc80a56961ad3fafce223c9fb8154583b"
+        }
+      },
+      "frontier_mode": "column_generated",
+      "groups": 29,
+      "historical_pr13_mode": "required",
+      "input_hashes": {
+        "capture_mxfp4-confirm-006": "6b0eab21a9628c725805e48d03dfb93f0d2fafc8e4ec5e7ae60b467834b06c98",
+        "capture_mxfp4-confirm-007": "7c11e840eee8fc09a574f35718fd5291cf8de363b0557ee796c60e3796c3b33e",
+        "capture_mxfp4-confirm-008": "0e3bdc7d9314582291eb5f3aaf9efc32871dd5c9a0d6a5c0214b4a3daa304185",
+        "checkpoint_index": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "factor": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6",
+        "historical_delta": "f6c463892a592cc16edcdc91c349afca23555a3842871e17170f9eae76aa8aec",
+        "pr13_config": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "same_host_config": "26129897498205d1d496d00539f66495406d7a4353a02d2304df314eadbca714",
+        "trees": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+      },
+      "layer": 23,
+      "minimum_prefix_tokens": 1,
+      "next_layer": 24,
+      "next_mixer": "linear_attention",
+      "paired_cached_baseline_bit_identical": true,
+      "policies": [
+        "d1_strict_tau_0.0625_eta_0",
+        "d1_strict_tau_0.0625_eta_0.0001",
+        "d1_strict_tau_0.0625_eta_0.00025",
+        "d1_strict_tau_0.0625_eta_0.0005",
+        "d1_strict_tau_0.0625_eta_0.001",
+        "d1_strict_tau_0.0625_eta_5e-05",
+        "exact_combined_local_column_generated_frontier",
+        "pr13_router_square_column_generated",
+        "regenerated_router_square_column_generated"
+      ],
+      "prompt_position_coupling_allowed": false,
+      "rates": [
+        384
+      ],
+      "schema": "pr13_d1_exact_prefill_decode_slice_oracle_v2",
+      "scientific_boundary": "Exact reconstructed-prefix cached single-token D1 slice surrogate. No full-model exact-prefill handoff, terminal KL, temporal rollout, D2-D4 objective, or runtime-controller claim.",
+      "single_current_token_injection": true,
+      "temperature": [
+        0.0625
+      ],
+      "test_rows_admitted_or_used": false,
+      "wall_seconds": 353.80102016590536
+    }
+  },
+  "objective_core_sha256": "f1ae0b1536cfe18de2dc56625f1403764bec56dd73c4c330309f62ff9f1c5895",
+  "runner_sha256": "843ca2be93755e302ecf0dd5682fa017adc7f4c7d59719fe94a79db350acc07a",
+  "schema": "pr13_d1_exact_prefill_decode_slice_oracle_v2",
+  "slice_core_sha256": "471a0b5ad9d938e3d7e55b1f464e3480040efe05f35137d18879441d82382c90",
+  "test_rows_admitted_or_used": false
+}

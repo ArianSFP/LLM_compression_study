@@ -1,0 +1,37 @@
+[layer 0] decoding 103 active experts
+[layer 0] decoded 16/103 experts
+[layer 0] decoded 32/103 experts
+[layer 0] decoded 48/103 experts
+[layer 0] decoded 64/103 experts
+[layer 0] decoded 80/103 experts
+[layer 0] decoded 96/103 experts
+[layer 0] decoded 103/103 experts
+[layer 0] building 29 exact option geometries
+[layer 0] built 8/29 geometries
+[layer 0] built 16/29 geometries
+[layer 0] built 24/29 geometries
+[layer 0] built 29/29 geometries
+[layer 0] column-generating 29 rate-384 geometries
+[layer 0] refined 8/29 geometries
+[layer 0] refined 16/29 geometries
+[layer 0] refined 24/29 geometries
+[layer 0] refined 29/29 geometries
+Traceback (most recent call last):
+  File "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/code/experiments/adaptive_expert_precision_oracle/scripts/run_d1_decode_slice_oracle.py", line 616, in <module>
+    main()
+  File "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/code/experiments/adaptive_expert_precision_oracle/scripts/run_d1_decode_slice_oracle.py", line 596, in main
+    facts = [run_layer(args, int(layer)) for layer in args.layers]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/code/experiments/adaptive_expert_precision_oracle/scripts/run_d1_decode_slice_oracle.py", line 469, in run_layer
+    problems, effects, gradient_rows = _decode_problems_and_effects(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/code/experiments/adaptive_expert_precision_oracle/scripts/run_d1_decode_slice_oracle.py", line 219, in _decode_problems_and_effects
+    gradient = torch.autograd.grad(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/autograd/__init__.py", line 503, in grad
+    result = _engine_run_backward(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/autograd/graph.py", line 829, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation: [torch.cuda.FloatTensor [1, 32, 128, 128]], which is output 0 of torch::autograd::CopyBackwards, is at version 2; expected version 1 instead. Hint: enable anomaly detection to find the operation that failed to compute its gradient, with torch.autograd.set_detect_anomaly(True).

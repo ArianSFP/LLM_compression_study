@@ -214,6 +214,10 @@ model-host exact VJP and paired pre-residual D1 replay path;
 `run_d1_exact_request_repair.py` performs the explicitly oracle-only
 causal-prefix finalist repair. Exact downstream-tail replay is implemented and
 frozen in [the tail methodology](D1_DOWNSTREAM_TAIL_KL_METHODS_20260824.md);
-terminal results remain a pending hardware gate. The deployable signed-effect
-predictor, uncertainty calibration, and sequential certificate study remain
-future gates.
+terminal results remain a pending hardware gate for the older no-cache
+full-sequence formulation. Because the product now supplies exact prefill,
+that pending run is not the next product-facing gate and must not be launched
+unchanged. Its decode-only successor is frozen in
+[the exact-prefill decode protocol](D1_EXACT_PREFILL_DECODE_PROTOCOL_20260824.md).
+The deployable signed-effect predictor, uncertainty calibration, and
+sequential certificate study remain future gates.

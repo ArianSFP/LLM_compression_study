@@ -1,0 +1,115 @@
+[layer 23] decoding 90 active experts
+[layer 23] decoded 16/90 experts
+[layer 23] decoded 32/90 experts
+[layer 23] decoded 48/90 experts
+[layer 23] decoded 64/90 experts
+[layer 23] decoded 80/90 experts
+[layer 23] decoded 90/90 experts
+[layer 23] building 29 exact option geometries
+[layer 23] built 8/29 geometries
+[layer 23] built 16/29 geometries
+[layer 23] built 24/29 geometries
+[layer 23] built 29/29 geometries
+[layer 23] wrote coarse geometry cache /workspace/pr13_d1_decode_slice_pilot_20260824_v2/cache/coarse_geometry_layer_23.pkl
+[layer 23] column-generating 29 rate-384 geometries
+[layer 23] refined 8/29 geometries
+[layer 23] refined 16/29 geometries
+[layer 23] refined 24/29 geometries
+[layer 23] refined 29/29 geometries
+[decode VJP] layer=23 group=1/29 position=1 seconds=0.048
+[decode VJP] layer=23 group=2/29 position=2 seconds=0.050
+[decode VJP] layer=23 group=3/29 position=3 seconds=0.054
+[decode VJP] layer=23 group=4/29 position=4 seconds=0.061
+[decode VJP] layer=23 group=5/29 position=5 seconds=0.067
+[decode VJP] layer=23 group=6/29 position=6 seconds=0.067
+[decode VJP] layer=23 group=7/29 position=7 seconds=0.067
+[decode VJP] layer=23 group=8/29 position=8 seconds=0.076
+[decode VJP] layer=23 group=9/29 position=9 seconds=0.070
+[decode VJP] layer=23 group=10/29 position=10 seconds=0.067
+[decode VJP] layer=23 group=11/29 position=1 seconds=0.067
+[decode VJP] layer=23 group=12/29 position=2 seconds=0.068
+[decode VJP] layer=23 group=13/29 position=3 seconds=0.067
+[decode VJP] layer=23 group=14/29 position=4 seconds=0.067
+[decode VJP] layer=23 group=15/29 position=5 seconds=0.069
+[decode VJP] layer=23 group=16/29 position=6 seconds=0.067
+[decode VJP] layer=23 group=17/29 position=7 seconds=0.067
+[decode VJP] layer=23 group=18/29 position=8 seconds=0.066
+[decode VJP] layer=23 group=19/29 position=1 seconds=0.066
+[decode VJP] layer=23 group=20/29 position=2 seconds=0.064
+[decode VJP] layer=23 group=21/29 position=3 seconds=0.065
+[decode VJP] layer=23 group=22/29 position=4 seconds=0.065
+[decode VJP] layer=23 group=23/29 position=5 seconds=0.065
+[decode VJP] layer=23 group=24/29 position=6 seconds=0.067
+[decode VJP] layer=23 group=25/29 position=7 seconds=0.067
+[decode VJP] layer=23 group=26/29 position=8 seconds=0.067
+[decode VJP] layer=23 group=27/29 position=9 seconds=0.068
+[decode VJP] layer=23 group=28/29 position=10 seconds=0.069
+[decode VJP] layer=23 group=29/29 position=11 seconds=0.070
+[allocation] group 1/29 complete
+[allocation] group 2/29 complete
+[allocation] group 3/29 complete
+[allocation] group 4/29 complete
+[allocation] group 5/29 complete
+[allocation] group 6/29 complete
+[allocation] group 7/29 complete
+[allocation] group 8/29 complete
+[allocation] group 9/29 complete
+[allocation] group 10/29 complete
+[allocation] group 11/29 complete
+[allocation] group 12/29 complete
+[allocation] group 13/29 complete
+[allocation] group 14/29 complete
+[allocation] group 15/29 complete
+[allocation] group 16/29 complete
+[allocation] group 17/29 complete
+[allocation] group 18/29 complete
+[allocation] group 19/29 complete
+[allocation] group 20/29 complete
+[allocation] group 21/29 complete
+[allocation] group 22/29 complete
+[allocation] group 23/29 complete
+[allocation] group 24/29 complete
+[allocation] group 25/29 complete
+[allocation] group 26/29 complete
+[allocation] group 27/29 complete
+[allocation] group 28/29 complete
+[allocation] group 29/29 complete
+[decode replay] layer=23 group=1/29
+[decode replay] layer=23 group=2/29
+[decode replay] layer=23 group=3/29
+[decode replay] layer=23 group=4/29
+[decode replay] layer=23 group=5/29
+[decode replay] layer=23 group=6/29
+[decode replay] layer=23 group=7/29
+[decode replay] layer=23 group=8/29
+[decode replay] layer=23 group=9/29
+[decode replay] layer=23 group=10/29
+[decode replay] layer=23 group=11/29
+[decode replay] layer=23 group=12/29
+[decode replay] layer=23 group=13/29
+[decode replay] layer=23 group=14/29
+[decode replay] layer=23 group=15/29
+[decode replay] layer=23 group=16/29
+[decode replay] layer=23 group=17/29
+[decode replay] layer=23 group=18/29
+[decode replay] layer=23 group=19/29
+[decode replay] layer=23 group=20/29
+[decode replay] layer=23 group=21/29
+[decode replay] layer=23 group=22/29
+[decode replay] layer=23 group=23/29
+[decode replay] layer=23 group=24/29
+[decode replay] layer=23 group=25/29
+[decode replay] layer=23 group=26/29
+[decode replay] layer=23 group=27/29
+[decode replay] layer=23 group=28/29
+[decode replay] layer=23 group=29/29
+ layer                                         policy  rate_pages_per_expert  groups  exact_d1_crossing_rate  mean_local_qenergy_damage  mean_current_hidden_mse  mean_next_mixer_cache_mse
+    23                     d1_strict_tau_0.0625_eta_0                    384      29                0.034483                   0.004077                 0.000002                   0.000003
+    23                d1_strict_tau_0.0625_eta_0.0001                    384      29                0.034483                   0.004087                 0.000002                   0.000003
+    23               d1_strict_tau_0.0625_eta_0.00025                    384      29                0.034483                   0.004114                 0.000002                   0.000003
+    23                d1_strict_tau_0.0625_eta_0.0005                    384      29                0.034483                   0.004165                 0.000002                   0.000003
+    23                 d1_strict_tau_0.0625_eta_0.001                    384      29                0.000000                   0.004287                 0.000002                   0.000003
+    23                 d1_strict_tau_0.0625_eta_5e-05                    384      29                0.034483                   0.004079                 0.000002                   0.000003
+    23 exact_combined_local_column_generated_frontier                    384      29                0.034483                   0.004077                 0.000002                   0.000003
+    23            pr13_router_square_column_generated                    384      29                0.068966                   0.004168                 0.000002                   0.000003
+    23     regenerated_router_square_column_generated                    384      29                0.068966                   0.004168                 0.000002                   0.000003

@@ -296,6 +296,140 @@ class _D1LayerSlice:
 
         return self.next_router_outputs(layer_output, attention_mask)[0]
 
+    def decode_prefix_cache(self, prefix_layer_output: Any) -> Any:
+        """Build the exact next-mixer cache from an uncompressed prefix.
+
+        Only the next layer is executed.  The returned hybrid cache is a
+        pre-step snapshot: callers must clone it before every candidate
+        because both Qwen attention implementations mutate cache state.
+        """
+
+        import torch
+        from transformers import DynamicCache
+
+        hidden = prefix_layer_output
+        if not isinstance(hidden, torch.Tensor):
+            hidden = torch.as_tensor(
+                hidden, device=self.device, dtype=torch.bfloat16,
+            )
+        if hidden.ndim == 2:
+            hidden = hidden.unsqueeze(0)
+        if hidden.ndim != 3 or hidden.shape[0] != 1:
+            raise ValueError("decode prefix must be [1,prefix,hidden]")
+        cache = DynamicCache(config=self.next_config)
+        sequence = int(hidden.shape[1])
+        if sequence == 0:
+            return cache
+        normalized = self.next_input_norm(hidden)
+        if self.next_mixer_type == "linear_attention":
+            self.next_mixer(
+                hidden_states=normalized,
+                cache_params=cache,
+                attention_mask=None,
+            )
+        elif self.next_mixer_type == "full_attention":
+            from transformers.models.qwen3_5_moe.modeling_qwen3_5_moe import (
+                create_causal_mask,
+            )
+
+            positions = torch.arange(
+                sequence, device=hidden.device, dtype=torch.long,
+            ).view(1, 1, -1).expand(4, 1, -1)
+            text_positions = positions[0]
+            rope_positions = positions[1:]
+            mask = create_causal_mask(
+                config=self.next_config,
+                inputs_embeds=hidden,
+                attention_mask=None,
+                past_key_values=None,
+                position_ids=text_positions,
+            )
+            if self.next_rotary is None:
+                raise RuntimeError("full-attention decode slice omitted rotary embeddings")
+            self.next_mixer(
+                hidden_states=normalized,
+                position_embeddings=self.next_rotary(hidden, rope_positions),
+                attention_mask=mask,
+                position_ids=text_positions,
+                past_key_values=cache,
+            )
+        else:
+            raise RuntimeError(f"unsupported D1 next mixer: {self.next_mixer_type}")
+        return cache
+
+    def next_router_outputs_decode(
+        self,
+        current_layer_output: Any,
+        prefix_cache: Any,
+        position: int,
+    ) -> tuple[Any, Any, Any, Any]:
+        """Execute one cached decode token and return router outputs and cache.
+
+        ``prefix_cache`` is mutated exactly once.  It must be a private clone
+        of an exact-prefix snapshot rather than shared among candidates.
+        """
+
+        import torch
+
+        hidden = current_layer_output
+        if not isinstance(hidden, torch.Tensor):
+            hidden = torch.as_tensor(
+                hidden, device=self.device, dtype=torch.bfloat16,
+            )
+        if hidden.ndim == 2:
+            hidden = hidden.unsqueeze(0)
+        if hidden.ndim != 3 or tuple(hidden.shape[:2]) != (1, 1):
+            raise ValueError("cached D1 decode requires one [1,1,hidden] token")
+        token_position = int(position)
+        if token_position < 0:
+            raise ValueError("decode position must be nonnegative")
+        residual = hidden
+        normalized = self.next_input_norm(hidden)
+        if self.next_mixer_type == "linear_attention":
+            mixed = self.next_mixer(
+                hidden_states=normalized,
+                cache_params=prefix_cache,
+                attention_mask=None,
+            )
+        elif self.next_mixer_type == "full_attention":
+            positions = torch.full(
+                (4, 1, 1), token_position,
+                device=hidden.device,
+                dtype=torch.long,
+            )
+            if self.next_rotary is None:
+                raise RuntimeError("full-attention decode slice omitted rotary embeddings")
+            mixed, _ = self.next_mixer(
+                hidden_states=normalized,
+                position_embeddings=self.next_rotary(hidden, positions[1:]),
+                attention_mask=None,
+                position_ids=positions[0],
+                past_key_values=prefix_cache,
+            )
+        else:
+            raise RuntimeError(f"unsupported D1 next mixer: {self.next_mixer_type}")
+        normalized_moe = self.next_post_norm(residual + mixed)
+        logits, scores, expert_ids = self.next_router(normalized_moe)
+        return (
+            logits.reshape(1, 1, -1),
+            scores.reshape(1, 1, -1),
+            expert_ids.reshape(1, 1, -1),
+            prefix_cache,
+        )
+
+    def next_router_logits_decode(
+        self,
+        current_layer_output: Any,
+        prefix_cache: Any,
+        position: int,
+    ) -> tuple[Any, Any]:
+        """Return one-token cached router logits and the committed cache."""
+
+        logits, _, _, cache = self.next_router_outputs_decode(
+            current_layer_output, prefix_cache, position,
+        )
+        return logits, cache
+
 
 def _copy_state(module: Any, state: Mapping[str, Any]) -> None:
     missing, unexpected = module.load_state_dict(dict(state), strict=True)

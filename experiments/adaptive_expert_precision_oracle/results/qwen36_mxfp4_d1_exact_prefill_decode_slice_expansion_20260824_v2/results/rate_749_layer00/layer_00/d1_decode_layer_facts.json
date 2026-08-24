@@ -1,0 +1,95 @@
+{
+  "cache_state_parity_required": true,
+  "completed": true,
+  "environment": {
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "host": "1c286b37431c",
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128"
+  },
+  "eta": [
+    0.0,
+    5e-05,
+    0.0001,
+    0.00025,
+    0.0005,
+    0.001
+  ],
+  "files": {
+    "d1_decode_allocation_experts.parquet": {
+      "bytes": 343823,
+      "sha256": "0888b7d02bb9c25f924c2e0b6720dc50b2075d94efc2a15ae7705e3e9aff723d"
+    },
+    "d1_decode_allocation_groups.parquet": {
+      "bytes": 15883,
+      "sha256": "b5dfb645e62d6bb2909e771bfc7ebadd09252ad98684f473796823eafe3d800e"
+    },
+    "d1_decode_cache_parity.parquet": {
+      "bytes": 10828,
+      "sha256": "f2ddf38a9f4661db205d2ee96a054d705c60e946f6fc0b96cc3bd97d5203d9e9"
+    },
+    "d1_decode_exact_route_metrics.parquet": {
+      "bytes": 24353,
+      "sha256": "fbefbaff5d19de3dab6b5e9ca4fc7733ee6dcdb4b65a041e2bb691b0badba559"
+    },
+    "d1_decode_policy_summary.parquet": {
+      "bytes": 6133,
+      "sha256": "8861624ec8b2d4f0338a75929d6dd07fee16d8c718519da1a11dc7fafed348a5"
+    },
+    "d1_decode_selected_deltas.npz": {
+      "bytes": 1992640,
+      "sha256": "ad81cdccdae9d23a6ef68b6059eb76a2c8ba7cd4284503b2c3fc1fbb8c667b68"
+    },
+    "d1_decode_token_oracle.parquet": {
+      "bytes": 19488,
+      "sha256": "b3515675b3d08c78c4ba801c48a8d7ef3fb616c69bd57d58023e098e07e2d00c"
+    },
+    "d1_decode_vjp_metrics.parquet": {
+      "bytes": 9541,
+      "sha256": "d1f716c0f68a0405fdb36100a4b41e59fc54e7c82c6f023962c8acb8344b4039"
+    }
+  },
+  "frontier_mode": "column_generated",
+  "groups": 29,
+  "historical_pr13_mode": "required",
+  "input_hashes": {
+    "capture_mxfp4-confirm-006": "6b0eab21a9628c725805e48d03dfb93f0d2fafc8e4ec5e7ae60b467834b06c98",
+    "capture_mxfp4-confirm-007": "7c11e840eee8fc09a574f35718fd5291cf8de363b0557ee796c60e3796c3b33e",
+    "capture_mxfp4-confirm-008": "0e3bdc7d9314582291eb5f3aaf9efc32871dd5c9a0d6a5c0214b4a3daa304185",
+    "checkpoint_index": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "factor": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84",
+    "historical_delta": "5593e5502fbbe02fcf5917339d5ed92c542c21e8f81d5f3b2ba07a9dcedff41a",
+    "pr13_config": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+    "same_host_config": "26129897498205d1d496d00539f66495406d7a4353a02d2304df314eadbca714",
+    "trees": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+  },
+  "layer": 0,
+  "minimum_prefix_tokens": 1,
+  "next_layer": 1,
+  "next_mixer": "linear_attention",
+  "paired_cached_baseline_bit_identical": true,
+  "policies": [
+    "d1_strict_tau_0.0625_eta_0",
+    "d1_strict_tau_0.0625_eta_0.0001",
+    "d1_strict_tau_0.0625_eta_0.00025",
+    "d1_strict_tau_0.0625_eta_0.0005",
+    "d1_strict_tau_0.0625_eta_0.001",
+    "d1_strict_tau_0.0625_eta_5e-05",
+    "exact_combined_local_column_generated_frontier",
+    "pr13_router_square_column_generated",
+    "regenerated_router_square_column_generated"
+  ],
+  "prompt_position_coupling_allowed": false,
+  "rates": [
+    749
+  ],
+  "schema": "pr13_d1_exact_prefill_decode_slice_oracle_v2",
+  "scientific_boundary": "Exact reconstructed-prefix cached single-token D1 slice surrogate. No full-model exact-prefill handoff, terminal KL, temporal rollout, D2-D4 objective, or runtime-controller claim.",
+  "single_current_token_injection": true,
+  "temperature": [
+    0.0625
+  ],
+  "test_rows_admitted_or_used": false,
+  "wall_seconds": 431.4166203420609
+}
