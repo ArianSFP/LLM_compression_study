@@ -8,7 +8,7 @@ oracle conveniences; a runtime predictor is intentionally out of scope.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Sequence
 
 import numpy as np
@@ -39,6 +39,30 @@ class TokenStateGeometry:
     proxy: np.ndarray | None
     beta: float
     execution_sum_tolerance: float = 0.003
+    # One geometry instance belongs to one token/layer group. Complete state
+    # tables recur heavily across the five oracle arms and eta ablations, so
+    # retaining their exact synthesized output is both bounded and much
+    # cheaper than re-running all eight expert reconstructions. These caches
+    # are performance-only: keys contain the complete physical state bytes
+    # and returned arrays are immutable.
+    _output_delta_cache: dict[bytes, np.ndarray] = field(
+        default_factory=dict, init=False, repr=False, compare=False,
+    )
+    _local_damage_cache: dict[bytes, float] = field(
+        default_factory=dict, init=False, repr=False, compare=False,
+    )
+    _legacy_damage_cache: dict[tuple[bytes, bytes], float] = field(
+        default_factory=dict, init=False, repr=False, compare=False,
+    )
+    _output_delta_cache_hits: list[int] = field(
+        default_factory=lambda: [0], init=False, repr=False, compare=False,
+    )
+    _local_damage_cache_hits: list[int] = field(
+        default_factory=lambda: [0], init=False, repr=False, compare=False,
+    )
+    _legacy_damage_cache_hits: list[int] = field(
+        default_factory=lambda: [0], init=False, repr=False, compare=False,
+    )
 
     def __post_init__(self) -> None:
         responses = tuple(self.responses)
@@ -97,6 +121,11 @@ class TokenStateGeometry:
         """Return routed approximate-minus-Q4 output before BF16-once rounding."""
 
         value = validate_states(states)
+        key = np.asarray(value, np.uint8).tobytes(order="C")
+        cached = self._output_delta_cache.get(key)
+        if cached is not None:
+            self._output_delta_cache_hits[0] += 1
+            return cached
         result = np.zeros(self.output_width, np.float64)
         for expert, response in enumerate(self.responses):
             approximate = split_state_output(response, value[expert])
@@ -104,10 +133,71 @@ class TokenStateGeometry:
                 np.asarray(approximate, np.float64)
                 - np.asarray(response.target_output, np.float64)
             )
+        result.setflags(write=False)
+        self._output_delta_cache[key] = result
         return result
 
     def local_damage(self, states: Any) -> float:
-        return qenergy_damage(self.output_delta(states), self.proxy, self.beta)
+        value = validate_states(states)
+        key = np.asarray(value, np.uint8).tobytes(order="C")
+        cached = self._local_damage_cache.get(key)
+        if cached is not None:
+            self._local_damage_cache_hits[0] += 1
+            return cached
+        damage = qenergy_damage(self.output_delta(value), self.proxy, self.beta)
+        self._local_damage_cache[key] = damage
+        return damage
+
+    def local_damages_from_output_deltas(
+        self,
+        output_deltas: Any,
+        *,
+        chunk_size: int = 256,
+    ) -> np.ndarray:
+        """Evaluate the exact qmetric for a batch of synthesized errors.
+
+        This is the vectorized equivalent of calling ``qenergy_damage`` for
+        every row. It is used by matched-swap search after forming the exact
+        candidate error as incumbent + removal + addition; no approximation
+        or route signal enters the local guard.
+        """
+
+        values = np.asarray(output_deltas, np.float64)
+        if values.ndim == 1:
+            values = values[None, :]
+        chunk = int(chunk_size)
+        if (
+            values.ndim != 2
+            or values.shape[1] != self.output_width
+            or np.any(~np.isfinite(values))
+            or chunk < 1
+        ):
+            raise ValueError(
+                "output deltas must be finite [candidate,output] and chunk positive"
+            )
+        result = np.empty(values.shape[0], np.float64)
+        for start in range(0, values.shape[0], chunk):
+            selected = values[start : start + chunk]
+            scores = np.einsum("ij,ij->i", selected, selected, optimize=True)
+            if self.proxy is not None and self.beta != 0.0:
+                projected = selected @ self.proxy
+                scores += self.beta * np.einsum(
+                    "ij,ij->i", projected, projected, optimize=True,
+                )
+            result[start : start + selected.shape[0]] = scores
+        return result
+
+    def cache_stats(self) -> dict[str, int]:
+        """Return non-scientific counters for runner timing evidence."""
+
+        return {
+            "output_delta_states": len(self._output_delta_cache),
+            "output_delta_hits": int(self._output_delta_cache_hits[0]),
+            "local_damage_states": len(self._local_damage_cache),
+            "local_damage_hits": int(self._local_damage_cache_hits[0]),
+            "legacy_damage_states": len(self._legacy_damage_cache),
+            "legacy_damage_hits": int(self._legacy_damage_cache_hits[0]),
+        }
 
     def all_q2_damage(self) -> float:
         return self.local_damage(np.zeros((8, 512), np.uint8))
@@ -121,6 +211,14 @@ class TokenStateGeometry:
         weights = np.asarray(selector_weights, np.float64).reshape(-1)
         if weights.shape != (8,) or np.any(weights <= 0.0):
             raise ValueError("selector weights must contain eight positive values")
+        key = (
+            np.asarray(value, np.uint8).tobytes(order="C"),
+            np.asarray(weights, np.float64).tobytes(order="C"),
+        )
+        cached = self._legacy_damage_cache.get(key)
+        if cached is not None:
+            self._legacy_damage_cache_hits[0] += 1
+            return cached
         total = 0.0
         for expert, response in enumerate(self.responses):
             residual = (
@@ -130,7 +228,9 @@ class TokenStateGeometry:
             total += float(weights[expert] ** 2) * qenergy_damage(
                 residual, self.proxy, self.beta,
             )
-        return float(total)
+        result = float(total)
+        self._legacy_damage_cache[key] = result
+        return result
 
     def _unit_output(self, expert: int, unit: int, state: int) -> np.ndarray:
         response = self.responses[int(expert)]
@@ -140,8 +240,11 @@ class TokenStateGeometry:
         matrix = response.down4 if bool(SPLIT_STATE_DOWN_HIGH[int(state)]) else response.down2
         return hidden * np.asarray(matrix, np.float64)[int(unit)]
 
-    def move_output_delta(self, states: Any, move: PhysicalPageMove) -> np.ndarray:
-        value = validate_states(states)
+    def _move_output_delta_unchecked(
+        self,
+        value: np.ndarray,
+        move: PhysicalPageMove,
+    ) -> np.ndarray:
         if int(value[move.expert, move.unit]) != move.source_state:
             raise ValueError("page move is stale for token geometry")
         return float(self.execution_weights[move.expert]) * (
@@ -151,6 +254,10 @@ class TokenStateGeometry:
             - self._unit_output(move.expert, move.unit, move.source_state)
         )
 
+    def move_output_delta(self, states: Any, move: PhysicalPageMove) -> np.ndarray:
+        value = validate_states(states)
+        return self._move_output_delta_unchecked(value, move)
+
     def move_output_deltas(
         self, states: Any, moves: Sequence[PhysicalPageMove],
     ) -> np.ndarray:
@@ -159,7 +266,7 @@ class TokenStateGeometry:
         for move in moves:
             if int(value[move.expert, move.unit]) != move.source_state:
                 raise ValueError("page move sequence contains a stale move")
-            rows.append(self.move_output_delta(value, move))
+            rows.append(self._move_output_delta_unchecked(value, move))
         if not rows:
             return np.empty((0, self.output_width), np.float64)
         return np.stack(rows)

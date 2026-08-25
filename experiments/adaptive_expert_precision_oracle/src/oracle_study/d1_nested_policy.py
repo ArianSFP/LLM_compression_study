@@ -9,6 +9,7 @@ remove/add swaps remain a separate audit trail.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import time
 from typing import Any, Callable, Sequence
 
 import numpy as np
@@ -38,6 +39,8 @@ ExactReplay = Callable[[np.ndarray], ExactD1Metrics]
 
 
 __all__ = [
+    "Arm3HighPathHint",
+    "NestedPolicyMemo",
     "NestedPolicyCheckpoint",
     "PolicyRepairAudit",
     "NestedPolicyPairResult",
@@ -45,6 +48,81 @@ __all__ = [
     "replay_add_only_moves",
     "orchestrate_nested_policy_pair",
 ]
+
+
+@dataclass(frozen=True)
+class Arm3HighPathHint:
+    """Compact exact audit of the D1-blind Arm3 low-to-high local path."""
+
+    completion_moves: tuple[PhysicalPageMove, ...]
+    checkpoint_local_damages: tuple[float, ...]
+    stop_reason: str
+
+    def __post_init__(self) -> None:
+        moves = tuple(self.completion_moves)
+        damages = tuple(map(float, self.checkpoint_local_damages))
+        reason = str(self.stop_reason)
+        if (
+            any(
+                not isinstance(move, PhysicalPageMove) or move.direction != "add"
+                for move in moves
+            )
+            or not damages
+            or any(not np.isfinite(value) or value < 0.0 for value in damages)
+            or not reason
+        ):
+            raise ValueError("Arm3 high-path hint is invalid")
+        object.__setattr__(self, "completion_moves", moves)
+        object.__setattr__(self, "checkpoint_local_damages", damages)
+        object.__setattr__(self, "stop_reason", reason)
+
+
+@dataclass
+class NestedPolicyMemo:
+    """Per-token performance memo with no influence on policy decisions.
+
+    A memo must never be shared across token geometries or D1 contexts. Keys
+    contain complete physical state bytes and every scalar search parameter;
+    cache hits therefore replace only byte-identical deterministic work.
+    """
+
+    high_completion_paths: dict[tuple[object, ...], Any]
+    exact_repairs: dict[tuple[object, ...], ExactRepairResult]
+    high_path_hits: int = 0
+    high_path_misses: int = 0
+    high_path_seconds: float = 0.0
+    repair_hits: int = 0
+    repair_misses: int = 0
+    repair_seconds: float = 0.0
+    safe_high_shortcuts: int = 0
+
+    def __init__(self) -> None:
+        self.high_completion_paths = {}
+        self.exact_repairs = {}
+        self.high_path_hits = 0
+        self.high_path_misses = 0
+        self.high_path_seconds = 0.0
+        self.repair_hits = 0
+        self.repair_misses = 0
+        self.repair_seconds = 0.0
+        self.safe_high_shortcuts = 0
+
+    @staticmethod
+    def state_key(states: Any) -> bytes:
+        return np.asarray(validate_states(states), np.uint8).tobytes(order="C")
+
+    def stats(self) -> dict[str, float | int]:
+        return {
+            "high_path_entries": len(self.high_completion_paths),
+            "high_path_hits": int(self.high_path_hits),
+            "high_path_misses": int(self.high_path_misses),
+            "high_path_build_seconds": float(self.high_path_seconds),
+            "repair_entries": len(self.exact_repairs),
+            "repair_hits": int(self.repair_hits),
+            "repair_misses": int(self.repair_misses),
+            "repair_build_seconds": float(self.repair_seconds),
+            "safe_high_shortcuts": int(self.safe_high_shortcuts),
+        }
 
 
 def _freeze(value: np.ndarray, dtype: np.dtype | type = np.int64) -> np.ndarray:
@@ -508,6 +586,8 @@ def orchestrate_nested_policy_pair(
     maximum_repair_rounds: int = 8,
     move_limit: int = 32,
     candidate_limit: int = 8,
+    memo: NestedPolicyMemo | None = None,
+    arm3_high_path_hint: Arm3HighPathHint | None = None,
 ) -> NestedPolicyPairResult:
     """Build one conservative Arm4/Arm5 low/high nested policy pair."""
 
@@ -527,6 +607,12 @@ def orchestrate_nested_policy_pair(
         raise TypeError("boundaries must be ScreenedD1Boundaries")
     if not callable(exact_replay):
         raise TypeError("exact_replay must be callable")
+    if memo is not None and not isinstance(memo, NestedPolicyMemo):
+        raise TypeError("memo must be a NestedPolicyMemo")
+    if arm3_high_path_hint is not None and not isinstance(
+        arm3_high_path_hint, Arm3HighPathHint,
+    ):
+        raise TypeError("arm3_high_path_hint must be an Arm3HighPathHint")
     if (
         low_cap < 0
         or high_cap < low_cap
@@ -577,6 +663,42 @@ def orchestrate_nested_policy_pair(
             raise ValueError("geometry move scores are invalid")
         return values
 
+    def run_repair(
+        incumbent: np.ndarray,
+        frozen: np.ndarray,
+        damage_limit: float,
+    ) -> ExactRepairResult:
+        key = (
+            policy,
+            NestedPolicyMemo.state_key(incumbent),
+            NestedPolicyMemo.state_key(frozen),
+            np.float64(damage_limit).tobytes(),
+            int(maximum_repair_rounds),
+            int(move_limit),
+            int(candidate_limit),
+        )
+        if memo is not None and key in memo.exact_repairs:
+            memo.repair_hits += 1
+            return memo.exact_repairs[key]
+        repair_started = time.perf_counter()
+        result = iterative_exact_repair(
+            incumbent,
+            frozen,
+            geometry,
+            boundaries,
+            local_damage_limit=damage_limit,
+            exact_replay=replay,
+            arm=policy,
+            maximum_rounds=maximum_repair_rounds,
+            move_limit=move_limit,
+            candidate_limit=candidate_limit,
+        )
+        if memo is not None:
+            memo.exact_repairs[key] = result
+            memo.repair_misses += 1
+            memo.repair_seconds += time.perf_counter() - repair_started
+        return result
+
     arm3_low_damage = local(arm3_low)
     arm3_high_damage = local(arm3_high)
     low_limit = arm3_low_damage + eta_value * q2
@@ -593,18 +715,7 @@ def orchestrate_nested_policy_pair(
         low_metrics = initial_low_metrics
         low_reason = "arm3_low_exact_safe_identity"
     else:
-        low_repair = iterative_exact_repair(
-            arm3_low,
-            core,
-            geometry,
-            boundaries,
-            local_damage_limit=low_limit,
-            exact_replay=replay,
-            arm=policy,
-            maximum_rounds=maximum_repair_rounds,
-            move_limit=move_limit,
-            candidate_limit=candidate_limit,
-        )
+        low_repair = run_repair(arm3_low, core, low_limit)
         low_state = np.asarray(low_repair.final_state).copy()
         low_metrics = low_repair.final_metrics
         low_reason = f"low_repair_{low_repair.stop_reason}"
@@ -616,20 +727,124 @@ def orchestrate_nested_policy_pair(
     ):
         raise RuntimeError("selected low state violates repair invariants")
 
+    # A safe same-rate Arm3-high incumbent is immutable by policy. When the
+    # D1-blind precompute supplies its exact low-to-high audit, replaying the
+    # expensive local path cannot alter selection or any serialized audit.
+    if (
+        initial_high_metrics.safe
+        and arm3_high_path_hint is not None
+        and np.array_equal(low_state, arm3_low)
+    ):
+        hint = arm3_high_path_hint
+        if not np.array_equal(
+            replay_add_only_moves(arm3_low, hint.completion_moves), arm3_high,
+        ):
+            raise RuntimeError("Arm3 high-path hint does not reach its endpoint")
+        if not np.isclose(
+            hint.checkpoint_local_damages[-1],
+            arm3_high_damage,
+            rtol=0.0,
+            atol=1e-12,
+        ):
+            raise RuntimeError("Arm3 high-path hint endpoint damage changed")
+        qualified = sum(
+            damage <= high_reference_limit + 1e-12
+            for damage in hint.checkpoint_local_damages
+        )
+        if qualified < 1:
+            raise RuntimeError("safe Arm3-high identity failed its own guardrail")
+        fast_checkpoints = [NestedPolicyCheckpoint(
+            checkpoint_index=0,
+            state=low_state,
+            metrics=low_metrics,
+            local_damage=low_damage,
+        )]
+        if hint.completion_moves:
+            fast_checkpoints.append(NestedPolicyCheckpoint(
+                checkpoint_index=1,
+                state=arm3_high,
+                metrics=initial_high_metrics,
+                local_damage=arm3_high_damage,
+                completion_moves=hint.completion_moves,
+            ))
+        suffix = (
+            "high_cap"
+            if state_page_count(arm3_high) == high_cap
+            else hint.stop_reason
+        )
+        fast_high_reason = (
+            "low_retained_as_high_strict_guard_feasible"
+            if not hint.completion_moves
+            else f"completion_endpoint_strict_guard_nonworsening_{suffix}"
+        )
+        if memo is not None:
+            memo.safe_high_shortcuts += 1
+        return NestedPolicyPairResult(
+            arm=policy,
+            expert_ids=ids,
+            common_core=core,
+            arm3_low_state=arm3_low,
+            arm3_high_state=arm3_high,
+            low_state=low_state,
+            high_state=arm3_high,
+            low_metrics=low_metrics,
+            high_metrics=initial_high_metrics,
+            arm3_high_metrics=initial_high_metrics,
+            arm3_low_damage=arm3_low_damage,
+            arm3_high_damage=arm3_high_damage,
+            low_local_damage=low_damage,
+            high_local_damage=arm3_high_damage,
+            low_local_damage_limit=low_limit,
+            high_reference_damage_limit=high_reference_limit,
+            eta=eta_value,
+            j_q2=q2,
+            low_cap_pages=low_cap,
+            high_cap_pages=high_cap,
+            refresh_after_accepted_pages=refresh,
+            low_stop_reason=low_reason,
+            high_stop_reason=fast_high_reason,
+            core_to_low_moves=canonical_add_only_moves(core, low_state),
+            core_to_high_moves=canonical_add_only_moves(core, arm3_high),
+            low_repair=low_repair,
+            high_checkpoints=tuple(fast_checkpoints),
+            high_repair_audits=(),
+            pair_fallback_high_guardrail_infeasible=False,
+            high_guardrail_qualified_checkpoints=qualified,
+            high_guardrail_repair_attempts=0,
+        )
+
     high_checkpoints: list[NestedPolicyCheckpoint] = [NestedPolicyCheckpoint(
         checkpoint_index=0,
         state=low_state,
         metrics=low_metrics,
         local_damage=low_damage,
     )]
-    endpoint_path = add_only_local_completion(
-        low_state,
-        ids,
-        budget_pages=high_cap,
-        local_damage=local,
-        score_additions=move_scores,
-        refresh_after_accepted_pages=refresh,
+    high_path_key = (
+        NestedPolicyMemo.state_key(low_state),
+        np.asarray(ids, np.int64).tobytes(order="C"),
+        high_cap,
+        refresh,
     )
+    endpoint_path = (
+        None if memo is None
+        else memo.high_completion_paths.get(high_path_key)
+    )
+    if endpoint_path is None:
+        path_started = time.perf_counter()
+        endpoint_path = add_only_local_completion(
+            low_state,
+            ids,
+            budget_pages=high_cap,
+            local_damage=local,
+            score_additions=move_scores,
+            refresh_after_accepted_pages=refresh,
+        )
+        if memo is not None:
+            memo.high_completion_paths[high_path_key] = endpoint_path
+            memo.high_path_misses += 1
+            memo.high_path_seconds += time.perf_counter() - path_started
+    elif memo is not None:
+        memo.high_path_hits += 1
     path_checkpoints = tuple(endpoint_path.checkpoints)
     path_pages = tuple(checkpoint.group_pages for checkpoint in path_checkpoints)
     if any(right <= left for left, right in zip(path_pages, path_pages[1:])):
@@ -716,18 +931,7 @@ def orchestrate_nested_policy_pair(
             if initial_high_metrics.safe:
                 continue
             repair_attempts += 1
-            repair = iterative_exact_repair(
-                raw_state,
-                low_state,
-                geometry,
-                boundaries,
-                local_damage_limit=high_reference_limit,
-                exact_replay=replay,
-                arm=policy,
-                maximum_rounds=maximum_repair_rounds,
-                move_limit=move_limit,
-                candidate_limit=candidate_limit,
-            )
+            repair = run_repair(raw_state, low_state, high_reference_limit)
             restored = (
                 repair.final_metrics.membership_crossings
                 <= allowed_crossings

@@ -13,11 +13,14 @@ sys.path.insert(0, str(EXPERIMENT / "src"))
 
 from oracle_study.d1_nested_allocation import (  # noqa: E402
     DOWN_BIT,
+    add_only_local_completion,
     apply_page_move,
     physical_subset,
     state_page_count,
 )
 from oracle_study.d1_nested_policy import (  # noqa: E402
+    Arm3HighPathHint,
+    NestedPolicyMemo,
     canonical_add_only_moves,
     orchestrate_nested_policy_pair,
     replay_add_only_moves,
@@ -160,6 +163,8 @@ def _run(
     eta: float = 0.1,
     j_q2: float = 10.0,
     refresh: int = 2,
+    memo: NestedPolicyMemo | None = None,
+    high_path_hint: Arm3HighPathHint | None = None,
 ):
     return orchestrate_nested_policy_pair(
         core,
@@ -175,6 +180,8 @@ def _run(
         high_cap_pages=max(state_page_count(high), state_page_count(low)),
         refresh_after_accepted_pages=refresh,
         arm=arm,
+        memo=memo,
+        arm3_high_path_hint=high_path_hint,
     )
 
 
@@ -194,6 +201,114 @@ def test_exact_safe_arm3_low_is_retained_byte_for_byte() -> None:
     assert result.high_metrics.safe
     assert not result.low_state.flags.writeable
     assert not result.high_state.flags.writeable
+
+
+def test_policy_memo_preserves_states_metrics_and_audits_byte_for_byte() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1, 2, 3)
+    geometry = _ToyGeometry({
+        (0, 0, 1): 4.0,
+        (0, 1, 1): 3.0,
+        (0, 2, 1): 2.0,
+        (0, 3, 1): 1.0,
+    })
+    replay = lambda states: _metrics(1)  # noqa: E731
+    reference = _run(core, low, high, geometry, replay, refresh=1)
+    memo = NestedPolicyMemo()
+    first = _run(core, low, high, geometry, replay, refresh=1, memo=memo)
+    second = _run(core, low, high, geometry, replay, refresh=1, memo=memo)
+
+    def audit(result):
+        return (
+            result.low_state.tobytes(),
+            result.high_state.tobytes(),
+            result.low_metrics.membership_crossings,
+            result.high_metrics.membership_crossings,
+            result.low_stop_reason,
+            result.high_stop_reason,
+            tuple(
+                (
+                    checkpoint.checkpoint_index,
+                    checkpoint.state.tobytes(),
+                    checkpoint.local_damage,
+                    tuple(move.to_dict().items() for move in checkpoint.completion_moves),
+                )
+                for checkpoint in result.high_checkpoints
+            ),
+            result.high_guardrail_qualified_checkpoints,
+            result.high_guardrail_repair_attempts,
+        )
+
+    assert audit(first) == audit(reference)
+    assert audit(second) == audit(reference)
+    stats = memo.stats()
+    assert stats["high_path_entries"] == 1
+    assert stats["high_path_misses"] == 1
+    assert stats["high_path_hits"] == 1
+
+
+def test_safe_high_path_hint_skips_rebuild_with_exact_audit_parity() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1, 2)
+    geometry = _ToyGeometry({
+        (0, 0, 1): 30.0,
+        (0, 1, 1): 20.0,
+        (0, 2, 1): 10.0,
+    })
+    path = add_only_local_completion(
+        low,
+        IDS,
+        budget_pages=state_page_count(high),
+        local_damage=geometry.local_damage,
+        score_additions=geometry.score_moves,
+        refresh_after_accepted_pages=1,
+    )
+    np.testing.assert_array_equal(path.final.states, high)
+    hint = Arm3HighPathHint(
+        completion_moves=tuple(
+            move
+            for checkpoint in path.checkpoints[1:]
+            for move in checkpoint.moves
+        ),
+        checkpoint_local_damages=tuple(
+            checkpoint.local_damage for checkpoint in path.checkpoints
+        ),
+        stop_reason=path.stop_reason,
+    )
+    replay = lambda states: _metrics(0)  # noqa: E731
+    reference = _run(core, low, high, geometry, replay, refresh=1)
+    memo = NestedPolicyMemo()
+    optimized = _run(
+        core, low, high, geometry, replay,
+        refresh=1, memo=memo, high_path_hint=hint,
+    )
+
+    def signature(result):
+        return (
+            result.low_state.tobytes(),
+            result.high_state.tobytes(),
+            result.low_stop_reason,
+            result.high_stop_reason,
+            result.high_guardrail_qualified_checkpoints,
+            result.high_guardrail_repair_attempts,
+            tuple(
+                (
+                    checkpoint.checkpoint_index,
+                    checkpoint.state.tobytes(),
+                    checkpoint.local_damage,
+                    tuple(move.to_dict().items() for move in checkpoint.completion_moves),
+                )
+                for checkpoint in result.high_checkpoints
+            ),
+        )
+
+    assert signature(optimized) == signature(reference)
+    stats = memo.stats()
+    assert stats["safe_high_shortcuts"] == 1
+    assert stats["high_path_entries"] == 0
+    assert stats["high_path_misses"] == 0
 
 
 def test_unsafe_low_uses_strict_same_page_exact_repair() -> None:

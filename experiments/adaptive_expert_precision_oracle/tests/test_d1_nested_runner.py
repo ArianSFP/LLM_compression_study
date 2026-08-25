@@ -455,6 +455,8 @@ def test_compact_arm3_pair_retains_only_endpoints_and_canonical_chains() -> None
         high_stop_reason="budget_reached",
         core_to_low_moves=canonical_add_only_moves(core, low),
         core_to_high_moves=canonical_add_only_moves(core, high),
+        low_to_high_moves=canonical_add_only_moves(low, high),
+        high_path_checkpoint_damages=(2.0, 1.0),
     )
     assert compact.common_core.dtype == np.uint8
     assert not compact.common_core.flags.writeable
@@ -503,3 +505,29 @@ def test_high_guardrail_fallback_audit_counts_pairs_not_endpoint_rows() -> None:
         },
         "counting_unit": "policy_pair_low_endpoint_only",
     }
+
+
+def test_scientific_memo_audit_excludes_host_dependent_durations() -> None:
+    stats = {
+        "high_path_entries": 2,
+        "high_path_hits": 7,
+        "high_path_misses": 2,
+        "high_path_build_seconds": 12.345,
+        "repair_entries": 3,
+        "repair_hits": 5,
+        "repair_misses": 3,
+        "repair_build_seconds": 67.89,
+        "safe_high_shortcuts": 9,
+    }
+    audit = runner._deterministic_policy_memo_audit(stats)
+    assert audit == {
+        key: int(value)
+        for key, value in stats.items()
+        if not key.endswith("_seconds")
+    }
+    assert not any(key.endswith("_seconds") for key in audit)
+    with pytest.raises(ValueError, match="timing schema"):
+        runner._deterministic_policy_memo_audit({
+            key: value for key, value in stats.items()
+            if key != "repair_build_seconds"
+        })

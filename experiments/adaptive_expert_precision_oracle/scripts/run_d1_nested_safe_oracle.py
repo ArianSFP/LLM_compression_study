@@ -59,8 +59,15 @@ from oracle_study.d1_nested_artifacts import (  # noqa: E402
     validate_frozen_calibration_spec,
 )
 from oracle_study.d1_nested_policy import (  # noqa: E402
+    Arm3HighPathHint,
+    NestedPolicyMemo,
     canonical_add_only_moves,
     orchestrate_nested_policy_pair,
+)
+from oracle_study.d1_nested_profile import (  # noqa: E402
+    ProfiledGeometry,
+    TimingProfile,
+    profiled_callable,
 )
 from oracle_study.d1_nested_search import (  # noqa: E402
     ExactD1Metrics,
@@ -98,6 +105,8 @@ class CompactLocalPair:
     high_stop_reason: str
     core_to_low_moves: tuple[PhysicalPageMove, ...]
     core_to_high_moves: tuple[PhysicalPageMove, ...]
+    low_to_high_moves: tuple[PhysicalPageMove, ...]
+    high_path_checkpoint_damages: tuple[float, ...]
 
     def __post_init__(self) -> None:
         low_rate = int(self.low_rate)
@@ -114,12 +123,19 @@ class CompactLocalPair:
         )))
         low_moves = tuple(self.core_to_low_moves)
         high_moves = tuple(self.core_to_high_moves)
+        low_to_high = tuple(self.low_to_high_moves)
+        high_path_damages = tuple(map(float, self.high_path_checkpoint_damages))
         if (
             low_rate < 1
             or high_rate <= low_rate
             or window < 0
             or any(not np.isfinite(value) or value < 0.0 for value in damages)
             or any(not value for value in reasons)
+            or not high_path_damages
+            or any(
+                not np.isfinite(value) or value < 0.0
+                for value in high_path_damages
+            )
             or not physical_subset(core, low)
             or not physical_subset(low, high)
             or state_page_count(low) > 8 * low_rate
@@ -130,6 +146,12 @@ class CompactLocalPair:
             raise ValueError("compact Arm3 low canonical chain does not replay")
         if not np.array_equal(_replay_add_chain(core, high_moves), high):
             raise ValueError("compact Arm3 high canonical chain does not replay")
+        if not np.array_equal(_replay_add_chain(low, low_to_high), high):
+            raise ValueError("compact Arm3 low-to-high path does not replay")
+        if not np.isclose(
+            high_path_damages[-1], damages[2], rtol=0.0, atol=1e-12,
+        ):
+            raise ValueError("compact Arm3 high-path endpoint damage changed")
         for value in (core, low, high):
             value.setflags(write=False)
         object.__setattr__(self, "low_rate", low_rate)
@@ -146,6 +168,10 @@ class CompactLocalPair:
         object.__setattr__(self, "high_stop_reason", reasons[2])
         object.__setattr__(self, "core_to_low_moves", low_moves)
         object.__setattr__(self, "core_to_high_moves", high_moves)
+        object.__setattr__(self, "low_to_high_moves", low_to_high)
+        object.__setattr__(
+            self, "high_path_checkpoint_damages", high_path_damages,
+        )
 
 
 @dataclass(frozen=True)
@@ -161,9 +187,18 @@ class FrozenBankResult:
 class ExactReplayCache:
     """One byte-keyed exact D1 replay cache shared by every arm for a token."""
 
-    def __init__(self, context: Any, geometry: TokenStateGeometry) -> None:
+    def __init__(
+        self,
+        context: Any,
+        geometry: TokenStateGeometry,
+        *,
+        profile: TimingProfile | None = None,
+        profile_labels: Mapping[str, str | int | float | bool | None] | None = None,
+    ) -> None:
         self.context = context
         self.geometry = geometry
+        self.profile = profile
+        self.profile_labels = dict(profile_labels or {})
         self._cache: dict[bytes, tuple[ExactD1Metrics, np.ndarray]] = {}
         self.executions = 0
         self.hits = 0
@@ -178,12 +213,29 @@ class ExactReplayCache:
         key = self.key(value)
         if key in self._cache:
             self.hits += 1
+            if self.profile is not None:
+                self.profile.add(
+                    "exact_replay_cache_hit",
+                    0.0,
+                    labels=self.profile_labels,
+                )
             return self._cache[key]
-        logits = np.asarray(
-            self.context.replay_logits(self.geometry.output_delta(value)),
-            np.float32,
-        ).reshape(-1)
-        metrics = exact_all_expert_d1_metrics(self._target, logits)
+        if self.profile is None:
+            logits = np.asarray(
+                self.context.replay_logits(self.geometry.output_delta(value)),
+                np.float32,
+            ).reshape(-1)
+            metrics = exact_all_expert_d1_metrics(self._target, logits)
+        else:
+            with self.profile.measure(
+                "exact_replay_execution",
+                labels=self.profile_labels,
+            ):
+                logits = np.asarray(
+                    self.context.replay_logits(self.geometry.output_delta(value)),
+                    np.float32,
+                ).reshape(-1)
+                metrics = exact_all_expert_d1_metrics(self._target, logits)
         frozen_logits = logits.copy()
         frozen_logits.setflags(write=False)
         self._cache[key] = (metrics, frozen_logits)
@@ -246,6 +298,38 @@ def atomic_json(path: Path, payload: Any) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     temporary.replace(path)
+
+def _write_profile_sidecar(
+    profile: TimingProfile,
+    output_dir: Path,
+    *,
+    split: str,
+    layer: int,
+    requests: int,
+    config: Mapping[str, Any],
+) -> Path | None:
+    """Write host timing outside scientific artifacts, or nothing when off."""
+
+    if not profile.enabled:
+        return None
+    profile_path = (
+        output_dir / "profiles" / str(split)
+        / f"layer_{int(layer):02d}_timings.json"
+    )
+    payload = profile.snapshot()
+    payload.update({
+        "split": str(split),
+        "layer": int(layer),
+        "requests": int(requests),
+        "config_canonical_sha256": canonical_sha256(config),
+        "scientific_candidate_rows_modified": False,
+        "included_in_scientific_layer_facts": False,
+        "durations_are_host_dependent": True,
+        "arm3_items_are_three_completion_passes_per_forked_pair": True,
+    })
+    atomic_json(profile_path, payload)
+    return profile_path
+
 
 
 def atomic_pickle(path: Path, payload: Any) -> None:
@@ -535,6 +619,14 @@ def _compact_local_pair_task(
         high_stop_reason=str(high.stop_reason),
         core_to_low_moves=canonical_add_only_moves(common, low_state),
         core_to_high_moves=canonical_add_only_moves(common, high_state),
+        low_to_high_moves=tuple(
+            move
+            for checkpoint in high.checkpoints[1:]
+            for move in checkpoint.moves
+        ),
+        high_path_checkpoint_damages=tuple(
+            float(checkpoint.local_damage) for checkpoint in high.checkpoints
+        ),
     )
     return group_index, pair_index, window, result
 
@@ -1118,6 +1210,25 @@ def _high_guardrail_audit(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _deterministic_policy_memo_audit(
+    stats: Mapping[str, float | int],
+) -> dict[str, int]:
+    """Retain reproducible memo counts; timing belongs only in profile sidecars."""
+
+    timing_keys = {"high_path_build_seconds", "repair_build_seconds"}
+    missing = timing_keys.difference(stats)
+    if missing:
+        raise ValueError(f"policy memo timing schema is incomplete: {sorted(missing)}")
+    result: dict[str, int] = {}
+    for key, value in stats.items():
+        if key in timing_keys:
+            continue
+        if isinstance(value, bool) or int(value) != value or int(value) < 0:
+            raise ValueError("deterministic policy memo counters must be nonnegative integers")
+        result[str(key)] = int(value)
+    return result
+
+
 def _config_windows_etas(
     config: Mapping[str, Any],
 ) -> tuple[tuple[int, ...], tuple[float, ...]]:
@@ -1209,6 +1320,7 @@ def _policy_grid(
     }
 
 
+
 def _expected_rows_per_group(
     rates: Sequence[int],
     policy_grid: Mapping[tuple[int, int], Mapping[int, Sequence[float]]],
@@ -1223,6 +1335,8 @@ def _expected_rows_per_group(
 
 def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
     started = time.perf_counter()
+    profile = TimingProfile(bool(getattr(args, "profile_timings", False)))
+    layer_profile_labels = {"layer": int(layer), "split": str(args.split)}
     config = load_json(args.config)
     pr13_config = load_json(args.pr13_config)
     frozen_raw = (
@@ -1257,32 +1371,51 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         ) for item in config["traffic_pairs"]
     ]
     rates = sorted({rate for pair in pair_specs for rate in pair})
-    geometries, rate_state_grid = _precompute_rate_states(
-        groups,
-        experts,
-        proxy,
-        beta,
-        pr13_config,
-        rates,
-        int(args.workers),
-        int(layer),
-    )
+    with profile.measure(
+        "rate_state_precompute",
+        calls=len(groups) * len(rates),
+        labels=layer_profile_labels,
+    ):
+        geometries, rate_state_grid = _precompute_rate_states(
+            groups,
+            experts,
+            proxy,
+            beta,
+            pr13_config,
+            rates,
+            int(args.workers),
+            int(layer),
+        )
     refresh = int(config["common_core"]["refresh_after_accepted_pages"])
-    arm3_grid = _precompute_arm3_pairs(
-        geometries,
-        groups,
-        rate_state_grid,
-        proxy,
-        beta,
-        pair_specs,
-        config_windows,
-        refresh,
-        int(args.workers),
-        int(layer),
-    )
+    arm3_jobs = len(groups) * len(pair_specs) * len(config_windows)
+    with profile.measure(
+        "arm3_local_pair_precompute",
+        calls=arm3_jobs,
+        items=3 * arm3_jobs,
+        labels={
+            **layer_profile_labels,
+            "completion_passes_per_pair": 3,
+            "scope": "forked_batch_including_process_overhead",
+        },
+    ):
+        arm3_grid = _precompute_arm3_pairs(
+            geometries,
+            groups,
+            rate_state_grid,
+            proxy,
+            beta,
+            pair_specs,
+            config_windows,
+            refresh,
+            int(args.workers),
+            int(layer),
+        )
     del arrays, experts
     gc.collect()
-    model_slice = load_d1_layer_slice(args.checkpoint, layer, device=args.device)
+    with profile.measure("d1_slice_load", labels=layer_profile_labels):
+        model_slice = load_d1_layer_slice(
+            args.checkpoint, layer, device=args.device,
+        )
 
     rows: list[dict[str, Any]] = []
     parity_rows: list[dict[str, Any]] = []
@@ -1296,9 +1429,16 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         zip(groups, geometries, strict=True),
     ):
         request_id = str(group["request_id"])
-        context = _d1_context(
-            model_slice, captures[request_id], layer, int(group["position"]),
-        )
+        group_profile_labels = {
+            **layer_profile_labels,
+            "group": int(group["group"]),
+            "request_id": request_id,
+        }
+        group_started = time.perf_counter() if profile.enabled else 0.0
+        with profile.measure("d1_context", labels=group_profile_labels):
+            context = _d1_context(
+                model_slice, captures[request_id], layer, int(group["position"]),
+            )
         token_geometry = TokenStateGeometry(
             tuple(coarse["responses"]),
             np.asarray(group["execution_weights"], np.float64),
@@ -1306,7 +1446,13 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
             beta,
         )
         boundaries = _full_d1_boundaries(context)
-        replay = ExactReplayCache(context, token_geometry)
+        replay = ExactReplayCache(
+            context,
+            token_geometry,
+            profile=profile if profile.enabled else None,
+            profile_labels=group_profile_labels,
+        )
+        policy_memo = NestedPolicyMemo()
         rate_states = rate_state_grid[group_index]
         local_pairs = arm3_grid[group_index]
         first_row = len(rows)
@@ -1314,6 +1460,12 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         # Arm 1: exactly one independent PR13 incumbent at each numeric rate.
         for rate in rates:
             state = rate_states[rate][0]
+            arm_profile_labels = {
+                **group_profile_labels,
+                "arm": ARM_PR13,
+                "rate": int(rate),
+            }
+            arm_started = time.perf_counter() if profile.enabled else 0.0
             rows.append(_state_record(
                 arm=ARM_PR13,
                 rate=rate,
@@ -1331,9 +1483,21 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                     "frontier_facts": dict(rate_states[rate][2]),
                 },
             ))
+            profile.add(
+                "arm_execution",
+                time.perf_counter() - arm_started if profile.enabled else 0.0,
+                labels=arm_profile_labels,
+            )
+
 
         # Arm 2: freeze all five complete states at a rate before replaying any.
         for rate in rates:
+            arm_profile_labels = {
+                **group_profile_labels,
+                "arm": ARM_STRICT,
+                "rate": int(rate),
+            }
+            arm_started = time.perf_counter() if profile.enabled else 0.0
             pair = next(pair for pair in pair_specs if rate in pair)
             endpoints = {
                 window: (
@@ -1367,12 +1531,27 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                 target_ids=context.target_ids,
                 parameter=_strict_bank_parameter(bank),
             ))
+            profile.add(
+                "arm_execution",
+                time.perf_counter() - arm_started if profile.enabled else 0.0,
+                labels=arm_profile_labels,
+            )
+
 
         # Arms 3--5 share each D1-blind physical core and Arm3 endpoints.
         for pair in pair_specs:
             low_rate, high_rate = pair
             for window, eta_values in policy_grid[pair].items():
                 local = local_pairs[(low_rate, high_rate, int(window))]
+                arm_profile_labels = {
+                    **group_profile_labels,
+                    "arm": ARM_LOCAL,
+                    "low_rate": int(low_rate),
+                    "high_rate": int(high_rate),
+                    "repair_window": int(window),
+                }
+                arm_started = time.perf_counter() if profile.enabled else 0.0
+
                 rows.append(_state_record(
                     arm=ARM_LOCAL,
                     rate=low_rate,
@@ -1411,18 +1590,51 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                         "completion_stop_reason": local.high_stop_reason,
                     },
                 ))
+                profile.add(
+                    "arm_execution",
+                    time.perf_counter() - arm_started if profile.enabled else 0.0,
+                    calls=2,
+                    labels=arm_profile_labels,
+                )
                 for eta in eta_values:
                     for policy_name, arm_name in (
                         ("arm4", ARM_D1), ("arm5", ARM_D1_SEVERITY),
                     ):
+                        policy_labels = {
+                            **group_profile_labels,
+                            "arm": arm_name,
+                            "low_rate": int(low_rate),
+                            "high_rate": int(high_rate),
+                            "repair_window": int(window),
+                            "eta": float(eta),
+                        }
+                        policy_geometry = (
+                            ProfiledGeometry(
+                                token_geometry, profile, policy_labels,
+                            )
+                            if profile.enabled else token_geometry
+                        )
+                        policy_replay = (
+                            profiled_callable(
+                                replay,
+                                profile,
+                                "policy_exact_replay_callback",
+                                labels=policy_labels,
+                            )
+                            if profile.enabled else replay
+                        )
+                        memo_before = policy_memo.stats()
+                        policy_started = (
+                            time.perf_counter() if profile.enabled else 0.0
+                        )
                         result = orchestrate_nested_policy_pair(
                             local.common_core,
                             local.low_state,
                             local.high_state,
                             np.asarray(group["experts"], np.int64),
-                            token_geometry,
+                            policy_geometry,
                             boundaries,
-                            replay,
+                            policy_replay,
                             eta=float(eta),
                             j_q2=token_geometry.all_q2_damage(),
                             low_cap_pages=8 * low_rate,
@@ -1432,6 +1644,50 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                             maximum_repair_rounds=8,
                             move_limit=move_limit,
                             candidate_limit=candidate_limit,
+                            memo=policy_memo,
+                            arm3_high_path_hint=Arm3HighPathHint(
+                                completion_moves=local.low_to_high_moves,
+                                checkpoint_local_damages=(
+                                    local.high_path_checkpoint_damages
+                                ),
+                                stop_reason=local.high_stop_reason,
+                            ),
+                        )
+                        memo_after = policy_memo.stats()
+                        profile.add(
+                            "policy_pair",
+                            time.perf_counter() - policy_started if profile.enabled else 0.0,
+                            labels=policy_labels,
+                        )
+                        profile.add(
+                            "local_completion",
+                            float(memo_after["high_path_build_seconds"])
+                            - float(memo_before["high_path_build_seconds"]),
+                            calls=int(memo_after["high_path_misses"])
+                            - int(memo_before["high_path_misses"]),
+                            labels=policy_labels,
+                        )
+                        profile.add(
+                            "local_completion_cache_hit",
+                            0.0,
+                            calls=int(memo_after["high_path_hits"])
+                            - int(memo_before["high_path_hits"]),
+                            labels=policy_labels,
+                        )
+                        profile.add(
+                            "exact_repair_shortlist",
+                            float(memo_after["repair_build_seconds"])
+                            - float(memo_before["repair_build_seconds"]),
+                            calls=int(memo_after["repair_misses"])
+                            - int(memo_before["repair_misses"]),
+                            labels=policy_labels,
+                        )
+                        profile.add(
+                            "exact_repair_cache_hit",
+                            0.0,
+                            calls=int(memo_after["repair_hits"])
+                            - int(memo_before["repair_hits"]),
+                            labels=policy_labels,
                         )
                         for endpoint, rate, state, moves in (
                             (
@@ -1471,6 +1727,11 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
             )
         replay_executions += replay.executions
         replay_hits += replay.hits
+        policy_memo_stats = policy_memo.stats()
+        policy_memo_audit = _deterministic_policy_memo_audit(
+            policy_memo_stats,
+        )
+        geometry_cache_stats = token_geometry.cache_stats()
         parity_rows.append({
             "request_id": request_id,
             "layer": layer,
@@ -1480,13 +1741,23 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
             "exact_replay_unique_states": int(replay.states),
             "exact_replay_executions": int(replay.executions),
             "exact_replay_cache_hits": int(replay.hits),
+            **{f"policy_memo_{key}": value for key, value in policy_memo_audit.items()},
+            **{f"geometry_cache_{key}": value for key, value in geometry_cache_stats.items()},
         })
         print(
             f"[nested allocation] layer={layer} group={group['group'] + 1}/"
             f"{len(groups)} rows={emitted} replays={replay.executions} "
-            f"cache_hits={replay.hits}",
+            f"cache_hits={replay.hits} "
+            f"high_path_cache={policy_memo_stats['high_path_hits']}/"
+            f"{policy_memo_stats['high_path_misses']}",
             flush=True,
         )
+        profile.add(
+            "group_total",
+            time.perf_counter() - group_started if profile.enabled else 0.0,
+            labels=group_profile_labels,
+        )
+
         del context, replay, boundaries
         torch.cuda.empty_cache()
 
@@ -1563,6 +1834,19 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         },
     }
     atomic_json(layer_dir / "nested_layer_facts.json", facts)
+    profile_path = _write_profile_sidecar(
+        profile,
+        args.output_dir,
+        split=args.split,
+        layer=layer,
+        requests=len(groups),
+        config=config,
+    )
+    if profile_path is not None:
+        print(
+            f"[nested profile] wrote {profile_path}",
+            flush=True,
+        )
     del model_slice, geometries, rate_state_grid, arm3_grid
     gc.collect()
     torch.cuda.empty_cache()
@@ -1586,6 +1870,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--frozen-calibration", type=Path)
     parser.add_argument("--workers", type=int, default=24)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--profile-timings",
+        action="store_true",
+        help="write a separate non-scientific internal timing sidecar",
+    )
     return parser.parse_args()
 
 

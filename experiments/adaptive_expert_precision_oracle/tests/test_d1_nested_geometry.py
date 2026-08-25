@@ -48,6 +48,31 @@ def test_vectorized_move_scores_equal_exact_state_reconstruction() -> None:
     np.testing.assert_allclose(observed, expected, rtol=2e-13, atol=2e-13)
 
 
+def test_batched_delta_qmetric_and_complete_state_cache_match_scalar() -> None:
+    geometry = _geometry(6)
+    states = np.zeros((8, 512), np.uint8)
+    moves = legal_add_moves(states)[:19]
+    deltas = np.stack([
+        geometry.output_delta(apply_page_move(states, move)) for move in moves
+    ])
+    observed = geometry.local_damages_from_output_deltas(deltas, chunk_size=5)
+    expected = np.asarray([
+        geometry.local_damage(apply_page_move(states, move)) for move in moves
+    ])
+    np.testing.assert_allclose(observed, expected, rtol=2e-13, atol=2e-13)
+
+    first_delta = geometry.output_delta(states)
+    second_delta = geometry.output_delta(states.copy())
+    first_damage = geometry.local_damage(states)
+    second_damage = geometry.local_damage(states.copy())
+    np.testing.assert_array_equal(first_delta, second_delta)
+    assert first_damage == second_damage
+    assert not first_delta.flags.writeable
+    stats = geometry.cache_stats()
+    assert stats["output_delta_hits"] >= 1
+    assert stats["local_damage_hits"] >= 1
+
+
 def test_signed_effects_are_exact_directional_differences() -> None:
     geometry = _geometry(7)
     states = np.zeros((8, 512), np.uint8)

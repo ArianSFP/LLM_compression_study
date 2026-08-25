@@ -462,6 +462,12 @@ def shortlist_matched_page_swaps(
     if not removals or not additions:
         return ()
     sensitivities = np.asarray(boundaries.margin_sensitivities)
+    vectorized_local = all(hasattr(geometry, name) for name in (
+        "move_output_deltas", "local_damages_from_output_deltas",
+    ))
+    # Project all legal moves in bounded chunks for ranking. Full-width move
+    # deltas are synthesized only for the <=32+32 retained moves below; keeping
+    # every legal [move,hidden] row would add hundreds of MiB at model width.
     removal_effects = np.asarray(
         geometry.signed_move_effects(incumbent, removals, sensitivities),
         np.float64,
@@ -490,38 +496,127 @@ def shortlist_matched_page_swaps(
         min(move_cap, len(additions)),
     )
     incumbent_pages = state_page_count(incumbent)
-    retained: list[MatchedSwapCandidate] = []
-    for remove_index in removal_indices:
+    pair_indices = tuple(
+        (remove_index, add_index)
+        for remove_index in removal_indices
+        for add_index in addition_indices
+        if (
+            removals[remove_index].expert,
+            removals[remove_index].unit,
+        ) != (
+            additions[add_index].expert,
+            additions[add_index].unit,
+        )
+    )
+    vector_local: np.ndarray | None = None
+    if vectorized_local and pair_indices:
+        selected_removal_deltas = dict(zip(
+            removal_indices,
+            np.asarray(geometry.move_output_deltas(
+                incumbent, tuple(removals[index] for index in removal_indices),
+            ), np.float64),
+            strict=True,
+        ))
+        selected_addition_deltas = dict(zip(
+            addition_indices,
+            np.asarray(geometry.move_output_deltas(
+                incumbent, tuple(additions[index] for index in addition_indices),
+            ), np.float64),
+            strict=True,
+        ))
+        pair_deltas = np.stack([
+            incumbent_delta
+            + selected_removal_deltas[remove_index]
+            + selected_addition_deltas[add_index]
+            for remove_index, add_index in pair_indices
+        ])
+        vector_local = np.asarray(
+            geometry.local_damages_from_output_deltas(pair_deltas), np.float64,
+        ).reshape(-1)
+        if (
+            vector_local.shape != (len(pair_indices),)
+            or np.any(~np.isfinite(vector_local))
+            or np.any(vector_local < 0.0)
+        ):
+            raise ValueError("token geometry returned invalid vector local damage")
+
+    # Sort lightweight specifications first. On the optimized path complete
+    # 8x512 state tables are materialized and scalar-parity checked only for
+    # finalists, rather than for every member of the Cartesian product.
+    specifications: list[
+        tuple[tuple[float | int, ...], int, int, PredictedMarginMetrics, float]
+    ] = []
+    for pair_offset, (remove_index, add_index) in enumerate(pair_indices):
         removal = removals[remove_index]
-        for add_index in addition_indices:
+        addition = additions[add_index]
+        combined = (
+            incumbent_effects
+            + removal_effects[remove_index]
+            + addition_effects[add_index]
+        )
+        predicted = _predicted_from_effects(boundaries, combined)
+        local = float("nan") if vector_local is None else float(
+            vector_local[pair_offset]
+        )
+        if vector_local is not None and (not np.isfinite(local) or local < 0.0):
+            raise ValueError("token geometry returned invalid vector local damage")
+        # Local damage cannot affect ordering across distinct predicted D1
+        # prefixes. Defer the exact scalar guard and local tie-break until a
+        # complete equal-prefix group can still enter the top-k. This retains
+        # reference semantics even in an adversarial floating-point tie.
+        key = _predicted_key(predicted)
+        specifications.append((
+            key, remove_index, add_index, predicted, local,
+        ))
+    specifications.sort(key=lambda item: (
+        item[0],
+        removals[item[1]].sort_key,
+        additions[item[2]].sort_key,
+    ))
+
+    retained: list[MatchedSwapCandidate] = []
+    offset = 0
+    while offset < len(specifications) and len(retained) < result_cap:
+        prefix = specifications[offset][0]
+        end = offset + 1
+        while end < len(specifications) and specifications[end][0] == prefix:
+            end += 1
+        equal_prefix: list[MatchedSwapCandidate] = []
+        for _, remove_index, add_index, predicted, vector_score in specifications[
+            offset:end
+        ]:
+            removal = removals[remove_index]
             addition = additions[add_index]
-            if (removal.expert, removal.unit) == (addition.expert, addition.unit):
-                continue
             candidate_states = apply_page_moves(incumbent, (removal, addition))
             if (
                 state_page_count(candidate_states) != incumbent_pages
                 or not physical_subset(core, candidate_states)
             ):
-                raise RuntimeError("matched swap violated core or page-count invariants")
-            local = float(geometry.local_damage(candidate_states))
-            if not np.isfinite(local) or local < 0.0:
-                raise ValueError("token geometry returned invalid exact local damage")
-            if local > guard + tolerance:
+                raise RuntimeError(
+                    "matched swap violated core or page-count invariants"
+                )
+            scalar_score = float(geometry.local_damage(candidate_states))
+            if not np.isfinite(scalar_score) or scalar_score < 0.0:
+                raise ValueError("token geometry returned invalid scalar local damage")
+            if vector_local is not None and not np.isclose(
+                scalar_score, vector_score, rtol=2e-12, atol=2e-12,
+            ):
+                raise RuntimeError(
+                    "vectorized matched-swap qmetric lost scalar parity"
+                )
+            if scalar_score > guard + tolerance:
                 continue
-            combined = (
-                incumbent_effects
-                + removal_effects[remove_index]
-                + addition_effects[add_index]
-            )
-            retained.append(MatchedSwapCandidate(
+            equal_prefix.append(MatchedSwapCandidate(
                 states=candidate_states,
                 removal=removal,
                 addition=addition,
-                predicted=_predicted_from_effects(boundaries, combined),
-                local_damage=local,
+                predicted=predicted,
+                local_damage=scalar_score,
             ))
-    retained.sort(key=lambda candidate: candidate.sort_key)
-    return tuple(retained[:result_cap])
+        equal_prefix.sort(key=lambda candidate: candidate.sort_key)
+        retained.extend(equal_prefix[: result_cap - len(retained)])
+        offset = end
+    return tuple(retained)
 
 
 ExactReplay = Callable[[np.ndarray], ExactD1Metrics]

@@ -21,6 +21,10 @@ from oracle_study.d1_nested_search import (  # noqa: E402
     shortlist_matched_page_swaps,
     stable_top8,
 )
+from oracle_study.d1_nested_geometry import TokenStateGeometry  # noqa: E402
+from oracle_study.split_interaction_field import (  # noqa: E402
+    SplitProjectionResponses,
+)
 
 
 def _baseline_logits() -> np.ndarray:
@@ -176,6 +180,78 @@ def test_swap_shortlist_preserves_core_pages_distinct_units_and_exact_guard() ->
         )
         assert candidate.local_damage <= 1.0
         assert int(candidate.states[0, 3]) == 0  # rejected by exact local guard
+
+
+def test_vectorized_swap_shortlist_matches_scalar_reference_across_guards() -> None:
+    rng = np.random.default_rng(712)
+    responses = tuple(
+        SplitProjectionResponses(
+            hidden=rng.normal(size=(512, 4)),
+            down2=rng.normal(scale=0.03, size=(512, 9)),
+            down4=rng.normal(scale=0.03, size=(512, 9)),
+        )
+        for _ in range(8)
+    )
+    weights = np.arange(1, 9, dtype=np.float64)
+    weights /= weights.sum()
+    geometry = TokenStateGeometry(
+        responses, weights, rng.normal(size=(9, 3)), 0.7,
+    )
+
+    class ScalarReference:
+        """Expose only the pre-optimization geometry callback surface."""
+
+        output_width = geometry.output_width
+
+        @staticmethod
+        def output_delta(states):
+            return geometry.output_delta(states)
+
+        @staticmethod
+        def signed_move_effects(states, moves, sensitivities):
+            return geometry.signed_move_effects(states, moves, sensitivities)
+
+        @staticmethod
+        def local_damage(states):
+            return geometry.local_damage(states)
+
+    incumbent = rng.integers(0, 8, size=(8, 512), dtype=np.uint8)
+    core = np.bitwise_and(
+        incumbent,
+        rng.integers(0, 8, size=(8, 512), dtype=np.uint8),
+    )
+    sensitivities = rng.normal(size=(256, 9))
+    boundaries = build_screened_d1_boundaries(_baseline_logits(), sensitivities)
+    baseline_damage = geometry.local_damage(incumbent)
+    for guard in (0.0, baseline_damage * 0.95, baseline_damage, baseline_damage * 1.2):
+        optimized = shortlist_matched_page_swaps(
+            incumbent,
+            core,
+            geometry,
+            boundaries,
+            local_damage_limit=guard,
+            move_limit=12,
+            candidate_limit=8,
+        )
+        reference = shortlist_matched_page_swaps(
+            incumbent,
+            core,
+            ScalarReference(),  # type: ignore[arg-type]
+            boundaries,
+            local_damage_limit=guard,
+            move_limit=12,
+            candidate_limit=8,
+        )
+        assert len(optimized) == len(reference)
+        for observed, expected in zip(optimized, reference, strict=True):
+            np.testing.assert_array_equal(observed.states, expected.states)
+            assert observed.removal.sort_key == expected.removal.sort_key
+            assert observed.addition.sort_key == expected.addition.sort_key
+            assert observed.local_damage == expected.local_damage
+            np.testing.assert_array_equal(
+                observed.predicted.predicted_margins,
+                expected.predicted.predicted_margins,
+            )
 
 
 def _candidate_logits_for_crossings(crossings: int, *, shallow: bool = False) -> np.ndarray:
