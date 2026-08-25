@@ -941,25 +941,20 @@ def orchestrate_nested_policy_pair(
     )
     if endpoint_path is None:
         path_started = time.perf_counter()
-        if identity_high_path_hint is not None:
-            endpoint_path = _arm3_high_path_from_hint(
-                low_state,
-                arm3_high,
-                ids,
-                high_cap,
-                identity_high_path_hint,
-                local,
-                geometry.output_delta,
-            )
-        else:
-            endpoint_path = add_only_local_completion(
-                low_state,
-                ids,
-                budget_pages=high_cap,
-                local_damage=local,
-                score_additions=move_scores,
-                refresh_after_accepted_pages=refresh,
-            )
+        # Re-run the direct path even when the forked Arm3 identity path is
+        # available. Besides accepted checkpoints, the reference scorer
+        # evaluates cold rejected-prefix states during stale-batch backoff;
+        # those state counts are sealed in the slice-parity audit. Rebuilding
+        # only accepted checkpoints is decision-equivalent but does not
+        # reproduce that complete cache audit.
+        endpoint_path = add_only_local_completion(
+            low_state,
+            ids,
+            budget_pages=high_cap,
+            local_damage=local,
+            score_additions=move_scores,
+            refresh_after_accepted_pages=refresh,
+        )
         if memo is not None:
             memo.high_completion_paths[high_path_key] = endpoint_path
             memo.high_path_misses += 1

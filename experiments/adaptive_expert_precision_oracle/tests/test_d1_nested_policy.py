@@ -371,7 +371,7 @@ def test_safe_high_path_hint_skips_rebuild_with_exact_audit_parity() -> None:
     assert stats["high_path_misses"] == 0
 
 
-def test_unsafe_high_path_hint_reuses_exact_batches_with_full_parity() -> None:
+def test_unsafe_high_path_hint_retains_direct_cache_audit_path() -> None:
     core = _states()
     low = _states(0)
     high = _states(0, 1, 2)
@@ -478,7 +478,7 @@ def test_unsafe_high_path_hint_reuses_exact_batches_with_full_parity() -> None:
 
     assert signature(optimized) == signature(reference)
     assert reference_geometry.score_move_calls > 0
-    assert optimized_geometry.score_move_calls == 0
+    assert optimized_geometry.score_move_calls == reference_geometry.score_move_calls
     stats = memo.stats()
     assert stats["high_path_entries"] == 1
     assert stats["high_path_misses"] == 1
