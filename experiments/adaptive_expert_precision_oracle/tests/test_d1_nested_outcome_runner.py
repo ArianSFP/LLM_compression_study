@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from types import SimpleNamespace
 import ast
+import hashlib
+import json
 import sys
 
 import numpy as np
@@ -15,6 +17,134 @@ sys.path[:0] = [str(EXPERIMENT / "src"), str(EXPERIMENT / "scripts")]
 
 from oracle_study.d1_nested_outcomes import OutcomeAllocation  # noqa: E402
 import run_d1_nested_outcomes as runner  # noqa: E402
+
+
+def _write_json(path: Path, value: object) -> str:
+    payload = (json.dumps(value, sort_keys=True) + "\n").encode()
+    path.write_bytes(payload)
+    return hashlib.sha256(payload).hexdigest()
+
+
+def test_raw_request_inputs_must_match_both_frozen_calibration_hashes(
+    tmp_path: Path,
+) -> None:
+    manifest = tmp_path / "requests.jsonl"
+    original = (
+        json.dumps({"request_id": "7", "prompt_token_ids": [10, 11, 12]})
+        + "\n"
+    ).encode()
+    manifest.write_bytes(original)
+    original_manifest_sha = hashlib.sha256(original).hexdigest()
+    facts = tmp_path / "requests_facts.json"
+    original_facts_sha = _write_json(
+        facts,
+        {"output": {"sha256": original_manifest_sha, "bytes": len(original)}},
+    )
+    plan = SimpleNamespace(
+        request_manifest_sha256=original_manifest_sha,
+        request_manifest_facts_sha256=original_facts_sha,
+    )
+    assert runner._authenticate_raw_request_inputs(
+        plan, manifest_path=manifest, manifest_facts_path=facts,
+    ) == {
+        "manifest_sha256": original_manifest_sha,
+        "manifest_facts_sha256": original_facts_sha,
+    }
+
+    altered = (
+        json.dumps({"request_id": "7", "prompt_token_ids": [10, 99, 12]})
+        + "\n"
+    ).encode()
+    manifest.write_bytes(altered)
+    altered_manifest_sha = hashlib.sha256(altered).hexdigest()
+    altered_facts_sha = _write_json(
+        facts,
+        {"output": {"sha256": altered_manifest_sha, "bytes": len(altered)}},
+    )
+    with pytest.raises(ValueError, match="request manifest does not match"):
+        runner._authenticate_raw_request_inputs(
+            plan, manifest_path=manifest, manifest_facts_path=facts,
+        )
+
+    manifest.write_bytes(original)
+    facts.write_text(json.dumps({"self_consistent": True}) + "\n")
+    with pytest.raises(ValueError, match="manifest facts do not match"):
+        runner._authenticate_raw_request_inputs(
+            plan, manifest_path=manifest, manifest_facts_path=facts,
+        )
+    assert altered_facts_sha != original_facts_sha
+
+
+def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    original_manifest = tmp_path / "original_requests.jsonl"
+    original_payload = (
+        json.dumps({"request_id": "7", "prompt_token_ids": [10, 11, 12]})
+        + "\n"
+    ).encode()
+    original_manifest.write_bytes(original_payload)
+    original_manifest_sha = hashlib.sha256(original_payload).hexdigest()
+    original_facts = tmp_path / "original_requests_facts.json"
+    original_facts_sha = _write_json(
+        original_facts,
+        {"output": {"sha256": original_manifest_sha}},
+    )
+
+    supplied_manifest = tmp_path / "supplied_requests.jsonl"
+    supplied_payload = (
+        json.dumps({"request_id": "7", "prompt_token_ids": [10, 99, 12]})
+        + "\n"
+    ).encode()
+    supplied_manifest.write_bytes(supplied_payload)
+    supplied_manifest_sha = hashlib.sha256(supplied_payload).hexdigest()
+    supplied_facts = tmp_path / "supplied_requests_facts.json"
+    _write_json(
+        supplied_facts,
+        {"output": {"sha256": supplied_manifest_sha}},
+    )
+
+    capture = tmp_path / "capture.json"
+    capture_sha = _write_json(capture, {})
+    config = tmp_path / "allocation.json"
+    _write_json(config, {
+        "authenticated_capture_protocol": {
+            "path": capture.name,
+            "sha256": capture_sha,
+        },
+    })
+    plan = SimpleNamespace(
+        request_manifest_sha256=original_manifest_sha,
+        request_manifest_facts_sha256=original_facts_sha,
+    )
+    token_rows_exposed = False
+
+    def forbidden_parser(**_kwargs):
+        nonlocal token_rows_exposed
+        token_rows_exposed = True
+        raise AssertionError("request token rows were parsed before raw authentication")
+
+    monkeypatch.setattr(runner, "EXPERIMENT", tmp_path)
+    monkeypatch.setattr(runner, "FROZEN_ALLOCATION_CONFIG_PATH", config)
+    monkeypatch.setattr(runner, "AUTHENTICATED_CAPTURE_CONFIG_PATH", capture.name)
+    monkeypatch.setattr(runner, "AUTHENTICATED_CAPTURE_CONFIG_SHA256", capture_sha)
+    monkeypatch.setattr(runner, "validate_outcome_config", lambda _config: None)
+    monkeypatch.setattr(runner, "load_outcome_plan", lambda **_kwargs: plan)
+    monkeypatch.setattr(runner, "validate_plan_against_config", lambda *_args: None)
+    monkeypatch.setattr(runner, "validate_capture_inputs", forbidden_parser)
+    args = SimpleNamespace(
+        config=config, request_manifest=supplied_manifest,
+        request_manifest_facts=supplied_facts,
+        allocation_manifest=tmp_path / "allocations.json",
+        allocation_seal=tmp_path / "allocations.seal.json",
+        expected_allocation_sha256="a" * 64,
+        expected_calibration_sha256="b" * 64,
+        splits=["evaluation"], layers=None,
+    )
+    with pytest.raises(ValueError, match="request manifest does not match"):
+        runner._load_inputs(args)
+    assert token_rows_exposed is False
 
 
 class _PrefixObserver:

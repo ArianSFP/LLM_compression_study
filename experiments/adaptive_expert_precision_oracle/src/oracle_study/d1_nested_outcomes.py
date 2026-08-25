@@ -73,6 +73,8 @@ class OutcomePlan:
     allocations: tuple[OutcomeAllocation, ...]
     allocation_manifest_sha256: str
     frozen_calibration_spec_sha256: str
+    request_manifest_sha256: str
+    request_manifest_facts_sha256: str
     allocation_config_canonical_sha256: str | None
 
     def for_split(self, split: str) -> tuple[OutcomeAllocation, ...]:
@@ -101,6 +103,16 @@ def file_sha256(path: Path) -> str:
         for block in iter(lambda: handle.read(8 << 20), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _required_sha256(value: Any, *, field: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise ValueError(f"frozen calibration {field} is invalid")
+    return value
 
 
 def validate_outcome_config(config: Mapping[str, Any]) -> None:
@@ -175,6 +187,15 @@ def load_outcome_plan(
     )
     digest = file_sha256(Path(manifest_path))
     frozen_digest = validate_frozen_calibration_spec(manifest["frozen_calibration"])
+    frozen_spec = manifest["frozen_calibration"]["spec"]
+    request_manifest_sha256 = _required_sha256(
+        frozen_spec.get("request_manifest_sha256"),
+        field="request manifest SHA-256",
+    )
+    request_manifest_facts_sha256 = _required_sha256(
+        frozen_spec.get("request_manifest_facts_sha256"),
+        field="request manifest facts SHA-256",
+    )
     allocation_inputs = manifest.get("allocation_inputs")
     config_canonical_sha256: str | None = None
     if allocation_inputs is not None:
@@ -229,6 +250,8 @@ def load_outcome_plan(
         allocations=tuple(allocations),
         allocation_manifest_sha256=digest,
         frozen_calibration_spec_sha256=frozen_digest,
+        request_manifest_sha256=request_manifest_sha256,
+        request_manifest_facts_sha256=request_manifest_facts_sha256,
         allocation_config_canonical_sha256=config_canonical_sha256,
     )
 

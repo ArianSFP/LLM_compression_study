@@ -88,7 +88,12 @@ def _allocation(
 
 
 def _manifest(requests: tuple[str, ...] = ("7",)) -> dict[str, object]:
-    frozen = freeze_calibration_spec({"window": 16, "eta": 0.0005})
+    frozen = freeze_calibration_spec({
+        "window": 16,
+        "eta": 0.0005,
+        "request_manifest_sha256": "b" * 64,
+        "request_manifest_facts_sha256": "c" * 64,
+    })
     allocations = []
     chains = []
     for request_id in requests:
@@ -156,6 +161,8 @@ def test_outcome_plan_requires_authentic_seal_and_decodes_full_state(
     assert plan.allocations[0].selected_state.dtype.name == "uint8"
     assert plan.allocations[0].selected_pages == 1
     assert len(plan.allocations[0].state_sha256) == 64
+    assert plan.request_manifest_sha256 == "b" * 64
+    assert plan.request_manifest_facts_sha256 == "c" * 64
 
     manifest.write_bytes(manifest.read_bytes() + b"\n")
     with pytest.raises(ArtifactValidationError, match="SHA-256 mismatch"):

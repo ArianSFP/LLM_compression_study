@@ -1559,6 +1559,58 @@ def _selected_allocations(
     return selected
 
 
+def _resolve_request_manifest_facts_path(
+    capture_config: Mapping[str, Any],
+    manifest_path: Path,
+    supplied_path: Path | None,
+) -> Path:
+    """Resolve facts without parsing or exposing any request token IDs."""
+
+    if supplied_path is not None:
+        return Path(supplied_path)
+    manifest_path = Path(manifest_path)
+    sibling = manifest_path.with_name(f"{manifest_path.stem}_facts.json")
+    if sibling.is_file():
+        return sibling
+    request_source = capture_config.get("request_source")
+    if isinstance(request_source, Mapping):
+        configured = request_source.get("selected_manifest_facts")
+        if isinstance(configured, str) and configured:
+            configured_path = Path(configured)
+            if configured_path.is_file():
+                return configured_path
+    raise FileNotFoundError(
+        "selected request-manifest facts are required; supply "
+        "--request-manifest-facts"
+    )
+
+
+def _authenticate_raw_request_inputs(
+    plan: Any,
+    *,
+    manifest_path: Path,
+    manifest_facts_path: Path,
+) -> dict[str, str]:
+    """Bind raw request bytes to calibration before any token row is parsed."""
+
+    observed_manifest = file_sha256(Path(manifest_path))
+    if observed_manifest != str(plan.request_manifest_sha256):
+        raise ValueError(
+            "supplied request manifest does not match the frozen calibration "
+            "raw SHA-256"
+        )
+    observed_facts = file_sha256(Path(manifest_facts_path))
+    if observed_facts != str(plan.request_manifest_facts_sha256):
+        raise ValueError(
+            "supplied request manifest facts do not match the frozen calibration "
+            "raw SHA-256"
+        )
+    return {
+        "manifest_sha256": observed_manifest,
+        "manifest_facts_sha256": observed_facts,
+    }
+
+
 def _load_inputs(args: argparse.Namespace):
     allocation_config_sha256 = file_sha256(args.config)
     if allocation_config_sha256 != file_sha256(FROZEN_ALLOCATION_CONFIG_PATH):
@@ -1576,11 +1628,7 @@ def _load_inputs(args: argparse.Namespace):
         or file_sha256(capture_path) != AUTHENTICATED_CAPTURE_CONFIG_SHA256
     ):
         raise ValueError("authenticated capture protocol bytes changed")
-    capture_config, request_rows, request_hashes = validate_capture_inputs(
-        config_path=capture_path,
-        manifest_path=args.request_manifest,
-        manifest_facts_path=args.request_manifest_facts,
-    )
+    capture_config = load_json(capture_path)
     capture_critical_fields = (
         "checkpoint", "checkpoint_revision", "checkpoint_index_sha256",
         "checkpoint_config_sha256", "tokenizer_json_sha256", "selected_trees",
@@ -1602,6 +1650,26 @@ def _load_inputs(args: argparse.Namespace):
         expected_frozen_calibration_spec_sha256=args.expected_calibration_sha256,
     )
     validate_plan_against_config(plan, config)
+    request_facts_path = _resolve_request_manifest_facts_path(
+        capture_config, args.request_manifest, args.request_manifest_facts,
+    )
+    authenticated_raw_hashes = _authenticate_raw_request_inputs(
+        plan,
+        manifest_path=args.request_manifest,
+        manifest_facts_path=request_facts_path,
+    )
+    validated_capture_config, request_rows, request_hashes = validate_capture_inputs(
+        config_path=capture_path,
+        manifest_path=args.request_manifest,
+        manifest_facts_path=request_facts_path,
+    )
+    if validated_capture_config != capture_config:
+        raise RuntimeError("authenticated capture config changed during validation")
+    if any(
+        str(request_hashes[key]) != authenticated_raw_hashes[key]
+        for key in ("manifest_sha256", "manifest_facts_sha256")
+    ):
+        raise RuntimeError("request inputs changed during authenticated validation")
     allocations = _selected_allocations(plan, args.splits, args.layers)
     requests = join_request_manifest(allocations, request_rows)
     return (
