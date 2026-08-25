@@ -286,6 +286,46 @@ def _move_for(expert: int, unit: int, bit: int, source: int, direction: str) -> 
     return PhysicalPageMove(expert, unit, bit, source, destination)
 
 
+def _build_legal_move_templates(
+    direction: str,
+) -> tuple[tuple[tuple[tuple[PhysicalPageMove, ...], ...], ...], ...]:
+    """Intern every immutable one-unit move in canonical enumeration order.
+
+    Local prune/completion paths enumerate the same physical move values after
+    every refresh. Constructing hundreds of thousands of identical
+    dataclass objects in each path is pure Python overhead. These tables are
+    built once when the module is imported (before the runner forks its Arm-3
+    workers), so their immutable pages can also be shared by forked children.
+    Masked enumeration retains the explicit reference loop below because its
+    legal set depends on a second state table.
+    """
+
+    if direction not in {"add", "remove"}:
+        raise ValueError("move-template direction must be add or remove")
+    return tuple(
+        tuple(
+            tuple(
+                tuple(
+                    _move_for(expert, unit, bit, source, direction)
+                    for bit, _ in PROJECTION_BITS
+                    if (
+                        not source & bit
+                        if direction == "add"
+                        else bool(source & bit)
+                    )
+                )
+                for source in range(VALID_STATE_MASK + 1)
+            )
+            for unit in range(UNITS_PER_EXPERT)
+        )
+        for expert in range(EXPERTS_PER_GROUP)
+    )
+
+
+_LEGAL_ADD_MOVE_TEMPLATES = _build_legal_move_templates("add")
+_LEGAL_REMOVE_MOVE_TEMPLATES = _build_legal_move_templates("remove")
+
+
 def legal_add_moves(states: Any, *, upper_states: Any | None = None) -> tuple[PhysicalPageMove, ...]:
     """Enumerate add-one-bit moves in deterministic expert/unit/bit order."""
 
@@ -294,6 +334,12 @@ def legal_add_moves(states: Any, *, upper_states: Any | None = None) -> tuple[Ph
     if upper is not None and not physical_subset(value, upper):
         raise ValueError("current states are not a subset of the addition upper mask")
     result: list[PhysicalPageMove] = []
+    if upper is None:
+        for expert in range(EXPERTS_PER_GROUP):
+            templates = _LEGAL_ADD_MOVE_TEMPLATES[expert]
+            for unit in range(UNITS_PER_EXPERT):
+                result.extend(templates[unit][int(value[expert, unit])])
+        return tuple(result)
     for expert in range(EXPERTS_PER_GROUP):
         for unit in range(UNITS_PER_EXPERT):
             source = int(value[expert, unit])
@@ -318,6 +364,12 @@ def legal_remove_moves(
     if lower is not None and not physical_subset(lower, value):
         raise ValueError("removal lower mask is not a subset of current states")
     result: list[PhysicalPageMove] = []
+    if lower is None:
+        for expert in range(EXPERTS_PER_GROUP):
+            templates = _LEGAL_REMOVE_MOVE_TEMPLATES[expert]
+            for unit in range(UNITS_PER_EXPERT):
+                result.extend(templates[unit][int(value[expert, unit])])
+        return tuple(result)
     for expert in range(EXPERTS_PER_GROUP):
         for unit in range(UNITS_PER_EXPERT):
             source = int(value[expert, unit])
@@ -599,10 +651,23 @@ def _best_distinct_move_batch(
     )
     if allowed.shape != (len(moves),) or allowed.dtype != np.bool_:
         raise ValueError("physical move eligibility must be one boolean per move")
-    order = sorted(
-        range(len(moves)),
-        key=lambda index: (float(scores[index]), moves[index].sort_key),
+    # Legal move enumeration, and every admissibility-filtered subsequence of
+    # it, is already in canonical sort-key order. A stable C-level score sort
+    # therefore implements exactly the historical `(score, sort_key)` order
+    # without constructing and sorting thousands of Python key tuples. Keep
+    # the generic reference path for callers that supply noncanonical moves.
+    canonical = all(
+        left.sort_key <= right.sort_key
+        for left, right in zip(moves, moves[1:])
     )
+    order: Sequence[int]
+    if canonical:
+        order = np.argsort(scores, kind="stable")
+    else:
+        order = sorted(
+            range(len(moves)),
+            key=lambda index: (float(scores[index]), moves[index].sort_key),
+        )
     selected: list[PhysicalPageMove] = []
     seen: set[tuple[int, int]] = set()
     for index in order:

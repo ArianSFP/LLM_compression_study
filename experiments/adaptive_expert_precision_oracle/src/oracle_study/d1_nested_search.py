@@ -460,6 +460,7 @@ def shortlist_matched_page_swaps(
     move_limit: int = 32,
     candidate_limit: int = 8,
     local_tolerance: float = 1e-12,
+    _scalar_local_audit: list[tuple[np.ndarray, float]] | None = None,
 ) -> tuple[MatchedSwapCandidate, ...]:
     """Return a bounded signed-margin shortlist of exact-local legal swaps.
 
@@ -632,6 +633,10 @@ def shortlist_matched_page_swaps(
             scalar_score = float(geometry.local_damage(candidate_states))
             if not np.isfinite(scalar_score) or scalar_score < 0.0:
                 raise ValueError("token geometry returned invalid scalar local damage")
+            if _scalar_local_audit is not None:
+                _scalar_local_audit.append((
+                    _freeze(candidate_states, np.int64), scalar_score,
+                ))
             if vector_local is not None and not np.isclose(
                 scalar_score, vector_score, rtol=2e-12, atol=2e-12,
             ):
@@ -654,6 +659,105 @@ def shortlist_matched_page_swaps(
 
 
 ExactReplay = Callable[[np.ndarray], ExactD1Metrics]
+
+
+@dataclass(frozen=True)
+class _CachedRepairShortlist:
+    """Performance-only shortlist plus calls needed for cache-count parity."""
+
+    candidates: tuple[MatchedSwapCandidate, ...]
+    scalar_local_audit: tuple[tuple[np.ndarray, float], ...]
+
+    def __post_init__(self) -> None:
+        candidates = tuple(self.candidates)
+        audit: list[tuple[np.ndarray, float]] = []
+        if any(not isinstance(item, MatchedSwapCandidate) for item in candidates):
+            raise TypeError("cached repair shortlist candidates are invalid")
+        for states, raw_damage in self.scalar_local_audit:
+            value = validate_states(states)
+            damage = float(raw_damage)
+            if not np.isfinite(damage) or damage < 0.0:
+                raise ValueError("cached repair shortlist audit is invalid")
+            audit.append((_freeze(value, np.int64), damage))
+        object.__setattr__(self, "candidates", candidates)
+        object.__setattr__(self, "scalar_local_audit", tuple(audit))
+
+
+RepairShortlistCache = dict[tuple[object, ...], _CachedRepairShortlist]
+
+
+def _repair_shortlist_key(
+    incumbent: np.ndarray,
+    frozen_core: np.ndarray,
+    local_damage_limit: float,
+    move_limit: int,
+    candidate_limit: int,
+) -> tuple[object, ...]:
+    return (
+        np.asarray(validate_states(incumbent), np.uint8).tobytes(order="C"),
+        np.asarray(validate_states(frozen_core), np.uint8).tobytes(order="C"),
+        np.float64(local_damage_limit).tobytes(),
+        int(move_limit),
+        int(candidate_limit),
+    )
+
+
+def _cached_or_built_shortlist(
+    current: np.ndarray,
+    core: np.ndarray,
+    geometry: TokenStateGeometry,
+    boundaries: ScreenedD1Boundaries,
+    *,
+    local_damage_limit: float,
+    move_limit: int,
+    candidate_limit: int,
+    cache: RepairShortlistCache | None,
+) -> tuple[MatchedSwapCandidate, ...]:
+    if cache is None:
+        return shortlist_matched_page_swaps(
+            current,
+            core,
+            geometry,
+            boundaries,
+            local_damage_limit=local_damage_limit,
+            move_limit=move_limit,
+            candidate_limit=candidate_limit,
+        )
+    key = _repair_shortlist_key(
+        current, core, local_damage_limit, move_limit, candidate_limit,
+    )
+    cached = cache.get(key)
+    if cached is None:
+        audit: list[tuple[np.ndarray, float]] = []
+        candidates = shortlist_matched_page_swaps(
+            current,
+            core,
+            geometry,
+            boundaries,
+            local_damage_limit=local_damage_limit,
+            move_limit=move_limit,
+            candidate_limit=candidate_limit,
+            _scalar_local_audit=audit,
+        )
+        cache[key] = _CachedRepairShortlist(candidates, tuple(audit))
+        return candidates
+
+    # The uncached shortlist calls output_delta once after its two signed-move
+    # projections, then scalar local_damage for every audited finalist or
+    # guard rejection. Replaying only these cheap, now-cached calls preserves
+    # the serialized TokenStateGeometry cache counters without rebuilding the
+    # expensive signed effects and vector pair scores.
+    incumbent_delta = np.asarray(geometry.output_delta(current), np.float64)
+    if (
+        incumbent_delta.shape != (boundaries.output_width,)
+        or np.any(~np.isfinite(incumbent_delta))
+    ):
+        raise ValueError("token geometry returned an invalid incumbent delta")
+    for states, expected_damage in cached.scalar_local_audit:
+        observed = float(geometry.local_damage(states))
+        if observed != expected_damage:
+            raise RuntimeError("cached repair shortlist local damage changed")
+    return cached.candidates
 
 
 @dataclass(frozen=True)
@@ -732,6 +836,7 @@ def iterative_exact_repair(
     maximum_rounds: int = 8,
     move_limit: int = 32,
     candidate_limit: int = 8,
+    shortlist_cache: RepairShortlistCache | None = None,
 ) -> ExactRepairResult:
     """Iteratively accept only strict exact all-256 crossing reductions."""
 
@@ -741,6 +846,8 @@ def iterative_exact_repair(
         raise ValueError("arm must be 'arm4' or 'arm5'")
     if rounds != maximum_rounds or not 1 <= rounds <= TOP_K:
         raise ValueError("maximum_rounds must be an integer in [1,8]")
+    if shortlist_cache is not None and not isinstance(shortlist_cache, dict):
+        raise TypeError("shortlist_cache must be a dictionary")
     initial = validate_states(incumbent_states)
     core = validate_states(frozen_core)
     if not physical_subset(core, initial):
@@ -758,7 +865,7 @@ def iterative_exact_repair(
     steps: list[ExactRepairStep] = []
     stop_reason = "maximum_rounds"
     for round_index in range(1, rounds + 1):
-        candidates = shortlist_matched_page_swaps(
+        candidates = _cached_or_built_shortlist(
             current,
             core,
             geometry,
@@ -766,6 +873,7 @@ def iterative_exact_repair(
             local_damage_limit=local_damage_limit,
             move_limit=move_limit,
             candidate_limit=candidate_limit,
+            cache=shortlist_cache,
         )
         if not candidates:
             stop_reason = "no_shortlist_candidate"

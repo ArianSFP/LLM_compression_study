@@ -512,6 +512,9 @@ def test_compact_arm3_pair_retains_only_endpoints_and_canonical_chains() -> None
         core_to_low_moves=canonical_add_only_moves(core, low),
         core_to_high_moves=canonical_add_only_moves(core, high),
         low_to_high_moves=canonical_add_only_moves(low, high),
+        high_path_checkpoint_move_batches=(
+            canonical_add_only_moves(low, high),
+        ),
         high_path_checkpoint_damages=(2.0, 1.0),
     )
     assert compact.common_core.dtype == np.uint8

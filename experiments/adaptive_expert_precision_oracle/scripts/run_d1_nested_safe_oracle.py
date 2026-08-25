@@ -118,6 +118,9 @@ class CompactLocalPair:
     core_to_low_moves: tuple[PhysicalPageMove, ...]
     core_to_high_moves: tuple[PhysicalPageMove, ...]
     low_to_high_moves: tuple[PhysicalPageMove, ...]
+    high_path_checkpoint_move_batches: tuple[
+        tuple[PhysicalPageMove, ...], ...
+    ]
     high_path_checkpoint_damages: tuple[float, ...]
 
     def __post_init__(self) -> None:
@@ -136,6 +139,9 @@ class CompactLocalPair:
         low_moves = tuple(self.core_to_low_moves)
         high_moves = tuple(self.core_to_high_moves)
         low_to_high = tuple(self.low_to_high_moves)
+        high_path_batches = tuple(
+            tuple(batch) for batch in self.high_path_checkpoint_move_batches
+        )
         high_path_damages = tuple(map(float, self.high_path_checkpoint_damages))
         if (
             low_rate < 1
@@ -144,6 +150,19 @@ class CompactLocalPair:
             or any(not np.isfinite(value) or value < 0.0 for value in damages)
             or any(not value for value in reasons)
             or not high_path_damages
+            or len(high_path_damages) != len(high_path_batches) + 1
+            or any(
+                not batch
+                or any(
+                    not isinstance(move, PhysicalPageMove)
+                    or move.direction != "add"
+                    for move in batch
+                )
+                for batch in high_path_batches
+            )
+            or tuple(
+                move for batch in high_path_batches for move in batch
+            ) != low_to_high
             or any(
                 not np.isfinite(value) or value < 0.0
                 for value in high_path_damages
@@ -164,6 +183,10 @@ class CompactLocalPair:
             high_path_damages[-1], damages[2], rtol=0.0, atol=1e-12,
         ):
             raise ValueError("compact Arm3 high-path endpoint damage changed")
+        if not np.isclose(
+            high_path_damages[0], damages[1], rtol=0.0, atol=1e-12,
+        ):
+            raise ValueError("compact Arm3 high-path start damage changed")
         for value in (core, low, high):
             value.setflags(write=False)
         object.__setattr__(self, "low_rate", low_rate)
@@ -181,6 +204,9 @@ class CompactLocalPair:
         object.__setattr__(self, "core_to_low_moves", low_moves)
         object.__setattr__(self, "core_to_high_moves", high_moves)
         object.__setattr__(self, "low_to_high_moves", low_to_high)
+        object.__setattr__(
+            self, "high_path_checkpoint_move_batches", high_path_batches,
+        )
         object.__setattr__(
             self, "high_path_checkpoint_damages", high_path_damages,
         )
@@ -1232,6 +1258,9 @@ def _compact_local_pair_task(
             move
             for checkpoint in high.checkpoints[1:]
             for move in checkpoint.moves
+        ),
+        high_path_checkpoint_move_batches=tuple(
+            tuple(checkpoint.moves) for checkpoint in high.checkpoints[1:]
         ),
         high_path_checkpoint_damages=tuple(
             float(checkpoint.local_damage) for checkpoint in high.checkpoints
@@ -2340,6 +2369,9 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                             memo=policy_memo,
                             arm3_high_path_hint=Arm3HighPathHint(
                                 completion_moves=local.low_to_high_moves,
+                                checkpoint_move_batches=(
+                                    local.high_path_checkpoint_move_batches
+                                ),
                                 checkpoint_local_damages=(
                                     local.high_path_checkpoint_damages
                                 ),

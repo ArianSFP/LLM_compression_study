@@ -15,6 +15,8 @@ from typing import Any, Callable, Sequence
 import numpy as np
 
 from .d1_nested_allocation import (
+    AllocationCheckpoint,
+    AllocationPathTrace,
     PROJECTION_BITS,
     PhysicalPageMove,
     add_only_local_completion,
@@ -55,11 +57,13 @@ class Arm3HighPathHint:
     """Compact exact audit of the D1-blind Arm3 low-to-high local path."""
 
     completion_moves: tuple[PhysicalPageMove, ...]
+    checkpoint_move_batches: tuple[tuple[PhysicalPageMove, ...], ...]
     checkpoint_local_damages: tuple[float, ...]
     stop_reason: str
 
     def __post_init__(self) -> None:
         moves = tuple(self.completion_moves)
+        batches = tuple(tuple(batch) for batch in self.checkpoint_move_batches)
         damages = tuple(map(float, self.checkpoint_local_damages))
         reason = str(self.stop_reason)
         if (
@@ -67,12 +71,24 @@ class Arm3HighPathHint:
                 not isinstance(move, PhysicalPageMove) or move.direction != "add"
                 for move in moves
             )
+            or any(
+                not batch
+                or any(
+                    not isinstance(move, PhysicalPageMove)
+                    or move.direction != "add"
+                    for move in batch
+                )
+                for batch in batches
+            )
+            or tuple(move for batch in batches for move in batch) != moves
             or not damages
+            or len(damages) != len(batches) + 1
             or any(not np.isfinite(value) or value < 0.0 for value in damages)
             or not reason
         ):
             raise ValueError("Arm3 high-path hint is invalid")
         object.__setattr__(self, "completion_moves", moves)
+        object.__setattr__(self, "checkpoint_move_batches", batches)
         object.__setattr__(self, "checkpoint_local_damages", damages)
         object.__setattr__(self, "stop_reason", reason)
 
@@ -88,6 +104,7 @@ class NestedPolicyMemo:
 
     high_completion_paths: dict[tuple[object, ...], Any]
     exact_repairs: dict[tuple[object, ...], ExactRepairResult]
+    repair_shortlists: dict[tuple[object, ...], Any]
     high_path_hits: int = 0
     high_path_misses: int = 0
     high_path_seconds: float = 0.0
@@ -99,6 +116,7 @@ class NestedPolicyMemo:
     def __init__(self) -> None:
         self.high_completion_paths = {}
         self.exact_repairs = {}
+        self.repair_shortlists = {}
         self.high_path_hits = 0
         self.high_path_misses = 0
         self.high_path_seconds = 0.0
@@ -568,6 +586,73 @@ def _flatten_completion_moves(path: Any) -> tuple[PhysicalPageMove, ...]:
     )
 
 
+def _arm3_high_path_from_hint(
+    low_state: Any,
+    high_state: Any,
+    expert_ids: Any,
+    high_cap_pages: int,
+    hint: Arm3HighPathHint,
+    local_damage: Callable[[np.ndarray], float],
+    output_delta: Callable[[np.ndarray], np.ndarray],
+) -> AllocationPathTrace:
+    """Rebuild the exact precomputed Arm3 trace without rescoring its moves."""
+
+    low = validate_states(low_state)
+    high = validate_states(high_state)
+    ids = validate_expert_ids(expert_ids)
+    current = low.copy()
+    initial_damage = _finite_damage(
+        local_damage(_freeze(current)), "hinted Arm3 checkpoint damage",
+    )
+    if not np.isclose(
+        initial_damage,
+        hint.checkpoint_local_damages[0],
+        rtol=0.0,
+        atol=1e-12,
+    ):
+        raise RuntimeError("Arm3 high-path hint start damage changed")
+    checkpoints = [AllocationCheckpoint(
+        phase="add_only_completion",
+        step=0,
+        expert_ids=ids,
+        states=current,
+        local_damage=initial_damage,
+    )]
+    for step, (batch, damage) in enumerate(zip(
+        hint.checkpoint_move_batches,
+        hint.checkpoint_local_damages[1:],
+        strict=True,
+    ), start=1):
+        # The direct scorer performs one baseline output-cache lookup before
+        # each accepted batch. Retain that logical cache audit while skipping
+        # only the expensive enumeration and scoring of unselected moves.
+        output_delta(_freeze(current))
+        current = apply_page_moves(current, batch)
+        parent_damage = _finite_damage(
+            local_damage(_freeze(current)), "hinted Arm3 checkpoint damage",
+        )
+        if not np.isclose(
+            parent_damage, damage, rtol=0.0, atol=1e-12,
+        ):
+            raise RuntimeError("Arm3 high-path hint checkpoint damage changed")
+        checkpoints.append(AllocationCheckpoint(
+            phase="add_only_completion",
+            step=step,
+            expert_ids=ids,
+            states=current,
+            local_damage=parent_damage,
+            moves=batch,
+        ))
+    if not np.array_equal(current, high):
+        raise RuntimeError("Arm3 high-path hint does not reach its exact endpoint")
+    return AllocationPathTrace(
+        phase="add_only_completion",
+        target_pages=int(high_cap_pages),
+        stop_reason=hint.stop_reason,
+        checkpoints=tuple(checkpoints),
+    )
+
+
 def orchestrate_nested_policy_pair(
     common_core: Any,
     arm3_low_endpoint: Any,
@@ -692,6 +777,9 @@ def orchestrate_nested_policy_pair(
             maximum_rounds=maximum_repair_rounds,
             move_limit=move_limit,
             candidate_limit=candidate_limit,
+            shortlist_cache=(
+                None if memo is None else memo.repair_shortlists
+            ),
         )
         if memo is not None:
             memo.exact_repairs[key] = result
@@ -727,15 +815,37 @@ def orchestrate_nested_policy_pair(
     ):
         raise RuntimeError("selected low state violates repair invariants")
 
+    identity_high_path_hint = (
+        arm3_high_path_hint
+        if arm3_high_path_hint is not None
+        and np.array_equal(low_state, arm3_low)
+        else None
+    )
+    if identity_high_path_hint is not None and (
+        not np.isclose(
+            identity_high_path_hint.checkpoint_local_damages[0],
+            arm3_low_damage,
+            rtol=0.0,
+            atol=1e-12,
+        )
+        or not np.isclose(
+            identity_high_path_hint.checkpoint_local_damages[-1],
+            arm3_high_damage,
+            rtol=0.0,
+            atol=1e-12,
+        )
+    ):
+        raise RuntimeError("Arm3 high-path hint endpoint damage changed")
+
     # A safe same-rate Arm3-high incumbent is immutable by policy. When the
     # D1-blind precompute supplies its exact low-to-high audit, replaying the
     # expensive local path cannot alter selection or any serialized audit.
     if (
         initial_high_metrics.safe
-        and arm3_high_path_hint is not None
+        and identity_high_path_hint is not None
         and np.array_equal(low_state, arm3_low)
     ):
-        hint = arm3_high_path_hint
+        hint = identity_high_path_hint
         if not np.array_equal(
             replay_add_only_moves(arm3_low, hint.completion_moves), arm3_high,
         ):
@@ -831,14 +941,25 @@ def orchestrate_nested_policy_pair(
     )
     if endpoint_path is None:
         path_started = time.perf_counter()
-        endpoint_path = add_only_local_completion(
-            low_state,
-            ids,
-            budget_pages=high_cap,
-            local_damage=local,
-            score_additions=move_scores,
-            refresh_after_accepted_pages=refresh,
-        )
+        if identity_high_path_hint is not None:
+            endpoint_path = _arm3_high_path_from_hint(
+                low_state,
+                arm3_high,
+                ids,
+                high_cap,
+                identity_high_path_hint,
+                local,
+                geometry.output_delta,
+            )
+        else:
+            endpoint_path = add_only_local_completion(
+                low_state,
+                ids,
+                budget_pages=high_cap,
+                local_damage=local,
+                score_additions=move_scores,
+                refresh_after_accepted_pages=refresh,
+            )
         if memo is not None:
             memo.high_completion_paths[high_path_key] = endpoint_path
             memo.high_path_misses += 1

@@ -39,6 +39,7 @@ from oracle_study.d1_nested_allocation import (
     validate_page_parity,
     validate_states,
 )
+from oracle_study.d1_nested_allocation import _best_distinct_move_batch
 
 
 IDS = np.arange(10, 10 + EXPERTS_PER_GROUP, dtype=np.int64)
@@ -139,6 +140,64 @@ def test_legal_one_bit_moves_reject_stale_and_same_unit_batches() -> None:
     np.testing.assert_array_equal(apply_page_move(updated, removes[0]), states)
     with pytest.raises(ValueError, match="exactly"):
         PhysicalPageMove(0, 0, DOWN_BIT, 0, DOWN_BIT | UP_BIT)
+
+
+def test_cached_legal_moves_equal_reference_enumeration_for_every_state() -> None:
+    states = _states()
+    states[:] = np.arange(UNITS_PER_EXPERT, dtype=np.int64)[None, :] % 8
+
+    expected_adds = tuple(
+        PhysicalPageMove(expert, unit, bit, source, source | bit)
+        for expert in range(EXPERTS_PER_GROUP)
+        for unit in range(UNITS_PER_EXPERT)
+        for source in (int(states[expert, unit]),)
+        for bit in (DOWN_BIT, UP_BIT, GATE_BIT)
+        if not source & bit
+    )
+    expected_removes = tuple(
+        PhysicalPageMove(expert, unit, bit, source, source & ~bit)
+        for expert in range(EXPERTS_PER_GROUP)
+        for unit in range(UNITS_PER_EXPERT)
+        for source in (int(states[expert, unit]),)
+        for bit in (DOWN_BIT, UP_BIT, GATE_BIT)
+        if source & bit
+    )
+
+    assert legal_add_moves(states) == expected_adds
+    assert legal_remove_moves(states) == expected_removes
+    assert all(
+        left.sort_key <= right.sort_key
+        for left, right in zip(expected_adds, expected_adds[1:])
+    )
+    assert all(
+        left.sort_key <= right.sort_key
+        for left, right in zip(expected_removes, expected_removes[1:])
+    )
+
+
+def test_distinct_move_batch_noncanonical_fallback_preserves_reference_order() -> None:
+    moves = (
+        PhysicalPageMove(1, 3, DOWN_BIT, 0, DOWN_BIT),
+        PhysicalPageMove(0, 9, UP_BIT, 0, UP_BIT),
+        PhysicalPageMove(0, 2, GATE_BIT, 0, GATE_BIT),
+        PhysicalPageMove(0, 2, DOWN_BIT, 0, DOWN_BIT),
+    )
+    scores = np.asarray([0.25, 0.25, 0.5, 0.5], np.float64)
+    expected: list[PhysicalPageMove] = []
+    seen: set[tuple[int, int]] = set()
+    for index in sorted(
+        range(len(moves)),
+        key=lambda index: (float(scores[index]), moves[index].sort_key),
+    ):
+        move = moves[index]
+        unit = (move.expert, move.unit)
+        if unit in seen:
+            continue
+        expected.append(move)
+        seen.add(unit)
+        if len(expected) == 3:
+            break
+    assert _best_distinct_move_batch(moves, scores, 3) == tuple(expected)
 
 
 def test_reverse_local_pruning_is_a_common_d1_blind_physical_subset() -> None:

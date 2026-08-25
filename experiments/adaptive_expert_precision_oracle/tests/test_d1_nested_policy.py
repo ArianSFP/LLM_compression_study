@@ -164,6 +164,16 @@ class _StagedToyGeometry(_ToyGeometry):
         )
 
 
+class _CountingToyGeometry(_ToyGeometry):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.score_move_calls = 0
+
+    def score_moves(self, states, moves):
+        self.score_move_calls += 1
+        return super().score_moves(states, moves)
+
+
 def _run(
     core: np.ndarray,
     low: np.ndarray,
@@ -260,6 +270,41 @@ def test_policy_memo_preserves_states_metrics_and_audits_byte_for_byte() -> None
     assert stats["high_path_hits"] == 1
 
 
+def test_policy_memo_hides_cross_arm_shortlist_reuse_from_public_stats() -> None:
+    core = _states()
+    low = _states(0, 1)
+    geometry = _ToyGeometry(
+        {(0, 3, 1): 10.0}, addition_priority={3: 10.0},
+    )
+
+    def replay(states):
+        return _metrics(0 if int(states[0, 3]) != 0 else 1)
+
+    memo = NestedPolicyMemo()
+    arm4 = _run(core, low, low, geometry, replay, arm="arm4", memo=memo)
+    shortlist_entries = len(memo.repair_shortlists)
+    arm4_stats = memo.stats()
+    arm5 = _run(core, low, low, geometry, replay, arm="arm5", memo=memo)
+    arm5_stats = memo.stats()
+
+    assert shortlist_entries > 0
+    assert len(memo.repair_shortlists) == shortlist_entries
+    assert "repair_shortlists" not in arm4_stats
+    assert "repair_shortlists" not in arm5_stats
+    assert arm4_stats["repair_entries"] == 1
+    assert arm4_stats["repair_misses"] == 1
+    assert arm5_stats["repair_entries"] == 2
+    assert arm5_stats["repair_misses"] == 2
+    assert arm5_stats["repair_hits"] == 0
+    np.testing.assert_array_equal(arm5.low_state, arm4.low_state)
+    np.testing.assert_array_equal(arm5.high_state, arm4.high_state)
+    assert arm4.low_metrics.membership_crossings == 0
+    assert arm5.low_metrics.membership_crossings == 0
+    assert tuple(step.addition.sort_key for step in arm4.low_repair_steps) == tuple(
+        step.addition.sort_key for step in arm5.low_repair_steps
+    )
+
+
 def test_safe_high_path_hint_skips_rebuild_with_exact_audit_parity() -> None:
     core = _states()
     low = _states(0)
@@ -283,6 +328,9 @@ def test_safe_high_path_hint_skips_rebuild_with_exact_audit_parity() -> None:
             move
             for checkpoint in path.checkpoints[1:]
             for move in checkpoint.moves
+        ),
+        checkpoint_move_batches=tuple(
+            tuple(checkpoint.moves) for checkpoint in path.checkpoints[1:]
         ),
         checkpoint_local_damages=tuple(
             checkpoint.local_damage for checkpoint in path.checkpoints
@@ -321,6 +369,133 @@ def test_safe_high_path_hint_skips_rebuild_with_exact_audit_parity() -> None:
     assert stats["safe_high_shortcuts"] == 1
     assert stats["high_path_entries"] == 0
     assert stats["high_path_misses"] == 0
+
+
+def test_unsafe_high_path_hint_reuses_exact_batches_with_full_parity() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1, 2)
+    weights = {
+        (0, 0, 1): 30.0,
+        (0, 1, 1): 20.0,
+        (0, 2, 1): 10.0,
+    }
+    path_geometry = _ToyGeometry(weights)
+    path = add_only_local_completion(
+        low,
+        IDS,
+        budget_pages=state_page_count(high),
+        local_damage=path_geometry.local_damage,
+        score_additions=path_geometry.score_moves,
+        refresh_after_accepted_pages=1,
+    )
+    np.testing.assert_array_equal(path.final.states, high)
+    hint = Arm3HighPathHint(
+        completion_moves=tuple(
+            move
+            for checkpoint in path.checkpoints[1:]
+            for move in checkpoint.moves
+        ),
+        checkpoint_move_batches=tuple(
+            tuple(checkpoint.moves) for checkpoint in path.checkpoints[1:]
+        ),
+        checkpoint_local_damages=tuple(
+            checkpoint.local_damage for checkpoint in path.checkpoints
+        ),
+        stop_reason=path.stop_reason,
+    )
+
+    def replay(states):
+        return _metrics(1 if np.array_equal(states, high) else 0)
+
+    reference_geometry = _CountingToyGeometry(weights)
+    optimized_geometry = _CountingToyGeometry(weights)
+    reference = _run(
+        core, low, high, reference_geometry, replay, refresh=1,
+    )
+    memo = NestedPolicyMemo()
+    optimized = _run(
+        core, low, high, optimized_geometry, replay,
+        refresh=1, memo=memo, high_path_hint=hint,
+    )
+
+    def repair_signature(repair):
+        if repair is None:
+            return None
+        return (
+            repair.arm,
+            repair.initial_state.tobytes(),
+            repair.final_state.tobytes(),
+            repair.initial_metrics.membership_crossings,
+            repair.final_metrics.membership_crossings,
+            repair.stop_reason,
+            tuple(
+                (
+                    step.round_index,
+                    step.state.tobytes(),
+                    step.local_damage,
+                    step.removal.sort_key,
+                    step.addition.sort_key,
+                    step.metrics.membership_crossings,
+                )
+                for step in repair.steps
+            ),
+        )
+
+    def signature(result):
+        return (
+            result.low_state.tobytes(),
+            result.high_state.tobytes(),
+            result.low_metrics.membership_crossings,
+            result.high_metrics.membership_crossings,
+            result.low_local_damage,
+            result.high_local_damage,
+            result.low_stop_reason,
+            result.high_stop_reason,
+            result.high_guardrail_qualified_checkpoints,
+            result.high_guardrail_repair_attempts,
+            result.pair_fallback_high_guardrail_infeasible,
+            tuple(
+                (
+                    checkpoint.checkpoint_index,
+                    checkpoint.state.tobytes(),
+                    checkpoint.local_damage,
+                    tuple(move.sort_key for move in checkpoint.completion_moves),
+                    repair_signature(checkpoint.repair),
+                )
+                for checkpoint in result.high_checkpoints
+            ),
+            tuple(
+                (
+                    audit.attempt_index,
+                    audit.allowed_crossings,
+                    audit.accepted,
+                    repair_signature(audit.result),
+                )
+                for audit in result.high_repair_audits
+            ),
+        )
+
+    assert signature(optimized) == signature(reference)
+    assert reference_geometry.score_move_calls > 0
+    assert optimized_geometry.score_move_calls == 0
+    stats = memo.stats()
+    assert stats["high_path_entries"] == 1
+    assert stats["high_path_misses"] == 1
+    assert stats["high_path_hits"] == 0
+
+
+def test_high_path_hint_rejects_malformed_checkpoint_batches() -> None:
+    low = _states(0)
+    high = _states(0, 1)
+    moves = canonical_add_only_moves(low, high)
+    with pytest.raises(ValueError, match="hint is invalid"):
+        Arm3HighPathHint(
+            completion_moves=moves,
+            checkpoint_move_batches=(),
+            checkpoint_local_damages=(1.0, 0.0),
+            stop_reason="budget_reached",
+        )
 
 
 def test_unsafe_low_uses_strict_same_page_exact_repair() -> None:

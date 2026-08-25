@@ -149,8 +149,14 @@ class _StubGeometry:
     def __init__(self, *, forbidden_unit: int | None = None) -> None:
         self.forbidden_unit = forbidden_unit
         self.signed_calls = 0
+        self.output_calls = 0
+        self.local_calls = 0
+        self.output_state_calls: list[bytes] = []
+        self.local_state_calls: list[bytes] = []
 
     def output_delta(self, states: np.ndarray) -> np.ndarray:
+        self.output_calls += 1
+        self.output_state_calls.append(np.asarray(states, np.uint8).tobytes())
         return np.zeros(1, np.float64)
 
     @staticmethod
@@ -177,6 +183,8 @@ class _StubGeometry:
         return np.repeat(values[:, None], sensitivities.shape[0], axis=1)
 
     def local_damage(self, states: np.ndarray) -> float:
+        self.local_calls += 1
+        self.local_state_calls.append(np.asarray(states, np.uint8).tobytes())
         if self.forbidden_unit is not None and int(states[0, self.forbidden_unit]) != 0:
             return 10.0
         if int(states[0, 3]) != 0:
@@ -347,6 +355,63 @@ def test_iterative_repair_accepts_only_strict_exact_reductions_and_keeps_core() 
     assert all(right < left for left, right in zip(crossings, crossings[1:]))
     assert physical_subset(core, result.final_state)
     assert state_page_count(result.final_state) == state_page_count(incumbent)
+
+
+def test_repair_shortlist_cache_preserves_callbacks_and_scalar_cache_calls() -> None:
+    incumbent, core = _incumbent_and_core()
+    geometry = _StubGeometry()
+    baseline = _baseline_logits()
+    shortlist_cache = {}
+
+    def run(arm: str):
+        exact_calls = 0
+        exact_state_calls: list[bytes] = []
+
+        def exact_replay(states: np.ndarray) -> object:
+            nonlocal exact_calls
+            exact_calls += 1
+            exact_state_calls.append(np.asarray(states, np.uint8).tobytes())
+            crossings = 0 if int(states[0, 3]) != 0 else 1
+            return _exact_metrics(
+                baseline, _candidate_logits_for_crossings(crossings),
+            )
+
+        result = iterative_exact_repair(
+            incumbent,
+            core,
+            geometry,
+            _screen(),
+            local_damage_limit=1.0,
+            exact_replay=exact_replay,
+            arm=arm,
+            maximum_rounds=1,
+            shortlist_cache=shortlist_cache,
+        )
+        return result, exact_calls, tuple(exact_state_calls)
+
+    first, first_exact_calls, first_exact_states = run("arm4")
+    first_signed = geometry.signed_calls
+    first_output = geometry.output_calls
+    first_local = geometry.local_calls
+    first_output_states = tuple(geometry.output_state_calls)
+    first_local_states = tuple(geometry.local_state_calls)
+    assert len(shortlist_cache) == 1
+
+    second, second_exact_calls, second_exact_states = run("arm5")
+    assert len(shortlist_cache) == 1
+    assert geometry.signed_calls == first_signed
+    assert geometry.output_calls - first_output == first_output
+    assert geometry.local_calls - first_local == first_local
+    assert second_exact_calls == first_exact_calls
+    assert second_exact_states == first_exact_states
+    assert tuple(geometry.output_state_calls[first_output:]) == first_output_states
+    assert tuple(geometry.local_state_calls[first_local:]) == first_local_states
+    np.testing.assert_array_equal(second.final_state, first.final_state)
+    assert second.final_metrics.membership_crossings == 0
+    assert first.stop_reason == second.stop_reason == "d1_safe"
+    assert tuple(step.addition.sort_key for step in first.steps) == tuple(
+        step.addition.sort_key for step in second.steps
+    )
 
 
 def test_arm5_uses_exact_severity_only_while_unsafe_and_safe_is_immutable() -> None:
