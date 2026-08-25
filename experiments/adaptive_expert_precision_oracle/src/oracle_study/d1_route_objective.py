@@ -28,6 +28,8 @@ __all__ = [
     "token_option_deltas",
     "option_boundary_effects",
     "directional_route_loss",
+    "directional_route_hinge_loss",
+    "incumbent_repair_choice",
     "routing_mass_severity",
     "functional_swap_severity",
     "exact_candidate_logit_vjps",
@@ -343,6 +345,109 @@ def directional_route_loss(
     return float(np.sum(cost * np.logaddexp(0.0, argument)))
 
 
+def directional_route_hinge_loss(
+    q4_margins: Sequence[float] | np.ndarray,
+    signed_effect: Sequence[float] | np.ndarray,
+    *,
+    severity: float | Sequence[float] | np.ndarray = 1.0,
+    safety_margin: float | Sequence[float] | np.ndarray = 0.0,
+    squared: bool = True,
+) -> float:
+    """Return a one-sided loss that is exactly zero after certification.
+
+    Unlike softplus, this objective gives no reward for pushing an already
+    safe boundary farther away from its exact-Q4 margin.  Once all robust
+    margins are safe, the allocator's existing secondary local-error term
+    determines the choice.
+    """
+
+    margins = np.asarray(q4_margins, np.float64).reshape(-1)
+    effect = np.asarray(signed_effect, np.float64).reshape(-1)
+    if margins.shape != effect.shape or margins.size == 0:
+        raise ValueError("margins and signed effects must be equal nonempty vectors")
+    count = margins.size
+    cost = _vector_parameter(severity, count, "severity", positive=False)
+    safe = _vector_parameter(safety_margin, count, "safety_margin", positive=False)
+    deficit = np.maximum(0.0, safe - margins - effect)
+    if bool(squared):
+        deficit = deficit * deficit
+    return float(cost @ deficit)
+
+
+def incumbent_repair_choice(
+    policy_names: Sequence[str],
+    predicted_crossings: Sequence[int] | np.ndarray,
+    route_mass_churn: Sequence[float] | np.ndarray,
+    centered_logit_mse: Sequence[float] | np.ndarray,
+    local_damage: Sequence[float] | np.ndarray,
+    pages: Sequence[int] | np.ndarray,
+    *,
+    incumbent_policy: str,
+    boundary_violation: Sequence[float] | np.ndarray | None = None,
+) -> int:
+    """Choose a minimal D1 repair without globally replacing the incumbent.
+
+    A safe incumbent is retained.  An unsafe incumbent can only be replaced
+    by a candidate with strictly fewer predicted crossings.  This prevents
+    a D1 objective from introducing membership errors merely to improve an
+    aggregate soft score.  Robust boundary-violation depth is the first
+    severity tie-break because the exact panel found it more informative than
+    raw routing mass among candidates that already crossed.  Router-mass
+    churn, centered-logit fidelity, local damage, traffic change, and policy
+    name provide the remaining deterministic tie-breaks.
+    """
+
+    names = tuple(map(str, policy_names))
+    count = len(names)
+    if count == 0 or len(set(names)) != count or str(incumbent_policy) not in names:
+        raise ValueError("repair candidates and incumbent policy are invalid")
+    crossings = np.asarray(predicted_crossings, np.int64).reshape(-1)
+    mass = np.asarray(route_mass_churn, np.float64).reshape(-1)
+    centered = np.asarray(centered_logit_mse, np.float64).reshape(-1)
+    local = np.asarray(local_damage, np.float64).reshape(-1)
+    selected_pages = np.asarray(pages, np.int64).reshape(-1)
+    violation = (
+        np.zeros(count, np.float64)
+        if boundary_violation is None
+        else np.asarray(boundary_violation, np.float64).reshape(-1)
+    )
+    if any(value.shape != (count,) for value in (
+        crossings, mass, centered, local, selected_pages, violation,
+    )):
+        raise ValueError("repair candidate metrics must align with policy names")
+    if (
+        np.any(crossings < 0)
+        or np.any(selected_pages < 0)
+        or any(np.any(~np.isfinite(value)) or np.any(value < 0.0) for value in (
+            violation, mass, centered, local,
+        ))
+    ):
+        raise ValueError("repair candidate metrics must be finite nonnegative")
+    incumbent = names.index(str(incumbent_policy))
+    incumbent_crossings = int(crossings[incumbent])
+    if incumbent_crossings == 0:
+        return incumbent
+    eligible = [
+        index for index in range(count)
+        if int(crossings[index]) < incumbent_crossings
+    ]
+    if not eligible:
+        return incumbent
+    incumbent_pages = int(selected_pages[incumbent])
+    return min(
+        eligible,
+        key=lambda index: (
+            int(crossings[index]),
+            float(violation[index]),
+            float(mass[index]),
+            float(centered[index]),
+            float(local[index]),
+            abs(int(selected_pages[index]) - incumbent_pages),
+            names[index],
+        ),
+    )
+
+
 def routing_mass_severity(
     q4_logits: Sequence[float] | np.ndarray,
     problem: D1BoundaryProblem,
@@ -472,6 +577,7 @@ def d1_group_option_allocate(
     max_coordinate_sweeps: int = 8,
     max_pair_passes: int = 8,
     tolerance: float = 1e-12,
+    route_loss_kind: str = "softplus",
 ) -> D1AllocationTrace:
     """Minimize exact directional D1 risk with an additive local guardrail.
 
@@ -487,6 +593,9 @@ def d1_group_option_allocate(
         raise ValueError("D1 allocation inputs must align with expert count")
     if len(option_effects) != count or len(local_option_features) != count:
         raise ValueError("D1 option effects/features must align with frontiers")
+    loss_kind = str(route_loss_kind)
+    if loss_kind not in {"softplus", "squared_hinge"}:
+        raise ValueError("D1 route loss kind must be softplus or squared_hinge")
     budget = int(page_budget)
     limit = float(local_damage_limit)
     if budget < 0 or not np.isfinite(limit) or limit < 0.0:
@@ -531,6 +640,14 @@ def d1_group_option_allocate(
         raise ValueError("D1 seed allocation violates the local guardrail")
 
     def route_loss(effect: np.ndarray) -> float:
+        if loss_kind == "squared_hinge":
+            return directional_route_hinge_loss(
+                problem.q4_margins,
+                effect,
+                severity=problem.severity,
+                safety_margin=problem.safety_margin,
+                squared=True,
+            )
         return directional_route_loss(
             problem.q4_margins,
             effect,
@@ -665,6 +782,7 @@ def run_d1_oracle_policies(
     q4_final_logits: Sequence[float] | np.ndarray | None = None,
     max_coordinate_sweeps: int = 8,
     max_pair_passes: int = 8,
+    route_loss_kind: str = "softplus",
 ) -> tuple[D1OraclePolicyResult, ...]:
     """Select each D1 policy, then execute its final allocation exactly once.
 
@@ -701,6 +819,7 @@ def run_d1_oracle_policies(
             local_damage_limit=local_damage_limit,
             max_coordinate_sweeps=max_coordinate_sweeps,
             max_pair_passes=max_pair_passes,
+            route_loss_kind=route_loss_kind,
         )
         replayed = exact_replay(trace.option_indices.copy())
         final_logits = None

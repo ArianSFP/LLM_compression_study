@@ -1,0 +1,1154 @@
+{
+  "algorithm": {
+    "crossing_events": [
+      "prevented",
+      "introduced",
+      "both_crossed",
+      "both_safe"
+    ],
+    "downstream_routes_role": "descriptive_outcomes_only_not_selection_inputs",
+    "heavy_tail_top_events_per_comparison": 10,
+    "precision_state_width": 512,
+    "projection_bits_per_state_unit": 3,
+    "rate_pairs": [
+      [
+        360,
+        384
+      ],
+      [
+        725,
+        749
+      ]
+    ],
+    "remedy_selectors": {
+      "adjacent_rate_hard_d1_early_stop": {
+        "candidate_pool": "five_executed_policies_at_adjacent_low_and_high_rates",
+        "hard_constraint": "selected_group_pages_le_high_rate_pr13_pages"
+      },
+      "global_hard_d1_local": {
+        "candidate_pool_includes_pr13": true,
+        "selection_order": [
+          "fewest_exact_full_model_d1_crossings",
+          "lowest_exact_full_model_d1_mass_churn",
+          "lowest_live_execution_weighted_local_qenergy",
+          "smallest_absolute_total_selected_group_page_count_difference",
+          "deterministic_policy_name"
+        ]
+      },
+      "strict_pr13_incumbent_repair": {
+        "safe_pr13_is_immutable": true,
+        "tie_break_order": [
+          "lowest_exact_full_model_d1_mass_churn",
+          "lowest_live_execution_weighted_local_qenergy",
+          "smallest_absolute_total_selected_group_page_count_difference",
+          "deterministic_policy_name"
+        ],
+        "unsafe_switch_requires_strictly_fewer_exact_full_model_d1_crossings": true
+      }
+    },
+    "source_policy_banks_include_same_host_patch": true
+  },
+  "completed": true,
+  "config": {
+    "path": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json",
+    "sha256": "4fb569a6c0a0b7cde5a3267bb8571bedd0e82e5a690e8bac452bfb51e41a6e4a"
+  },
+  "gpu_work_performed": false,
+  "implementation": {
+    "scripts/analyze_d1_experiment_a_diagnosis.py": "fd70fc5365c8b98f8b7817158bee436fd2adcd9459247525d7807588b8a6a6b3",
+    "src/oracle_study/d1_experiment_a_diagnosis.py": "88ee360f636ef11710864644c8daae06e12796ac14c0f6688395326733357c1b"
+  },
+  "offline_only": true,
+  "outputs": {
+    "d1_experiment_a_adjacent_rate_nonmonotonicity_rows.parquet": {
+      "bytes": 249497,
+      "rows": 3480,
+      "sha256": "779d5b275971c2e923ff1174dafea16b832f66c65aaa0a1e07431c9fa2955591"
+    },
+    "d1_experiment_a_adjacent_rate_nonmonotonicity_summary.parquet": {
+      "bytes": 22317,
+      "rows": 140,
+      "sha256": "9a4d530d2d67276b900b365bacd95d5b6ce8bbd0f74470741967fa2609400ab9"
+    },
+    "d1_experiment_a_crossing_conditional_rows.parquet": {
+      "bytes": 566157,
+      "rows": 2784,
+      "sha256": "2076e548f3e558180d7a86464cc3a10ca83ffedfe74bc1f5afb381347e44ad46"
+    },
+    "d1_experiment_a_crossing_conditional_summary.parquet": {
+      "bytes": 32103,
+      "rows": 335,
+      "sha256": "40ae042c3cbf7975a007677ff6e73a55c645935f41bcc4674e0879ba0061cc87"
+    },
+    "d1_experiment_a_deployable_target_remedy_rows.parquet": {
+      "bytes": 188650,
+      "rows": 2436,
+      "sha256": "76ee0e52e2c6cd2813d107ec90cebb1caab70cbc3a985258c1d9d224d53bc36f"
+    },
+    "d1_experiment_a_deployable_target_remedy_summary.parquet": {
+      "bytes": 59520,
+      "rows": 392,
+      "sha256": "72bf04a4aa073e6c9e898ea827fdeafe7421313636c38f09ea1b61979fbbbc60"
+    },
+    "d1_experiment_a_heavy_tail_events.parquet": {
+      "bytes": 12444,
+      "rows": 360,
+      "sha256": "8fb42e7df44394c93920f6d402958c8b37f18d198cda2882e05cdf4fbe8c0230"
+    },
+    "d1_experiment_a_heavy_tail_summary.parquet": {
+      "bytes": 35576,
+      "rows": 252,
+      "sha256": "874475c720724101fb31ce8c2c7a2292c22a2193969b911cfbcacc2751ecaa75"
+    },
+    "d1_experiment_a_source_adjacent_delta_geometry.parquet": {
+      "bytes": 120350,
+      "rows": 1740,
+      "sha256": "8e5197971410b81be466597831bfcfc084257d2c8f5ae80dd12f1497df43bb8c"
+    },
+    "d1_experiment_a_source_adjacent_expert_geometry.parquet": {
+      "bytes": 124525,
+      "rows": 13920,
+      "sha256": "d9b487a221ce8e28e1fb2d57ca1bfc28c7dd5d92ea8b5b4e1a0778bf778a04f6"
+    },
+    "d1_experiment_a_source_adjacent_geometry_summary.parquet": {
+      "bytes": 19587,
+      "rows": 60,
+      "sha256": "ce1fad4b5eb3adc599522c99473996c2ee56c77477cf3b924220cfa6d5981bd3"
+    }
+  },
+  "same_host_allocation_patch": {
+    "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_patch",
+    "facts_sha256": "217e4241a743767300ef3c61793735f1d1c523bb348c7e18ef71d1fa03809f9d",
+    "mismatched_groups": 12,
+    "outputs": {
+      "d1_tail_same_host_patch_deltas.npz": {
+        "bytes": 1377324,
+        "sha256": "46049a42c9214ea1d12b2a7b04e7d205157328f37c906eec30c077897f015829"
+      },
+      "d1_tail_same_host_patch_experts.parquet": {
+        "bytes": 323319,
+        "sha256": "faa0ac6cc5d216b80427152c3cc3986e7fc5cc54ce2872c5142a9e456a764718"
+      },
+      "d1_tail_same_host_patch_groups.parquet": {
+        "bytes": 15291,
+        "sha256": "b749d0f4bbd7264a54a40d8ba258fd35db860a66ea8b62218b52330696dbc483"
+      },
+      "d1_tail_same_host_patch_parity.parquet": {
+        "bytes": 9019,
+        "sha256": "3817c511ddce12ba820580a1670abd5132420b1a7d4e04e233a532a599eeb62e"
+      }
+    }
+  },
+  "schema": "pr13_d1_experiment_a_offline_diagnosis_v1",
+  "scientific_boundary": "Deterministic post-hoc diagnosis of the finalized three-request exact-prefix cached single-token Experiment A smoke. Exact D1 route labels are oracle inputs to the remedy ablations; routes after D1 and terminal KL are descriptive outcomes only. This is not a runtime controller, generated rollout, or quality claim.",
+  "source_cells": [
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_360_layer00/layer_00",
+      "facts_sha256": "178bb85d7c5e80f97c2c7ce0094de7f971783518d21c10cd43fe0dc6062497d9",
+      "layer": 0,
+      "rate": 360,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 294520,
+          "sha256": "dcc889389d6eed04da9198bb3ec5def2f0f57ccafb48f4ea4f6cbf6f28508680"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15377,
+          "sha256": "3b95a98d735e0432abd2549086275dfbada117bd4e4261f9d1101abfff9dc46f"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "f2ddf38a9f4661db205d2ee96a054d705c60e946f6fc0b96cc3bd97d5203d9e9"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24050,
+          "sha256": "06d6db8492861bbc530b3a8a452f901c5c8c64be5776e9be99753018a169518a"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6099,
+          "sha256": "0cc73597fd07b20902c9e9829f8df36368b62b15e81366b37dbd205420a3e904"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1769511,
+          "sha256": "6257183c30175e7b7fe668f580a5527cb036772f0da9cedd9fe640c9a6bd8a9b"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19554,
+          "sha256": "1c99420ee9a42e993333c1ee2800c3a1886a21b12d195ebc053706a7ecca6456"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9537,
+          "sha256": "0920e7cf825196a7b675fe62d2266b84257ff01a969e1eb4ce8b0a6d81b82cb3"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_384_layer00/layer_00",
+      "facts_sha256": "bd40b2dbd698f0f2ba4136f98e41df33b08f8e16b07a6f04fcb6e510afbd0289",
+      "layer": 0,
+      "rate": 384,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 305228,
+          "sha256": "ff7eb42da954f2d9c82dd39d973f0fd337ad15af044c8e151c731cf68a05d1f9"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15393,
+          "sha256": "087bc320b7b71b70006f078bb13ff81c0090f60e420a0ab70444b3797afc4ee5"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "f2ddf38a9f4661db205d2ee96a054d705c60e946f6fc0b96cc3bd97d5203d9e9"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24268,
+          "sha256": "9ba222cabed9d1a54f2ec14370e15090bda3d8afebdc753583b0fb49965f722c"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6128,
+          "sha256": "929ab5eaf999f338098efdf0251d790522184622d6b35195ad0d81568c90f644"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1990943,
+          "sha256": "59ddb5fbe266afa1ce208a71784e6a0a7a612e8529c2fc187473f6c66f3064b7"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19560,
+          "sha256": "1f1f1b138bf19136076eb91c0c8ce3485ff78f10b4800fdd8b61451f7bd8207f"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9539,
+          "sha256": "ba87e93c146777246608351d872f6d3f7e7331d90f3687492aa3dcef578709e1"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_725_layer00/layer_00",
+      "facts_sha256": "bb20c4181f9cccb12e209d5d0cbcf63a7bbaf00f6903535356133d18354da61c",
+      "layer": 0,
+      "rate": 725,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 353014,
+          "sha256": "c49f1a441cd3e3dd8cbb250bda55dc0d09d64c1c69070d8a8c2faf66d02f89a8"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15894,
+          "sha256": "8fd82f196a3961d8a12413a01dededf8ea10f7a91298fc5d5c512592b3fb288c"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "f2ddf38a9f4661db205d2ee96a054d705c60e946f6fc0b96cc3bd97d5203d9e9"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24039,
+          "sha256": "02a4d8862f8fcf4e60f7201672cd2223072103065c138f189be9c0e64ac33ffb"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6093,
+          "sha256": "952703864a0d5dc56643bc83b6b2bcef65c8459d370f47af0a8e4631f921484f"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1770170,
+          "sha256": "2720bcd28f39f89a4a72802d075de56662f1f414d086e9b6f471d8d5077cda31"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19475,
+          "sha256": "2c3f2a1e75030feaebef32dc257bc2e4052aa7bc4e213e1045b0b7408b3074e1"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9546,
+          "sha256": "f96efb0a57288a9cad90fcc286aa241ad341348c77fc76c4e46efdbed44cbc89"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_749_layer00/layer_00",
+      "facts_sha256": "18bdca78b6a858bb90a6ceac26495a74eeef92d34a63b5b2ccffc4c6d1e619dc",
+      "layer": 0,
+      "rate": 749,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 343823,
+          "sha256": "0888b7d02bb9c25f924c2e0b6720dc50b2075d94efc2a15ae7705e3e9aff723d"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15883,
+          "sha256": "b5dfb645e62d6bb2909e771bfc7ebadd09252ad98684f473796823eafe3d800e"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "f2ddf38a9f4661db205d2ee96a054d705c60e946f6fc0b96cc3bd97d5203d9e9"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24353,
+          "sha256": "fbefbaff5d19de3dab6b5e9ca4fc7733ee6dcdb4b65a041e2bb691b0badba559"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6133,
+          "sha256": "8861624ec8b2d4f0338a75929d6dd07fee16d8c718519da1a11dc7fafed348a5"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1992640,
+          "sha256": "ad81cdccdae9d23a6ef68b6059eb76a2c8ba7cd4284503b2c3fc1fbb8c667b68"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19488,
+          "sha256": "b3515675b3d08c78c4ba801c48a8d7ef3fb616c69bd57d58023e098e07e2d00c"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9541,
+          "sha256": "d1f716c0f68a0405fdb36100a4b41e59fc54e7c82c6f023962c8acb8344b4039"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_360_layer01/layer_01",
+      "facts_sha256": "528d5c4f32be62442606e24e267bcd898be6d3a6644727e126ea2aed719a13bf",
+      "layer": 1,
+      "rate": 360,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 235679,
+          "sha256": "a40cf156bf76969ca2a4b1c63db38b43623add549e04fce9c1e5525120965670"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14834,
+          "sha256": "547eeaa929ffb05954751d9452c6498d7660c22a4bdf1c4bc8141827f9dd8ab3"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "7645c0638040a5161c6740e4b0804c6b5c601fce6522db00d51437a6e77a9653"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23705,
+          "sha256": "00291cba2b6060567c124011b27f258d9780e8eb9bc2fb421df6d1b98489e89a"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6099,
+          "sha256": "db5bb90a2de0432ee660554e96d43e9b1d23d1e42502b10146d419b841204e41"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1768597,
+          "sha256": "cce256bb7dccd620ba2624e1739db23ec18084f9b5a5203fad1e5d620ee54cbc"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19697,
+          "sha256": "f91201533b83f7f27fb28948022f3558fd69d54b610fee812f65f7764ea5b48d"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9549,
+          "sha256": "e713dfc82acc493d3f9eaa70bbaa28be2591a204ee06a558555725e614705b1b"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_384_layer01/layer_01",
+      "facts_sha256": "12f28cf531c3edf76564fa7fd96bd76093f4c214af376efe50581b5be9e67204",
+      "layer": 1,
+      "rate": 384,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 265591,
+          "sha256": "7bb16d3d81b0197f4538b4f7bfbb730040225ab817eb534e7e6fd14876b2565a"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14951,
+          "sha256": "4acf9228d4f9982a4739ae8e8394fc2428e6f59bebdfb7ed97ff739c90873c37"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "7645c0638040a5161c6740e4b0804c6b5c601fce6522db00d51437a6e77a9653"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24293,
+          "sha256": "f62a8680a32422de1d3457294d5dc8f72a6af8cc8bb16d1c12031c6a3b0f29a8"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6133,
+          "sha256": "4d3a81402593eeb4bc649444e7a0dd12fb237873f6406b1eb612163ebe7a0ca6"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1990202,
+          "sha256": "8277d95bf95b1051dcd9ed9a40d490b2042eb0ea7305c849d31a643c423eafcb"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19766,
+          "sha256": "f7cb3510df69f4f584386d8234e35c4beb6212a527c2b91f5f4113c25fe8db2c"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9550,
+          "sha256": "3e2c0c0c7679a3325d18f76d118d325e237519c33190bd28c98ad397b92c1d70"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_725_layer01/layer_01",
+      "facts_sha256": "e3d247b409d94438c04f22391fa193b95b640d6bc73334aa7da76c70796fee70",
+      "layer": 1,
+      "rate": 725,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 375080,
+          "sha256": "f8e91030284fc48153f1ec14665bb188c417eaec54c2389e399262f00c503fea"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15423,
+          "sha256": "1229c8a7a741217c00a4d5e336a52e5618e34f0486051651b1d1bf375af24a44"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "7645c0638040a5161c6740e4b0804c6b5c601fce6522db00d51437a6e77a9653"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23948,
+          "sha256": "83b99e28a3b1c5b21782d84e8641ba0ac3b03a32750a4679966d246c3d7523c7"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6085,
+          "sha256": "37a9493fc39ef44be9c44341306c286962687cb833ee9577ecc3863db5031015"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1766174,
+          "sha256": "9f58a1d1ff08b7846dc9fe42bdc246273eb6323c9f3f43906e33d4a3798c94f7"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19580,
+          "sha256": "500e126a0b4b63508deaf0dac7c157f3fc1c8013494719adb34c49310e25e9eb"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9552,
+          "sha256": "7ce28bd16dd5ec1573e3149082e13b7768da88775434be43d00a1930374e5153"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_749_layer01/layer_01",
+      "facts_sha256": "d469dd0b541498834501ab25869dd3668b11c18f8ad1e9c9c3b99c9e55162ced",
+      "layer": 1,
+      "rate": 749,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 375984,
+          "sha256": "28fd97f9cfafe7ef522d803e374abd3e518d587dd249467d7bdf6b788fcea274"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15470,
+          "sha256": "d4a74bd384c0286ebad3cd352fc49cd50e1bbbfe0deb1c4e0b4221e0dafc37cc"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "7645c0638040a5161c6740e4b0804c6b5c601fce6522db00d51437a6e77a9653"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24185,
+          "sha256": "4f53f40202423d55e4fda6633df8b3fd20c231b8702396e518eab9117f636133"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6124,
+          "sha256": "420b85fe1cfbb0710ed1adadc0ee758a35a50cd932df6f03c422d4ab752d6e4c"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1987804,
+          "sha256": "5bb062accc96065b3c3f0b1e50a3368078839fdcd500090dc184500888a94b75"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19533,
+          "sha256": "96a35f5cd4fc4c9b35f9d39c6b35275c7e9ab24661790acd9e661c9b963afb2c"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9553,
+          "sha256": "cc1892544cc9cbbc9e6dc85941dbe7f9742c43d56370d35d25cdc647ca3769da"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_360_layer04/layer_04",
+      "facts_sha256": "9108a2326454f80984a0da01e478f85ce729da88afdb52fa6f52f78f70c5c82a",
+      "layer": 4,
+      "rate": 360,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 232583,
+          "sha256": "7f91aba40906b8d785f6dcdece6291665e7a5ee2986b4dc2c77c1649a93a4d65"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14807,
+          "sha256": "9540f33343504b3851cb7fd39b92881644193a9cbe0867b82d71af5b1ebfc25f"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "f0df136a725f27f990a0e02021101c92bde94097c0596634220d0b927599ec48"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23757,
+          "sha256": "85561c961100bfa371dc44982e6c344dcb7b46be55f7993ef45b1f8877f5ddc9"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6101,
+          "sha256": "5577be00f81ed18850e2e5c19b87647c282398bf4ad27bfffd5971bf2a3df7a4"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1764777,
+          "sha256": "806947de9cab0e7f0c2178ab4bd6adce3106297ef64123636c6deff85e3510e0"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19691,
+          "sha256": "7fee0be150290def14f9c08088d8b3a2a8ddebd60c989609927a31fc732242dd"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9531,
+          "sha256": "b8ce305e176bd6a323b3e190f625405e14272133dca3e77f98623442c74fa021"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_384_layer04/layer_04",
+      "facts_sha256": "0e9d84a10b9bca1a57bf68c841553454721dc4b94c511302fb5ba15c83239a08",
+      "layer": 4,
+      "rate": 384,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 241765,
+          "sha256": "1662ec78fac90a7f56fb7fc50a6471df7fa3048661b7280e33ce7d8ac310c7ce"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14969,
+          "sha256": "92f459b31b9dc8d52037480090dfa9b597aa5d93dcb7856c7df7211cae6c3f3c"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "f0df136a725f27f990a0e02021101c92bde94097c0596634220d0b927599ec48"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24306,
+          "sha256": "bd394efff4422a7bfa35690d08107072edfd6f289fd76cc7ff97ac7f846fa6a6"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6132,
+          "sha256": "83dd6951d6f7b2ada91dc6faded22ceb1b87cffb4f7638a287a8a297c99f9274"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1986243,
+          "sha256": "a79e15aad40e014268a40902b010a3fbd2d4f0eb3f33695b606f7dc4773099f9"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19698,
+          "sha256": "8d1e6f07c537235ba16509e08f5e5dea93149bb822e6ea4ebb18dc5c0a294536"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9525,
+          "sha256": "898f03fd356984400eb0fcb99bd6a352c455c4e8e2af49480e3327c1aa844fef"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_725_layer04/layer_04",
+      "facts_sha256": "f6a9121d48711d5e7e5134b56a3f05bd066304270235486f817df694216daee1",
+      "layer": 4,
+      "rate": 725,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 358218,
+          "sha256": "a9c41d3907ed8cd57f0a290bd01b297946dc3468a38fd8e485a4089296acc298"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15433,
+          "sha256": "1cb83c56d1b38011bc6bef280a14077b09b5c6cbcfcf70baa353e02c211c14bb"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "f0df136a725f27f990a0e02021101c92bde94097c0596634220d0b927599ec48"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23914,
+          "sha256": "a0a09b2fee47448d140b8efa4543c707a936f7ba31bab161c50668f6bd7cb5bd"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6102,
+          "sha256": "031b74e03e74c14587304cf803684b3f5c7a62bf9e5f7c4ad4fa9a3a4a8d1066"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1766591,
+          "sha256": "b45ae300e8c1db957d3b9f9884289d428cacb206ef1344cea754d604c8b96ea6"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19520,
+          "sha256": "59169fd2e54b7f9c3be54dcc3dbcff78adf3fcc8e902933a768c04205dce60cc"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9531,
+          "sha256": "1d89e7fa9c95beef2922c35dfea4546a0b279f71c74a9e9d1958c6174c2b79c2"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_749_layer04/layer_04",
+      "facts_sha256": "1fbd6c0406f1ddd0715eff0d879085cb35c58d556db8bf7e5b576b4dcd68dbdb",
+      "layer": 4,
+      "rate": 749,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 358141,
+          "sha256": "883de1a030c2044f87dfb2571e3abec8873520864e397cc7ac2455d8a11c6155"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15417,
+          "sha256": "a7b2b17f98629cf47e8d85017dd71a0088b5ca139acdf40ec112cae8e5b72ff1"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10830,
+          "sha256": "f0df136a725f27f990a0e02021101c92bde94097c0596634220d0b927599ec48"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24338,
+          "sha256": "aca15b84cf418fc5c8a86042df090c8f7e93927c4bc459fde929434355b96e17"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6132,
+          "sha256": "bebd141be3fd6cb70531f9688a0fa50c36860608de78c820772049c59961b6ea"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1987041,
+          "sha256": "28b0c290c16f96d5da1d6bfe30b716fa8c400217a510e49d53e9f5a3df7ad6f6"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19512,
+          "sha256": "0721debbc24ef6c4a7d810479ba64e55de55ab46f10ca3dec26a4f1851091a65"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9533,
+          "sha256": "bacf5c4134e51cd3dad344d51a9f45bd2d002e27540b874f81283b7bd6b516f8"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_360_layer06/layer_06",
+      "facts_sha256": "ac4d7b6e8e86b3f4dcf8afaa90fb5d21876398250f944b75d86311b99bab3f7d",
+      "layer": 6,
+      "rate": 360,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 234770,
+          "sha256": "6b1667adf092ac5550058bce180e0d7567b0208a2f730448bd323c7869748fe0"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14914,
+          "sha256": "3617edc9dfed1f9ff0191979889a83c0802e3f6d33644e8d3209a7ba47714e62"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10880,
+          "sha256": "3d376d1d23b120583ff4078266d1d25ed414390b6597fb5e35ff148171f940a4"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24236,
+          "sha256": "6decb57afe48531ca2abbf706d6ff6daf28bcaa28dfcc5c3ce4f9e71ab3b0ac2"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6117,
+          "sha256": "fa6d3b63c2a385108e01b578327234a29740f0b7438bfaa445258310ae3f1364"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1764447,
+          "sha256": "0a0cb8978185d7648109e9dbd41ec0a5d257d0d9add7293ebc64d8cb65c9ce94"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19711,
+          "sha256": "e3c1bc2c89caf74f65947a37ca51afab7b5346c22a7afda7f21eeb711df5cb15"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9502,
+          "sha256": "0a2c2c2b96c43d9815ba35a9217cac23f1b86f404d938570504f8e65fc91d4b5"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_384_layer06/layer_06",
+      "facts_sha256": "858575675021a29ebbda702d04ca0dedcc16e7c5175757a2a7b4943d7e19622e",
+      "layer": 6,
+      "rate": 384,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 229011,
+          "sha256": "c08331d17001ce75bf0273986db8751b8bc64825606562817ec2417cf2029b7b"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14744,
+          "sha256": "dc47e4ee7bd0747f2f76d04d90ca4ea42a893bd57b76689c6391f68d0deb4afc"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10880,
+          "sha256": "3d376d1d23b120583ff4078266d1d25ed414390b6597fb5e35ff148171f940a4"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24166,
+          "sha256": "eab6348f7dd8c4cf0c9f72c9bd6c25a4f6c149ee751596fc6ee02ca786ef0d24"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6151,
+          "sha256": "7a7438c2e833aa161957cf559b34698cec6477edb2dfb669a4af11621d69dddd"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1985006,
+          "sha256": "dde8d607e98332f0111a1cc09354b8b480a28610c10b48c66be8f96e6be61687"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19712,
+          "sha256": "cd61079a4a34da1829fb9744b798f21f22b1a37082b6498c464ca6062e0925bc"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9499,
+          "sha256": "444011afe6ab76b9dc804f1d508a7d5c0eefd58454d5e09ad6a0137b146e3ea6"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_725_layer06/layer_06",
+      "facts_sha256": "16b6717a852e4f85987d41fe81a411bfd348af7c9820c373733c5acad537073c",
+      "layer": 6,
+      "rate": 725,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 362152,
+          "sha256": "7cb422fd9b34975be8eeec7ed0bac76a9f95867dd8d955d407c78a440f965bdf"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15433,
+          "sha256": "8798ba40d83d7f30fc5fa53cd7a7aecaac1e69e0690782b25def8021818119f1"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10880,
+          "sha256": "3d376d1d23b120583ff4078266d1d25ed414390b6597fb5e35ff148171f940a4"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24149,
+          "sha256": "dac27050d634b9393f03d739dfe1ae9dc8c1b7c1f39ff6859e179c4db48962c8"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6091,
+          "sha256": "b6f7bfe8e7876adaeed4d57b416042c99c1fec769259d9d7693e2de5f31edc18"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1767894,
+          "sha256": "b7e69466d622653e9025d171f389fdb0e5ceceb959370989a08c1d10f51228fd"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19591,
+          "sha256": "e09bc38e3a3700416711e96d9474bd26e7cd7ce8ff8f99bcca91adb3ab352218"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9502,
+          "sha256": "20b37316e249805c67ac9892021eb1d46190c3298ce134338255ef0f6788aeb0"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_749_layer06/layer_06",
+      "facts_sha256": "7d17f32e9e9cb20b6b5bd45ec8e44c745d86803dae63203a45b23914c2924ab1",
+      "layer": 6,
+      "rate": 749,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 356723,
+          "sha256": "1f1c3aa4fe6b69e7cd6ef641deaffb9254e14bb2282d7187c7506f233b02bc67"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15413,
+          "sha256": "739a8ac9e0d748be7a72d8e1240127444c83604f7f3ff8108abc7c355b9341d8"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10880,
+          "sha256": "3d376d1d23b120583ff4078266d1d25ed414390b6597fb5e35ff148171f940a4"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24572,
+          "sha256": "fe169bc027ef6725068c178312f1b1be99aa6a7b839c4a6dde69014d65e65a9c"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6142,
+          "sha256": "4e2da6058998ddf677fc88b56f479cc5ab3fd11dc19ca8f643548a6dff91f61c"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1988112,
+          "sha256": "8a44afa0837c5bf42c614f92dce588032c6760ce2cc8e34d8d7e5ce06c184d66"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19597,
+          "sha256": "d84662976ce8794c3cae4f43c60441e9facac8b7e266e8cb46dfe4bb136986e6"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9500,
+          "sha256": "ce73d47be246ed9206e13b5aaec25d988641e6c471fe5b9e23f68b97e4ae8b70"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_360_layer12/layer_12",
+      "facts_sha256": "e61eda38c3fd2503207e86d7f5566d62d2c896c2dc40b7883d4e4d3576436f92",
+      "layer": 12,
+      "rate": 360,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 215693,
+          "sha256": "cdd4d94126e3da9a213a9a23630088f7985bb2d017e5cf5b07758fff1d62d343"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14696,
+          "sha256": "ce48716269051a19b5989a787a2013ef197473849d69454bdd9e959f6005399f"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "caf95fd36a4763c867137593a1d2e6ca52aaaeb03593bae09957e39b9a6bfef2"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23337,
+          "sha256": "9ac51cf848d2a7ee447ca27fb4a18d578aab4b6b970d0a9ba1e7190d07fa58ca"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6084,
+          "sha256": "e934d66654b6d86d1b605b8bb313e1d2315193c221e6cecccf779f8d1f6b424c"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1766171,
+          "sha256": "18682ea0f9f5169d9e9165af60f2b2dc868aa4af8a1075f5f724601ea99bd4f8"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19674,
+          "sha256": "924a935d7a71c4a9f62fc33bb60206fe9a947df740748830fa30dcf32f2be1a7"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9516,
+          "sha256": "3537e7bbd893997e181b14f7c833c47c9abb9675a6dd05241ca752912dbd2311"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_384_layer12/layer_12",
+      "facts_sha256": "223905d46ef60c4376a329e42b4d8af8341d74917580845ce15d4023c06ffaf7",
+      "layer": 12,
+      "rate": 384,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 230488,
+          "sha256": "424073ac2376ce7bcf673aeb6e5000998a47529819fdaae723ccc238c096a024"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14739,
+          "sha256": "5bd1c5522a2a53ae347708a8314af9420a928a404f4cab6ef4c9d777d241b0f8"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "caf95fd36a4763c867137593a1d2e6ca52aaaeb03593bae09957e39b9a6bfef2"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23755,
+          "sha256": "2a711f30b772e400290717a0e22f38c3c91ff805457320143f3efa54a6302d59"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6113,
+          "sha256": "a24572a107217831a197a124f1618f05c7ecf10d033aaeecdde11b2266c2d860"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1986305,
+          "sha256": "cc33b6a35254692e719b7433899bda4fe395982b10265f960d91796887df935e"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19671,
+          "sha256": "a803ad03d0297c6f1434ef7fb7605927414e3bb7c654e83fde4431ae0e0c844f"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9510,
+          "sha256": "54d5dd3d44f4207cfbda1153c3252dcb33cb91ecdbeb7bd6fe0035aab141d8e2"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_725_layer12/layer_12",
+      "facts_sha256": "231cd024e274a09c597ae754ef89008d6e2fae8c130894e3acea313c542b562c",
+      "layer": 12,
+      "rate": 725,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 357216,
+          "sha256": "e6b01884093c0db1cd8f844291a9144d48a9da9a251f973d6bb23b70b59e2b01"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15414,
+          "sha256": "1f092da1cbdeea9301bcc17ffc8e38927cbda9da9b91fbc21930f79ea93e485f"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "caf95fd36a4763c867137593a1d2e6ca52aaaeb03593bae09957e39b9a6bfef2"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23906,
+          "sha256": "421f7c34b5c4279f6895b68c26b30f6e7ff4b021a44602a64daac1d2c6c44b39"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6093,
+          "sha256": "0b5a7a2675e59a1a26e359ecda950871517b2c8a0351aa2cc99c23b5da43e397"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1768911,
+          "sha256": "0c4e2f5a6308137727c584c6072718cd3eb88e2bc4f35d304b7370d4633cfd3a"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19482,
+          "sha256": "3aac27bf7152e8c71a8581962abcb947e6c1e35f2277fa68568faf03ea60b60f"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9515,
+          "sha256": "8a38722f1ae13eaa412f12ad70a167b6b8ef573250307053994e740b53a8e861"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_749_layer12/layer_12",
+      "facts_sha256": "cf5281088192887f74c0f9778ae2391e78dd83ae497446b825cc4cd12d237060",
+      "layer": 12,
+      "rate": 749,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 364621,
+          "sha256": "0931019fdb3c6ff2f461dcc2cb96060be7b8d6042fa19024c52f739f90230fb1"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15456,
+          "sha256": "c1035a858fb3d6beed69c79981e682bbf4d47094b81228d3871264f0269d0a41"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "caf95fd36a4763c867137593a1d2e6ca52aaaeb03593bae09957e39b9a6bfef2"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24067,
+          "sha256": "722cd767670a73f96592048dfcab84415c5092654acec56f1847379a52564998"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6112,
+          "sha256": "cd9d89fa57808ec7ea10b2875946e4f274810b2eb3305da9d6109f760d72688e"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1989771,
+          "sha256": "0c011549238afe77309e370728cbed782f1c0864fc682de0d40c01fa9df4d45c"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19460,
+          "sha256": "576159aed5ccac7bee3699374dde21f46a4f924559f9de0011b79a3c7abdc8c5"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9515,
+          "sha256": "f1acf4f9dfb5a9d9b12ca51b7383c98ae715bf0c7c538cc5c6b48eccda8ec31b"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_360_layer23/layer_23",
+      "facts_sha256": "17a0b5bf33e1e609ceb6b08b3f54b5d68ef3051bce8855c20188c5fe3d220d3f",
+      "layer": 23,
+      "rate": 360,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 221510,
+          "sha256": "40bf6169533c8cf79c9edfe826e37364bd12499b5245e795b298c40a119b097d"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14422,
+          "sha256": "fe5a11e2cb498d607f21633190cad0f218b56063773f33d738a8f43022254162"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "ce551fd1af2378c247356cbbff71ff045547ad24a06339441f9738178b1df9b8"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 22988,
+          "sha256": "bcdd2ccca90c3be34d1e7ca2d0fe6377647b17e27543b6bd9d49ef0a5d2bf550"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6102,
+          "sha256": "e4dc1477ed56d2b33a78ec6146bb994fc25376767e10348bc7ab8f1ae3d4c03a"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1768021,
+          "sha256": "a0ca6affc9b330e838b5aae297ad6a31af3179f7cbcdfc6179b929dae8faa010"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19710,
+          "sha256": "52f046ae594cdba535a883f4d3ae06c27107c2da736b92241d24772eae96d32e"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9516,
+          "sha256": "8db8b847d1e778baa0c9fd642ca9557203f08b85c439000a074e03f62c833a95"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_384_layer23/layer_23",
+      "facts_sha256": "4a3c43ffb01222951323b93676f68c78c5b172a18139dd3e4647782c3b5b9f8c",
+      "layer": 23,
+      "rate": 384,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 226200,
+          "sha256": "7c20236fdde0895f95149370ba18b0787c3b0bf1a828ff412aef410c19132326"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 14440,
+          "sha256": "eb67819c7b0f60f328bd16ec106dfcbb2b0268711d9950f97505a624358b1a78"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "ce551fd1af2378c247356cbbff71ff045547ad24a06339441f9738178b1df9b8"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23308,
+          "sha256": "fa0f0d0bf1c9d0779b6674936b9464b0e2c2fd9fc02f310f452decbf2e33e8b2"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6132,
+          "sha256": "45b2a4488b8bceef02dca70d857f96389e53c94f281032b286bcb2183a114ad4"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1988230,
+          "sha256": "95fb46c0f9659c9c639cd32d4851a8528c4859192d0ed2a72a0357877f1ff174"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19604,
+          "sha256": "cc967f7301caef0b1dae2c36867f0a4ce354b3760c544c2e468e103cfa8a4765"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9510,
+          "sha256": "694f7eab66995a085a486930f808d20cc80a56961ad3fafce223c9fb8154583b"
+        }
+      },
+      "source_kind": "mechanism"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/results/rate_725_layer23/layer_23",
+      "facts_sha256": "b97f430773c258e85d9c745a981eea6c50b5244029e488e1e43264f318c89fe5",
+      "layer": 23,
+      "rate": 725,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 356522,
+          "sha256": "2da86d60712265e8619505d2e0f7ab0df2875cdabb25273800edb426eea207cf"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15370,
+          "sha256": "727bc6094679e99d565682499823aec8b1d46b8dedc6fc5cb59ef414d5508e36"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "ce551fd1af2378c247356cbbff71ff045547ad24a06339441f9738178b1df9b8"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 23729,
+          "sha256": "39c9332003a2b6e095deb17b00448734c1927f8c2863b75d61ffa2b812b78b38"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6093,
+          "sha256": "40529084539ddde49651c5b05910bb21f1cb006c8402c1d07d1ccd01ca54870a"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1767548,
+          "sha256": "1fc50df4d2e5ee953fcfda60ff4147c10d5c3b39026403813460bc5fb19b93cd"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19483,
+          "sha256": "6d56951b05bc496d40afec6e0679ee3d3bb1b9708f2879b986186f019f7feafa"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9512,
+          "sha256": "0f5d0452ef0499981e1cfd071d324bf2687587e3a76f27e2fbf6e5bed0e988ee"
+        }
+      },
+      "source_kind": "matched_runtime_metadata"
+    },
+    {
+      "directory": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/results/rate_749_layer23/layer_23",
+      "facts_sha256": "a36955a8ee65749fc3a67146c45af80950c256281dbd1df27f79f17d091b2d34",
+      "layer": 23,
+      "rate": 749,
+      "recorded_files": {
+        "d1_decode_allocation_experts.parquet": {
+          "bytes": 357228,
+          "sha256": "19f7043d612bc3d40ba501a7ad0d459b11d7cab6e095313910d992ee4620763e"
+        },
+        "d1_decode_allocation_groups.parquet": {
+          "bytes": 15408,
+          "sha256": "721bd41bdd4fbecf2041a21a4808621bf710ecc9438055ffc7eb5cd0a513d30e"
+        },
+        "d1_decode_cache_parity.parquet": {
+          "bytes": 10828,
+          "sha256": "ce551fd1af2378c247356cbbff71ff045547ad24a06339441f9738178b1df9b8"
+        },
+        "d1_decode_exact_route_metrics.parquet": {
+          "bytes": 24057,
+          "sha256": "70e66239167da1c177d077a78178d6c4b92aa449f9274d0a0ec09f66655af2eb"
+        },
+        "d1_decode_policy_summary.parquet": {
+          "bytes": 6133,
+          "sha256": "7b28655f5663d877081d16959c9fb3a4c6eec32ba722ee9a984087edbe792ee7"
+        },
+        "d1_decode_selected_deltas.npz": {
+          "bytes": 1989396,
+          "sha256": "79fe26902639ccd850ab01fcf853ffa3ac770d885eb1b68650ea1b769e852b5b"
+        },
+        "d1_decode_token_oracle.parquet": {
+          "bytes": 19473,
+          "sha256": "8d1332c6194e9b525c1d91c14b68f14e5a9ac1a3de564691373c787bf10473f3"
+        },
+        "d1_decode_vjp_metrics.parquet": {
+          "bytes": 9511,
+          "sha256": "813b117d6f9d8bac0391478d8a3b86e4f166cb4de0313df174970c6db5320098"
+        }
+      },
+      "source_kind": "mechanism"
+    }
+  ],
+  "tail_inputs": {
+    "propagation": {
+      "bytes": 5012225,
+      "rows": 218080,
+      "sha256": "1058848b2985af307dfa6a0a54b1fca85568752aa648fb15260ec32aea03a984"
+    },
+    "quality": {
+      "bytes": 827373,
+      "rows": 6960,
+      "sha256": "ae626e499721639a2cd426ae452eeb2e3634787d1ae84c2a58ec2ab9d7e8b39d"
+    },
+    "root": "/home/arian/LLM_compression_study/d1_route_objective_worktree/experiments/adaptive_expert_precision_oracle/results/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3",
+    "run_facts_sha256": "7e68e32975e91bc8516b944294548716f35c1e4fc3cd60fbe5cc53cea37178c3",
+    "run_schema": "pr13_d1_cached_decode_tail_kl_v2",
+    "zero_dose_all_exact": true,
+    "zero_gates": {
+      "bytes": 28866,
+      "rows": 1392,
+      "sha256": "c383c4207911aa0e4ff4df007d65b8e033b83882087540d074759fdfaf779e66"
+    },
+    "zero_rows": 1392
+  },
+  "terminal_kl_used_for_remedy_selection": false,
+  "test_rows_admitted_or_used": false
+}

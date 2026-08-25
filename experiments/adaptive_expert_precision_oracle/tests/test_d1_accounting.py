@@ -12,6 +12,7 @@ from oracle_study.d1_accounting import (
     controller_accounting,
     matched_integral_pages,
     metadata_bpw,
+    repair_objective_accounting,
     provisional_decode_accounting,
 )
 
@@ -60,3 +61,18 @@ def test_hybrid_provisional_pass_scales_with_context() -> None:
     assert 0.77 < long.fraction_of_normal_layer < 0.79
     assert short.average_packed_megabytes < short.average_bf16_megabytes
     assert long.average_packed_megabytes > short.average_packed_megabytes
+
+
+def test_repair_overlay_and_severity_sidecar_accounting() -> None:
+    result = repair_objective_accounting(RATES)
+    assert result.repair_overlay_total_macs == 52_277_248
+    assert result.repair_overlay_fraction_of_pr13 == pytest.approx(1.01819, rel=1e-4)
+    assert result.scalar_adjoint_total_macs == 688_128
+    assert result.scalar_adjoint_fraction_of_pr13 == pytest.approx(0.01340, rel=1e-3)
+    assert result.routing_mass_increment_bytes_per_expert == 0
+    assert result.functional_embedding_bytes_per_expert == 16
+    assert result.functional_embedding_bpw_increment == pytest.approx(0.00004069, rel=1e-4)
+    assert result.functional_embedding_model_mib == pytest.approx(0.15625)
+    assert result.full_pair_table_bytes_per_expert == 512
+    assert result.full_pair_table_bpw_increment == pytest.approx(0.00130208, rel=1e-4)
+    assert result.full_pair_table_model_mib == pytest.approx(5.0)

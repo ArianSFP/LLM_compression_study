@@ -17,7 +17,9 @@ from oracle_study.d1_route_objective import (
     additive_local_damage_limit,
     build_d1_boundary_problem,
     d1_group_option_allocate,
+    directional_route_hinge_loss,
     directional_route_loss,
+    incumbent_repair_choice,
     functional_swap_severity,
     exact_candidate_logit_vjps,
     option_boundary_effects,
@@ -130,6 +132,59 @@ def test_boundary_projection_uses_execution_weights_and_signed_effects() -> None
     destabilizing = directional_route_loss([1.0], [-1.5], temperature=0.1)
     stabilizing = directional_route_loss([1.0], [0.5], temperature=0.1)
     assert destabilizing > stabilizing
+
+
+def test_hinge_loss_saturates_after_robust_route_safety() -> None:
+    baseline = directional_route_hinge_loss([0.125], [0.0])
+    farther = directional_route_hinge_loss([0.125], [10.0])
+    unsafe = directional_route_hinge_loss([0.125], [-0.25])
+    robust = directional_route_hinge_loss(
+        [0.125], [0.0], safety_margin=0.25, squared=False,
+    )
+    assert baseline == 0.0
+    assert farther == 0.0
+    assert unsafe == pytest.approx(0.125 ** 2)
+    assert robust == pytest.approx(0.125)
+
+
+def test_incumbent_repair_never_replaces_a_safe_incumbent() -> None:
+    choice = incumbent_repair_choice(
+        ["pr13", "global_d1"],
+        [0, 0],
+        [0.1, 0.0],
+        [0.1, 0.0],
+        [0.1, 0.0],
+        [100, 100],
+        incumbent_policy="pr13",
+    )
+    assert choice == 0
+
+
+def test_incumbent_repair_requires_fewer_crossings_then_uses_severity() -> None:
+    choice = incumbent_repair_choice(
+        ["pr13", "high_mass", "low_mass", "same_crossings"],
+        [2, 0, 0, 2],
+        [0.0, 0.2, 0.1, 0.0],
+        [0.0, 0.0, 0.1, 0.0],
+        [0.0, 0.0, 0.0, 0.0],
+        [100, 98, 101, 100],
+        incumbent_policy="pr13",
+    )
+    assert choice == 2
+
+
+def test_incumbent_repair_prioritizes_boundary_depth_within_crossing_count() -> None:
+    choice = incumbent_repair_choice(
+        ["pr13", "shallow", "deep"],
+        [2, 1, 1],
+        [0.0, 0.2, 0.1],
+        [0.0, 0.2, 0.1],
+        [0.0, 0.2, 0.1],
+        [100, 100, 100],
+        incumbent_policy="pr13",
+        boundary_violation=[1.0, 0.01, 0.1],
+    )
+    assert choice == 1
 
 
 def test_d1_allocator_uses_pair_exchange_under_local_guardrail() -> None:
@@ -249,3 +304,27 @@ def test_exact_candidate_vjps_select_same_token_only() -> None:
     logits = hidden @ weight.T
     gradients = exact_candidate_logit_vjps(logits, hidden, 1, [2, 0])
     np.testing.assert_allclose(gradients, weight[[2, 0]].numpy())
+
+
+def test_saturating_allocator_does_not_buy_safe_margin_overshoot() -> None:
+    frontiers = ((_option(0, [0]), _option(1, [1])),)
+    effects = (np.asarray([[0.0], [10.0]]),)
+    local = (np.asarray([[0.0], [1.0]]),)
+    common = dict(
+        frontiers=frontiers,
+        option_effects=effects,
+        problem=_one_boundary(),
+        page_budget=1,
+        seed_indices=[0],
+        local_option_features=local,
+        local_router_weights=[1.0],
+        local_damage_limit=1.0,
+        max_coordinate_sweeps=2,
+        max_pair_passes=0,
+    )
+    softplus = d1_group_option_allocate(**common, route_loss_kind="softplus")
+    hinge = d1_group_option_allocate(**common, route_loss_kind="squared_hinge")
+    np.testing.assert_array_equal(softplus.option_indices, [1])
+    np.testing.assert_array_equal(hinge.option_indices, [0])
+    assert hinge.route_loss == 0.0
+    assert hinge.local_damage < softplus.local_damage

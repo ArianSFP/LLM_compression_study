@@ -48,6 +48,27 @@ class ControllerAccounting:
 
 
 @dataclass(frozen=True)
+class RepairObjectiveAccounting:
+    rank: int
+    refreshes: int
+    repair_overlay_total_macs: int
+    repair_overlay_fraction_of_pr13: float
+    scalar_adjoint_total_macs: int
+    scalar_adjoint_fraction_of_pr13: float
+    routing_mass_increment_bytes_per_expert: int
+    functional_embedding_bytes_per_expert: int
+    functional_embedding_bpw_increment: float
+    functional_embedding_model_mib: float
+    full_pair_table_bytes_per_expert: int
+    full_pair_table_bpw_increment: float
+    full_pair_table_model_mib: float
+    matched_pages_with_functional_embedding: dict[str, int]
+
+    def to_dict(self) -> dict[str, object]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
 class ProvisionalPassAccounting:
     context_tokens: int
     average_macs: float
@@ -171,6 +192,80 @@ def controller_accounting(
         ),
         matched_pages=matched,
         matched_pages_with_uncertainty=matched_uncertainty,
+    )
+
+
+def repair_objective_accounting(
+    charged_bpw: Sequence[float],
+    *,
+    rank: int = 8,
+    refreshes: int = 6,
+    response_synthesis_bytes_per_expert: int = 10_240,
+    shared_bytes_per_layer: int = 98_304,
+    uncertainty_bytes_per_expert: int = 1_600,
+    response_synthesis_macs_per_expert: int = 10_240,
+    pr13_selector_macs: int = PR13_PRIMARY_SELECTOR_MACS,
+) -> RepairObjectiveAccounting:
+    """Cost a PR13-incumbent D1 repair overlay and severity metadata.
+
+    Routing-mass severity reuses the live router values and is free in stored
+    bytes.  The compact functional alternative stores one FP16 rank-r expert
+    embedding; a full 256-way FP16 pair row is reported only as an upper-cost
+    comparison.
+    """
+
+    base = controller_accounting(
+        charged_bpw,
+        rank=rank,
+        candidate_logits=16,
+        refreshes=refreshes,
+        response_synthesis_bytes_per_expert=response_synthesis_bytes_per_expert,
+        shared_bytes_per_layer=shared_bytes_per_layer,
+        uncertainty_bytes_per_expert=uncertainty_bytes_per_expert,
+        response_synthesis_macs_per_expert=response_synthesis_macs_per_expert,
+        pr13_selector_macs=pr13_selector_macs,
+    )
+    r = int(rank)
+    scans = int(refreshes)
+    page_candidates = EXPERTS_PER_GROUP * 3 * UNITS
+    synthesis = EXPERTS_PER_GROUP * int(response_synthesis_macs_per_expert)
+    scalar = page_candidates * r * scans + HIDDEN_SIZE * r + synthesis
+    overlay = int(pr13_selector_macs) + int(base.one_adjoint_total_macs)
+    functional_bytes = 2 * r
+    full_pair_bytes = 2 * EXPERTS_PER_LAYER
+    amortized_shared = float(shared_bytes_per_layer) / EXPERTS_PER_LAYER
+    joint_uncertainty_bytes = (
+        PR13_FACTOR_BYTES
+        + PR13_ABC_BYTES
+        + int(response_synthesis_bytes_per_expert)
+        + amortized_shared
+        + int(uncertainty_bytes_per_expert)
+    )
+    rates = tuple(float(value) for value in charged_bpw)
+    return RepairObjectiveAccounting(
+        rank=r,
+        refreshes=scans,
+        repair_overlay_total_macs=overlay,
+        repair_overlay_fraction_of_pr13=overlay / float(pr13_selector_macs),
+        scalar_adjoint_total_macs=int(scalar),
+        scalar_adjoint_fraction_of_pr13=scalar / float(pr13_selector_macs),
+        routing_mass_increment_bytes_per_expert=0,
+        functional_embedding_bytes_per_expert=functional_bytes,
+        functional_embedding_bpw_increment=metadata_bpw(functional_bytes),
+        functional_embedding_model_mib=(
+            functional_bytes * EXPERTS_PER_LAYER * 40 / float(1 << 20)
+        ),
+        full_pair_table_bytes_per_expert=full_pair_bytes,
+        full_pair_table_bpw_increment=metadata_bpw(full_pair_bytes),
+        full_pair_table_model_mib=(
+            full_pair_bytes * EXPERTS_PER_LAYER * 40 / float(1 << 20)
+        ),
+        matched_pages_with_functional_embedding={
+            f"{value:.12g}": matched_integral_pages(
+                value, joint_uncertainty_bytes + functional_bytes,
+            )
+            for value in rates
+        },
     )
 
 

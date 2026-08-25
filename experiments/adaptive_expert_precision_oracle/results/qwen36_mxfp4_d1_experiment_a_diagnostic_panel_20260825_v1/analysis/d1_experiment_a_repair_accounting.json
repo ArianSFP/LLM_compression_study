@@ -1,0 +1,74 @@
+{
+  "schema": "pr13_d1_experiment_a_repair_accounting_v1",
+  "scientific_boundary": "Analytic operation and sidecar-byte accounting only. The observed screen is a three-request Experiment A diagnostic, not a latency benchmark, deployable certificate, or Experiment B result.",
+  "assumptions": {
+    "routed_experts_per_group": 8,
+    "hidden_size": 2048,
+    "latent_rank": 8,
+    "candidate_router_logits": 16,
+    "page_bearing_projections_per_expert": 3,
+    "units_per_projection": 512,
+    "refreshes": 6,
+    "page_bytes": 512,
+    "original_weights_per_expert": 3145728
+  },
+  "pr13": {
+    "primary_selector_macs_per_group": 51343360,
+    "metadata_kib_per_group": 72.125,
+    "metadata_bpw": 0.023478190104166668,
+    "metadata_mib_for_40_layers": 90.15625
+  },
+  "one_adjoint_repair_overlay": {
+    "extra_macs_per_group": 933888,
+    "extra_fraction_of_pr13": 0.018189070602313524,
+    "pr13_plus_overlay_macs_per_group": 52277248,
+    "total_fraction_of_pr13": 1.0181890706023136
+  },
+  "adaptive_scalar_boundary_overlay": {
+    "description": "Collapse smooth min-selected versus max-outsider risk to one scalar adjoint; expand the boundary pool only while the excluded-expert bound is unsafe.",
+    "worst_case_extra_macs_per_group": 688128,
+    "worst_case_extra_fraction_of_pr13": 0.01340247307538891,
+    "pr13_plus_worst_case_overlay_macs_per_group": 52031488,
+    "pr13_plus_worst_case_fraction": 1.013402473075389
+  },
+  "observed_pr13_screen_at_margin_4_over_64": {
+    "rows": 696,
+    "actual_d1_crossings": 54,
+    "flagged_rows": 393,
+    "true_positive": 54,
+    "false_negative": 0,
+    "recall": 1.0,
+    "flagged_fraction": 0.5646551724137931,
+    "expected_scalar_extra_macs_if_only_flagged": 388555.03448275867,
+    "expected_scalar_extra_fraction_of_pr13": 0.007567775745154946,
+    "expected_one_adjoint_extra_macs_if_only_flagged": 527324.6896551724,
+    "expected_one_adjoint_extra_fraction_of_pr13": 0.010270552796995997,
+    "caveat": "Observed on the same three requests; threshold and coverage are descriptive and not frozen as a runtime certificate."
+  },
+  "joint_response_uncertainty_sidecar": {
+    "metadata_kib_per_group": 167.625,
+    "metadata_bpw": 0.0545654296875,
+    "metadata_mib_for_40_layers": 209.53125,
+    "matched_pages_per_expert": {
+      "0.5234781901041666_charged_bpw": 360,
+      "0.9987386067708334_charged_bpw": 725
+    }
+  },
+  "severity_metadata": {
+    "routing_mass": {
+      "bytes_per_expert": 0,
+      "reason": "Reuses live router values."
+    },
+    "rank8_fp16_functional_embedding": {
+      "bytes_per_expert": 16,
+      "bpw_increment": 0.000040690104166666664,
+      "mib_for_40_layers": 0.15625,
+      "matched_pages_unchanged": true
+    },
+    "full_256_way_fp16_pair_row": {
+      "bytes_per_expert": 512,
+      "bpw_increment": 0.0013020833333333333,
+      "mib_for_40_layers": 5.0
+    }
+  }
+}

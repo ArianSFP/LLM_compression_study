@@ -1,0 +1,40 @@
+{
+  "run_id": "qwen36_mxfp4_d1_experiment_a_diagnostic_panel_20260825_v1",
+  "schema": "pr13_d1_experiment_a_diagnostic_panel_config_v1",
+  "base_tail_config": "configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json",
+  "base_tail_config_sha256": "4fb569a6c0a0b7cde5a3267bb8571bedd0e82e5a690e8bac452bfb51e41a6e4a",
+  "source_result_root": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3",
+  "source_evidence_sha256": {
+    "d1_cached_decode_tail_quality.parquet": "ae626e499721639a2cd426ae452eeb2e3634787d1ae84c2a58ec2ab9d7e8b39d",
+    "d1_cached_decode_tail_propagation.parquet": "1058848b2985af307dfa6a0a54b1fca85568752aa648fb15260ec32aea03a984",
+    "d1_cached_decode_tail_run_facts.json": "7e68e32975e91bc8516b944294548716f35c1e4fc3cd60fbe5cc53cea37178c3",
+    "d1_cached_decode_tail_policy_bank_manifest.json": "4a976a341aad73e5c0f18a2970246c912f8f17793ad5980b46bebf18d24b4fb4"
+  },
+  "injection_layers": [0, 1, 4, 6, 12, 23],
+  "page_caps": [360, 384, 725, 749],
+  "policies": [
+    "pr13_router_square",
+    "exact_combined_local",
+    "calibration_selected_fixed_d1",
+    "frontier_companion_d1",
+    "exact_token_oracle"
+  ],
+  "route_modes": ["live", "frozen_set_live_weights", "fully_frozen"],
+  "panel": {
+    "total_unique_token_layers": 24,
+    "quiet_controls_per_layer": 2,
+    "adjacent_rate_reversals": 4,
+    "prevented_crossings": 4,
+    "introduced_crossings": 4
+  },
+  "interpolation": {
+    "rate_pairs": [[360, 384], [725, 749]],
+    "lambdas": [0.0, 0.25, 0.5, 0.75, 1.0],
+    "include_high_rescaled_to_low_norm": true
+  },
+  "hardware_execution_path": {
+    "required_gpu_name_substring": "RTX PRO 6000",
+    "minimum_gpu_memory_gib": 90
+  },
+  "output_root": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1"
+}

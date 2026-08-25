@@ -1,0 +1,37 @@
+{
+  "allocation_candidates_per_token": 20,
+  "baseline_seconds": 3.367208937648684,
+  "candidate_seconds": 48.38520586094819,
+  "completed": true,
+  "config_sha256": "f1cec1bbe14497fdc400a0764bafcb4e67414fbd22bb1aa1be37d916834a66fa",
+  "exact_prefix_cache_cloned_per_candidate": true,
+  "experiment_b_components_present": false,
+  "files": {
+    "d1_experiment_a_diagnostic_quality.parquet": {
+      "bytes": 101046,
+      "rows": 384,
+      "sha256": "c5d385c22a9342f6f515e9b4496116656e08fe8b83725a7e9f346c07ce1e64ba"
+    },
+    "d1_experiment_a_diagnostic_routes.parquet": {
+      "bytes": 746441,
+      "rows": 14592,
+      "sha256": "38f55a3b2c2c5f01518ce660f634709a2bfa62a88efe4386fa4373fbf0c9bef1"
+    },
+    "d1_experiment_a_diagnostic_zero_gates.parquet": {
+      "bytes": 39527,
+      "rows": 12,
+      "sha256": "0ac9450dd3251c6169b7835bf80ce5487ddf3e01198964ac3a9a6399f55dab85"
+    }
+  },
+  "injection_layer": 1,
+  "interpolation_candidates_per_token": 12,
+  "panel_sha256": "6204106a384bc530d6b91aed91359ceaacda8939d9e1a0d53a35401bd2a770b1",
+  "panel_tokens": 4,
+  "route_modes": [
+    "live",
+    "frozen_set_live_weights",
+    "fully_frozen"
+  ],
+  "schema": "pr13_d1_experiment_a_diagnostic_panel_v1",
+  "terminal_metric_scope": "current_token_only"
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "pr13_d1_experiment_a_diagnostic_package_v1",
+  "run_id": "qwen36_mxfp4_d1_experiment_a_diagnostic_panel_20260825_v1",
+  "status": "complete_experiment_a_mechanism_diagnosis",
+  "publication_branch": "agent/mxfp4-d1-experiment-a-diagnosis",
+  "source_parent_commit": "c239fad8282942cada450fb46c776b561f263e1c",
+  "scientific_scope": {
+    "prefill": "exact",
+    "token_execution": "isolated_cached_decode",
+    "allocator_horizon": "D1_same_token_next_layer_only",
+    "terminal_kl": "observed_outcome_only",
+    "downstream_routes": "descriptive_outcomes_only",
+    "experiment_b_started": false,
+    "d2_d4_objective_or_model_present": false
+  },
+  "grid": {
+    "unique_token_layer_identities": 24,
+    "injection_layers": [0, 1, 4, 6, 12, 23],
+    "page_caps": [360, 384, 725, 749],
+    "realizable_policies": 5,
+    "route_modes": ["live", "frozen_set_live_weights", "fully_frozen"],
+    "quality_rows": 2304,
+    "route_rows": 74784,
+    "zero_dose_rows": 72
+  },
+  "hard_gates": {
+    "zero_dose_all_exact": true,
+    "interpolation_endpoint_parity_exact": true,
+    "maximum_route_mode_decomposition_closure_error": 8.673617379884035e-19,
+    "maximum_direction_norm_decomposition_closure_error": 3.469446951953614e-18
+  },
+  "software_validation": {
+    "python_compile_changed_files": "passed",
+    "full_test_suite": {
+      "passed": 431,
+      "skipped": 1,
+      "failed": 0,
+      "warnings": 3
+    },
+    "diagnosis_analysis_byte_deterministic": true,
+    "source_live_transfer_analysis_byte_deterministic": true,
+    "panel_analysis_byte_deterministic": true,
+    "markdown_relative_links_resolve": true
+  },
+  "primary_files": {
+    "report": "analysis/D1_EXPERIMENT_A_ALLOCATOR_DIAGNOSIS_REPORT.md",
+    "analysis_facts": "analysis/d1_experiment_a_diagnostic_analysis_facts.json",
+    "repair_accounting": "analysis/d1_experiment_a_repair_accounting.json",
+    "run_facts": "d1_experiment_a_diagnostic_run_facts.json",
+    "panel_facts": "d1_experiment_a_diagnostic_panel_facts.json",
+    "host_facts": "d1_experiment_a_diagnostic_host_facts.json",
+    "quality": "d1_experiment_a_diagnostic_quality.parquet",
+    "routes": "d1_experiment_a_diagnostic_routes.parquet",
+    "zero_gates": "d1_experiment_a_diagnostic_zero_gates.parquet",
+    "panel": "d1_experiment_a_diagnostic_panel.parquet",
+    "hash_ledger": "artifact_hashes.sha256"
+  },
+  "provenance": {
+    "config_sha256": "f1cec1bbe14497fdc400a0764bafcb4e67414fbd22bb1aa1be37d916834a66fa",
+    "panel_sha256": "6204106a384bc530d6b91aed91359ceaacda8939d9e1a0d53a35401bd2a770b1",
+    "network_raw_root": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1",
+    "parent_tail_root": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3",
+    "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+  },
+  "limitations": [
+    "three teacher-forced requests",
+    "outcome-enriched 24-case panel",
+    "six sentinel injection layers",
+    "single injected token and layer per observation",
+    "no generated rollout or sequential cache drift",
+    "analytic cost accounting rather than measured latency",
+    "oracle remedy labels are not runtime inputs"
+  ]
+}

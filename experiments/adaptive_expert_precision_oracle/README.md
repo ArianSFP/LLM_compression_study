@@ -19,6 +19,18 @@ The implementation supplies objective/search, dynamic-latent, certification,
 metric, accounting, vectorized reference, and tensor-resident shortlist
 primitives. It contains no D2--D4 objective or runtime model.
 
+The current stopping point is the D1-only **Experiment A allocator diagnosis**.
+The exact cached-decode panel explains the previously paradoxical crossing and
+page-rate results, tests live, frozen-set/live-weight and fully-frozen tails,
+and compares conservative repair with global D1 replacement. The conclusion is
+that D1 membership is a strong amplifier but binary crossing count is not a
+globally ordered KL surrogate. The proposed next oracle is a hard-saturating
+PR #13-incumbent repair with nested, route-safe local completion. See the
+[canonical diagnosis report](results/qwen36_mxfp4_d1_experiment_a_diagnostic_panel_20260825_v1/analysis/D1_EXPERIMENT_A_ALLOCATOR_DIAGNOSIS_REPORT.md),
+[frozen methods](D1_EXPERIMENT_A_ALLOCATOR_DIAGNOSIS_METHODS_20260825.md), and
+[compact evidence package](results/qwen36_mxfp4_d1_experiment_a_diagnostic_panel_20260825_v1/README.md).
+Experiment B remains unstarted.
+
 The promoted stratified slice result covers layers 0, 1, 4, 6, 12, and 23 at
 384 and 749 pages/expert. Historical PR #13 changes 20/192 and 11/192 exact D1
 top-8 sets; the exact request-coupled D1 oracle changes 1/192 and 0/192. See
@@ -36,15 +48,16 @@ The completed six-layer/two-rate expansion, all compact artifacts, and the
 held-out result are in the
 [exact-prefill decode result package](results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/README.md)
 and [methodology report](results/qwen36_mxfp4_d1_exact_prefill_decode_slice_expansion_20260824_v2/analysis/D1_EXACT_PREFILL_DECODE_SLICE_REPORT.md).
-The product-facing terminal-quality gate is now frozen in the
-[cached-decode tail config](configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v2.json)
+The completed product-facing terminal-quality smoke is frozen in the
+[cached-decode tail v3 config](configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json)
 and [methodology](D1_CACHED_DECODE_TAIL_KL_METHODS_20260824.md). It processes
 one token behind a private exact-prefix cache, retains the post-token hybrid
 cache, and reevaluates complete selected precision states on the live cached
 activation. The matched 360/725 cells and evidence are in the
 [matched-rate package](results/qwen36_mxfp4_d1_decode_matched_rates_20260824_v2/README.md).
-Allocation validation is complete on the 3090; terminal execution requires an
-RTX PRO 6000 96 GB.
+Exact terminal execution and the focused diagnosis completed on an RTX PRO
+6000; the evidence remains a three-request mechanism smoke, not a quality
+claim.
 
 The older [full-sequence tail config](configs/qwen36_mxfp4_d1_full_sequence_tail_kl_legacy_20260824_v1.json)
 and [legacy methodology](D1_FULL_SEQUENCE_TAIL_KL_LEGACY_METHODS_20260824.md)

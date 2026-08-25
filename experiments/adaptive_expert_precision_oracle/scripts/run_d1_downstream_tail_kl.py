@@ -245,7 +245,13 @@ class RoutedOutputReplacement:
 
 
 class FrozenDecodeRoutes:
-    """Freeze executed downstream IDs/weights while retaining live logits."""
+    """Control downstream execution while retaining live router logits.
+
+    ``frozen_set_live_weights`` preserves the exact-Q4 expert membership but
+    recomputes and renormalizes weights from the candidate's live logits.  It
+    therefore separates discrete membership changes from ordinary weight
+    drift, matching the validated same-host causal-control semantics.
+    """
 
     def __init__(
         self,
@@ -257,7 +263,7 @@ class FrozenDecodeRoutes:
         self.handles = []
         if route_mode == "live":
             return
-        if route_mode != "fully_frozen":
+        if route_mode not in {"frozen_set_live_weights", "fully_frozen"}:
             raise ValueError(f"unknown route mode: {route_mode}")
         layers = model.model.language_model.layers
         for layer_id in range(int(injection_layer) + 1, len(layers)):
@@ -269,12 +275,24 @@ class FrozenDecodeRoutes:
             ) -> Any:
                 if not isinstance(output, tuple) or len(output) < 3:
                     raise RuntimeError("route freeze requires router tuple output")
-                exact_scores = baseline.router_scores[layer_id].to(
-                    device=output[1].device, dtype=output[1].dtype,
-                ).reshape_as(output[1])
                 exact_ids = baseline.router_ids[layer_id].to(
                     device=output[2].device, dtype=output[2].dtype,
                 ).reshape_as(output[2])
+                if route_mode == "fully_frozen":
+                    exact_scores = baseline.router_scores[layer_id].to(
+                        device=output[1].device, dtype=output[1].dtype,
+                    ).reshape_as(output[1])
+                else:
+                    probabilities = torch.softmax(
+                        output[0], dtype=torch.float, dim=-1,
+                    )
+                    exact_scores = torch.gather(
+                        probabilities, dim=-1, index=exact_ids,
+                    )
+                    exact_scores = exact_scores / exact_scores.sum(
+                        dim=-1, keepdim=True,
+                    )
+                    exact_scores = exact_scores.to(output[1].dtype)
                 return (output[0], exact_scores, exact_ids, *output[3:])
 
             self.handles.append(layers[layer_id].mlp.gate.register_forward_hook(hook))

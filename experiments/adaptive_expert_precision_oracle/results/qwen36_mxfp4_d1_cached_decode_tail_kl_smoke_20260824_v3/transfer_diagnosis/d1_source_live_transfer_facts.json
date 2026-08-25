@@ -1,0 +1,427 @@
+{
+  "analysis_kind": "offline_source_slice_to_live_full_model_transfer_audit",
+  "completed": true,
+  "experiment_b_started": false,
+  "experiment_stage": "A",
+  "headline": {
+    "all_candidate_margin_risk_roc_auc": 0.813448551935394,
+    "all_source_live_crossing_agreement": 0.9002873563218391,
+    "fixed_candidate_margin_risk_roc_auc": 0.8026991614255765,
+    "fixed_margin_zero_false_negative": 48,
+    "fixed_margin_zero_false_positive": 56,
+    "fixed_margin_zero_false_positive_rate": 0.0880503144654088,
+    "fixed_margin_zero_recall": 0.2,
+    "fixed_margin_zero_true_negative": 580,
+    "fixed_margin_zero_true_positive": 12,
+    "fixed_source_crossing_label_false_negative_rate": 0.9333333333333333,
+    "fixed_source_live_crossing_agreement": 0.9037356321839081,
+    "interpretation": "source candidate margins may rank live D1 risk while the zero threshold is not a calibrated full-model certificate"
+  },
+  "implementation": {
+    "scripts/analyze_d1_source_live_transfer.py": "ac61556f9f84739ca03a7a15edeee6b9ef2ecf627119440276d00f2c3c31be5b",
+    "src/oracle_study/d1_source_live_transfer.py": "54c2b198092ec20872441ed5a46dc7957e2f6144be73f049777b79f7a1bf1745"
+  },
+  "input_files": {
+    "capture_facts": {
+      "bytes": 6724,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/d1_tail_same_host_allocation_capture_facts.json",
+      "sha256": "d425731345fa9016a92f73fbb87a08293590e271fcb2ab90ce62b505d7efbbc3"
+    },
+    "manifest": {
+      "bytes": 69055,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/d1_cached_decode_tail_policy_bank_manifest.json",
+      "sha256": "4a976a341aad73e5c0f18a2970246c912f8f17793ad5980b46bebf18d24b4fb4"
+    },
+    "patch_groups": {
+      "bytes": 15291,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_patch/d1_tail_same_host_patch_groups.parquet",
+      "sha256": "b749d0f4bbd7264a54a40d8ba258fd35db860a66ea8b62218b52330696dbc483"
+    },
+    "propagation": {
+      "bytes": 5012225,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/d1_cached_decode_tail_propagation.parquet",
+      "sha256": "1058848b2985af307dfa6a0a54b1fca85568752aa648fb15260ec32aea03a984"
+    },
+    "quality": {
+      "bytes": 827373,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/d1_cached_decode_tail_quality.parquet",
+      "sha256": "ae626e499721639a2cd426ae452eeb2e3634787d1ae84c2a58ec2ab9d7e8b39d"
+    },
+    "route_audit": {
+      "bytes": 18151,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/tail_route_transfer_audit/d1_tail_route_transfer.parquet",
+      "sha256": "1f7c904eec9b7f90b27d687d9b093cdbfc31ec25f6609ef7e0e99870df45fa91"
+    }
+  },
+  "layers": [
+    0,
+    1,
+    4,
+    6,
+    12,
+    23
+  ],
+  "outputs": {
+    "D1_SOURCE_LIVE_TRANSFER_DIAGNOSIS.md": {
+      "bytes": 3342,
+      "sha256": "ce646d09537807b381e8d3e348e8ba59b9bf6590be40ff0253d3945d00b254e0"
+    },
+    "d1_source_live_transfer_baseline_margin_summary.parquet": {
+      "bytes": 7734,
+      "rows": 15,
+      "sha256": "e77ab20fc6cdf8fed397dd7476e6efd6b293000379486b6914cbb51c2e014d09"
+    },
+    "d1_source_live_transfer_crossing_summary.parquet": {
+      "bytes": 22965,
+      "rows": 26,
+      "sha256": "7eb5b253990d94857e0c3090ddb15ca269e2601e790f4c5045434630a385e1dd"
+    },
+    "d1_source_live_transfer_delta_fidelity.parquet": {
+      "bytes": 12912,
+      "rows": 20,
+      "sha256": "1ea634cee551df41edab4b8f75957221865e595e143cb9744fd138f09417ad4f"
+    },
+    "d1_source_live_transfer_fixed_pr13_patch_rows.parquet": {
+      "bytes": 31293,
+      "rows": 696,
+      "sha256": "68b12ffa851b49f639e624a08e968672355029c8cb2a7024666db2dcc14516b4"
+    },
+    "d1_source_live_transfer_fixed_pr13_patch_summary.parquet": {
+      "bytes": 10228,
+      "rows": 10,
+      "sha256": "46b191ab1086df73b177bf976aa27970789b6f1288f8e2039ee1d9aca61b226e"
+    },
+    "d1_source_live_transfer_rows.parquet": {
+      "bytes": 192115,
+      "rows": 3480,
+      "sha256": "5738af3dfb654cf96dadfe202c08bcd95080ee13642ea72b5c96e5c98335c16d"
+    },
+    "d1_source_live_transfer_threshold_calibration.parquet": {
+      "bytes": 21021,
+      "rows": 80,
+      "sha256": "a53009fb8d01ae1e1362215254c3e14c2a0a7f0b06a3d6acd32c4e36df8ae7bb"
+    }
+  },
+  "patch_identities": [
+    {
+      "group": 8,
+      "layer": 1,
+      "position": 9,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "group": 22,
+      "layer": 6,
+      "position": 5,
+      "request_id": "mxfp4-confirm-008"
+    },
+    {
+      "group": 25,
+      "layer": 6,
+      "position": 8,
+      "request_id": "mxfp4-confirm-008"
+    },
+    {
+      "group": 28,
+      "layer": 6,
+      "position": 11,
+      "request_id": "mxfp4-confirm-008"
+    },
+    {
+      "group": 6,
+      "layer": 12,
+      "position": 7,
+      "request_id": "mxfp4-confirm-006"
+    },
+    {
+      "group": 14,
+      "layer": 12,
+      "position": 5,
+      "request_id": "mxfp4-confirm-007"
+    },
+    {
+      "group": 28,
+      "layer": 12,
+      "position": 11,
+      "request_id": "mxfp4-confirm-008"
+    },
+    {
+      "group": 12,
+      "layer": 23,
+      "position": 3,
+      "request_id": "mxfp4-confirm-007"
+    },
+    {
+      "group": 13,
+      "layer": 23,
+      "position": 4,
+      "request_id": "mxfp4-confirm-007"
+    },
+    {
+      "group": 16,
+      "layer": 23,
+      "position": 7,
+      "request_id": "mxfp4-confirm-007"
+    },
+    {
+      "group": 20,
+      "layer": 23,
+      "position": 3,
+      "request_id": "mxfp4-confirm-008"
+    },
+    {
+      "group": 27,
+      "layer": 23,
+      "position": 10,
+      "request_id": "mxfp4-confirm-008"
+    }
+  ],
+  "patch_identity_matches_route_transfer_mismatch_set": true,
+  "patched_token_identities": 12,
+  "policies": [
+    "calibration_selected_fixed_d1",
+    "exact_combined_local",
+    "exact_token_oracle",
+    "frontier_companion_d1",
+    "pr13_router_square"
+  ],
+  "policy_or_threshold_selected": false,
+  "pro_d1_capture_files": [
+    {
+      "admitted_rows": 29,
+      "bytes": 525371,
+      "layer": 0,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/same_host_allocation_layer_00.npz",
+      "sha256": "7c665d6b1e5ef8f3d458ea6195e42c7cd979fa5d88316a4da2489733e258045a"
+    },
+    {
+      "admitted_rows": 29,
+      "bytes": 523459,
+      "layer": 1,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/same_host_allocation_layer_01.npz",
+      "sha256": "f4bf4a866348f1fd835244541db14eb248a8573026f800ad68daa4ea30e7a1b9"
+    },
+    {
+      "admitted_rows": 29,
+      "bytes": 522462,
+      "layer": 4,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/same_host_allocation_layer_04.npz",
+      "sha256": "bce73edb081e290574211959854148109e0957bfae1468cd4e4ac6de77edbc74"
+    },
+    {
+      "admitted_rows": 29,
+      "bytes": 522968,
+      "layer": 6,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/same_host_allocation_layer_06.npz",
+      "sha256": "879d00f238f0d22343cc9d33cd2898300aa7d02f0b0845907ce44ee50ee21fba"
+    },
+    {
+      "admitted_rows": 29,
+      "bytes": 526013,
+      "layer": 12,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/same_host_allocation_layer_12.npz",
+      "sha256": "35d63f2cf79fa47d4013ace8e964e6e7c56ba6fd02ab1946364da85f27d2b832"
+    },
+    {
+      "admitted_rows": 29,
+      "bytes": 527048,
+      "layer": 23,
+      "path": "/workspace/pr13_d1_cached_decode_tail_kl_smoke_20260824_v3/same_host_allocation_capture/same_host_allocation_layer_23.npz",
+      "sha256": "a2e6bfa2a7f48e06f20520e94954ffb6c21dee9060cb64ad961eaf85ee889b14"
+    }
+  ],
+  "rates": [
+    360,
+    384,
+    725,
+    749
+  ],
+  "raw_source_cells": [
+    {
+      "cell": "layer_00_rate_360",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_360_layer00/layer_00/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "06d6db8492861bbc530b3a8a452f901c5c8c64be5776e9be99753018a169518a"
+    },
+    {
+      "cell": "layer_00_rate_384",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_384_layer00/layer_00/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "9ba222cabed9d1a54f2ec14370e15090bda3d8afebdc753583b0fb49965f722c"
+    },
+    {
+      "cell": "layer_00_rate_725",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_725_layer00/layer_00/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "02a4d8862f8fcf4e60f7201672cd2223072103065c138f189be9c0e64ac33ffb"
+    },
+    {
+      "cell": "layer_00_rate_749",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_749_layer00/layer_00/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "fbefbaff5d19de3dab6b5e9ca4fc7733ee6dcdb4b65a041e2bb691b0badba559"
+    },
+    {
+      "cell": "layer_01_rate_360",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_360_layer01/layer_01/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "00291cba2b6060567c124011b27f258d9780e8eb9bc2fb421df6d1b98489e89a"
+    },
+    {
+      "cell": "layer_01_rate_384",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_384_layer01/layer_01/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "f62a8680a32422de1d3457294d5dc8f72a6af8cc8bb16d1c12031c6a3b0f29a8"
+    },
+    {
+      "cell": "layer_01_rate_725",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_725_layer01/layer_01/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "83b99e28a3b1c5b21782d84e8641ba0ac3b03a32750a4679966d246c3d7523c7"
+    },
+    {
+      "cell": "layer_01_rate_749",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_749_layer01/layer_01/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "4f53f40202423d55e4fda6633df8b3fd20c231b8702396e518eab9117f636133"
+    },
+    {
+      "cell": "layer_04_rate_360",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_360_layer04/layer_04/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "85561c961100bfa371dc44982e6c344dcb7b46be55f7993ef45b1f8877f5ddc9"
+    },
+    {
+      "cell": "layer_04_rate_384",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_384_layer04/layer_04/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "bd394efff4422a7bfa35690d08107072edfd6f289fd76cc7ff97ac7f846fa6a6"
+    },
+    {
+      "cell": "layer_04_rate_725",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_725_layer04/layer_04/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "a0a09b2fee47448d140b8efa4543c707a936f7ba31bab161c50668f6bd7cb5bd"
+    },
+    {
+      "cell": "layer_04_rate_749",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_749_layer04/layer_04/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "aca15b84cf418fc5c8a86042df090c8f7e93927c4bc459fde929434355b96e17"
+    },
+    {
+      "cell": "layer_06_rate_360",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_360_layer06/layer_06/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "6decb57afe48531ca2abbf706d6ff6daf28bcaa28dfcc5c3ce4f9e71ab3b0ac2"
+    },
+    {
+      "cell": "layer_06_rate_384",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_384_layer06/layer_06/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "eab6348f7dd8c4cf0c9f72c9bd6c25a4f6c149ee751596fc6ee02ca786ef0d24"
+    },
+    {
+      "cell": "layer_06_rate_725",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_725_layer06/layer_06/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "dac27050d634b9393f03d739dfe1ae9dc8c1b7c1f39ff6859e179c4db48962c8"
+    },
+    {
+      "cell": "layer_06_rate_749",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_749_layer06/layer_06/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "fe169bc027ef6725068c178312f1b1be99aa6a7b839c4a6dde69014d65e65a9c"
+    },
+    {
+      "cell": "layer_12_rate_360",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_360_layer12/layer_12/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "9ac51cf848d2a7ee447ca27fb4a18d578aab4b6b970d0a9ba1e7190d07fa58ca"
+    },
+    {
+      "cell": "layer_12_rate_384",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_384_layer12/layer_12/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "2a711f30b772e400290717a0e22f38c3c91ff805457320143f3efa54a6302d59"
+    },
+    {
+      "cell": "layer_12_rate_725",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_725_layer12/layer_12/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "421f7c34b5c4279f6895b68c26b30f6e7ff4b021a44602a64daac1d2c6c44b39"
+    },
+    {
+      "cell": "layer_12_rate_749",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_749_layer12/layer_12/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "722cd767670a73f96592048dfcab84415c5092654acec56f1847379a52564998"
+    },
+    {
+      "cell": "layer_23_rate_360",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_360_layer23/layer_23/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "bcdd2ccca90c3be34d1e7ca2d0fe6377647b17e27543b6bd9d49ef0a5d2bf550"
+    },
+    {
+      "cell": "layer_23_rate_384",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_384_layer23/layer_23/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "fa0f0d0bf1c9d0779b6674936b9464b0e2c2fd9fc02f310f452decbf2e33e8b2"
+    },
+    {
+      "cell": "layer_23_rate_725",
+      "path": "/workspace/pr13_d1_decode_matched_rates_20260824_v2/results/rate_725_layer23/layer_23/d1_decode_exact_route_metrics.parquet",
+      "rows": 232,
+      "sha256": "39c9332003a2b6e095deb17b00448734c1927f8c2863b75d61ffa2b812b78b38"
+    },
+    {
+      "cell": "layer_23_rate_749",
+      "path": "/workspace/pr13_d1_decode_slice_pilot_20260824_v2/results/rate_749_layer23/layer_23/d1_decode_exact_route_metrics.parquet",
+      "rows": 261,
+      "sha256": "70e66239167da1c177d077a78178d6c4b92aa449f9274d0a0ec09f66655af2eb"
+    }
+  ],
+  "rows": 3480,
+  "schema": "pr13_d1_source_live_transfer_diagnosis_v1",
+  "terminal_kl_used_for_selection": false,
+  "thresholds": [
+    0.0,
+    0.015625,
+    0.03125,
+    0.0625
+  ],
+  "transfer_decomposition": {
+    "baseline_d1_anchor": {
+      "bias_source_minus_pro": 0.0011673850574712645,
+      "comparison_axis": "same_token_next_layer_router",
+      "mae": 0.016433189655172414,
+      "maximum_absolute_error": 0.0625,
+      "pearson": 0.961536552132911,
+      "source": "raw_source_cell_exact_Q4_D1_baseline",
+      "spearman": 0.900124326975186,
+      "target": "same_host_PRO_exact_Q4_D1_baseline_capture"
+    },
+    "candidate_signed_margin_live_calibration": {
+      "fixed_margin_risk_roc_auc": 0.8026991614255765,
+      "fixed_margin_zero_false_positive_rate": 0.0880503144654088,
+      "fixed_margin_zero_recall": 0.2,
+      "fixed_source_crossing_label_false_negative_rate": 0.9333333333333333
+    },
+    "delta_reconstruction": {
+      "bit_exact": false,
+      "mean_fixed_stored_to_live_cosine": 0.9909592508309487,
+      "mean_fixed_stored_to_live_mse": 1.1190189439114746e-08
+    },
+    "remaining_error": {
+      "likely_components": [
+        "source_slice_to_full_model_candidate_execution",
+        "BF16_boundary_quantization",
+        "upstream_VJP_linearization_used_for_allocation_selection"
+      ],
+      "reason": "candidate margins were exact source-slice replay labels, so live threshold failure remains after exact source-side replay",
+      "status": "inference_not_component_identification",
+      "vjp_alone_explains_miscalibration": false
+    }
+  }
+}

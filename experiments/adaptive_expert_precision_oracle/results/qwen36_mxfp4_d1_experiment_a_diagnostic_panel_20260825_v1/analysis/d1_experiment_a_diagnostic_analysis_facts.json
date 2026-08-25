@@ -1,0 +1,131 @@
+{
+  "completed": true,
+  "config_sha256": "f1cec1bbe14497fdc400a0764bafcb4e67414fbd22bb1aa1be37d916834a66fa",
+  "d2_d4_objectives_or_models_present": false,
+  "experiment_b_components_present": false,
+  "full_tail_routes_used_as_descriptive_outcomes_only": true,
+  "gates": {
+    "direction_norm_decomposition_max_closure_error": 3.469446951953614e-18,
+    "interpolation_endpoint_parity_exact": true,
+    "panel_rows": 24,
+    "route_mode_decomposition_max_closure_error": 8.673617379884035e-19,
+    "route_modes": [
+      "live",
+      "frozen_set_live_weights",
+      "fully_frozen"
+    ],
+    "zero_dose_all_exact": true
+  },
+  "implementation": {
+    "scripts/analyze_d1_experiment_a_diagnostic_panel.py": "b34549f4bc9864cd1ef9be13a4958af2ec22fe8b0c93e44222507c011fc53b52",
+    "src/oracle_study/d1_downstream_outcome_diagnosis.py": "96e7134e0362f6e5555085fe1414b207b0ce601fd7cbf3024628da83db58145b",
+    "src/oracle_study/d1_experiment_a_diagnostic_panel.py": "ee437246b7e5af1cc2e3c21a69598ee9f96123aa99a0893a0c46f0138cc0bfdc"
+  },
+  "input_panel_sha256": "6204106a384bc530d6b91aed91359ceaacda8939d9e1a0d53a35401bd2a770b1",
+  "input_quality_sha256": "f4841d450ed0dd70709b92497b6c281ae464d3e402bc7129f167a194068b25aa",
+  "input_routes_sha256": "0ad30f0d3ca480bf75375fb2530891a8f637067c35cd0d0b13ab8aa4ca2e5abb",
+  "input_run_facts_sha256": "7f4c75585117ad994f7be5d7a9df9e8a7cc8c7e97d204631e1a09e96a1f2ce6a",
+  "input_zero_sha256": "352e96edb50c3298ff3fd3c93f7295ce2d99224dee598662da5a2df4975d5b2a",
+  "numeric_diagnostics": {
+    "direction_dominant_fraction": 0.5208333333333334,
+    "interpolation_terminal_kl_nonmonotone_fraction": 1.0,
+    "maximum_bf16_collapsed_nonzero_fraction": 0.79638671875,
+    "mean_membership_execution_component_kl": 0.0033267053030363015,
+    "mean_router_weight_component_kl": -7.862493839284434e-06,
+    "norm_dominant_fraction": 0.4791666666666667,
+    "prevented_or_introduced_rows": 11,
+    "terminal_nonmonotone_with_constant_d1_fraction": 0.9375,
+    "terminal_nonmonotone_with_downstream_burden_transition_fraction": 1.0
+  },
+  "observed_minimum_kl_lambda_is_descriptive_not_policy_selection": true,
+  "outputs": {
+    "d1_diagnostic_bf16_ulp_rows.parquet": {
+      "bytes": 69794,
+      "rows": 768,
+      "sha256": "14ef9053ea5447b75ce97fd7370deee2ec6aa5b912aa8110fe3bafbb67e22d4c"
+    },
+    "d1_diagnostic_bf16_ulp_summary.parquet": {
+      "bytes": 16364,
+      "rows": 88,
+      "sha256": "69215d9a3d1ae5673544400ee82e8529964774c644b5afcc87dd9d8b62411899"
+    },
+    "d1_diagnostic_bf16_ulp_terminal_association.parquet": {
+      "bytes": 4519,
+      "rows": 5,
+      "sha256": "399aeef95ef6693e41233baff25c5f0271d8b41bcff14111915b05e42e1eedc6"
+    },
+    "d1_diagnostic_cohort_fixed_vs_pr13_rows.parquet": {
+      "bytes": 54835,
+      "rows": 96,
+      "sha256": "38dd54cdd81481e1aadf789ee3f40e8f74f9293ca591ae6f9b7055cb2014621b"
+    },
+    "d1_diagnostic_cohort_fixed_vs_pr13_summary.parquet": {
+      "bytes": 13310,
+      "rows": 29,
+      "sha256": "1235573ced15c39bee383882a51d88fc47a1bde80541b2de37900ce61f71081b"
+    },
+    "d1_diagnostic_downstream_outcome_rows.parquet": {
+      "bytes": 60343,
+      "rows": 768,
+      "sha256": "e46dc71a8f2c5de7fc3a2b00e50ed28c729087a7e345c149f4cc466a0fa8daf8"
+    },
+    "d1_diagnostic_downstream_path_transition_summary.parquet": {
+      "bytes": 19378,
+      "rows": 48,
+      "sha256": "34cff4c48682de4d193eb6e1e18826146b00779a3e7027f6698c0b18d5e919eb"
+    },
+    "d1_diagnostic_immediate_d1_severity_correlations.parquet": {
+      "bytes": 9202,
+      "rows": 132,
+      "sha256": "698f5356779b8afb1fc80fcd9ce0b7f4c49b5fdaddca212aa4257b143c5f9808"
+    },
+    "d1_diagnostic_immediate_d1_severity_rows.parquet": {
+      "bytes": 79978,
+      "rows": 768,
+      "sha256": "1f9e9f0144791b444e716a808bcc0acf0dbcda35eda036efc06b4e90510cb7de"
+    },
+    "d1_diagnostic_immediate_d1_severity_summary.parquet": {
+      "bytes": 30877,
+      "rows": 352,
+      "sha256": "19687381d927720615b84d2594eebbebfbd8ea41d02e610af2ce36424155bafa"
+    },
+    "d1_diagnostic_interpolation_points.parquet": {
+      "bytes": 26762,
+      "rows": 288,
+      "sha256": "cc427d6249d07a154513c520f5863fbc450b6acb990ae41f7acde0c5dca46400"
+    },
+    "d1_diagnostic_interpolation_summary.parquet": {
+      "bytes": 11118,
+      "rows": 22,
+      "sha256": "d45ae9e12d98129ce39afd009ba9b36ba730744c5a6de56f0c029101585d16d5"
+    },
+    "d1_diagnostic_interpolation_turning_points.parquet": {
+      "bytes": 20373,
+      "rows": 48,
+      "sha256": "97bc0c909e366cf01d885cd37eb022a89b1f90190055911335e988f68c74362c"
+    },
+    "d1_diagnostic_page_direction_vs_norm_rows.parquet": {
+      "bytes": 45111,
+      "rows": 48,
+      "sha256": "9918ebe0367f219b905807a2fc4e7f9afec79e7e460b0c0bc68da4b41cbdabc9"
+    },
+    "d1_diagnostic_page_direction_vs_norm_summary.parquet": {
+      "bytes": 14506,
+      "rows": 22,
+      "sha256": "079fb84e509c33cf55f63fe988a27e26a58862f8000aea2f21750b87f7b53494"
+    },
+    "d1_diagnostic_route_mode_decomposition_rows.parquet": {
+      "bytes": 155299,
+      "rows": 768,
+      "sha256": "ace7dc7a7469de9ae05b76e011f36956d54e78c80c3d2e85669dd03a5f3d8dea"
+    },
+    "d1_diagnostic_route_mode_decomposition_summary.parquet": {
+      "bytes": 31616,
+      "rows": 352,
+      "sha256": "a7b07e93a3c16916b47ab353c868b39e589841f5558bb911dd335de0536e23d1"
+    }
+  },
+  "report_prose_generated": false,
+  "schema": "pr13_d1_experiment_a_diagnostic_analysis_v1",
+  "terminal_kl_role": "observed_outcome_only_not_an_allocator_input"
+}

@@ -1,0 +1,13 @@
+{
+  "completed": true,
+  "config_sha256": "f1cec1bbe14497fdc400a0764bafcb4e67414fbd22bb1aa1be37d916834a66fa",
+  "cuda": "12.8",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "gpu_memory_gib": 94.96832275390625,
+  "host": "77eef4de1648",
+  "model_load_seconds": 364.24133786791936,
+  "panel_sha256": "6204106a384bc530d6b91aed91359ceaacda8939d9e1a0d53a35401bd2a770b1",
+  "python": "3.12.3",
+  "schema": "pr13_d1_experiment_a_diagnostic_panel_v1",
+  "torch": "2.8.0+cu128"
+}

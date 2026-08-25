@@ -1,0 +1,140 @@
+{
+  "base_tail_config": "/root/LLM_compression_study/experiments/adaptive_expert_precision_oracle/configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json",
+  "base_tail_config_sha256": "4fb569a6c0a0b7cde5a3267bb8571bedd0e82e5a690e8bac452bfb51e41a6e4a",
+  "bf16_ulp_accounting_present": true,
+  "completed": true,
+  "config_sha256": "f1cec1bbe14497fdc400a0764bafcb4e67414fbd22bb1aa1be37d916834a66fa",
+  "counts": {
+    "candidates_per_token": 32,
+    "detailed_route_rows": 74784,
+    "quality_rows": 2304,
+    "route_modes": 3,
+    "unique_token_layers": 24,
+    "zero_rows": 72
+  },
+  "experiment_b_components_present": false,
+  "interpolation_controls_are_page_unrealizable": true,
+  "interpolation_endpoint_parity": {
+    "all_exact": true,
+    "comparisons": [
+      {
+        "endpoint_rate": 360,
+        "fixed_candidate_id": "rate_360__calibration_selected_fixed_d1",
+        "high_rate": 384,
+        "low_rate": 360,
+        "maxima": {
+          "bf16_effective_delta_mse": 0.0,
+          "delta_nll": 0.0,
+          "final_hidden_mse": 0.0,
+          "live_injected_delta_mse": 0.0,
+          "logit_kl": 0.0,
+          "post_token_full_cache_mse": 0.0
+        },
+        "path_candidate_id": "fixed_d1_path_360_384__lambda_0",
+        "rows": 72
+      },
+      {
+        "endpoint_rate": 384,
+        "fixed_candidate_id": "rate_384__calibration_selected_fixed_d1",
+        "high_rate": 384,
+        "low_rate": 360,
+        "maxima": {
+          "bf16_effective_delta_mse": 0.0,
+          "delta_nll": 0.0,
+          "final_hidden_mse": 0.0,
+          "live_injected_delta_mse": 0.0,
+          "logit_kl": 0.0,
+          "post_token_full_cache_mse": 0.0
+        },
+        "path_candidate_id": "fixed_d1_path_360_384__lambda_1",
+        "rows": 72
+      },
+      {
+        "endpoint_rate": 725,
+        "fixed_candidate_id": "rate_725__calibration_selected_fixed_d1",
+        "high_rate": 749,
+        "low_rate": 725,
+        "maxima": {
+          "bf16_effective_delta_mse": 0.0,
+          "delta_nll": 0.0,
+          "final_hidden_mse": 0.0,
+          "live_injected_delta_mse": 0.0,
+          "logit_kl": 0.0,
+          "post_token_full_cache_mse": 0.0
+        },
+        "path_candidate_id": "fixed_d1_path_725_749__lambda_0",
+        "rows": 72
+      },
+      {
+        "endpoint_rate": 749,
+        "fixed_candidate_id": "rate_749__calibration_selected_fixed_d1",
+        "high_rate": 749,
+        "low_rate": 725,
+        "maxima": {
+          "bf16_effective_delta_mse": 0.0,
+          "delta_nll": 0.0,
+          "final_hidden_mse": 0.0,
+          "live_injected_delta_mse": 0.0,
+          "logit_kl": 0.0,
+          "post_token_full_cache_mse": 0.0
+        },
+        "path_candidate_id": "fixed_d1_path_725_749__lambda_1",
+        "rows": 72
+      }
+    ]
+  },
+  "layer_facts": {
+    "0": {
+      "path": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1/layers/layer_00/d1_experiment_a_diagnostic_layer_facts.json",
+      "sha256": "eb04449071668731e5d34f29e27a866d229304e597c41e45ef8ec31db81bb6c8"
+    },
+    "1": {
+      "path": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1/layers/layer_01/d1_experiment_a_diagnostic_layer_facts.json",
+      "sha256": "79cd0a44ee756d4b99704221ebf2a0b08c44eecd485e8c87ba9fc595076b2c33"
+    },
+    "12": {
+      "path": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1/layers/layer_12/d1_experiment_a_diagnostic_layer_facts.json",
+      "sha256": "aafe77e88fa60e1858feb33e934c51b1277cd61c5247cd2a448c3280b1604a44"
+    },
+    "23": {
+      "path": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1/layers/layer_23/d1_experiment_a_diagnostic_layer_facts.json",
+      "sha256": "e8d8a41327de30103909f2409ff812c3988cc34c0801b40d5dd7afe445551983"
+    },
+    "4": {
+      "path": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1/layers/layer_04/d1_experiment_a_diagnostic_layer_facts.json",
+      "sha256": "6b3f5f488905d08a157b01b2b4ad36055c8664f28835ba2f6ebd7a9b869399e2"
+    },
+    "6": {
+      "path": "/workspace/pr13_d1_experiment_a_diagnostic_panel_20260825_v1/layers/layer_06/d1_experiment_a_diagnostic_layer_facts.json",
+      "sha256": "82e873b5e9af4ff4c12b9ce12aaa47c99c9792fbca3a8c9f79e0927bf79c650b"
+    }
+  },
+  "outputs": {
+    "d1_experiment_a_diagnostic_quality.parquet": {
+      "bytes": 356799,
+      "rows": 2304,
+      "sha256": "f4841d450ed0dd70709b92497b6c281ae464d3e402bc7129f167a194068b25aa"
+    },
+    "d1_experiment_a_diagnostic_routes.parquet": {
+      "bytes": 4299924,
+      "rows": 74784,
+      "sha256": "0ad30f0d3ca480bf75375fb2530891a8f637067c35cd0d0b13ab8aa4ca2e5abb"
+    },
+    "d1_experiment_a_diagnostic_zero_gates.parquet": {
+      "bytes": 40318,
+      "rows": 72,
+      "sha256": "352e96edb50c3298ff3fd3c93f7295ce2d99224dee598662da5a2df4975d5b2a"
+    }
+  },
+  "panel_facts_sha256": "b1167468cd971432a900ee20ffcba21cb7f948443ea7f4e14e6c90da96219896",
+  "panel_sha256": "6204106a384bc530d6b91aed91359ceaacda8939d9e1a0d53a35401bd2a770b1",
+  "route_modes": [
+    "live",
+    "frozen_set_live_weights",
+    "fully_frozen"
+  ],
+  "schema": "pr13_d1_experiment_a_diagnostic_panel_v1",
+  "scientific_boundary": "Enriched 24-token/layer Experiment A diagnostic panel selected from the three-request smoke cohort. One injected layer and one current token per candidate behind an exact prefix cache. Interpolation controls are not page allocations. No Experiment B controller, general quality claim, generated rollout, or joint all-layer compression is present.",
+  "terminal_metric_scope": "current_token_only",
+  "zero_dose_all_exact": true
+}

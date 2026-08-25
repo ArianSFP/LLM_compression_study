@@ -1,0 +1,29 @@
+{
+  "base_tail_config": "/root/LLM_compression_study/experiments/adaptive_expert_precision_oracle/configs/qwen36_mxfp4_d1_cached_decode_tail_kl_smoke_20260824_v3.json",
+  "base_tail_config_sha256": "4fb569a6c0a0b7cde5a3267bb8571bedd0e82e5a690e8bac452bfb51e41a6e4a",
+  "completed": true,
+  "config_sha256": "f1cec1bbe14497fdc400a0764bafcb4e67414fbd22bb1aa1be37d916834a66fa",
+  "experiment_b_components_present": false,
+  "panel_is_not_an_estimator_or_quality_cohort": true,
+  "panel_sha256": "6204106a384bc530d6b91aed91359ceaacda8939d9e1a0d53a35401bd2a770b1",
+  "quiet_controls_per_layer": {
+    "0": 2,
+    "1": 2,
+    "12": 2,
+    "23": 2,
+    "4": 2,
+    "6": 2
+  },
+  "rows": 24,
+  "schema": "pr13_d1_experiment_a_diagnostic_panel_v1",
+  "selection_counts": {
+    "adjacent_rate_reversal": 4,
+    "fixed_vs_pr13_introduced": 4,
+    "fixed_vs_pr13_prevented": 4,
+    "quiet_control": 12
+  },
+  "selection_uses_final_kl_only_for_panel_enrichment": true,
+  "source_propagation_sha256": "1058848b2985af307dfa6a0a54b1fca85568752aa648fb15260ec32aea03a984",
+  "source_quality_sha256": "ae626e499721639a2cd426ae452eeb2e3634787d1ae84c2a58ec2ab9d7e8b39d",
+  "unique_token_layers": 24
+}
