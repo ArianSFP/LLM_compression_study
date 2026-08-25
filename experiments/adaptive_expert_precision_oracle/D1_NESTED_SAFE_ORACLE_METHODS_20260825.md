@@ -205,6 +205,14 @@ and VJP. After anchoring, zero delta must reproduce the captured router logits
 exactly. Every finalist is then replayed through that anchored same-host next
 router, and all 256 router logits participate in the final top-8 check.
 
+The unanchored slice route is diagnostic, not a target gate. In particular,
+bounded slice drift can reorder an exact tie or move a near-boundary expert
+before the fixed anchor is applied. Raw ordered-route and set agreement are
+therefore serialized separately. The hard route gate is that the anchored
+zero-delta logits are bit-identical to the captured full-model logits and that
+the authoritative CUDA softmax/top-k operation reproduces the captured ordered
+top-8 exactly.
+
 Each repair round screens at most 32 signed-margin page moves and replays at
 most 8 exact finalists. This compute cap is distinct from the configured
 `W in {16, 32, 64}` group-level repair-window grid. A safe incumbent is

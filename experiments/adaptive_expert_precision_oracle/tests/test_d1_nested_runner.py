@@ -63,6 +63,38 @@ def _logits() -> tuple[np.ndarray, np.ndarray]:
     return target, candidate
 
 
+def test_raw_slice_route_is_diagnostic_but_anchored_route_is_hard_gate() -> None:
+    target = np.arange(8, dtype=np.int64)
+    raw_order_swap = target.copy()
+    raw_order_swap[5:7] = raw_order_swap[5:7][::-1]
+    parity = runner._route_anchor_parity(
+        raw_order_swap, target.copy(), target,
+    )
+    assert parity == {
+        "raw_cached_vs_full_ordered_top8_equal": False,
+        "raw_cached_vs_full_top8_set_equal": True,
+        "anchored_cached_vs_full_ordered_top8_equal": True,
+    }
+
+    raw_membership_swap = target.copy()
+    raw_membership_swap[-1] = 8
+    parity = runner._route_anchor_parity(
+        raw_membership_swap, target.copy(), target,
+    )
+    assert parity["raw_cached_vs_full_ordered_top8_equal"] is False
+    assert parity["raw_cached_vs_full_top8_set_equal"] is False
+
+    wrong_anchor = target.copy()
+    wrong_anchor[-1] = 8
+    with pytest.raises(RuntimeError, match="anchored CUDA"):
+        runner._route_anchor_parity(target, wrong_anchor, target)
+
+    duplicate = target.copy()
+    duplicate[-1] = duplicate[-2]
+    with pytest.raises(ValueError, match="eight unique"):
+        runner._route_anchor_parity(duplicate, target, target)
+
+
 
 def test_v2_config_order_claims_match_implemented_selector_keys() -> None:
     config = runner.load_json(runner.FROZEN_ALLOCATION_CONFIG_PATH)
