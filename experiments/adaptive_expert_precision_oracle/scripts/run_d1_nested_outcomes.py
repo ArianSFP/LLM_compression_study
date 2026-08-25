@@ -33,6 +33,7 @@ from oracle_study.causal_replay import projection_responses  # noqa: E402
 from oracle_study.d1_decode import cache_state_metrics, clone_decode_cache  # noqa: E402
 from oracle_study.d1_nested_artifacts import canonical_sha256  # noqa: E402
 from oracle_study.d1_nested_outcomes import (  # noqa: E402
+    ALLOCATION_CONFIG_FILE_SHA256,
     AUTHENTICATED_CAPTURE_CONFIG_PATH,
     AUTHENTICATED_CAPTURE_CONFIG_SHA256,
     CACHE_FILE,
@@ -90,8 +91,16 @@ HOST_FACTS = "d1_nested_outcome_host_facts.json"
 Q4_ROUTED_MAX_ABS_ATOL = 0.125
 FROZEN_ALLOCATION_CONFIG_PATH = (
     EXPERIMENT
-    / "configs/qwen36_mxfp4_d1_nested_safe_allocation_20260825_v1.json"
+    / "configs/qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2.json"
 )
+OUTCOME_CODE_BUNDLE_SCHEMA = "pr13_d1_nested_outcome_code_bundle_v1"
+OUTCOME_CODE_BUNDLE_ROOTS = ("scripts", "src/oracle_study")
+OUTCOME_CODE_REQUIRED_MEMBERS = {
+    "scripts/run_d1_nested_outcomes.py",
+    "scripts/run_d1_downstream_tail_kl.py",
+    "src/oracle_study/d1_nested_outcomes.py",
+    "src/oracle_study/d1_decode_tail.py",
+}
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -113,6 +122,90 @@ def _cell_paths(output: Path, split: str, layer: int) -> dict[str, Path]:
     }
 
 
+def _outcome_code_bundle() -> dict[str, Any]:
+    """Hash the complete experiment Python implementation deterministically."""
+
+    members = []
+    for relative_root in OUTCOME_CODE_BUNDLE_ROOTS:
+        root = EXPERIMENT / relative_root
+        for path in sorted(root.rglob("*.py")):
+            if not path.is_file():
+                continue
+            members.append({
+                "path": path.relative_to(EXPERIMENT).as_posix(),
+                "bytes": path.stat().st_size,
+                "sha256": file_sha256(path),
+            })
+    observed = {str(member["path"]) for member in members}
+    missing = sorted(OUTCOME_CODE_REQUIRED_MEMBERS.difference(observed))
+    if missing:
+        raise RuntimeError(f"outcome code bundle is incomplete: {missing}")
+    inventory = {
+        str(member["path"]): {
+            "sha256": str(member["sha256"]),
+            "bytes": int(member["bytes"]),
+        }
+        for member in members
+    }
+    candidate_identity = {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": len(inventory),
+        "canonical_sha256": canonical_sha256(inventory),
+    }
+    payload = {
+        "schema": OUTCOME_CODE_BUNDLE_SCHEMA,
+        "scope": "all_python_under_experiment_scripts_and_src_oracle_study",
+        "roots": list(OUTCOME_CODE_BUNDLE_ROOTS),
+        "files": len(members),
+        "members": members,
+        "allocation_candidate_code_identity": candidate_identity,
+    }
+    return {
+        **payload,
+        "sha256": canonical_sha256(payload),
+    }
+
+
+def _authenticate_outcome_code_bundle(plan: Any) -> dict[str, Any]:
+    """Require outcome code to equal the allocation-stage sealed bundle."""
+
+    bundle = _outcome_code_bundle()
+    observed = bundle["allocation_candidate_code_identity"]
+    expected = dict(plan.calibration_candidate_code_identity)
+    if observed != expected:
+        raise RuntimeError(
+            "outcome code bundle differs from the sealed allocation code identity: "
+            f"expected={expected}, observed={observed}"
+        )
+    return bundle
+
+
+def _validate_execution_stack(
+    config: Mapping[str, Any],
+    hardware: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Require the exact GPU/Torch/CUDA route-label execution stack."""
+
+    expected = config.get("authenticated_capture_execution_stack")
+    if not isinstance(expected, Mapping):
+        raise RuntimeError("authenticated capture execution stack is absent")
+    observed = {
+        "gpu": str(hardware.get("gpu", "")),
+        "torch": str(torch.__version__),
+        "cuda": str(torch.version.cuda),
+    }
+    mismatches = {
+        field: {"expected": str(expected.get(field)), "observed": value}
+        for field, value in observed.items()
+        if value != str(expected.get(field))
+    }
+    if mismatches:
+        raise RuntimeError(
+            f"authenticated capture execution stack mismatch: {mismatches}"
+        )
+    return dict(expected)
+
+
 def _input_pins(
     *,
     allocation_config_sha256: str,
@@ -120,6 +213,8 @@ def _input_pins(
     checkpoint_hashes: Mapping[str, str],
     selected_tree_sha256: str,
     allocation_facts: Mapping[str, Any],
+    execution_stack: Mapping[str, Any],
+    outcome_code_bundle: Mapping[str, Any],
     q4_routed_max_abs_atol: float,
 ) -> dict[str, Any]:
     return {
@@ -138,6 +233,8 @@ def _input_pins(
             checkpoint_hashes["checkpoint_index_sha256"]
         ),
         "selected_tree_sha256": str(selected_tree_sha256),
+        "authenticated_capture_execution_stack": dict(execution_stack),
+        "outcome_code_bundle": dict(outcome_code_bundle),
         "q4_routed_max_abs_atol": float(q4_routed_max_abs_atol),
         **dict(allocation_facts),
     }
@@ -1613,7 +1710,10 @@ def _authenticate_raw_request_inputs(
 
 def _load_inputs(args: argparse.Namespace):
     allocation_config_sha256 = file_sha256(args.config)
-    if allocation_config_sha256 != file_sha256(FROZEN_ALLOCATION_CONFIG_PATH):
+    frozen_config_sha256 = file_sha256(FROZEN_ALLOCATION_CONFIG_PATH)
+    if frozen_config_sha256 != ALLOCATION_CONFIG_FILE_SHA256:
+        raise RuntimeError("checked-in immutable v2 allocation config bytes changed")
+    if allocation_config_sha256 != ALLOCATION_CONFIG_FILE_SHA256:
         raise ValueError(
             "supplied allocation config bytes differ from the frozen checked-in config"
         )
@@ -1649,7 +1749,10 @@ def _load_inputs(args: argparse.Namespace):
         expected_manifest_sha256=args.expected_allocation_sha256,
         expected_frozen_calibration_spec_sha256=args.expected_calibration_sha256,
     )
-    validate_plan_against_config(plan, config)
+    validate_plan_against_config(
+        plan, config, config_file_sha256=allocation_config_sha256,
+    )
+    outcome_code_bundle = _authenticate_outcome_code_bundle(plan)
     request_facts_path = _resolve_request_manifest_facts_path(
         capture_config, args.request_manifest, args.request_manifest_facts,
     )
@@ -1674,16 +1777,17 @@ def _load_inputs(args: argparse.Namespace):
     requests = join_request_manifest(allocations, request_rows)
     return (
         config, plan, allocations, requests, request_hashes,
-        allocation_config_sha256,
+        allocation_config_sha256, outcome_code_bundle,
     )
 
 
 def run_phase(args: argparse.Namespace) -> None:
     (
         config, plan, allocations, requests, request_hashes,
-        allocation_config_sha256,
+        allocation_config_sha256, outcome_code_bundle,
     ) = _load_inputs(args)
     hardware = _gpu_gate(config)
+    execution_stack = _validate_execution_stack(config, hardware)
     checkpoint_hashes = validate_checkpoint_pins(config, args.checkpoint)
     tree_sha = file_sha256(args.trees)
     if tree_sha != str(config["selected_tree_sha256"]):
@@ -1694,6 +1798,8 @@ def run_phase(args: argparse.Namespace) -> None:
         checkpoint_hashes=checkpoint_hashes,
         selected_tree_sha256=tree_sha,
         allocation_facts=outcome_input_facts(plan),
+        execution_stack=execution_stack,
+        outcome_code_bundle=outcome_code_bundle,
         q4_routed_max_abs_atol=Q4_ROUTED_MAX_ABS_ATOL,
     )
     args.output.mkdir(parents=True, exist_ok=True)
@@ -1821,7 +1927,7 @@ def run_phase(args: argparse.Namespace) -> None:
 def finalize_phase(args: argparse.Namespace) -> None:
     (
         config, plan, allocations, requests, request_hashes,
-        allocation_config_sha256,
+        allocation_config_sha256, outcome_code_bundle,
     ) = _load_inputs(args)
     del requests
     checkpoint_hashes = {
@@ -1838,6 +1944,10 @@ def finalize_phase(args: argparse.Namespace) -> None:
         checkpoint_hashes=checkpoint_hashes,
         selected_tree_sha256=str(load_json(args.config)["selected_tree_sha256"]),
         allocation_facts=outcome_input_facts(plan),
+        execution_stack=dict(
+            config["authenticated_capture_execution_stack"]
+        ),
+        outcome_code_bundle=outcome_code_bundle,
         q4_routed_max_abs_atol=Q4_ROUTED_MAX_ABS_ATOL,
     )
     quality_parts = []

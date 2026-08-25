@@ -49,6 +49,8 @@ from oracle_study.d1_nested_allocation import (  # noqa: E402
     RouteRepairMetrics,
     add_only_local_completion,
     hard_saturating_route_repair,
+    physical_added_pages,
+    physical_removed_pages,
     physical_subset,
     reverse_local_prune_to_reserve,
     state_page_count,
@@ -75,6 +77,7 @@ from oracle_study.d1_nested_search import (  # noqa: E402
     exact_all_expert_d1_metrics,
     stable_top8,
 )
+import capture_d1_nested_exact_decode as capture_auth  # noqa: E402
 import run_d1_slice_oracle_pilot as base  # noqa: E402
 
 
@@ -85,6 +88,15 @@ ARM_LOCAL = "nested_local_only"
 ARM_D1 = "nested_d1_safe"
 ARM_D1_SEVERITY = "nested_d1_safe_violation_mass"
 STRICT_BANK_WINDOWS = (16, 32, 64)
+FROZEN_ALLOCATION_CONFIG_PATH = (
+    EXPERIMENT / "configs"
+    / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2.json"
+)
+SCIENTIFIC_LAYER_FILES = (
+    "nested_candidates.pkl",
+    "nested_candidate_metrics.parquet",
+    "nested_slice_parity.parquet",
+)
 
 
 @dataclass(frozen=True)
@@ -199,16 +211,19 @@ class ExactReplayCache:
         self.geometry = geometry
         self.profile = profile
         self.profile_labels = dict(profile_labels or {})
-        self._cache: dict[bytes, tuple[ExactD1Metrics, np.ndarray]] = {}
+        self._cache: dict[bytes, tuple[ExactD1Metrics, np.ndarray, np.ndarray]] = {}
         self.executions = 0
         self.hits = 0
         self._target = np.asarray(context.target_logits, np.float64)
+        self._target_ids = np.asarray(context.target_ids, np.int64)
 
     @staticmethod
     def key(states: np.ndarray) -> bytes:
         return np.asarray(validate_states(states), np.uint8).tobytes(order="C")
 
-    def evaluate(self, states: np.ndarray) -> tuple[ExactD1Metrics, np.ndarray]:
+    def evaluate(
+        self, states: np.ndarray,
+    ) -> tuple[ExactD1Metrics, np.ndarray, np.ndarray]:
         value = validate_states(states)
         key = self.key(value)
         if key in self._cache:
@@ -220,25 +235,32 @@ class ExactReplayCache:
                     labels=self.profile_labels,
                 )
             return self._cache[key]
-        if self.profile is None:
-            logits = np.asarray(
-                self.context.replay_logits(self.geometry.output_delta(value)),
-                np.float32,
-            ).reshape(-1)
-            metrics = exact_all_expert_d1_metrics(self._target, logits)
-        else:
+        def execute() -> tuple[np.ndarray, np.ndarray]:
+            logits, candidate_ids = self.context.replay_route(
+                self.geometry.output_delta(value),
+            )
+            return (
+                np.asarray(logits, np.float32).reshape(-1),
+                np.asarray(candidate_ids, np.int64).reshape(-1),
+            )
+        if self.profile is not None:
             with self.profile.measure(
                 "exact_replay_execution",
                 labels=self.profile_labels,
             ):
-                logits = np.asarray(
-                    self.context.replay_logits(self.geometry.output_delta(value)),
-                    np.float32,
-                ).reshape(-1)
-                metrics = exact_all_expert_d1_metrics(self._target, logits)
+                logits, candidate_ids = execute()
+        else:
+            logits, candidate_ids = execute()
+        metrics = exact_all_expert_d1_metrics(
+            self._target, logits,
+            baseline_top8=self._target_ids,
+            candidate_top8=candidate_ids,
+        )
         frozen_logits = logits.copy()
         frozen_logits.setflags(write=False)
-        self._cache[key] = (metrics, frozen_logits)
+        frozen_ids = candidate_ids.copy()
+        frozen_ids.setflags(write=False)
+        self._cache[key] = (metrics, frozen_logits, frozen_ids)
         self.executions += 1
         return self._cache[key]
 
@@ -247,6 +269,9 @@ class ExactReplayCache:
 
     def logits(self, states: np.ndarray) -> np.ndarray:
         return self.evaluate(states)[1]
+
+    def ids(self, states: np.ndarray) -> np.ndarray:
+        return self.evaluate(states)[2]
 
     @property
     def states(self) -> int:
@@ -347,8 +372,590 @@ def atomic_parquet(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
     temporary.replace(path)
 
 
+def _code_identity() -> dict[str, Any]:
+    roots = (EXPERIMENT / "scripts", EXPERIMENT / "src" / "oracle_study")
+    files = sorted(
+        path for root in roots for path in root.rglob("*.py") if path.is_file()
+    )
+    inventory = {
+        str(path.relative_to(EXPERIMENT)): {
+            "sha256": sha256(path),
+            "bytes": path.stat().st_size,
+        }
+        for path in files
+    }
+    return {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": len(inventory),
+        "canonical_sha256": canonical_sha256(inventory),
+    }
+
+
+def _assert_file_pin(
+    path: Path,
+    expected_sha256: Any,
+    label: str,
+    *,
+    expected_bytes: Any | None = None,
+) -> dict[str, Any]:
+    path = Path(path)
+    if not path.is_file():
+        raise FileNotFoundError(f"{label} not found: {path}")
+    observed_bytes = path.stat().st_size
+    observed_sha = sha256(path)
+    if observed_sha != str(expected_sha256):
+        raise RuntimeError(f"{label} SHA-256 mismatch")
+    if expected_bytes is not None and observed_bytes != int(expected_bytes):
+        raise RuntimeError(f"{label} byte count mismatch")
+    return {"sha256": observed_sha, "bytes": observed_bytes}
+
+def _cuda_softmax_top8(
+    logits: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Mirror the model's authoritative FP32 CUDA softmax/top-k route."""
+
+    values = logits.float()
+    if (
+        not values.is_cuda
+        or values.shape != (256,)
+        or not bool(torch.isfinite(values).all().item())
+    ):
+        raise RuntimeError("route execution requires 256 finite FP32 CUDA logits")
+    probabilities = torch.softmax(values, dim=-1, dtype=torch.float32)
+    expert_ids = torch.topk(
+        probabilities, 8, dim=-1, largest=True, sorted=True,
+    ).indices
+    return probabilities, expert_ids
+
+
+def _captured_route_cuda_preflight(
+    capture_dir: Path,
+    request_rows: Sequence[Mapping[str, Any]],
+    layers: Sequence[int],
+) -> dict[str, Any]:
+    """Authenticate captured ordered D1 routes before frontier construction."""
+
+    contexts = 0
+    ordered_matches = 0
+    numpy_stable_order_mismatches = 0
+    boundary_probability_ties = 0
+    with torch.inference_mode():
+        for row in request_rows:
+            request_id = str(row["request_id"])
+            position = int(row["decode_position"])
+            path = capture_auth.capture_path(capture_dir, request_id)
+            with np.load(path, allow_pickle=False) as source:
+                for layer in layers:
+                    target_layer = int(layer) + 1
+                    logits = np.asarray(
+                        source["router_logits"][target_layer, position],
+                        np.float32,
+                    )
+                    captured_ids = np.asarray(
+                        source["router_ids"][target_layer, position],
+                        np.int64,
+                    )
+                    tensor = torch.as_tensor(
+                        logits, device="cuda:0", dtype=torch.float32,
+                    )
+                    probabilities, executed = _cuda_softmax_top8(tensor)
+                    observed = executed.detach().cpu().numpy()
+                    contexts += 1
+                    if not np.array_equal(observed, captured_ids):
+                        raise RuntimeError(
+                            "captured ordered route CUDA preflight failed: "
+                            f"request={request_id}, injection_layer={int(layer)}, "
+                            f"target_layer={target_layer}, captured={captured_ids.tolist()}, "
+                            f"executed={observed.tolist()}"
+                        )
+                    ordered_matches += 1
+                    numpy_stable_order_mismatches += int(
+                        not np.array_equal(stable_top8(logits), captured_ids)
+                    )
+                    mask = torch.ones(256, dtype=torch.bool, device=tensor.device)
+                    mask[executed] = False
+                    outside_max = torch.max(probabilities[mask])
+                    selected_min = torch.min(probabilities[executed])
+                    boundary_probability_ties += int(
+                        bool(torch.eq(selected_min, outside_max).item())
+                    )
+    expected = len(request_rows) * len(tuple(layers))
+    if contexts != expected or ordered_matches != expected:
+        raise RuntimeError("captured route CUDA preflight coverage changed")
+    return {
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "operation": (
+            "raw_logits_fp32_cuda_then_softmax_fp32_then_"
+            "torch_topk_k8_sorted"
+        ),
+        "requests": len(request_rows),
+        "target_injection_layers": list(map(int, layers)),
+        "contexts": contexts,
+        "ordered_matches": ordered_matches,
+        "all_ordered_ids_exact": True,
+        "captured_ordered_router_ids_authoritative": True,
+        "numpy_stable_order_mismatches": numpy_stable_order_mismatches,
+        "boundary_probability_ties": boundary_probability_ties,
+    }
+
+
+
+def _validate_deterministic_order_contract(config: Mapping[str, Any]) -> None:
+    """Bind documentary ordering claims to the implemented selector keys."""
+
+    common = config.get("common_core")
+    screen = config.get("d1_screen")
+    gate = config.get("exact_d1_gate")
+    allocation = config.get("allocation_phase")
+    expected_common = [
+        "least_exact_combined_local_damage_increase",
+        "routed_expert_slot",
+        "unit",
+        "projection_bit",
+    ]
+    expected_arm4 = [
+        "fewest_membership_changes",
+        "lowest_exact_combined_local_qenergy",
+        "lowest_removal_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+        "lowest_addition_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+        "lowest_shortlist_index",
+    ]
+    expected_arm5 = [
+        "fewest_membership_changes",
+        "lowest_boundary_violation_depth_if_candidate_remains_unsafe_else_zero",
+        "lowest_baseline_routing_mass_lost_if_candidate_remains_unsafe_else_zero",
+        "lowest_exact_combined_local_qenergy",
+        "lowest_removal_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+        "lowest_addition_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+        "lowest_shortlist_index",
+    ]
+    if (
+        not isinstance(common, Mapping)
+        or common.get("deterministic_tie_break") != expected_common
+        or not isinstance(screen, Mapping)
+        or "refresh_after_accepted_pages" in screen
+        or "beam_width" in screen
+        or not isinstance(gate, Mapping)
+        or gate.get("arm4_unsafe_tie_break") != expected_arm4
+        or gate.get("arm5_unsafe_tie_break") != expected_arm5
+        or not isinstance(allocation, Mapping)
+        or allocation.get("planned_fp32_and_bf16_once_effective_deltas_recorded")
+        is not False
+    ):
+        raise RuntimeError(
+            "immutable deterministic ordering/effective-delta contract changed"
+        )
+
+
+def _authenticate_allocation_inputs(
+    args: argparse.Namespace,
+) -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+    list[dict[str, Any]],
+    dict[str, Any],
+    dict[int, tuple[Path, Path]],
+    dict[str, Any],
+]:
+    """Authenticate every scientific input before a model or factor is loaded."""
+
+    if not FROZEN_ALLOCATION_CONFIG_PATH.is_file():
+        raise FileNotFoundError(FROZEN_ALLOCATION_CONFIG_PATH)
+    allocation_config_sha = sha256(args.config)
+    if allocation_config_sha != sha256(FROZEN_ALLOCATION_CONFIG_PATH):
+        raise RuntimeError(
+            "allocation config bytes differ from the checked-in immutable v2 config"
+        )
+    config = load_json(args.config)
+    if (
+        config.get("schema") != "pr13_d1_nested_safe_allocation_config_v1"
+        or config.get("experiment_stage") != "A"
+        or config.get("run_id")
+        != "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2"
+    ):
+        raise RuntimeError("allocation config is not the frozen v2 Experiment A run")
+    _validate_deterministic_order_contract(config)
+    pilot = bool(args.pilot)
+    production_root = Path(str(config["output_root"])).resolve()
+    output_root = Path(args.output_dir).resolve()
+    if pilot:
+        if args.request_limit is None:
+            raise ValueError("--pilot requires an explicit --request-limit")
+        pilot_root = production_root / "pilots"
+        try:
+            relative_pilot = output_root.relative_to(pilot_root)
+        except ValueError as exc:
+            raise RuntimeError(
+                "pilot output must be below <v2 output_root>/pilots"
+            ) from exc
+        if not relative_pilot.parts:
+            raise RuntimeError("pilot output requires a named child directory")
+    elif args.request_limit is not None:
+        raise ValueError("production v2 allocation rejects partial request cohorts")
+    elif output_root != production_root:
+        raise RuntimeError("production output differs from the immutable v2 run root")
+    hardware_path = config.get("hardware_execution_path")
+    if not isinstance(hardware_path, Mapping) or (
+        hardware_path.get("cpu_worker_blas_threads") != 1
+        or hardware_path.get("cpu_worker_processes_allowed_range") != [1, 64]
+        or hardware_path.get("cpu_worker_processes_default") != 24
+        or hardware_path.get("cpu_worker_process_count_is_semantics_inert")
+        is not True
+        or not 1 <= int(args.workers) <= 64
+    ):
+        raise RuntimeError("immutable CPU worker/thread hardware path changed")
+    if str(args.device) not in {"cuda", "cuda:0"}:
+        raise RuntimeError("immutable hardware path requires CUDA device zero")
+
+    capture_protocol = config.get("authenticated_capture_protocol")
+    if not isinstance(capture_protocol, Mapping):
+        raise RuntimeError("authenticated capture protocol pin is absent")
+    capture_config_path = EXPERIMENT / str(capture_protocol.get("path", ""))
+    _assert_file_pin(
+        capture_config_path,
+        capture_protocol.get("sha256"),
+        "capture protocol config",
+    )
+    capture_config, all_rows, capture_hashes = capture_auth.validate_capture_inputs(
+        config_path=capture_config_path,
+        manifest_path=args.manifest,
+        manifest_facts_path=args.manifest_facts,
+        frozen_config_path=capture_config_path,
+    )
+    for field in (
+        "checkpoint_revision",
+        "checkpoint_index_sha256",
+        "checkpoint_config_sha256",
+        "tokenizer_json_sha256",
+        "selected_tree_sha256",
+    ):
+        if config.get(field) != capture_config.get(field):
+            raise RuntimeError(f"allocation/capture protocol mismatch: {field}")
+    capture_hardware = capture_config.get("hardware_execution_path")
+    if (
+        config.get("injection_layers") != capture_config.get("injection_layers")
+        or config.get("decode_position") != capture_config.get("decode_position")
+        or config.get("request_source") != capture_config.get("request_source")
+        or not isinstance(capture_hardware, Mapping)
+        or any(
+            hardware_path.get(key) != value
+            for key, value in capture_hardware.items()
+        )
+    ):
+        raise RuntimeError("allocation/capture scientific protocol changed")
+
+    checkpoint_pins = capture_auth.validate_checkpoint_pins(
+        capture_config, args.checkpoint,
+    )
+    tokenizer_pin = _assert_file_pin(
+        args.checkpoint / "tokenizer.json",
+        config["tokenizer_json_sha256"],
+        "checkpoint tokenizer",
+    )
+    tree_pin = _assert_file_pin(
+        args.trees, config["selected_tree_sha256"], "selected expert tree",
+    )
+    pr13_inputs = config.get("authenticated_pr13_inputs")
+    if not isinstance(pr13_inputs, Mapping):
+        raise RuntimeError("authenticated PR13 input pins are absent")
+    pr13_config_pin = _assert_file_pin(
+        args.pr13_config,
+        pr13_inputs.get("config_sha256"),
+        "PR13 allocation config",
+    )
+    pr13_config = load_json(args.pr13_config)
+    if (
+        pr13_inputs.get("tree_sha256") != tree_pin["sha256"]
+        or pr13_inputs.get("checkpoint_config_sha256")
+        != checkpoint_pins["checkpoint_config_sha256"]
+        or pr13_inputs.get("checkpoint_index_sha256")
+        != checkpoint_pins["checkpoint_index_sha256"]
+    ):
+        raise RuntimeError("v2 PR13 checkpoint/tree pins changed")
+
+
+    capture_inputs = config.get("authenticated_capture_artifacts")
+    if not isinstance(capture_inputs, Mapping):
+        raise RuntimeError("authenticated capture artifact pins are absent")
+    if (
+        capture_inputs.get("facts_schema") != capture_auth.FACTS_SCHEMA
+        or capture_inputs.get("split") != "all"
+        or capture_inputs.get("requests") != len(all_rows)
+        or capture_inputs.get("files") != len(all_rows)
+        or capture_inputs.get("manifest_sha256")
+        != capture_hashes["manifest_sha256"]
+        or capture_inputs.get("manifest_facts_sha256")
+        != capture_hashes["manifest_facts_sha256"]
+    ):
+        raise RuntimeError("v2 capture-artifact pins changed")
+
+    capture_facts_pin = _assert_file_pin(
+        args.capture_facts,
+        capture_inputs.get("facts_sha256"),
+        "capture ledger",
+    )
+    capture_facts = load_json(args.capture_facts)
+    layers = tuple(map(int, config["injection_layers"]))
+    router_layers = tuple(sorted(set(layers + tuple(layer + 1 for layer in layers))))
+    expected_names = {
+        capture_auth.capture_path(args.capture_dir, str(row["request_id"])).name
+        for row in all_rows
+    }
+    files = capture_facts.get("files")
+    repeat_gates = capture_facts.get("repeat_gates")
+    if (
+        capture_facts.get("schema") != capture_auth.FACTS_SCHEMA
+        or capture_facts.get("completed") is not True
+        or capture_facts.get("split") != "all"
+        or capture_facts.get("requests") != len(all_rows)
+        or capture_facts.get("request_ids")
+        != [str(row["request_id"]) for row in all_rows]
+        or capture_facts.get("config_sha256") != capture_hashes["config_sha256"]
+        or capture_facts.get("manifest_sha256") != capture_hashes["manifest_sha256"]
+        or capture_facts.get("manifest_facts_sha256")
+        != capture_hashes["manifest_facts_sha256"]
+        or capture_facts.get("checkpoint_config_sha256")
+        != checkpoint_pins["checkpoint_config_sha256"]
+        or capture_facts.get("checkpoint_index_sha256")
+        != checkpoint_pins["checkpoint_index_sha256"]
+        or capture_facts.get("layers") != list(layers)
+        or capture_facts.get("array_model_layers") != 40
+        or capture_facts.get("array_hidden_size") != 2048
+        or capture_facts.get("array_routed_experts") != 256
+        or capture_facts.get("all_current_token_repeats_exact") is not True
+        or capture_facts.get("exact_prefix_progression") is not True
+        or capture_facts.get("one_isolated_decode_token_per_request") is not True
+        or capture_facts.get("terminal_logits_retained_or_written") is not False
+        or capture_facts.get("candidate_state_or_delta_used") is not False
+        or capture_facts.get("downstream_candidate_outcome_used") is not False
+        or not isinstance(files, Mapping)
+        or set(files) != expected_names
+        or not isinstance(repeat_gates, list)
+        or len(repeat_gates) != len(all_rows)
+    ):
+        raise RuntimeError("capture ledger violates the immutable exact-decode contract")
+    if (
+        any(not isinstance(row, Mapping) for row in repeat_gates)
+        or [str(row.get("request_id")) for row in repeat_gates]
+        != [str(row["request_id"]) for row in all_rows]
+        or any(row.get("all_exact") is not True for row in repeat_gates)
+    ):
+        raise RuntimeError("capture repeat-gate ledger changed")
+    actual_names = {
+        path.name for path in Path(args.capture_dir).iterdir()
+        if path.is_file() and path.suffix == ".npz"
+    }
+    if actual_names != expected_names:
+        raise RuntimeError("capture directory NPZ inventory differs from its ledger")
+
+    full_split_rows = [
+        row for row in all_rows if str(row["split"]) == str(args.split)
+    ]
+    expected_split_requests = int(
+        config["request_source"][f"{args.split}_requests"]
+    )
+    if len(full_split_rows) != expected_split_requests:
+        raise RuntimeError("selected split request cohort changed")
+    if pilot:
+        limit = int(args.request_limit)
+        if not 1 <= limit < expected_split_requests:
+            raise ValueError(
+                "pilot request-limit must be smaller than the complete split"
+            )
+        split_rows = full_split_rows[:limit]
+    else:
+        split_rows = full_split_rows
+    for row in split_rows:
+        path = capture_auth.capture_path(
+            args.capture_dir, str(row["request_id"]),
+        )
+        record = files.get(path.name)
+        if not isinstance(record, Mapping):
+            raise RuntimeError(f"capture ledger lacks {path.name}")
+        _assert_file_pin(
+            path,
+            record.get("sha256"),
+            f"capture archive {path.name}",
+            expected_bytes=record.get("bytes"),
+        )
+        if record.get("request_manifest_row_sha256") != canonical_sha256(dict(row)):
+            raise RuntimeError(f"capture row identity changed: {path.name}")
+        repeat = capture_auth.validate_capture_archive(
+            path,
+            row,
+            input_hashes=capture_hashes,
+            injection_layers=layers,
+            router_layers=router_layers,
+            model_layers=40,
+            hidden_size=2048,
+            num_experts=256,
+        )
+        if record.get("repeat_gate_sha256") != canonical_sha256(repeat):
+            raise RuntimeError(f"capture repeat gate changed: {path.name}")
+
+
+    capture_environment = capture_facts.get("environment")
+    capture_stack = config.get("authenticated_capture_execution_stack")
+    hardware = capture_auth._gpu_gate(config)
+    runtime = {
+        **hardware,
+        "python": platform.python_version(),
+        "numpy": np.__version__,
+        "torch": torch.__version__,
+        "cuda": torch.version.cuda,
+    }
+    if (
+        not isinstance(capture_environment, Mapping)
+        or not isinstance(capture_stack, Mapping)
+        or capture_stack.get("route_operation")
+        != (
+            "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_"
+            "then_torch_topk_k8_sorted"
+        )
+        or capture_stack.get("captured_ordered_router_ids_authoritative") is not True
+        or capture_stack.get("allocation_runtime_must_match_gpu_torch_cuda_exactly")
+        is not True
+        or capture_stack.get("all_selected_request_d1_targets_preflight_required")
+        is not True
+        or any(
+            str(capture_stack.get(key)) != str(capture_environment.get(key))
+            for key in ("gpu", "torch", "cuda")
+        )
+        or any(
+            str(runtime.get(key)) != str(capture_environment.get(key))
+            for key in ("gpu", "torch", "cuda")
+        )
+    ):
+        raise RuntimeError(
+            "allocation GPU/Torch/CUDA stack differs from authenticated capture"
+        )
+    authenticated_capture_stack = {
+        **{
+            key: str(capture_environment[key])
+            for key in ("gpu", "torch", "cuda")
+        },
+        "candidate_route_operation_role": "anchored_candidate_route_execution",
+        "candidate_route_operation": str(capture_stack["route_operation"]),
+        "target_preflight_operation_role": (
+            "captured_unanchored_target_route_authentication"
+        ),
+        "target_preflight_operation": (
+            "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted"
+        ),
+    }
+    route_preflight = _captured_route_cuda_preflight(
+        args.capture_dir, split_rows, layers,
+    )
+    factor_manifest_pin = _assert_file_pin(
+        args.factor_manifest,
+        pr13_inputs.get("factor_manifest_sha256"),
+        "PR13 factor manifest",
+    )
+    factor_manifest = load_json(args.factor_manifest)
+    manifest_layers = factor_manifest.get("layers")
+    if (
+        factor_manifest.get("schema")
+        != pr13_inputs.get("factor_manifest_schema")
+        or factor_manifest.get("completed") is not True
+        or factor_manifest.get("config_sha256") != pr13_config_pin["sha256"]
+        or factor_manifest.get("tree_sha256") != tree_pin["sha256"]
+        or factor_manifest.get("checkpoint_config_sha256")
+        != checkpoint_pins["checkpoint_config_sha256"]
+        or factor_manifest.get("checkpoint_index_sha256")
+        != checkpoint_pins["checkpoint_index_sha256"]
+        or not isinstance(manifest_layers, Mapping)
+        or set(manifest_layers) != {str(layer) for layer in range(40)}
+    ):
+        raise RuntimeError("PR13 factor manifest changed its authenticated contract")
+    factor_paths: dict[int, tuple[Path, Path]] = {}
+    factor_layer_pins: dict[str, Any] = {}
+    for layer in layers:
+        record = manifest_layers.get(str(layer))
+        if not isinstance(record, Mapping):
+            raise RuntimeError(f"factor manifest lacks layer {layer}")
+        factor_path = Path(args.fit_dir) / str(record.get("file", ""))
+        sidecar_path = Path(args.fit_dir) / str(record.get("sidecar", ""))
+        if factor_path.parent.resolve() != Path(args.fit_dir).resolve():
+            raise RuntimeError("factor manifest contains an unsafe factor filename")
+        if sidecar_path.parent.resolve() != Path(args.fit_dir).resolve():
+            raise RuntimeError("factor manifest contains an unsafe sidecar filename")
+        factor_pin = _assert_file_pin(
+            factor_path,
+            record.get("sha256"),
+            f"PR13 factor layer {layer}",
+            expected_bytes=record.get("bytes"),
+        )
+        sidecar_pin = _assert_file_pin(
+            sidecar_path,
+            record.get("sidecar_sha256"),
+            f"PR13 factor sidecar layer {layer}",
+        )
+        sidecar = load_json(sidecar_path)
+        if sidecar.get("sha256") != factor_pin["sha256"]:
+            raise RuntimeError(f"PR13 factor sidecar payload mismatch at layer {layer}")
+        factor_paths[layer] = (factor_path, sidecar_path)
+        factor_layer_pins[str(layer)] = {
+            "factor": factor_pin,
+            "sidecar": sidecar_pin,
+        }
+
+    code_identity = _code_identity()
+    input_pins = {
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "allocation_config_sha256": allocation_config_sha,
+        "capture_protocol_config_sha256": capture_hashes["config_sha256"],
+        "request_manifest_sha256": capture_hashes["manifest_sha256"],
+        "request_manifest_facts_sha256": capture_hashes["manifest_facts_sha256"],
+        "capture_facts_sha256": capture_facts_pin["sha256"],
+        "checkpoint_config_sha256": checkpoint_pins["checkpoint_config_sha256"],
+        "checkpoint_index_sha256": checkpoint_pins["checkpoint_index_sha256"],
+        "tokenizer_json_sha256": tokenizer_pin["sha256"],
+        "selected_tree_sha256": tree_pin["sha256"],
+        "pr13_config_sha256": pr13_config_pin["sha256"],
+        "factor_manifest_sha256": factor_manifest_pin["sha256"],
+        "factor_layers": factor_layer_pins,
+        "authenticated_capture_execution_stack": authenticated_capture_stack,
+        "captured_route_cuda_preflight": route_preflight,
+        "code_identity": code_identity,
+    }
+    frozen_sha = (
+        None
+        if args.frozen_calibration is None
+        else sha256(args.frozen_calibration)
+    )
+    run_identity = {
+        "schema": "pr13_d1_nested_allocation_run_identity_v1",
+        "run_id": str(config["run_id"]),
+        "split": str(args.split),
+        "request_ids": [str(row["request_id"]) for row in split_rows],
+        "input_pins": input_pins,
+        "hardware_runtime": runtime,
+        "captured_route_cuda_preflight": route_preflight,
+        "frozen_calibration_file_sha256": frozen_sha,
+        "pilot_nonpromotable": pilot,
+        "completed_for_sealing": not pilot,
+        "output_dir": str(output_root),
+        "cpu_worker_processes": int(args.workers),
+        "cpu_worker_blas_threads": 1,
+    }
+    return (
+        config,
+        pr13_config,
+        split_rows,
+        input_pins,
+        factor_paths,
+        {
+            "hardware_runtime": runtime,
+            "captured_route_cuda_preflight": route_preflight,
+            "run_identity_sha256": canonical_sha256(run_identity),
+            "run_identity": run_identity,
+        },
+    )
+
+
 def capture_path(directory: Path, request_id: str) -> Path:
-    path = directory / f"{request_id}.npz"
+    path = capture_auth.capture_path(directory, request_id)
     if not path.is_file():
         raise FileNotFoundError(path)
     return path
@@ -535,25 +1142,27 @@ def _precompute_rate_states(
 ]:
     """Build/refine/collapse all groups in worker batches, retaining states only."""
 
-    geometries = base._build_geometries(
-        groups, experts, proxy, beta, config, int(workers), int(layer),
-    )
+    with threadpool_limits(limits=1):
+        geometries = base._build_geometries(
+            groups, experts, proxy, beta, config, int(workers), int(layer),
+        )
     if len(geometries) != len(groups):
         raise RuntimeError("coarse geometry grid does not match request groups")
     state_grid: list[
         dict[int, tuple[np.ndarray, np.ndarray, dict[str, Any]]]
     ] = [dict() for _ in groups]
     for rate in map(int, rates):
-        refined = base._refine_geometries(
-            geometries,
-            groups,
-            proxy,
-            beta,
-            config,
-            rate,
-            int(workers),
-            int(layer),
-        )
+        with threadpool_limits(limits=1):
+            refined = base._refine_geometries(
+                geometries,
+                groups,
+                proxy,
+                beta,
+                config,
+                rate,
+                int(workers),
+                int(layer),
+            )
         collapsed = _collapse_refined_rate(
             refined, groups, config, rate, int(workers), int(layer),
         )
@@ -715,7 +1324,7 @@ class D1Context:
     current_routed: np.ndarray
     parity: dict[str, Any]
 
-    def replay_logits(self, delta: np.ndarray) -> np.ndarray:
+    def replay_route(self, delta: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         hidden = self.model_slice.compose_current_output(
             self.current_residual[None, None, :],
             self.current_x[None, None, :],
@@ -727,9 +1336,20 @@ class D1Context:
                 hidden, clone_decode_cache(self.prefix_cache),
                 int(self.parity["position"]),
             )
-        raw = logits[0, 0].detach().float().cpu().numpy()
-        anchored = np.asarray(raw + self.logit_anchor, np.float32)
-        return anchored
+            anchor = torch.as_tensor(
+                self.logit_anchor,
+                device=logits.device,
+                dtype=torch.float32,
+            )
+            anchored = logits[0, 0].float() + anchor
+            _, executed_ids = _cuda_softmax_top8(anchored)
+        return (
+            anchored.detach().cpu().numpy().astype(np.float32, copy=False),
+            executed_ids.detach().cpu().numpy().astype(np.int64, copy=False),
+        )
+
+    def replay_logits(self, delta: np.ndarray) -> np.ndarray:
+        return self.replay_route(delta)[0]
 
 
 def _d1_context(
@@ -778,27 +1398,37 @@ def _d1_context(
         or not cache_parity.bit_identical
     ):
         raise RuntimeError("stored/singleton exact D1 decode is not bit-identical")
-    raw_baseline_logits = stored_logits[0, 0].detach().float().cpu().numpy()
+    raw_cuda = stored_logits[0, 0].detach().float()
+    raw_baseline_logits = raw_cuda.cpu().numpy()
     baseline_ids = stored_ids[0, 0].detach().cpu().numpy()
     target_logits = np.asarray(capture["router_logits"][layer + 1, position], np.float32)
     target_ids = np.asarray(capture["router_ids"][layer + 1, position], np.int64)
     logit_anchor = np.asarray(target_logits - raw_baseline_logits, np.float32)
     raw_max_abs = float(np.max(np.abs(logit_anchor), initial=0.0))
-    anchored_baseline = np.asarray(raw_baseline_logits + logit_anchor, np.float32)
+    anchored_cuda = raw_cuda + torch.as_tensor(
+        logit_anchor, device=raw_cuda.device, dtype=torch.float32,
+    )
+    target_probabilities, anchored_ids_cuda = _cuda_softmax_top8(anchored_cuda)
+    anchored_baseline = anchored_cuda.detach().cpu().numpy()
+    anchored_ids = anchored_ids_cuda.detach().cpu().numpy()
     if raw_max_abs > 0.0625 or not np.array_equal(anchored_baseline, target_logits):
         raise RuntimeError("raw D1 slice exceeds or fails its constant-logit anchor gate")
     if not np.array_equal(baseline_ids, target_ids):
         raise RuntimeError("stored-hidden cached decode changes ordered target IDs")
+    if not np.array_equal(anchored_ids, target_ids):
+        raise RuntimeError("anchored CUDA softmax/top-k differs from captured target IDs")
     baseline_logits = anchored_baseline
-    target_order = stable_top8(target_logits)
-    if not np.array_equal(target_ids, target_order):
-        raise RuntimeError("captured ordered D1 IDs differ from stable target-logit top-8")
-    target_set = set(target_order.tolist())
-    outsiders = np.asarray(sorted(
-        (expert for expert in range(target_logits.size) if expert not in target_set),
-        key=lambda expert: (-float(target_logits[expert]), int(expert)),
-    )[:8], np.int64)
-    candidate_ids = np.concatenate((target_order[5:8], outsiders))
+    outsider_mask = torch.ones(
+        256, dtype=torch.bool, device=target_probabilities.device,
+    )
+    outsider_mask[anchored_ids_cuda] = False
+    outsider_probabilities = target_probabilities.masked_fill(
+        ~outsider_mask, -torch.inf,
+    )
+    outsiders = torch.topk(
+        outsider_probabilities, 8, largest=True, sorted=True,
+    ).indices.detach().cpu().numpy()
+    candidate_ids = np.concatenate((target_ids[5:8], outsiders))
     current = stored_current.detach().clone().requires_grad_(True)
     with mutation_safe_cached_autograd():
         logits, _ = model_slice.next_router_logits_decode(
@@ -854,14 +1484,18 @@ def _state_record(
     selector_weights: np.ndarray,
     d1_logits: np.ndarray,
     target_logits: np.ndarray,
+    d1_candidate_ids: np.ndarray,
     target_ids: np.ndarray,
     parameter: Mapping[str, Any],
 ) -> dict[str, Any]:
-    exact = exact_all_expert_d1_metrics(target_logits, d1_logits)
-    if set(exact.baseline_top8.tolist()) != set(
-        np.asarray(target_ids, np.int64).reshape(-1).tolist()
-    ):
-        raise RuntimeError("stored target IDs differ from the target-logit top-8 set")
+    exact = exact_all_expert_d1_metrics(
+        target_logits,
+        d1_logits,
+        baseline_top8=target_ids,
+        candidate_top8=d1_candidate_ids,
+    )
+    if not np.array_equal(exact.baseline_top8, np.asarray(target_ids, np.int64)):
+        raise RuntimeError("stored target IDs changed from the authoritative route")
     move_rows = [
         move.to_dict() if isinstance(move, PhysicalPageMove) else dict(move)
         for move in moves
@@ -893,6 +1527,8 @@ def _state_record(
         "d1_candidate_logits": np.asarray(d1_logits, np.float32),
         "d1_crossings": int(exact.membership_crossings),
         "d1_violation_depth": float(exact.violation_depth),
+        "d1_candidate_ids": np.asarray(d1_candidate_ids, np.int64),
+        "d1_target_ids": np.asarray(target_ids, np.int64),
         "d1_routing_mass_churn": float(exact.routing_mass_lost),
         "d1_labeled_margin": float(exact.target_set_margin),
         "parameter": dict(parameter),
@@ -951,6 +1587,36 @@ def _state_digest(states: np.ndarray) -> str:
     ).hexdigest()
 
 
+def _paired_reference_high_core_seal(
+    common_core: np.ndarray,
+    reference_high: np.ndarray,
+    *,
+    reference_high_rate: int,
+) -> dict[str, Any]:
+    core = validate_states(common_core)
+    reference = validate_states(reference_high)
+    added = physical_added_pages(reference, core)
+    removed = physical_removed_pages(reference, core)
+    if added != 0 or not physical_subset(core, reference):
+        raise RuntimeError("common core is not a literal subset of paired PR13 high")
+    reference_pages = state_page_count(reference)
+    core_pages = state_page_count(core)
+    if removed != reference_pages - core_pages:
+        raise RuntimeError("reference-high/core page accounting changed")
+    return {
+        "schema": "pr13_d1_paired_reference_high_core_seal_v1",
+        "reference_arm": ARM_PR13,
+        "reference_rate": int(reference_high_rate),
+        "reference_state_sha256": _state_digest(reference),
+        "reference_pages": int(reference_pages),
+        "common_core_state_sha256": _state_digest(core),
+        "common_core_pages": int(core_pages),
+        "common_core_is_literal_subset": True,
+        "removed_pages": int(removed),
+        "added_pages": 0,
+    }
+
+
 def _full_d1_boundaries(context: D1Context) -> Any:
     sensitivities = np.asarray(context.sensitivities, np.float64)
     candidate_ids = np.asarray(context.candidate_ids, np.int64).reshape(-1)
@@ -963,7 +1629,12 @@ def _full_d1_boundaries(context: D1Context) -> Any:
         raise ValueError("D1 context candidate sensitivities are invalid")
     full = np.zeros((256, sensitivities.shape[1]), np.float64)
     full[candidate_ids] = sensitivities
-    return build_screened_d1_boundaries(context.target_logits, full)
+    return build_screened_d1_boundaries(
+        context.target_logits,
+        full,
+        selected_expert_ids=np.asarray(context.target_ids, np.int64)[5:8],
+        outsider_expert_ids=candidate_ids[3:],
+    )
 
 
 def _checkpoint_for_state(
@@ -1109,6 +1780,7 @@ def _policy_parameter(
     repair_window: int,
     eta: float,
     endpoint: str,
+    paired_reference_high_core_seal: Mapping[str, Any],
 ) -> dict[str, Any]:
     return {
         "repair_window": int(repair_window),
@@ -1157,6 +1829,7 @@ def _policy_parameter(
             for audit in result.high_repair_audits
         ],
         "canonical_core_to_selected_chain": True,
+        "paired_pr13_high_core_seal": dict(paired_reference_high_core_seal),
     }
 
 
@@ -1337,8 +2010,18 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
     started = time.perf_counter()
     profile = TimingProfile(bool(getattr(args, "profile_timings", False)))
     layer_profile_labels = {"layer": int(layer), "split": str(args.split)}
-    config = load_json(args.config)
-    pr13_config = load_json(args.pr13_config)
+    if not all(hasattr(args, name) for name in (
+        "authenticated_config",
+        "authenticated_pr13_config",
+        "authenticated_request_rows",
+        "authenticated_factor_paths",
+        "input_pins",
+        "run_identity_sha256",
+        "hardware_runtime",
+    )):
+        raise RuntimeError("run_layer requires successful authenticated preflight")
+    config = args.authenticated_config
+    pr13_config = args.authenticated_pr13_config
     frozen_raw = (
         None if args.frozen_calibration is None
         else load_json(args.frozen_calibration)
@@ -1347,17 +2030,16 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
     config_windows, config_etas = _config_windows_etas(config)
     if tuple(map(int, args.repair_windows)) != config_windows:
         raise ValueError("CLI repair windows differ from the immutable config grid")
-    request_rows = _selected_requests(args.manifest, args.split, args.request_limit)
+    request_rows = list(args.authenticated_request_rows)
     captures = {
         str(row["request_id"]): load_capture(
             capture_path(args.capture_dir, str(row["request_id"])), layer,
         ) for row in request_rows
     }
     groups = _groups(request_rows, captures, layer)
-    factor_path = args.fit_dir / f"average_rate_factor_layer_{layer}.npz"
-    factor_sidecar = args.fit_dir / f"average_rate_factor_layer_{layer}.json"
+    factor_path, factor_sidecar = args.authenticated_factor_paths[int(layer)]
     if load_json(factor_sidecar)["sha256"] != sha256(factor_path):
-        raise RuntimeError("PR13 factor sidecar hash mismatch")
+        raise RuntimeError("authenticated PR13 factor sidecar payload changed")
     arrays = dict(np.load(factor_path, allow_pickle=False))
     proxy = np.asarray(arrays["proxy"], np.float32)
     beta = float(np.asarray(arrays["beta"]).reshape(-1)[0])
@@ -1476,6 +2158,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                 geometry=token_geometry,
                 selector_weights=np.asarray(group["selector_weights"]),
                 d1_logits=replay.logits(state),
+                d1_candidate_ids=replay.ids(state),
                 target_logits=context.target_logits,
                 target_ids=context.target_ids,
                 parameter={
@@ -1527,6 +2210,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                 geometry=token_geometry,
                 selector_weights=np.asarray(group["selector_weights"]),
                 d1_logits=replay.logits(selected.states),
+                d1_candidate_ids=replay.ids(selected.states),
                 target_logits=context.target_logits,
                 target_ids=context.target_ids,
                 parameter=_strict_bank_parameter(bank),
@@ -1543,6 +2227,11 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
             low_rate, high_rate = pair
             for window, eta_values in policy_grid[pair].items():
                 local = local_pairs[(low_rate, high_rate, int(window))]
+                paired_reference_seal = _paired_reference_high_core_seal(
+                    local.common_core,
+                    rate_states[high_rate][0],
+                    reference_high_rate=high_rate,
+                )
                 arm_profile_labels = {
                     **group_profile_labels,
                     "arm": ARM_LOCAL,
@@ -1562,6 +2251,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                     geometry=token_geometry,
                     selector_weights=np.asarray(group["selector_weights"]),
                     d1_logits=replay.logits(local.low_state),
+                    d1_candidate_ids=replay.ids(local.low_state),
                     target_logits=context.target_logits,
                     target_ids=context.target_ids,
                     parameter={
@@ -1569,6 +2259,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                         "endpoint": "low",
                         "core_stop_reason": local.core_stop_reason,
                         "completion_stop_reason": local.low_stop_reason,
+                        "paired_pr13_high_core_seal": dict(paired_reference_seal),
                     },
                 ))
                 rows.append(_state_record(
@@ -1581,6 +2272,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                     geometry=token_geometry,
                     selector_weights=np.asarray(group["selector_weights"]),
                     d1_logits=replay.logits(local.high_state),
+                    d1_candidate_ids=replay.ids(local.high_state),
                     target_logits=context.target_logits,
                     target_ids=context.target_ids,
                     parameter={
@@ -1588,6 +2280,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                         "endpoint": "high",
                         "core_stop_reason": local.core_stop_reason,
                         "completion_stop_reason": local.high_stop_reason,
+                        "paired_pr13_high_core_seal": dict(paired_reference_seal),
                     },
                 ))
                 profile.add(
@@ -1711,6 +2404,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                                     group["selector_weights"],
                                 ),
                                 d1_logits=replay.logits(state),
+                                d1_candidate_ids=replay.ids(state),
                                 target_logits=context.target_logits,
                                 target_ids=context.target_ids,
                                 parameter=_policy_parameter(
@@ -1718,6 +2412,7 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
                                     repair_window=int(window),
                                     eta=float(eta),
                                     endpoint=endpoint,
+                                    paired_reference_high_core_seal=paired_reference_seal,
                                 ),
                             ))
         emitted = len(rows) - first_row
@@ -1790,6 +2485,15 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         "schema": SCHEMA,
         "split": args.split,
         "layer": layer,
+        "run_id": str(config["run_id"]),
+        "run_identity_sha256": str(args.run_identity_sha256),
+        "input_pins": dict(args.input_pins),
+        "captured_route_cuda_preflight": dict(args.captured_route_cuda_preflight),
+        "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+        "paired_reference_high_core_sealed": True,
+        "pilot_nonpromotable": bool(args.pilot),
+        "completed_for_sealing": not bool(args.pilot),
+        "partial_request_cohort": bool(args.pilot),
         "requests": len(groups),
         "request_ids": [str(row["request_id"]) for row in request_rows],
         "repair_windows": list(config_windows),
@@ -1822,15 +2526,12 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
         ),
         "wall_seconds": time.perf_counter() - started,
         "files": {
-            path.name: {"sha256": sha256(path), "bytes": path.stat().st_size}
-            for path in layer_dir.iterdir() if path.is_file()
+            name: _assert_file_pin(layer_dir / name, sha256(layer_dir / name), name)
+            for name in SCIENTIFIC_LAYER_FILES
         },
         "environment": {
             "host": platform.node(),
-            "python": platform.python_version(),
-            "torch": torch.__version__,
-            "cuda": torch.version.cuda,
-            "gpu": torch.cuda.get_device_name(0),
+            **dict(args.hardware_runtime),
         },
     }
     atomic_json(layer_dir / "nested_layer_facts.json", facts)
@@ -1853,21 +2554,187 @@ def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
     return facts
 
 
+def _expected_layer_contract(
+    args: argparse.Namespace,
+    layer: int,
+) -> dict[str, Any]:
+    config = args.authenticated_config
+    frozen_raw = (
+        None if args.frozen_calibration is None
+        else load_json(args.frozen_calibration)
+    )
+    policy_grid, frozen_facts = _policy_grid(config, args.split, frozen_raw)
+    windows, etas = _config_windows_etas(config)
+    rates = sorted({
+        int(rate)
+        for pair in config["traffic_pairs"]
+        for rate in (
+            pair["metadata_matched_pages_per_expert"],
+            pair["pr13_reference_pages_per_expert"],
+        )
+    })
+    per_group = _expected_rows_per_group(rates, policy_grid)
+    requests = list(args.authenticated_request_rows)
+    frozen_expected = (
+        None if frozen_facts is None else {
+            **frozen_facts,
+            "path": str(args.frozen_calibration.resolve()),
+            "file_sha256": sha256(args.frozen_calibration),
+        }
+    )
+    return {
+        "completed": True,
+        "schema": SCHEMA,
+        "split": str(args.split),
+        "layer": int(layer),
+        "run_id": str(config["run_id"]),
+        "run_identity_sha256": str(args.run_identity_sha256),
+        "input_pins": dict(args.input_pins),
+        "captured_route_cuda_preflight": dict(args.captured_route_cuda_preflight),
+        "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+        "paired_reference_high_core_sealed": True,
+        "pilot_nonpromotable": bool(args.pilot),
+        "completed_for_sealing": not bool(args.pilot),
+        "partial_request_cohort": bool(args.pilot),
+        "requests": len(requests),
+        "request_ids": [str(row["request_id"]) for row in requests],
+        "repair_windows": list(windows),
+        "eta_grid": list(etas),
+        "evaluated_policy_grid": {
+            f"{low}_to_{high}": {
+                str(window): list(map(float, values))
+                for window, values in grid.items()
+            }
+            for (low, high), grid in policy_grid.items()
+        },
+        "rates": rates,
+        "expected_rows": per_group * len(requests),
+        "expected_rows_per_group": per_group,
+        "allocation_uses_terminal_or_downstream_outcome": False,
+        "candidate_execution_stops_at_d1_router": True,
+        "frozen_calibration": frozen_expected,
+    }
+
+
+def _validate_completed_layer(
+    args: argparse.Namespace,
+    layer: int,
+) -> dict[str, Any] | None:
+    layer_dir = args.output_dir / args.split / f"layer_{int(layer):02d}"
+    facts_path = layer_dir / "nested_layer_facts.json"
+    allowed_partial = {
+        *SCIENTIFIC_LAYER_FILES,
+        *(f"{name}.tmp" for name in SCIENTIFIC_LAYER_FILES),
+        "nested_layer_facts.json.tmp",
+    }
+    if not facts_path.is_file():
+        if layer_dir.is_dir():
+            unexpected = {
+                path.name for path in layer_dir.iterdir()
+                if path.is_file() and path.name not in allowed_partial
+            }
+            if unexpected:
+                raise RuntimeError(
+                    f"incomplete layer {layer} contains unexpected files: "
+                    f"{sorted(unexpected)}"
+                )
+        return None
+
+    actual_names = {
+        path.name for path in layer_dir.iterdir() if path.is_file()
+    }
+    expected_names = {*SCIENTIFIC_LAYER_FILES, facts_path.name}
+    if actual_names != expected_names:
+        raise RuntimeError(
+            f"completed layer {layer} has a noncanonical file inventory"
+        )
+    facts = load_json(facts_path)
+    expected = _expected_layer_contract(args, layer)
+    for key, value in expected.items():
+        if facts.get(key) != value:
+            raise RuntimeError(
+                f"completed layer {layer} resume identity changed: {key}"
+            )
+    if (
+        facts.get("rows") != expected["expected_rows"]
+        or facts.get("expected_rows") != expected["expected_rows"]
+        or not isinstance(facts.get("rows_by_arm"), Mapping)
+        or sum(map(int, facts["rows_by_arm"].values())) != expected["expected_rows"]
+    ):
+        raise RuntimeError(f"completed layer {layer} candidate row grid changed")
+    files = facts.get("files")
+    if not isinstance(files, Mapping) or set(files) != set(SCIENTIFIC_LAYER_FILES):
+        raise RuntimeError(f"completed layer {layer} file ledger changed")
+    for name in SCIENTIFIC_LAYER_FILES:
+        record = files[name]
+        if not isinstance(record, Mapping):
+            raise RuntimeError(f"completed layer {layer} file record changed")
+        _assert_file_pin(
+            layer_dir / name,
+            record.get("sha256"),
+            f"completed layer {layer} {name}",
+            expected_bytes=record.get("bytes"),
+        )
+    environment = facts.get("environment")
+    if (
+        not isinstance(environment, Mapping)
+        or {
+            key: value for key, value in environment.items() if key != "host"
+        } != dict(args.hardware_runtime)
+    ):
+        raise RuntimeError(f"completed layer {layer} runtime identity changed")
+    return facts
+
+
+def _complete_run_payload(
+    args: argparse.Namespace,
+    layers: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "completed": True,
+        "schema": SCHEMA,
+        "split": str(args.split),
+        "run_id": str(args.authenticated_config["run_id"]),
+        "run_identity_sha256": str(args.run_identity_sha256),
+        "run_identity": dict(args.run_identity),
+        "pilot_nonpromotable": bool(args.pilot),
+        "completed_for_sealing": not bool(args.pilot),
+        "input_pins": dict(args.input_pins),
+        "captured_route_cuda_preflight": dict(args.captured_route_cuda_preflight),
+        "atomic_resume_protocol": (
+            "pilot_nonpromotable_facts_last_requested_layer_merge_v1"
+            if args.pilot else
+            "validated_facts_last_per_layer_exact_six_layer_merge_v1"
+        ),
+        "layers": dict(layers),
+        "runner_sha256": sha256(Path(__file__).resolve()),
+        "test_rows_admitted_or_used": False,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--manifest-facts", type=Path, required=True)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--trees", type=Path, required=True)
     parser.add_argument("--fit-dir", type=Path, required=True)
+    parser.add_argument("--factor-manifest", type=Path, required=True)
     parser.add_argument("--pr13-config", type=Path, required=True)
     parser.add_argument("--capture-dir", type=Path, required=True)
+    parser.add_argument("--capture-facts", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--split", choices=("calibration", "evaluation"), required=True)
     parser.add_argument("--layers", type=int, nargs="+", required=True)
     parser.add_argument("--repair-windows", type=int, nargs="+", default=[16, 32, 64])
     parser.add_argument("--request-limit", type=int)
     parser.add_argument("--frozen-calibration", type=Path)
+    parser.add_argument(
+        "--pilot",
+        action="store_true",
+        help="run a partial, isolated, explicitly nonpromotable pilot",
+    )
     parser.add_argument("--workers", type=int, default=24)
     parser.add_argument("--device", default="cuda")
     parser.add_argument(
@@ -1890,16 +2757,74 @@ def main() -> None:
         raise ValueError("calibration split rejects --frozen-calibration")
     if args.split == "evaluation" and args.frozen_calibration is None:
         raise ValueError("evaluation split requires --frozen-calibration")
+
+    (
+        config,
+        pr13_config,
+        request_rows,
+        input_pins,
+        factor_paths,
+        run_facts,
+    ) = _authenticate_allocation_inputs(args)
+    configured_layers = tuple(map(int, config["injection_layers"]))
+    requested_layers = tuple(map(int, args.layers))
+    if (
+        len(set(requested_layers)) != len(requested_layers)
+        or not set(requested_layers).issubset(configured_layers)
+    ):
+        raise ValueError("CLI layers must be unique configured injection layers")
+    target_layers = requested_layers if args.pilot else configured_layers
+    if tuple(map(int, args.repair_windows)) != _config_windows_etas(config)[0]:
+        raise ValueError("CLI repair windows differ from the immutable config grid")
+
+    args.authenticated_config = config
+    args.authenticated_pr13_config = pr13_config
+    args.authenticated_request_rows = request_rows
+    args.authenticated_factor_paths = factor_paths
+    args.input_pins = input_pins
+    args.run_identity = run_facts["run_identity"]
+    args.run_identity_sha256 = run_facts["run_identity_sha256"]
+    args.hardware_runtime = run_facts["hardware_runtime"]
+    args.captured_route_cuda_preflight = run_facts["captured_route_cuda_preflight"]
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    facts = [run_layer(args, int(layer)) for layer in args.layers]
-    atomic_json(args.output_dir / f"nested_run_facts_{args.split}.json", {
-        "completed": True,
-        "schema": SCHEMA,
-        "split": args.split,
-        "layers": {str(row["layer"]): row for row in facts},
-        "runner_sha256": sha256(Path(__file__).resolve()),
-        "test_rows_admitted_or_used": False,
-    })
+
+    for layer in requested_layers:
+        existing = _validate_completed_layer(args, layer)
+        if existing is not None:
+            print(
+                f"[nested resume] reused split={args.split} layer={layer}",
+                flush=True,
+            )
+            continue
+        run_layer(args, layer)
+
+    completed: dict[str, dict[str, Any]] = {}
+    for layer in target_layers:
+        layer_facts = _validate_completed_layer(args, layer)
+        if layer_facts is not None:
+            completed[str(layer)] = layer_facts
+    global_path = args.output_dir / f"nested_run_facts_{args.split}.json"
+    if len(completed) != len(target_layers):
+        if global_path.exists():
+            raise RuntimeError(
+                "completed global run facts coexist with an incomplete layer grid"
+            )
+        pending = [
+            layer for layer in target_layers if str(layer) not in completed
+        ]
+        print(
+            f"[nested resume] split={args.split} pending_layers={pending}",
+            flush=True,
+        )
+        return
+
+    payload = _complete_run_payload(args, completed)
+    if global_path.is_file():
+        if load_json(global_path) != payload:
+            raise RuntimeError("existing completed run facts changed sealed merge identity")
+        print(f"[nested resume] reused {global_path}", flush=True)
+        return
+    atomic_json(global_path, payload)
 
 
 if __name__ == "__main__":

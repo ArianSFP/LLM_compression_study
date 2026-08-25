@@ -63,9 +63,37 @@ def _logits() -> tuple[np.ndarray, np.ndarray]:
     return target, candidate
 
 
+
+def test_v2_config_order_claims_match_implemented_selector_keys() -> None:
+    config = runner.load_json(runner.FROZEN_ALLOCATION_CONFIG_PATH)
+    runner._validate_deterministic_order_contract(config)
+    assert (
+        config["implementation_parent_commit"]
+        == "7a2adea1dd3d188914a3c803aaebf51411b9c7e0"
+    )
+    assert "refresh_after_accepted_pages" not in config["d1_screen"]
+    assert "beam_width" not in config["d1_screen"]
+
+    changed = runner.load_json(runner.FROZEN_ALLOCATION_CONFIG_PATH)
+    changed["common_core"]["deterministic_tie_break"][1] = "expert_id"
+    with pytest.raises(RuntimeError, match="deterministic ordering"):
+        runner._validate_deterministic_order_contract(changed)
+
+    changed = runner.load_json(runner.FROZEN_ALLOCATION_CONFIG_PATH)
+    changed["exact_d1_gate"]["arm4_unsafe_tie_break"][-1] = (
+        "deterministic_state_sha256"
+    )
+    with pytest.raises(RuntimeError, match="deterministic ordering"):
+        runner._validate_deterministic_order_contract(changed)
+
 def test_state_record_uses_exact_target_logits_for_all_severity_fields() -> None:
     target, candidate = _logits()
-    expected = exact_all_expert_d1_metrics(target, candidate)
+    candidate_ids = stable_top8(candidate)
+    expected = exact_all_expert_d1_metrics(
+        target, candidate,
+        baseline_top8=stable_top8(target),
+        candidate_top8=candidate_ids,
+    )
     target_ids = stable_top8(target)
     states = np.zeros((8, 512), np.uint8)
     group = {
@@ -89,6 +117,7 @@ def test_state_record_uses_exact_target_logits_for_all_severity_fields() -> None
         geometry=Geometry(),
         selector_weights=np.full(8, 0.125),
         d1_logits=candidate,
+        d1_candidate_ids=candidate_ids,
         target_logits=target,
         target_ids=target_ids,
         parameter={},
@@ -99,10 +128,12 @@ def test_state_record_uses_exact_target_logits_for_all_severity_fields() -> None
         expected.routing_mass_lost
     )
     assert record["d1_labeled_margin"] == pytest.approx(expected.target_set_margin)
+    np.testing.assert_array_equal(record["d1_target_ids"], target_ids)
+    np.testing.assert_array_equal(record["d1_candidate_ids"], candidate_ids)
 
     wrong_ids = target_ids.copy()
-    wrong_ids[-1] = 9
-    with pytest.raises(RuntimeError, match="target IDs differ"):
+    wrong_ids[-1] = wrong_ids[-2]
+    with pytest.raises(ValueError, match="baseline_top8"):
         runner._state_record(
             arm=runner.ARM_LOCAL,
             rate=360,
@@ -114,6 +145,7 @@ def test_state_record_uses_exact_target_logits_for_all_severity_fields() -> None
             selector_weights=np.full(8, 0.125),
             d1_logits=candidate,
             target_logits=target,
+            d1_candidate_ids=candidate_ids,
             target_ids=wrong_ids,
             parameter={},
         )
@@ -200,7 +232,26 @@ def test_rate_precompute_batches_all_groups_and_propagates_workers(
     groups = [{"group": 0}, {"group": 1}]
     coarse = [{"coarse": 0}, {"coarse": 1}]
     calls: list[tuple[object, ...]] = []
+    active_limits = 0
+    entered_limits: list[int] = []
 
+    class OneThreadLimit:
+        def __enter__(self):
+            nonlocal active_limits
+            active_limits += 1
+            entered_limits.append(active_limits)
+            return self
+
+        def __exit__(self, exc_type, exc, traceback):
+            nonlocal active_limits
+            active_limits -= 1
+            return False
+
+    def limit(*, limits):
+        assert limits == 1
+        return OneThreadLimit()
+
+        assert active_limits == 1
     def build(groups_arg, experts, proxy, beta, config, workers, layer):
         calls.append(("build", len(groups_arg), workers, layer))
         return coarse
@@ -208,6 +259,7 @@ def test_rate_precompute_batches_all_groups_and_propagates_workers(
     def refine(
         geometries, groups_arg, proxy, beta, config, rate, workers, layer,
     ):
+        assert active_limits == 1
         assert geometries is coarse
         calls.append(("refine", rate, len(groups_arg), workers, layer))
         return [
@@ -221,6 +273,7 @@ def test_rate_precompute_batches_all_groups_and_propagates_workers(
 
     monkeypatch.setattr(runner.base, "_build_geometries", build)
     monkeypatch.setattr(runner.base, "_refine_geometries", refine)
+    monkeypatch.setattr(runner, "threadpool_limits", limit)
     monkeypatch.setattr(runner, "_pr13_and_local_states", allocate)
     proxy = np.zeros((1, 1), np.float32)
     geometries, states = runner._precompute_rate_states(
@@ -243,6 +296,8 @@ def test_rate_precompute_batches_all_groups_and_propagates_workers(
     assert [sorted(group_states) for group_states in states] == [
         [360, 749], [360, 749],
     ]
+    assert entered_limits == [1, 1, 1]
+    assert active_limits == 0
     assert int(states[1][749][0][0, 0]) == 750
 
 
@@ -341,12 +396,13 @@ def test_outer_exact_replay_cache_keys_complete_state_bytes() -> None:
     class Context:
         target_logits = target
 
-        def replay_logits(self, delta: np.ndarray) -> np.ndarray:
+        target_ids = stable_top8(target)
+        def replay_route(self, delta: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
             calls.append(float(delta[0]))
             candidate = target.copy()
             if delta[0] > 0:
                 candidate[8] = candidate[7] + 1.0
-            return candidate
+            return candidate, stable_top8(candidate)
 
     class OutputGeometry:
         def output_delta(self, states: np.ndarray) -> np.ndarray:
@@ -531,3 +587,36 @@ def test_scientific_memo_audit_excludes_host_dependent_durations() -> None:
             key: value for key, value in stats.items()
             if key != "repair_build_seconds"
         })
+
+
+def test_profile_sidecar_is_disabled_path_and_scientific_artifact_inert(
+    tmp_path: Path,
+) -> None:
+    config = {"run_id": "profile-inertness"}
+    disabled = runner.TimingProfile(False)
+    assert runner._write_profile_sidecar(
+        disabled,
+        tmp_path,
+        split="calibration",
+        layer=0,
+        requests=1,
+        config=config,
+    ) is None
+    assert list(tmp_path.iterdir()) == []
+
+    enabled = runner.TimingProfile(True)
+    enabled.add("probe", 0.25, labels={"group": 0})
+    path = runner._write_profile_sidecar(
+        enabled,
+        tmp_path,
+        split="calibration",
+        layer=0,
+        requests=1,
+        config=config,
+    )
+    assert path == tmp_path / "profiles" / "calibration" / "layer_00_timings.json"
+    assert path.is_file()
+    assert not (tmp_path / "calibration").exists()
+    payload = runner.load_json(path)
+    assert payload["included_in_scientific_layer_facts"] is False
+    assert payload["scientific_candidate_rows_modified"] is False

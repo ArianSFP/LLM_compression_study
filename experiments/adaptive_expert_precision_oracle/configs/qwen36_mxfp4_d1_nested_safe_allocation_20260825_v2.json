@@ -1,0 +1,388 @@
+{
+  "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+  "schema": "pr13_d1_nested_safe_allocation_config_v1",
+  "experiment_stage": "A",
+  "authenticated_capture_protocol": {
+    "path": "configs/qwen36_mxfp4_d1_nested_safe_oracle_20260825_v1.json",
+    "sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713"
+  },
+  "implementation_parent_commit": "7a2adea1dd3d188914a3c803aaebf51411b9c7e0",
+  "base_all_layer_pr13_commit": "089deb4bd41eb71864779ced0cbb3db41e9dcb63",
+  "base_same_host_controls_commit": "64e94ace22f42734941bb3b4fd6702b8ff380295",
+  "checkpoint": "/workspace/qwen36_mxfp4_candidate",
+  "checkpoint_revision": "7eceff3a9f7e6f916c824d197266d86676bce695",
+  "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+  "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+  "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+  "selected_trees": "/workspace/codebook_granularity_study/locked/selected_trees.json",
+  "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+  "fit_dir": "/workspace/pr13_average_rate_all_layers_20260822_v1/results/fit",
+  "pr13_config": "configs/qwen36_mxfp4_average_rate_all_layers.json",
+  "request_source": {
+    "path": "/workspace/LLM_prefetch_study/artifacts/j_route_0/manifests/bf16_screen_n256_v1.jsonl",
+    "sha256": "f8894fa1ba3cc29d30c1f7d60dd11d32e2449792c3fd2e404187bfceedfb19c4",
+    "summary_path": "/workspace/LLM_prefetch_study/artifacts/j_route_0/manifests/bf16_screen_n256_v1.jsonl.summary.json",
+    "summary_sha256": "3aba54b4447ca861481b2f8784c8e62c68f58d31c9055624770c60d2ec3ae8b0",
+    "request_id_normalization": "nonnegative_JSON_integer_to_lossless_decimal_string",
+    "inputs_only": true,
+    "prior_bf16_states_routes_or_caches_reused": false,
+    "domains": [
+      "code",
+      "dialogue_instruction",
+      "factual_qa",
+      "long_context",
+      "multilingual",
+      "prose",
+      "reasoning",
+      "summarisation"
+    ],
+    "selection_seed": 20260825,
+    "calibration_requests_per_domain": 4,
+    "evaluation_requests_per_domain": 12,
+    "calibration_requests": 32,
+    "evaluation_requests": 96,
+    "total_requests": 128,
+    "development_prompt_sha256_exclusions": [
+      "1276d726c8c40905133ea241fdd4c1d0eac80469fb91cd492c645774367b5019",
+      "68e34741383352d2bbd3b1cc78bd8ddf3f8e710d056ec8d895c2421b77eb0a40",
+      "bb79dff1d90d1f1f4a50ef4a955cedc7f358248a026f21d8519a4931ea6abc49"
+    ],
+    "development_overlap_required": 0,
+    "selected_manifest": "/workspace/pr13_d1_nested_safe_oracle_20260825_v1/inputs/d1_nested_requests.jsonl",
+    "selected_manifest_facts": "/workspace/pr13_d1_nested_safe_oracle_20260825_v1/inputs/d1_nested_requests_facts.json"
+  },
+  "decode_position": {
+    "positions_per_request": 1,
+    "rule": "min(33,prompt_token_count-2)",
+    "maximum_position": 33,
+    "minimum_prefix_tokens": 8,
+    "next_token_label_required": true,
+    "exact_prefill": true,
+    "query_length": 1,
+    "candidate_cache_reused": false
+  },
+  "injection_layers": [
+    0,
+    1,
+    4,
+    6,
+    12,
+    23
+  ],
+  "d1_definition": "same_decode_token_next_layer_router_only",
+  "d2_d4_objectives_models_or_selector_inputs_present": false,
+  "downstream_routes_and_terminal_kl_role": "sealed_outcome_phase_only",
+  "traffic_pairs": [
+    {
+      "product_bpw": 0.5234781901041666,
+      "pr13_reference_pages_per_expert": 384,
+      "metadata_matched_pages_per_expert": 360,
+      "pr13_reference_group_cap": 3072,
+      "metadata_matched_group_cap": 2880
+    },
+    {
+      "product_bpw": 0.9987386067708334,
+      "pr13_reference_pages_per_expert": 749,
+      "metadata_matched_pages_per_expert": 725,
+      "pr13_reference_group_cap": 5992,
+      "metadata_matched_group_cap": 5800
+    }
+  ],
+  "metadata_accounting": {
+    "page_bytes": 512,
+    "experts_per_group": 8,
+    "pr13_metadata_bytes_per_expert": 9232,
+    "joint_response_uncertainty_bytes_per_expert": 21456,
+    "pr13_metadata_kib_per_group": 72.125,
+    "joint_response_uncertainty_metadata_kib_per_group": 167.625,
+    "charged_bpw_unchanged": true
+  },
+  "physical_state": {
+    "experts_per_group": 8,
+    "units_per_expert": 512,
+    "projection_bits": {
+      "down": 1,
+      "up": 2,
+      "gate": 4
+    },
+    "state_values": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "page_cost": "three_bit_popcount",
+    "budget_is_upper_bound_not_fill_requirement": true,
+    "common_core_is_literal_subset_of_reference_high": true,
+    "completed_states_may_add_outside_reference_high": true,
+    "all_completion_checkpoints_are_supersets_of_common_core": true
+  },
+  "arms": [
+    "independent_pr13",
+    "strict_frozen_candidate_incumbent_repair",
+    "nested_local_only",
+    "nested_d1_safe",
+    "nested_d1_safe_violation_mass"
+  ],
+  "strict_frozen_candidate_bank": {
+    "candidate_count": 5,
+    "members": [
+      "independent_pr13_incumbent",
+      "independent_exact_combined_local",
+      "nested_local_window_16",
+      "nested_local_window_32",
+      "nested_local_window_64"
+    ],
+    "all_states_frozen_before_exact_d1_selection": true,
+    "terminal_or_downstream_outcomes_used": false
+  },
+  "common_core": {
+    "d1_blind": true,
+    "construction": "reverse_exact_combined_local_qenergy_from_reference_high",
+    "weights": "actual_bf16_execution_router_weights",
+    "repair_window_pages_per_group_grid": [
+      16,
+      32,
+      64
+    ],
+    "refresh_after_accepted_pages": 4,
+    "deterministic_tie_break": [
+      "least_exact_combined_local_damage_increase",
+      "routed_expert_slot",
+      "unit",
+      "projection_bit"
+    ]
+  },
+  "local_guardrail": {
+    "form": "J_candidate_le_J_nested_local_endpoint_plus_eta_times_J_all_Q2",
+    "eta_grid": [
+      0.0,
+      0.0001,
+      0.00025,
+      0.0005,
+      0.001
+    ],
+    "metric": "exact_combined_execution_weighted_qmetric",
+    "legacy_selector_weighted_qenergy_also_reported": true
+  },
+  "d1_screen": {
+    "oracle_only": true,
+    "selected_ranks": [
+      6,
+      7,
+      8
+    ],
+    "outsider_ranks": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "signed_effects": "exact_token_dependent_full_model_prefix_conditioned_vjp_projection",
+    "raw_slice_router_anchor_max_abs": 0.0625,
+    "captured_full_model_baseline_logit_anchor_applied": true,
+    "zero_delta_after_anchor_must_equal_captured_logits": true,
+    "candidate_page_shortlist": 32,
+    "maximum_exact_finalists": 8,
+    "screen_is_certificate": false
+  },
+  "exact_d1_gate": {
+    "all_256_router_logits_checked": true,
+    "target": "exact_Q4_top8_set",
+    "safe_incumbent_is_immutable": true,
+    "unsafe_replacement_requires_strictly_fewer_membership_changes": true,
+    "arm4_unsafe_tie_break": [
+      "fewest_membership_changes",
+      "lowest_exact_combined_local_qenergy",
+      "lowest_removal_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+      "lowest_addition_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+      "lowest_shortlist_index"
+    ],
+    "arm5_unsafe_tie_break": [
+      "fewest_membership_changes",
+      "lowest_boundary_violation_depth_if_candidate_remains_unsafe_else_zero",
+      "lowest_baseline_routing_mass_lost_if_candidate_remains_unsafe_else_zero",
+      "lowest_exact_combined_local_qenergy",
+      "lowest_removal_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+      "lowest_addition_sort_key_routed_slot_unit_projection_bit_source_state_destination_state",
+      "lowest_shortlist_index"
+    ],
+    "severity_continues_after_safety": false,
+    "unresolved_action": "retain_incumbent_and_record_repair_failure",
+    "high_completion_path_scan": "complete_add_only_local_path_highest_pages_then_lowest_local",
+    "high_checkpoint_admission": "strict_high_endpoint_local_guard_and_exact_d1_nonworsening_against_selected_low",
+    "same_rate_high_incumbent_semantics": "safe_arm3_high_byte_identical_else_changed_high_requires_strict_crossing_reduction",
+    "high_guardrail_infeasible_action": "revert_entire_low_high_policy_pair_byte_for_byte_to_arm3",
+    "pair_fallback_preserves_fixed_grid": true
+  },
+  "calibration": {
+    "terminal_kl_used": false,
+    "downstream_routes_used": false,
+    "selection_per_rate": false,
+    "selection_per_traffic_pair": true,
+    "metadata_matched_low_endpoint_selects_shared_pair_parameters": true,
+    "selection_order": [
+      "zero_safe_to_unsafe_events",
+      "fewest_unresolved_exact_d1_crossings",
+      "smallest_repair_window_pages",
+      "smallest_eta",
+      "lowest_mean_exact_combined_local_qenergy",
+      "deterministic_parameter_hash"
+    ],
+    "parameters_frozen_before_evaluation_allocation": true
+  },
+  "allocation_phase": {
+    "terminal_logits_captured": false,
+    "downstream_layers_after_d1_executed": false,
+    "complete_states_serialized": true,
+    "move_and_checkpoint_chain_serialized": true,
+    "allocation_manifest_sha256_sealed_before_tail": true,
+    "planned_fp32_and_bf16_once_effective_deltas_recorded": false,
+    "zero_ulp_pages_not_counted_as_useful_completion": true,
+    "pair_fallback_flag_serialized": true,
+    "high_guardrail_qualified_checkpoint_count_serialized": true,
+    "high_guardrail_repair_attempt_count_serialized": true,
+    "pair_fallback_frequency_reported_once_per_policy_pair": true
+  },
+  "outcome_phase": {
+    "requires_sealed_allocation_manifest": true,
+    "route_modes": [
+      "live",
+      "frozen_set_live_weights",
+      "fully_frozen"
+    ],
+    "terminal_metric_scope": "current_token_only",
+    "post_token_complete_cache_retained": true,
+    "zero_dose_bit_exact_gate": true,
+    "candidate_cache_reused": false
+  },
+  "statistics": {
+    "unit_of_independence": "request",
+    "request_weighting": "equal",
+    "within_request_layer_weighting": "equal",
+    "cluster_bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260825,
+    "paired_sign_flip_resamples": 100000,
+    "primary_contrasts": [
+      "nested_d1_safe_vs_nested_local_only_at_360",
+      "nested_d1_safe_vs_nested_local_only_at_725",
+      "nested_d1_safe_360_vs_independent_pr13_384_product_matched",
+      "nested_d1_safe_725_vs_independent_pr13_749_product_matched"
+    ],
+    "secondary_contrasts": [
+      "nested_local_only_vs_independent_pr13_same_numeric_cap",
+      "strict_repair_vs_independent_pr13_same_numeric_cap",
+      "severity_ablation_vs_nested_d1_safe"
+    ],
+    "multiplicity": "holm_within_primary_family",
+    "report": [
+      "mean",
+      "median",
+      "win_fraction",
+      "p90",
+      "p95",
+      "maximum",
+      "request_cluster_confidence_interval",
+      "request_layer_domain_strata"
+    ]
+  },
+  "promotion_gates": {
+    "all_engineering_gates_required": true,
+    "nested_d1_safe_exact_crossing_rate_below_nested_local_only": true,
+    "nested_local_safe_made_unsafe_allowed": 0,
+    "local_guardrail_violations_allowed": 0,
+    "primary_paired_mean_kl_holm_adjusted_upper_95ci_below_zero": true,
+    "product_paired_mean_kl_upper_95ci_below_zero_at_both_rates": true,
+    "paired_p95_kl_regression_maximum": 0.0,
+    "paired_single_request_kl_regression_maximum": 0.002839,
+    "experiment_b_starts_on_gate_failure": false
+  },
+  "hardware_execution_path": {
+    "required_gpu_name_substring": "RTX PRO 6000",
+    "minimum_gpu_memory_gib": 90,
+    "attention_implementation": "eager",
+    "experts_implementation": "eager",
+    "full_model_load": "dequantized_bfloat16_cuda0",
+    "cache": "complete_native_hybrid_cache_with_kv_convolution_and_recurrent_state",
+    "cpu_worker_blas_threads": 1,
+    "cpu_worker_processes_allowed_range": [
+      1,
+      64
+    ],
+    "cpu_worker_processes_default": 24,
+    "cpu_worker_process_count_is_semantics_inert": true
+  },
+  "output_root": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2",
+  "experiment_b_started": false,
+  "runtime_predictor_in_scope": false,
+  "generated_rollout_in_scope": false,
+  "joint_all_layer_compression_in_scope": false,
+  "scientific_boundary": "Independent-request exact-prefix cached single-token Experiment A oracle. D1 is only the same token's next-layer router and may act only as a hard repair/safety signal. The common physical core is D1-blind. Exact Q4 D1 labels are oracle inputs; terminal KL, downstream routes, final hidden state and post-token cache differences are sealed outcomes only. No runtime certification or Experiment B claim.",
+  "configuration_provenance": {
+    "materialization": "standalone_full_config_v1",
+    "parent_path": "configs/qwen36_mxfp4_d1_nested_safe_allocation_20260825_v1.json",
+    "parent_sha256": "fef7b21ecdebcfb68d3f63c6a10575db4ce1163d72ca410e107626c34d061480"
+  },
+  "authenticated_capture_artifacts": {
+    "directory": "/workspace/pr13_d1_nested_safe_oracle_20260825_v1/captures_authenticated",
+    "facts_path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v1/captures_authenticated/capture_facts_all.json",
+    "facts_schema": "pr13_d1_nested_exact_decode_capture_facts_v1",
+    "facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+    "split": "all",
+    "requests": 128,
+    "files": 128,
+    "manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+    "manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c"
+  },
+  "authenticated_capture_execution_stack": {
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "torch": "2.8.0+cu128",
+    "cuda": "12.8",
+    "route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+    "captured_ordered_router_ids_authoritative": true,
+    "allocation_runtime_must_match_gpu_torch_cuda_exactly": true,
+    "all_selected_request_d1_targets_preflight_required": true
+  },
+  "authenticated_pr13_inputs": {
+    "config_path": "configs/qwen36_mxfp4_average_rate_all_layers.json",
+    "config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+    "fit_dir": "/workspace/pr13_average_rate_all_layers_20260822_v1/results/fit",
+    "factor_manifest_path": "/workspace/pr13_average_rate_all_layers_20260822_v1/results/fit/average_rate_factor_manifest.json",
+    "factor_manifest_schema": "average_rate_all_layers_distributed_v1",
+    "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+    "tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+    "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb"
+  },
+  "reference_high_core_seal": {
+    "required": true,
+    "reference_arm": "independent_pr13",
+    "reference_endpoint": "paired_reference_high",
+    "applies_to_arms": [
+      "nested_local_only",
+      "nested_d1_safe",
+      "nested_d1_safe_violation_mass"
+    ],
+    "literal_subset_and_state_hash_required": true
+  },
+  "atomic_resume": {
+    "schema": "pr13_d1_nested_atomic_layer_resume_v1",
+    "full_request_split_only": true,
+    "facts_written_last": true,
+    "scientific_files_per_layer": [
+      "nested_candidates.pkl",
+      "nested_candidate_metrics.parquet",
+      "nested_slice_parity.parquet"
+    ],
+    "completed_global_requires_exact_configured_layer_set": true,
+    "mixed_input_or_code_identity_rejected": true
+  }
+}

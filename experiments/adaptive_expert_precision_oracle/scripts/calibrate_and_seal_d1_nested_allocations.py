@@ -62,6 +62,7 @@ class CandidateInputs:
     paths: tuple[Path, ...]
     sha256_by_path: dict[str, str]
     run_facts_sha256: str
+    code_identity: dict[str, Any] | None
 
 
 def _sha256_file(path: Path) -> str:
@@ -352,6 +353,110 @@ def _load_protocol_inputs(args: argparse.Namespace, split: str) -> ProtocolInput
     )
 
 
+def _validate_v2_candidate_run_provenance(
+    facts: Mapping[str, Any],
+    protocol: ProtocolInputs,
+    split: str,
+) -> tuple[dict[str, Any], str] | None:
+    seal = protocol.config.get("reference_high_core_seal")
+    if not isinstance(seal, Mapping) or seal.get("required") is not True:
+        return None
+    capture = protocol.config.get("authenticated_capture_artifacts")
+    pr13 = protocol.config.get("authenticated_pr13_inputs")
+    capture_protocol = protocol.config.get("authenticated_capture_protocol")
+    resume = protocol.config.get("atomic_resume")
+    if not all(isinstance(value, Mapping) for value in (
+        capture, pr13, capture_protocol, resume,
+    )):
+        raise ArtifactValidationError("v2 candidate provenance config is incomplete")
+    if (
+        resume.get("schema") != "pr13_d1_nested_atomic_layer_resume_v1"
+        or resume.get("facts_written_last") is not True
+        or resume.get("completed_global_requires_exact_configured_layer_set")
+        is not True
+        or facts.get("atomic_resume_protocol")
+        != "validated_facts_last_per_layer_exact_six_layer_merge_v1"
+        or facts.get("run_id") != protocol.config.get("run_id")
+        or facts.get("pilot_nonpromotable") is not False
+        or facts.get("completed_for_sealing") is not True
+    ):
+        raise ArtifactValidationError("v2 candidate atomic resume contract changed")
+    pins = facts.get("input_pins")
+    if not isinstance(pins, Mapping):
+        raise ArtifactValidationError("v2 candidate run lacks authenticated input pins")
+    expected = {
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "allocation_config_sha256": protocol.config_sha256,
+        "capture_protocol_config_sha256": capture_protocol.get("sha256"),
+        "request_manifest_sha256": protocol.request_manifest_sha256,
+        "request_manifest_facts_sha256":
+            protocol.request_manifest_facts_sha256,
+        "capture_facts_sha256": capture.get("facts_sha256"),
+        "checkpoint_config_sha256":
+            protocol.config.get("checkpoint_config_sha256"),
+        "checkpoint_index_sha256":
+            protocol.config.get("checkpoint_index_sha256"),
+        "tokenizer_json_sha256":
+            protocol.config.get("tokenizer_json_sha256"),
+        "selected_tree_sha256": protocol.config.get("selected_tree_sha256"),
+        "pr13_config_sha256": pr13.get("config_sha256"),
+        "factor_manifest_sha256": pr13.get("factor_manifest_sha256"),
+    }
+    for key, value in expected.items():
+        if pins.get(key) != value:
+            raise ArtifactValidationError(
+                f"v2 candidate input pin changed: {key}"
+            )
+    factor_layers = pins.get("factor_layers")
+    if (
+        not isinstance(factor_layers, Mapping)
+        or set(factor_layers) != {str(layer) for layer in protocol.layers}
+    ):
+        raise ArtifactValidationError("v2 candidate factor-layer pins changed")
+    for layer, record in factor_layers.items():
+        if (
+            not isinstance(record, Mapping)
+            or set(record) != {"factor", "sidecar"}
+            or any(
+                not isinstance(record.get(kind), Mapping)
+                or set(record[kind]) != {"sha256", "bytes"}
+                or not HEX_64.fullmatch(str(record[kind].get("sha256", "")))
+                or _integer(
+                    record[kind].get("bytes"),
+                    f"factor layer {layer} {kind} bytes",
+                    1,
+                ) < 1
+                for kind in ("factor", "sidecar")
+            )
+        ):
+            raise ArtifactValidationError("v2 candidate factor file pin changed")
+    code = pins.get("code_identity")
+    if (
+        not isinstance(code, Mapping)
+        or code.get("schema") != "pr13_d1_nested_code_bundle_v1"
+        or _integer(code.get("files"), "candidate code file count", 1) < 1
+        or not HEX_64.fullmatch(str(code.get("canonical_sha256", "")))
+    ):
+        raise ArtifactValidationError("v2 candidate code identity changed")
+    identity_sha = _sha256(
+        facts.get("run_identity_sha256"), "candidate run identity SHA-256",
+    )
+    identity = facts.get("run_identity")
+    if (
+        not isinstance(identity, Mapping)
+        or identity.get("schema")
+        != "pr13_d1_nested_allocation_run_identity_v1"
+        or identity.get("run_id") != protocol.config.get("run_id")
+        or identity.get("split") != split
+        or identity.get("request_ids") != list(protocol.manifest_request_ids)
+        or identity.get("input_pins") != pins
+        or hashlib.sha256(canonical_json_bytes(identity)).hexdigest()
+        != identity_sha
+    ):
+        raise ArtifactValidationError("v2 candidate run identity changed")
+    return dict(pins), identity_sha
+
+
 def _discover_candidate_inputs(
     args: argparse.Namespace,
     protocol: ProtocolInputs,
@@ -371,6 +476,7 @@ def _discover_candidate_inputs(
         or facts.get("test_rows_admitted_or_used") is not False
     ):
         raise ArtifactValidationError(f"{split} candidate run facts changed contract")
+    v2_provenance = _validate_v2_candidate_run_provenance(facts, protocol, split)
     layer_facts = facts.get("layers")
     expected_keys = {str(layer) for layer in protocol.layers}
     if not isinstance(layer_facts, Mapping) or set(layer_facts) != expected_keys:
@@ -394,6 +500,22 @@ def _discover_candidate_inputs(
             raise ArtifactValidationError(
                 f"candidate layer {layer} facts changed the D1-only contract"
             )
+        if v2_provenance is not None:
+            input_pins, run_identity_sha = v2_provenance
+            if (
+                entry.get("run_id") != protocol.config.get("run_id")
+                or entry.get("run_identity_sha256") != run_identity_sha
+                or entry.get("input_pins") != input_pins
+                or entry.get("atomic_resume_protocol")
+                != "facts_last_exact_three_file_inventory_v1"
+                or entry.get("paired_reference_high_core_sealed") is not True
+                or entry.get("pilot_nonpromotable") is not False
+                or entry.get("completed_for_sealing") is not True
+                or entry.get("partial_request_cohort") is not False
+            ):
+                raise ArtifactValidationError(
+                    f"candidate layer {layer} v2 provenance changed"
+                )
         entry_etas = entry.get("eta_grid")
         entry_rates = entry.get("rates")
         if not isinstance(entry_etas, list) or not isinstance(entry_rates, list):
@@ -429,9 +551,19 @@ def _discover_candidate_inputs(
                     f"evaluation candidate layer {layer} used another frozen spec"
                 )
         files = entry.get("files")
-        if not isinstance(files, Mapping) or not isinstance(files.get(PICKLE_NAME), Mapping):
+        if not isinstance(files, Mapping) or not isinstance(
+            files.get(PICKLE_NAME), Mapping,
+        ):
             raise ArtifactValidationError(
                 f"candidate layer {layer} facts lack {PICKLE_NAME} provenance"
+            )
+        if v2_provenance is not None and set(files) != {
+            "nested_candidates.pkl",
+            "nested_candidate_metrics.parquet",
+            "nested_slice_parity.parquet",
+        }:
+            raise ArtifactValidationError(
+                f"candidate layer {layer} scientific file inventory changed"
             )
         file_facts = files[PICKLE_NAME]
         pinned = _sha256(
@@ -449,7 +581,11 @@ def _discover_candidate_inputs(
             )
         paths.append(path)
         pins[str(path)] = pinned
-    return CandidateInputs(tuple(paths), pins, facts_digest)
+    code_identity = (
+        None if v2_provenance is None
+        else dict(v2_provenance[0]["code_identity"])
+    )
+    return CandidateInputs(tuple(paths), pins, facts_digest, code_identity)
 
 
 def _bind_frozen_spec(
@@ -483,6 +619,39 @@ def _bind_frozen_spec(
         )
     return frozen, frozen_digest, file_digest
 
+def _require_matching_candidate_code_identity(
+    frozen: Mapping[str, Any],
+    evaluation_code_identity: Mapping[str, Any] | None,
+) -> None:
+    """Fail closed if calibration and evaluation used different code bundles."""
+
+    spec = frozen.get("spec")
+    calibration = (
+        spec.get("calibration_candidate_code_identity")
+        if isinstance(spec, Mapping)
+        else None
+    )
+    if calibration is None and evaluation_code_identity is None:
+        return
+    for label, identity in (
+        ("calibration", calibration),
+        ("evaluation", evaluation_code_identity),
+    ):
+        if (
+            not isinstance(identity, Mapping)
+            or set(identity) != {"schema", "files", "canonical_sha256"}
+            or identity.get("schema") != "pr13_d1_nested_code_bundle_v1"
+            or _integer(identity.get("files"), f"{label} code file count", 1) < 1
+            or not HEX_64.fullmatch(str(identity.get("canonical_sha256", "")))
+        ):
+            raise ArtifactValidationError(
+                f"{label} candidate code identity is missing or malformed"
+            )
+    if dict(calibration) != dict(evaluation_code_identity):
+        raise ArtifactValidationError(
+            "evaluation candidate code identity differs from frozen calibration"
+
+        )
 
 def _reject_output_aliases(
     outputs: Sequence[Path], inputs: Sequence[Path],
@@ -521,6 +690,7 @@ def run_calibrate(args: argparse.Namespace) -> dict[str, Any]:
         config_file_sha256=protocol.config_sha256,
         request_manifest_sha256=protocol.request_manifest_sha256,
         request_manifest_facts_sha256=protocol.request_manifest_facts_sha256,
+        calibration_candidate_code_identity=candidates.code_identity,
     )
     written = write_calibration_selection(
         selection,
@@ -550,6 +720,9 @@ def run_seal_evaluation(args: argparse.Namespace) -> dict[str, Any]:
         protocol,
         "evaluation",
         expected_frozen_sha256=frozen_digest,
+    )
+    _require_matching_candidate_code_identity(
+        frozen, candidates.code_identity,
     )
     _reject_output_aliases(
         (args.manifest_output, args.seal_output),

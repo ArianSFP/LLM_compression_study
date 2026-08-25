@@ -167,6 +167,10 @@ def _row(
 ) -> dict[str, object]:
     selected = np.asarray(selected, np.uint8)
     frozen = selected.copy() if core is None else np.asarray(core, np.uint8)
+    target_ids = list(range(8))
+    candidate_ids = target_ids.copy()
+    if crossings:
+        candidate_ids[-crossings:] = list(range(8, 8 + crossings))
     prompt_sha = hashlib.sha256(request_id.encode()).hexdigest()
     return {
         "schema": CANDIDATE_SCHEMA,
@@ -191,6 +195,8 @@ def _row(
         "all_q2_damage": 1.0,
         "legacy_additive_damage": local_damage + 0.1,
         "d1_candidate_logits": np.linspace(1.0, -1.0, 256, dtype=np.float32),
+        "d1_target_ids": target_ids,
+        "d1_candidate_ids": candidate_ids,
         "d1_crossings": crossings,
         "d1_violation_depth": float(crossings) * 0.2,
         "d1_routing_mass_churn": float(crossings) * 0.01,
@@ -220,7 +226,11 @@ def _load(path: Path, split: str):
     )
 
 
-def _select(corpus, config: dict[str, object] | None = None):
+def _select(
+    corpus,
+    config: dict[str, object] | None = None,
+    code_identity: dict[str, object] | None = None,
+):
     return select_and_freeze_calibration(
         corpus,
         _config() if config is None else config,
@@ -228,6 +238,7 @@ def _select(corpus, config: dict[str, object] | None = None):
         config_file_sha256="a" * 64,
         request_manifest_sha256="b" * 64,
         request_manifest_facts_sha256="c" * 64,
+        calibration_candidate_code_identity=code_identity,
     )
 
 
@@ -513,4 +524,62 @@ def test_evaluation_seal_rejects_local_guard_and_split_misuse(tmp_path: Path) ->
     with pytest.raises(ArtifactValidationError, match="not frozen"):
         build_evaluation_allocation_manifest(
             off_grid, _config(), selection, expected_request_ids=["request-eval"],
+        )
+
+
+def test_frozen_calibration_carries_candidate_code_identity(
+    tmp_path: Path,
+) -> None:
+    identity = {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": 17,
+        "canonical_sha256": "d" * 64,
+    }
+    path = _write_pickle(tmp_path, "calibration", _calibration_rows())
+    selection = _select(
+        _load(path, "calibration"), code_identity=identity,
+    )
+    assert (
+        selection.frozen_calibration["spec"]
+        ["calibration_candidate_code_identity"]
+    ) == identity
+    validated = validate_calibration_selection(
+        selection.frozen_calibration, _config(),
+    )
+    assert validated["spec"]["calibration_candidate_code_identity"] == identity
+
+
+def test_calibration_and_sealing_reject_inconsistent_authoritative_target_ids(
+    tmp_path: Path,
+) -> None:
+    calibration_rows = _calibration_rows()
+    calibration_rows[-1]["d1_target_ids"] = [1, 0, 2, 3, 4, 5, 6, 7]
+    calibration_path = _write_pickle(
+        tmp_path / "calibration-target-drift",
+        "calibration",
+        calibration_rows,
+    )
+    with pytest.raises(
+        ArtifactValidationError,
+        match="authoritative d1_target_ids changed across arms/rates",
+    ):
+        _select(_load(calibration_path, "calibration"))
+
+    selection = _selection(tmp_path / "selection")
+    evaluation_rows = _evaluation_rows()
+    evaluation_rows[-1]["d1_target_ids"] = [1, 0, 2, 3, 4, 5, 6, 7]
+    evaluation_path = _write_pickle(
+        tmp_path / "evaluation-target-drift",
+        "evaluation",
+        evaluation_rows,
+    )
+    with pytest.raises(
+        ArtifactValidationError,
+        match="authoritative d1_target_ids changed across arms/rates",
+    ):
+        build_evaluation_allocation_manifest(
+            _load(evaluation_path, "evaluation"),
+            _config(),
+            selection,
+            expected_request_ids=["request-eval"],
         )

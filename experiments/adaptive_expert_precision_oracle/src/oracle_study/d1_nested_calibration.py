@@ -93,6 +93,8 @@ CANDIDATE_FIELDS = {
     "all_q2_damage",
     "legacy_additive_damage",
     "d1_candidate_logits",
+    "d1_target_ids",
+    "d1_candidate_ids",
     "d1_crossings",
     "d1_violation_depth",
     "d1_routing_mass_churn",
@@ -164,6 +166,37 @@ def _text(value: Any, field: str) -> str:
     if not isinstance(value, str) or not value or value != value.strip():
         raise ArtifactValidationError(f"{field} must be a nonempty trimmed string")
     return value
+
+
+def _candidate_code_identity(
+    value: Any,
+    *,
+    required: bool,
+) -> dict[str, Any] | None:
+    if value is None:
+        if required:
+            raise ArtifactValidationError(
+                "calibration candidate code identity is required"
+            )
+        return None
+    if not isinstance(value, Mapping) or set(value) != {
+        "schema", "files", "canonical_sha256",
+    }:
+        raise ArtifactValidationError(
+            "calibration candidate code identity fields changed"
+        )
+    if value.get("schema") != "pr13_d1_nested_code_bundle_v1":
+        raise ArtifactValidationError(
+            "calibration candidate code identity schema changed"
+        )
+    identity = {
+        "schema": str(value["schema"]),
+        "files": _integer(value.get("files"), "candidate code file count", 1),
+        "canonical_sha256": _sha256(
+            value.get("canonical_sha256"), "candidate code canonical SHA-256",
+        ),
+    }
+    return json.loads(canonical_json_bytes(identity))
 
 
 def _json_value(value: Any, field: str) -> Any:
@@ -309,6 +342,8 @@ class CandidateRecord:
     local_damage: float
     all_q2_damage: float
     legacy_additive_damage: float
+    d1_target_ids: tuple[int, ...]
+    d1_candidate_ids: tuple[int, ...]
     d1_crossings: int
     d1_violation_depth: float
     d1_routing_mass_churn: float
@@ -398,8 +433,15 @@ def _candidate_record(
     if logits.shape != (256,) or np.any(~np.isfinite(logits)):
         raise ArtifactValidationError(f"candidate {path} lacks all 256 finite D1 logits")
     crossings = _integer(raw["d1_crossings"], f"{path}.d1_crossings")
+    d1_target_ids = _expert_ids(raw["d1_target_ids"])
+    d1_candidate_ids = _expert_ids(raw["d1_candidate_ids"])
     if crossings > 8:
         raise ArtifactValidationError(f"candidate {path} has more than eight crossings")
+    expected_crossings = 8 - len(set(d1_target_ids) & set(d1_candidate_ids))
+    if crossings != expected_crossings:
+        raise ArtifactValidationError(
+            f"candidate {path} crossing count disagrees with executed route IDs"
+        )
     parameter = _json_value(raw["parameter"], f"{path}.parameter")
     if not isinstance(parameter, dict):
         raise ArtifactValidationError(f"candidate {path}.parameter must be an object")
@@ -434,6 +476,8 @@ def _candidate_record(
         d1_violation_depth=_finite(
             raw["d1_violation_depth"], f"{path}.d1_violation_depth",
         ),
+        d1_target_ids=d1_target_ids,
+        d1_candidate_ids=d1_candidate_ids,
         d1_routing_mass_churn=_finite(
             raw["d1_routing_mass_churn"], f"{path}.d1_routing_mass_churn",
         ),
@@ -537,6 +581,8 @@ class _ConfigContract:
     authenticated_capture_path: str
     authenticated_capture_sha256: str
     config_canonical_sha256: str
+
+    reference_high_core_seal_required: bool
 
     @property
     def rates(self) -> tuple[int, ...]:
@@ -703,6 +749,22 @@ def _config_contract(config: Mapping[str, Any]) -> _ConfigContract:
     evaluation_count = _integer(
         request_source.get("evaluation_requests"), "evaluation request count", 1,
     )
+    reference_seal = config.get("reference_high_core_seal")
+    reference_seal_required = isinstance(reference_seal, Mapping) and (
+        reference_seal.get("required") is True
+    )
+    if reference_seal_required and (
+        reference_seal.get("reference_arm") != ARM_PR13
+        or reference_seal.get("reference_endpoint")
+        != "paired_reference_high"
+        or tuple(reference_seal.get("applies_to_arms", ())) != NESTED_ARMS
+        or reference_seal.get("literal_subset_and_state_hash_required")
+        is not True
+    ):
+        raise ArtifactValidationError(
+            "config changed the paired PR13-high core-seal contract"
+        )
+
     return _ConfigContract(
         run_id=_text(config.get("run_id"), "config run_id"),
         layers=layers,
@@ -714,6 +776,7 @@ def _config_contract(config: Mapping[str, Any]) -> _ConfigContract:
         authenticated_capture_path=AUTHENTICATED_CAPTURE_CONFIG_PATH,
         authenticated_capture_sha256=AUTHENTICATED_CAPTURE_CONFIG_SHA256,
         config_canonical_sha256=canonical_sha256(config),
+        reference_high_core_seal_required=reference_seal_required,
     )
 
 
@@ -792,6 +855,23 @@ def _source_rows(sources: Iterable[CandidateSource]) -> list[dict[str, Any]]:
     ]
 
 
+def _validate_authoritative_d1_targets(corpus: CandidateCorpus) -> None:
+    """Require one captured D1 target route per request/layer cell."""
+
+    targets: dict[tuple[int, str], tuple[int, ...]] = {}
+    for record in corpus.records:
+        target = tuple(record.d1_target_ids)
+        prior = targets.setdefault(record.cell, target)
+        if prior != target:
+            raise ArtifactValidationError(
+                "authoritative d1_target_ids changed across arms/rates for "
+                f"layer={record.layer}, request={record.request_id}"
+            )
+    if not targets:
+        raise ArtifactValidationError(
+            "candidate corpus contains no authoritative D1 target routes"
+        )
+
 def _index_unique(
     records: Iterable[CandidateRecord],
     key: Any,
@@ -807,6 +887,67 @@ def _index_unique(
     return result
 
 
+def _validate_reference_high_core_seals(
+    corpus: CandidateCorpus,
+    contract: _ConfigContract,
+) -> None:
+    if not contract.reference_high_core_seal_required:
+        return
+    references = _index_unique(
+        (
+            record for record in corpus.records
+            if record.arm == ARM_PR13
+            and record.rate in {pair.high_rate for pair in contract.pairs}
+        ),
+        lambda record: (record.rate, record.cell),
+        label="paired PR13-high reference cell",
+    )
+    nested_checked = 0
+    for pair in contract.pairs:
+        pair_rates = {pair.low_rate, pair.high_rate}
+        for record in corpus.records:
+            if record.arm not in NESTED_ARMS or record.rate not in pair_rates:
+                continue
+            reference = references.get((pair.high_rate, record.cell))
+            if reference is None:
+                raise ArtifactValidationError(
+                    f"{record.identity} lacks its paired PR13-high reference"
+                )
+            if record.expert_ids != reference.expert_ids:
+                raise ArtifactValidationError(
+                    f"{record.identity} changed paired PR13-high expert alignment"
+                )
+            if not physical_subset(record.common_core, reference.selected_state):
+                raise ArtifactValidationError(
+                    f"{record.identity} core is not a literal PR13-high subset"
+                )
+            reference_pages = state_page_count(reference.selected_state)
+            core_pages = state_page_count(record.common_core)
+            expected = {
+                "schema": "pr13_d1_paired_reference_high_core_seal_v1",
+                "reference_arm": ARM_PR13,
+                "reference_rate": pair.high_rate,
+                "reference_state_sha256": hashlib.sha256(
+                    reference.selected_state.tobytes(order="C"),
+                ).hexdigest(),
+                "reference_pages": reference_pages,
+                "common_core_state_sha256": hashlib.sha256(
+                    record.common_core.tobytes(order="C"),
+                ).hexdigest(),
+                "common_core_pages": core_pages,
+                "common_core_is_literal_subset": True,
+                "removed_pages": reference_pages - core_pages,
+                "added_pages": 0,
+            }
+            if record.parameter.get("paired_pr13_high_core_seal") != expected:
+                raise ArtifactValidationError(
+                    f"{record.identity} paired PR13-high seal changed"
+                )
+            nested_checked += 1
+    if nested_checked == 0:
+        raise ArtifactValidationError("no nested paired PR13-high seals were validated")
+
+
 def select_and_freeze_calibration(
     corpus: CandidateCorpus,
     config: Mapping[str, Any],
@@ -816,18 +957,25 @@ def select_and_freeze_calibration(
     request_manifest_sha256: str,
     request_manifest_facts_sha256: str,
     local_tolerance: float = 1e-12,
+    calibration_candidate_code_identity: Mapping[str, Any] | None = None,
 ) -> CalibrationSelection:
     """Select pair-level W/eta from Arm 4 calibration D1/local evidence only."""
 
     if not isinstance(corpus, CandidateCorpus) or corpus.split != "calibration":
         raise ArtifactValidationError("calibration selection requires calibration pickles")
     contract = _config_contract(config)
+    code_identity = _candidate_code_identity(
+        calibration_candidate_code_identity,
+        required=contract.reference_high_core_seal_required,
+    )
     request_ids = _request_cohort(
         corpus, contract,
         expected_count=contract.calibration_requests,
         expected_request_ids=expected_request_ids,
     )
+    _validate_authoritative_d1_targets(corpus)
     tolerance = _finite(local_tolerance, "local tolerance")
+    _validate_reference_high_core_seals(corpus, contract)
     expected_cells = {
         (layer, request_id)
         for layer in contract.layers
@@ -1055,6 +1203,8 @@ def select_and_freeze_calibration(
         "traffic_pairs": selected_pairs,
         "rates": rates,
     }
+    if code_identity is not None:
+        spec["calibration_candidate_code_identity"] = code_identity
     frozen = freeze_calibration_spec(spec)
     return CalibrationSelection(frozen_calibration=frozen, evidence=evidence)
 
@@ -1111,6 +1261,10 @@ def validate_calibration_selection(
     validate_frozen_calibration_spec(frozen)
     spec = frozen["spec"]
     contract = _config_contract(config)
+    _candidate_code_identity(
+        spec.get("calibration_candidate_code_identity"),
+        required=contract.reference_high_core_seal_required,
+    )
     if (
         spec.get("schema") != CALIBRATION_SPEC_SCHEMA
         or spec.get("run_id") != contract.run_id
@@ -1273,6 +1427,8 @@ def _same_exact_d1(left: CandidateRecord, right: CandidateRecord) -> bool:
         and left.d1_violation_depth == right.d1_violation_depth
         and left.d1_routing_mass_churn == right.d1_routing_mass_churn
         and left.d1_labeled_margin == right.d1_labeled_margin
+        and left.d1_target_ids == right.d1_target_ids
+        and left.d1_candidate_ids == right.d1_candidate_ids
     )
 
 
@@ -1358,6 +1514,8 @@ def _allocation_record(
         "d1_violation_depth": record.d1_violation_depth,
         "d1_routing_mass_churn": record.d1_routing_mass_churn,
         "d1_labeled_margin": record.d1_labeled_margin,
+        "d1_target_ids": list(record.d1_target_ids),
+        "d1_candidate_ids": list(record.d1_candidate_ids),
         "candidate_source": {
             "path": record.source.path,
             "sha256": record.source.sha256,
@@ -1397,8 +1555,10 @@ def build_evaluation_allocation_manifest(
         expected_count=contract.evaluation_requests,
         expected_request_ids=expected_request_ids,
     )
+    _validate_authoritative_d1_targets(corpus)
     calibration_ids = set(frozen["spec"]["calibration_request_ids"])
     calibration_prompts = set(frozen["spec"]["calibration_prompt_sha256"])
+    _validate_reference_high_core_seals(corpus, contract)
     evaluation_prompts = {record.prompt_sha256 for record in corpus.records}
     if calibration_ids & set(request_ids) or calibration_prompts & evaluation_prompts:
         raise ArtifactValidationError(
@@ -1462,7 +1622,7 @@ def build_evaluation_allocation_manifest(
                             f"literal nested pair failed for {arm}, {pair.pair_id}, "
                             f"layer={layer}, request={request_id}"
                         )
-                    chains.append({
+                    chain = {
                         "name": (
                             f"{arm}__{pair.pair_id}__layer_{layer:02d}__"
                             f"request_{request_id}"
@@ -1471,7 +1631,23 @@ def build_evaluation_allocation_manifest(
                             _allocation_reference(low),
                             _allocation_reference(high),
                         ],
-                    })
+                    }
+                    if contract.reference_high_core_seal_required:
+                        reference = indexed[
+                            (ARM_PR13, pair.high_rate, layer, request_id)
+                        ]
+                        paired_seal = low.parameter["paired_pr13_high_core_seal"]
+                        if paired_seal != high.parameter[
+                            "paired_pr13_high_core_seal"
+                        ]:
+                            raise ArtifactValidationError(
+                                "nested endpoints changed their paired PR13-high seal"
+                            )
+                        chain.update({
+                            "paired_reference_high": _allocation_reference(reference),
+                            "paired_pr13_high_core_seal": dict(paired_seal),
+                        })
+                    chains.append(chain)
     ordered = sorted(
         indexed.values(),
         key=lambda record: (

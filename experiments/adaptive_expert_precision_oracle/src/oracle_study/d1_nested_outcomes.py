@@ -28,6 +28,18 @@ from .d1_nested_artifacts import (
 
 ROUTE_MODES = ("live", "frozen_set_live_weights", "fully_frozen")
 ALLOCATION_CONFIG_SCHEMA = "pr13_d1_nested_safe_allocation_config_v1"
+ALLOCATION_CONFIG_RUN_ID = (
+    "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2"
+)
+ALLOCATION_CONFIG_V1_PATH = (
+    "configs/qwen36_mxfp4_d1_nested_safe_allocation_20260825_v1.json"
+)
+ALLOCATION_CONFIG_FILE_SHA256 = (
+    "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599"
+)
+ALLOCATION_CONFIG_CANONICAL_SHA256 = (
+    "927f847b20dd68ad91d43ccf46c4e70f05f4aec750dbb6b1fbbfc2a7bcdcf223"
+)
 AUTHENTICATED_CAPTURE_CONFIG_PATH = (
     "configs/qwen36_mxfp4_d1_nested_safe_oracle_20260825_v1.json"
 )
@@ -73,9 +85,11 @@ class OutcomePlan:
     allocations: tuple[OutcomeAllocation, ...]
     allocation_manifest_sha256: str
     frozen_calibration_spec_sha256: str
+    allocation_config_file_sha256: str
     request_manifest_sha256: str
     request_manifest_facts_sha256: str
-    allocation_config_canonical_sha256: str | None
+    allocation_config_canonical_sha256: str
+    calibration_candidate_code_identity: dict[str, Any]
 
     def for_split(self, split: str) -> tuple[OutcomeAllocation, ...]:
         if split not in {"calibration", "evaluation"}:
@@ -115,6 +129,40 @@ def _required_sha256(value: Any, *, field: str) -> str:
     return value
 
 
+def _required_candidate_code_identity(value: Any) -> dict[str, Any]:
+    if not isinstance(value, Mapping) or set(value) != {
+        "schema", "files", "canonical_sha256",
+    }:
+        raise ValueError("calibration candidate code identity fields changed")
+    if value.get("schema") != "pr13_d1_nested_code_bundle_v1":
+        raise ValueError("calibration candidate code identity schema changed")
+    files = value.get("files")
+    if isinstance(files, bool) or not isinstance(files, int) or files < 1:
+        raise ValueError("calibration candidate code identity file count is invalid")
+    return {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": int(files),
+        "canonical_sha256": _required_sha256(
+            value.get("canonical_sha256"),
+            field="calibration candidate code canonical SHA-256",
+        ),
+    }
+
+
+def _require_contract_fields(
+    config: Mapping[str, Any],
+    field: str,
+    expected: Mapping[str, Any],
+) -> Mapping[str, Any]:
+    value = config.get(field)
+    if not isinstance(value, Mapping):
+        raise ValueError(f"frozen {field} contract is absent")
+    for key, expected_value in expected.items():
+        if value.get(key) != expected_value:
+            raise ValueError(f"frozen {field} contract changed: {key}")
+    return value
+
+
 def validate_outcome_config(config: Mapping[str, Any]) -> None:
     """Require the frozen Experiment-A outcome boundary, not policy knobs."""
 
@@ -122,6 +170,8 @@ def validate_outcome_config(config: Mapping[str, Any]) -> None:
         raise ValueError("unexpected nested Experiment A allocation config schema")
     if config.get("experiment_stage") != "A":
         raise ValueError("nested outcome runner is restricted to Experiment A")
+    if config.get("run_id") != ALLOCATION_CONFIG_RUN_ID:
+        raise ValueError("outcome runner requires the immutable v2 allocation config")
     capture = config.get("authenticated_capture_protocol")
     if (
         not isinstance(capture, Mapping)
@@ -130,6 +180,116 @@ def validate_outcome_config(config: Mapping[str, Any]) -> None:
         or capture.get("sha256") != AUTHENTICATED_CAPTURE_CONFIG_SHA256
     ):
         raise ValueError("authenticated capture protocol pin changed")
+    _require_contract_fields(config, "configuration_provenance", {
+        "materialization": "standalone_full_config_v1",
+        "parent_path": ALLOCATION_CONFIG_V1_PATH,
+        "parent_sha256": (
+            "fef7b21ecdebcfb68d3f63c6a10575db4ce1163d72ca410e107626c34d061480"
+        ),
+    })
+    request_source = config.get("request_source")
+    if not isinstance(request_source, Mapping):
+        raise ValueError("frozen request source contract is absent")
+    capture_artifacts = _require_contract_fields(
+        config,
+        "authenticated_capture_artifacts",
+        {
+            "directory": (
+                "/workspace/pr13_d1_nested_safe_oracle_20260825_v1/"
+                "captures_authenticated"
+            ),
+            "facts_path": (
+                "/workspace/pr13_d1_nested_safe_oracle_20260825_v1/"
+                "captures_authenticated/capture_facts_all.json"
+            ),
+            "facts_schema": "pr13_d1_nested_exact_decode_capture_facts_v1",
+            "facts_sha256": (
+                "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643"
+            ),
+            "split": "all",
+            "requests": 128,
+            "files": 128,
+            "manifest_sha256": (
+                "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546"
+            ),
+            "manifest_facts_sha256": (
+                "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c"
+            ),
+        },
+    )
+    if capture_artifacts.get("requests") != request_source.get("total_requests"):
+        raise ValueError("authenticated capture request count changed")
+    _require_contract_fields(config, "authenticated_capture_execution_stack", {
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "torch": "2.8.0+cu128",
+        "cuda": "12.8",
+        "route_operation": (
+            "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_"
+            "torch_topk_k8_sorted"
+        ),
+        "captured_ordered_router_ids_authoritative": True,
+        "allocation_runtime_must_match_gpu_torch_cuda_exactly": True,
+        "all_selected_request_d1_targets_preflight_required": True,
+    })
+    pr13_inputs = _require_contract_fields(
+        config,
+        "authenticated_pr13_inputs",
+        {
+            "config_path": "configs/qwen36_mxfp4_average_rate_all_layers.json",
+            "config_sha256": (
+                "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006"
+            ),
+            "fit_dir": "/workspace/pr13_average_rate_all_layers_20260822_v1/results/fit",
+            "factor_manifest_path": (
+                "/workspace/pr13_average_rate_all_layers_20260822_v1/results/fit/"
+                "average_rate_factor_manifest.json"
+            ),
+            "factor_manifest_schema": "average_rate_all_layers_distributed_v1",
+            "factor_manifest_sha256": (
+                "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069"
+            ),
+            "tree_sha256": (
+                "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8"
+            ),
+            "checkpoint_config_sha256": (
+                "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a"
+            ),
+            "checkpoint_index_sha256": (
+                "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb"
+            ),
+        },
+    )
+    if any((
+        pr13_inputs.get("config_path") != config.get("pr13_config"),
+        pr13_inputs.get("fit_dir") != config.get("fit_dir"),
+        pr13_inputs.get("tree_sha256") != config.get("selected_tree_sha256"),
+        pr13_inputs.get("checkpoint_config_sha256")
+        != config.get("checkpoint_config_sha256"),
+        pr13_inputs.get("checkpoint_index_sha256")
+        != config.get("checkpoint_index_sha256"),
+    )):
+        raise ValueError("authenticated PR13 inputs disagree with the root config")
+    _require_contract_fields(config, "reference_high_core_seal", {
+        "required": True,
+        "reference_arm": "independent_pr13",
+        "reference_endpoint": "paired_reference_high",
+        "applies_to_arms": [
+            "nested_local_only", "nested_d1_safe",
+            "nested_d1_safe_violation_mass",
+        ],
+        "literal_subset_and_state_hash_required": True,
+    })
+    _require_contract_fields(config, "atomic_resume", {
+        "schema": "pr13_d1_nested_atomic_layer_resume_v1",
+        "full_request_split_only": True,
+        "facts_written_last": True,
+        "scientific_files_per_layer": [
+            "nested_candidates.pkl", "nested_candidate_metrics.parquet",
+            "nested_slice_parity.parquet",
+        ],
+        "completed_global_requires_exact_configured_layer_set": True,
+        "mixed_input_or_code_identity_rejected": True,
+    })
     outcome = config.get("outcome_phase")
     if not isinstance(outcome, Mapping):
         raise ValueError("outcome phase is absent")
@@ -150,6 +310,10 @@ def validate_outcome_config(config: Mapping[str, Any]) -> None:
         raise ValueError("generated rollout is outside this outcome study")
     if config.get("joint_all_layer_compression_in_scope") is not False:
         raise ValueError("joint all-layer compression is outside this outcome study")
+    if canonical_sha256(config) != ALLOCATION_CONFIG_CANONICAL_SHA256:
+        raise ValueError(
+            "immutable v2 allocation config canonical SHA-256 changed"
+        )
 
 
 def _optional_string(value: Any, *, field: str) -> str | None:
@@ -188,6 +352,14 @@ def load_outcome_plan(
     digest = file_sha256(Path(manifest_path))
     frozen_digest = validate_frozen_calibration_spec(manifest["frozen_calibration"])
     frozen_spec = manifest["frozen_calibration"]["spec"]
+    config_file_sha256 = _required_sha256(
+        frozen_spec.get("config_file_sha256"),
+        field="allocation config file SHA-256",
+    )
+    frozen_config_canonical_sha256 = _required_sha256(
+        frozen_spec.get("config_canonical_sha256"),
+        field="allocation config canonical SHA-256",
+    )
     request_manifest_sha256 = _required_sha256(
         frozen_spec.get("request_manifest_sha256"),
         field="request manifest SHA-256",
@@ -196,23 +368,20 @@ def load_outcome_plan(
         frozen_spec.get("request_manifest_facts_sha256"),
         field="request manifest facts SHA-256",
     )
+    calibration_candidate_code_identity = _required_candidate_code_identity(
+        frozen_spec.get("calibration_candidate_code_identity")
+    )
     allocation_inputs = manifest.get("allocation_inputs")
-    config_canonical_sha256: str | None = None
-    if allocation_inputs is not None:
-        if not isinstance(allocation_inputs, Mapping):
-            raise ValueError("allocation manifest inputs must be an object")
-        raw_config_digest = allocation_inputs.get("config_canonical_sha256")
-        if raw_config_digest is not None:
-            if (
-                not isinstance(raw_config_digest, str)
-                or len(raw_config_digest) != 64
-                or any(
-                    character not in "0123456789abcdef"
-                    for character in raw_config_digest
-                )
-            ):
-                raise ValueError("allocation manifest config digest is invalid")
-            config_canonical_sha256 = raw_config_digest
+    if not isinstance(allocation_inputs, Mapping):
+        raise ValueError("allocation manifest inputs must be an object")
+    config_canonical_sha256 = _required_sha256(
+        allocation_inputs.get("config_canonical_sha256"),
+        field="allocation manifest config canonical SHA-256",
+    )
+    if config_canonical_sha256 != frozen_config_canonical_sha256:
+        raise ValueError(
+            "allocation manifest and frozen calibration config digests differ"
+        )
     allocations: list[OutcomeAllocation] = []
     for index, raw in enumerate(manifest["allocations"]):
         state = np.asarray(decode_state(raw["selected_state"]), dtype=np.uint8)
@@ -250,9 +419,13 @@ def load_outcome_plan(
         allocations=tuple(allocations),
         allocation_manifest_sha256=digest,
         frozen_calibration_spec_sha256=frozen_digest,
+        allocation_config_file_sha256=config_file_sha256,
         request_manifest_sha256=request_manifest_sha256,
         request_manifest_facts_sha256=request_manifest_facts_sha256,
         allocation_config_canonical_sha256=config_canonical_sha256,
+        calibration_candidate_code_identity=(
+            calibration_candidate_code_identity
+        ),
     )
 
 
@@ -349,11 +522,26 @@ def validate_complete_allocation_grid(
 def validate_plan_against_config(
     plan: OutcomePlan,
     config: Mapping[str, Any],
+    *,
+    config_file_sha256: str | None = None,
 ) -> None:
     """Bind the sealed evaluation grid to the frozen arm/rate/layer contract."""
 
     validate_outcome_config(config)
-    if plan.allocation_config_canonical_sha256 != canonical_sha256(config):
+    if plan.allocation_config_file_sha256 != ALLOCATION_CONFIG_FILE_SHA256:
+        raise ValueError(
+            "sealed allocation manifest is not bound to the immutable raw v2 config"
+        )
+    if (
+        config_file_sha256 is not None
+        and plan.allocation_config_file_sha256
+        != _required_sha256(config_file_sha256, field="supplied config file SHA-256")
+    ):
+        raise ValueError(
+            "sealed allocation manifest is not bound to the raw allocation config"
+        )
+    observed_canonical_sha256 = canonical_sha256(config)
+    if plan.allocation_config_canonical_sha256 != observed_canonical_sha256:
         raise ValueError(
             "sealed allocation manifest is not bound to the frozen allocation config"
         )
@@ -531,8 +719,12 @@ def outcome_input_facts(plan: OutcomePlan) -> dict[str, Any]:
     return {
         "allocation_manifest_sha256": plan.allocation_manifest_sha256,
         "frozen_calibration_spec_sha256": plan.frozen_calibration_spec_sha256,
+        "allocation_config_file_sha256": plan.allocation_config_file_sha256,
         "allocation_config_canonical_sha256": (
             plan.allocation_config_canonical_sha256
+        ),
+        "calibration_candidate_code_identity": dict(
+            plan.calibration_candidate_code_identity
         ),
         "allocation_identities_sha256": canonical_sha256([
             [row.arm, row.rate, row.layer, row.request_id, row.state_sha256]

@@ -14,6 +14,7 @@ sys.path[:0] = [str(EXPERIMENT / "src"), str(EXPERIMENT / "scripts")]
 
 import calibrate_and_seal_d1_nested_allocations as cli  # noqa: E402
 from oracle_study.d1_nested_artifacts import (  # noqa: E402
+    ArtifactValidationError,
     canonical_json_bytes,
     freeze_calibration_spec,
 )
@@ -351,3 +352,75 @@ def test_cli_hash_pins_are_required_and_mismatch_fails_before_pickle_load(
     with pytest.raises(SystemExit, match="candidate run facts SHA-256 mismatch"):
         cli.main(argv)
     assert called is False
+
+
+def test_cross_split_candidate_code_identity_exact_match_passes() -> None:
+    identity = {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": 17,
+        "canonical_sha256": "d" * 64,
+    }
+    frozen = {
+        "spec": {"calibration_candidate_code_identity": identity},
+    }
+    cli._require_matching_candidate_code_identity(frozen, dict(identity))
+
+
+def test_seal_rejects_code_identity_mismatch_before_pickle_load(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    protocol = _protocol_files(tmp_path)
+    calibration_identity = {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": 17,
+        "canonical_sha256": "d" * 64,
+    }
+    evaluation_identity = {
+        **calibration_identity,
+        "canonical_sha256": "e" * 64,
+    }
+    frozen = freeze_calibration_spec({
+        "config_file_sha256": protocol["config_sha"],
+        "request_manifest_sha256": protocol["manifest_sha"],
+        "request_manifest_facts_sha256": protocol["request_facts_sha"],
+        "calibration_request_ids": ["request-calibration"],
+        "calibration_candidate_code_identity": calibration_identity,
+    })
+    frozen_path = tmp_path / "frozen-code-identity.json"
+    frozen_file_sha = _write_json(frozen_path, frozen, canonical=True)
+    root, run_facts, run_sha = _candidate_files(
+        tmp_path,
+        split="evaluation",
+        request_id="request-evaluation",
+        frozen_sha256=frozen["sha256"],
+    )
+    monkeypatch.setattr(
+        cli,
+        "_discover_candidate_inputs",
+        lambda *args, **kwargs: cli.CandidateInputs(
+            (), {}, run_sha, evaluation_identity,
+        ),
+    )
+    pickle_loaded = False
+
+    def forbidden(*args, **kwargs):
+        nonlocal pickle_loaded
+        pickle_loaded = True
+        raise AssertionError("mismatched-code pickle loader was reached")
+
+    monkeypatch.setattr(cli, "load_layer_candidate_pickles", forbidden)
+    args = cli.parse_args([
+        "seal-evaluation",
+        *_common_args(protocol, root, run_facts, run_sha),
+        "--frozen-spec", str(frozen_path),
+        "--frozen-spec-sha256", frozen_file_sha,
+        "--manifest-output", str(tmp_path / "allocations.json"),
+        "--seal-output", str(tmp_path / "allocations.seal.json"),
+    ])
+    with pytest.raises(
+        ArtifactValidationError,
+        match="code identity differs from frozen calibration",
+    ):
+        cli.run_seal_evaluation(args)
+    assert pickle_loaded is False

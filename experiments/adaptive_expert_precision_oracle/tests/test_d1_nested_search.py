@@ -28,7 +28,38 @@ from oracle_study.split_interaction_field import (  # noqa: E402
 
 
 def _baseline_logits() -> np.ndarray:
+
     return -np.arange(256, dtype=np.float64) / 10.0
+def _exact_metrics(
+    baseline: np.ndarray,
+    candidate: np.ndarray,
+    *,
+    baseline_ids: np.ndarray | None = None,
+    candidate_ids: np.ndarray | None = None,
+):
+    return exact_all_expert_d1_metrics(
+        baseline,
+        candidate,
+        baseline_top8=stable_top8(baseline) if baseline_ids is None else baseline_ids,
+        candidate_top8=stable_top8(candidate) if candidate_ids is None else candidate_ids,
+    )
+
+
+def _screened_boundaries(baseline: np.ndarray, sensitivities: np.ndarray):
+    order = np.argsort(-np.asarray(baseline), kind="stable")
+    target = order[:8]
+    target_set = set(map(int, target))
+    outsider = np.asarray(
+        [expert for expert in order if int(expert) not in target_set][:8],
+        np.int64,
+    )
+    return build_screened_d1_boundaries(
+        baseline,
+        sensitivities,
+        selected_expert_ids=target[5:8],
+        outsider_expert_ids=outsider,
+    )
+
 
 
 def test_stable_top8_uses_expert_index_for_exact_ties() -> None:
@@ -38,6 +69,27 @@ def test_stable_top8_uses_expert_index_for_exact_ties() -> None:
     assert stable_top8(tied).tolist() == [17, 42, 0, 1, 2, 3, 4, 5]
 
 
+
+def test_explicit_cuda_ids_control_tie_order_and_zero_depth_boundary_crossing() -> None:
+    logits = np.zeros(256, np.float64)
+    target = np.arange(8, dtype=np.int64)
+    reordered = np.asarray([0, 1, 2, 3, 4, 5, 7, 6], np.int64)
+    same_set = _exact_metrics(
+        logits, logits, baseline_ids=target, candidate_ids=reordered,
+    )
+    assert same_set.membership_crossings == 0
+    assert same_set.candidate_top8.tolist() == reordered.tolist()
+
+    boundary_tie = np.asarray([0, 1, 2, 3, 4, 5, 6, 8], np.int64)
+    crossed = _exact_metrics(
+        logits, logits, baseline_ids=target, candidate_ids=boundary_tie,
+    )
+    assert crossed.membership_crossings == 1
+    assert crossed.lost_target_experts.tolist() == [7]
+    assert crossed.entering_outsiders.tolist() == [8]
+    assert crossed.violation_depth == 0.0
+    assert crossed.target_set_margin == 0.0
+
 def test_exact_all_256_metrics_pair_strongest_entrant_with_weakest_target() -> None:
     baseline = _baseline_logits()
     candidate = baseline.copy()
@@ -46,7 +98,7 @@ def test_exact_all_256_metrics_pair_strongest_entrant_with_weakest_target() -> N
     candidate[8] = -0.50
     candidate[9] = -0.55
 
-    metrics = exact_all_expert_d1_metrics(baseline, candidate)
+    metrics = _exact_metrics(baseline, candidate)
 
     assert metrics.membership_crossings == 2
     assert metrics.entering_outsiders.tolist() == [8, 9]
@@ -58,7 +110,7 @@ def test_exact_all_256_metrics_pair_strongest_entrant_with_weakest_target() -> N
     assert metrics.target_set_margin == pytest.approx(-2.5)
     assert not metrics.safe
 
-    safe = exact_all_expert_d1_metrics(baseline, baseline)
+    safe = _exact_metrics(baseline, baseline)
     assert safe.safe
     assert safe.membership_crossings == 0
     assert safe.violation_depth == 0.0
@@ -71,7 +123,7 @@ def test_screened_projection_matches_explicit_candidate_logit_margins() -> None:
     baseline = _baseline_logits()
     sensitivities = rng.normal(size=(256, 3))
     delta = np.asarray([0.2, -0.3, 0.1])
-    boundaries = build_screened_d1_boundaries(baseline, sensitivities)
+    boundaries = _screened_boundaries(baseline, sensitivities)
 
     predicted = predicted_signed_margin_metrics(boundaries, delta)
     candidate = baseline + sensitivities @ delta
@@ -136,7 +188,7 @@ class _StubGeometry:
 
 def _screen() -> object:
     sensitivities = np.arange(256, dtype=np.float64)[:, None] / 256.0
-    return build_screened_d1_boundaries(_baseline_logits(), sensitivities)
+    return _screened_boundaries(_baseline_logits(), sensitivities)
 
 
 def _incumbent_and_core() -> tuple[np.ndarray, np.ndarray]:
@@ -221,7 +273,7 @@ def test_vectorized_swap_shortlist_matches_scalar_reference_across_guards() -> N
         rng.integers(0, 8, size=(8, 512), dtype=np.uint8),
     )
     sensitivities = rng.normal(size=(256, 9))
-    boundaries = build_screened_d1_boundaries(_baseline_logits(), sensitivities)
+    boundaries = _screened_boundaries(_baseline_logits(), sensitivities)
     baseline_damage = geometry.local_damage(incumbent)
     for guard in (0.0, baseline_damage * 0.95, baseline_damage, baseline_damage * 1.2):
         optimized = shortlist_matched_page_swaps(
@@ -274,7 +326,7 @@ def test_iterative_repair_accepts_only_strict_exact_reductions_and_keeps_core() 
 
     def exact_replay(states: np.ndarray) -> object:
         helpful = int(states[0, 3] != 0) + int(states[0, 4] != 0)
-        return exact_all_expert_d1_metrics(
+        return _exact_metrics(
             baseline, _candidate_logits_for_crossings(2 - helpful),
         )
 
@@ -308,7 +360,7 @@ def test_arm5_uses_exact_severity_only_while_unsafe_and_safe_is_immutable() -> N
             logits = _candidate_logits_for_crossings(1, shallow=True)
         else:
             logits = _candidate_logits_for_crossings(2)
-        return exact_all_expert_d1_metrics(baseline, logits)
+        return _exact_metrics(baseline, logits)
 
     arm4 = iterative_exact_repair(
         incumbent,
@@ -343,7 +395,7 @@ def test_arm5_uses_exact_severity_only_while_unsafe_and_safe_is_immutable() -> N
     def safe_replay(states: np.ndarray) -> object:
         nonlocal calls
         calls += 1
-        return exact_all_expert_d1_metrics(baseline, baseline)
+        return _exact_metrics(baseline, baseline)
 
     safe = iterative_exact_repair(
         safe_state,

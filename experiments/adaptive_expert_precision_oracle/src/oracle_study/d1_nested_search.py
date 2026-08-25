@@ -73,6 +73,18 @@ def stable_top8(logits: Sequence[float] | np.ndarray) -> np.ndarray:
     return np.argsort(-values, kind="stable")[:TOP_K].astype(np.int64, copy=True)
 
 
+def _executed_top8(value: Sequence[int] | np.ndarray, field: str) -> np.ndarray:
+    ids = np.asarray(value)
+    if (
+        ids.shape != (TOP_K,)
+        or ids.dtype.kind not in "iu"
+        or len(set(map(int, ids))) != TOP_K
+        or np.any((ids < 0) | (ids >= EXPERT_COUNT))
+    ):
+        raise ValueError(f"{field} must contain eight unique executed IDs in [0,255]")
+    return np.asarray(ids, np.int64).copy()
+
+
 @dataclass(frozen=True)
 class ExactD1Metrics:
     baseline_top8: np.ndarray
@@ -162,8 +174,14 @@ def _subset_order(
 def exact_all_expert_d1_metrics(
     baseline_logits: Sequence[float] | np.ndarray,
     candidate_logits: Sequence[float] | np.ndarray,
+    *,
+    baseline_top8: Sequence[int] | np.ndarray,
+    candidate_top8: Sequence[int] | np.ndarray,
 ) -> ExactD1Metrics:
-    """Measure exact labeled top-8 damage using all 256 router logits.
+    """Measure exact labeled top-8 damage using explicit executed route IDs.
+
+    The caller supplies IDs produced by the authoritative execution stack;
+    logits are never re-ranked with incompatible NumPy tie semantics.
 
     Entering outsiders are paired strongest-first with lost target experts
     weakest-first under candidate logits.  The summed positive logit gaps form
@@ -173,8 +191,8 @@ def exact_all_expert_d1_metrics(
 
     baseline = _finite_logits(baseline_logits, exact_256=True)
     candidate = _finite_logits(candidate_logits, exact_256=True)
-    target = stable_top8(baseline)
-    observed = stable_top8(candidate)
+    target = _executed_top8(baseline_top8, "baseline_top8")
+    observed = _executed_top8(candidate_top8, "candidate_top8")
     target_set = set(target.tolist())
     observed_set = set(observed.tolist())
     lost_raw = np.asarray(sorted(target_set.difference(observed_set)), np.int64)
@@ -251,8 +269,11 @@ class ScreenedD1Boundaries:
 def build_screened_d1_boundaries(
     baseline_logits: Sequence[float] | np.ndarray,
     candidate_logit_sensitivities: np.ndarray,
+    *,
+    selected_expert_ids: Sequence[int] | np.ndarray,
+    outsider_expert_ids: Sequence[int] | np.ndarray,
 ) -> ScreenedD1Boundaries:
-    """Build the fixed ranks 6--8 versus ranks 9--16 shortlist screen."""
+    """Build the explicit executed ranks 6--8 versus eight-outsider screen."""
 
     logits = _finite_logits(baseline_logits, exact_256=True)
     gradients = np.asarray(candidate_logit_sensitivities, np.float64)
@@ -265,9 +286,22 @@ def build_screened_d1_boundaries(
         raise ValueError(
             "candidate-logit sensitivities must be finite [256,output]"
         )
-    order = np.argsort(-logits, kind="stable")
-    selected_unique = order[np.asarray(SCREEN_SELECTED_RANKS) - 1]
-    outsider_unique = order[np.asarray(SCREEN_OUTSIDER_RANKS) - 1]
+    selected_unique = np.asarray(selected_expert_ids)
+    outsider_unique = np.asarray(outsider_expert_ids)
+    if (
+        selected_unique.shape != (len(SCREEN_SELECTED_RANKS),)
+        or outsider_unique.shape != (len(SCREEN_OUTSIDER_RANKS),)
+        or selected_unique.dtype.kind not in "iu"
+        or outsider_unique.dtype.kind not in "iu"
+        or len(set(map(int, selected_unique))) != selected_unique.size
+        or len(set(map(int, outsider_unique))) != outsider_unique.size
+        or bool(set(map(int, selected_unique)) & set(map(int, outsider_unique)))
+        or np.any((selected_unique < 0) | (selected_unique >= EXPERT_COUNT))
+        or np.any((outsider_unique < 0) | (outsider_unique >= EXPERT_COUNT))
+    ):
+        raise ValueError("screened executed expert ID pools are invalid")
+    selected_unique = np.asarray(selected_unique, np.int64)
+    outsider_unique = np.asarray(outsider_unique, np.int64)
     selected = np.repeat(selected_unique, outsider_unique.size)
     outsiders = np.tile(outsider_unique, selected_unique.size)
     return ScreenedD1Boundaries(

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from types import SimpleNamespace
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -15,19 +17,24 @@ sys.path.insert(0, str(EXPERIMENT / "src"))
 from oracle_study.d1_nested_artifacts import (  # noqa: E402
     ALLOCATION_MANIFEST_SCHEMA,
     ArtifactValidationError,
+    canonical_sha256,
     encode_state,
     freeze_calibration_spec,
     write_sealed_allocation_manifest,
 )
 from oracle_study.d1_nested_outcomes import (  # noqa: E402
+    ALLOCATION_CONFIG_CANONICAL_SHA256,
+    ALLOCATION_CONFIG_FILE_SHA256,
     ROUTE_MODES,
     join_request_manifest,
     load_outcome_plan,
+    outcome_input_facts,
     request_layer_means,
     require_zero_dose_parity,
     route_mode_contrasts,
     validate_complete_allocation_grid,
     validate_outcome_config,
+    validate_plan_against_config,
 )
 
 
@@ -91,8 +98,15 @@ def _manifest(requests: tuple[str, ...] = ("7",)) -> dict[str, object]:
     frozen = freeze_calibration_spec({
         "window": 16,
         "eta": 0.0005,
+        "config_file_sha256": "d" * 64,
+        "config_canonical_sha256": "e" * 64,
         "request_manifest_sha256": "b" * 64,
         "request_manifest_facts_sha256": "c" * 64,
+        "calibration_candidate_code_identity": {
+            "schema": "pr13_d1_nested_code_bundle_v1",
+            "files": 1,
+            "canonical_sha256": "f" * 64,
+        },
     })
     allocations = []
     chains = []
@@ -118,6 +132,7 @@ def _manifest(requests: tuple[str, ...] = ("7",)) -> dict[str, object]:
     return {
         "schema": ALLOCATION_MANIFEST_SCHEMA,
         "frozen_calibration": frozen,
+        "allocation_inputs": {"config_canonical_sha256": "e" * 64},
         "allocations": allocations,
         "nesting_chains": chains,
     }
@@ -161,8 +176,20 @@ def test_outcome_plan_requires_authentic_seal_and_decodes_full_state(
     assert plan.allocations[0].selected_state.dtype.name == "uint8"
     assert plan.allocations[0].selected_pages == 1
     assert len(plan.allocations[0].state_sha256) == 64
+    assert plan.allocation_config_file_sha256 == "d" * 64
     assert plan.request_manifest_sha256 == "b" * 64
     assert plan.request_manifest_facts_sha256 == "c" * 64
+    assert plan.calibration_candidate_code_identity == {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": 1,
+        "canonical_sha256": "f" * 64,
+    }
+    input_facts = outcome_input_facts(plan)
+    assert input_facts["allocation_config_file_sha256"] == "d" * 64
+    assert input_facts["allocation_config_canonical_sha256"] == "e" * 64
+    assert input_facts["calibration_candidate_code_identity"] == (
+        plan.calibration_candidate_code_identity
+    )
 
     manifest.write_bytes(manifest.read_bytes() + b"\n")
     with pytest.raises(ArtifactValidationError, match="SHA-256 mismatch"):
@@ -277,7 +304,7 @@ def test_request_means_retain_route_mode_and_weight_layers_equally() -> None:
 def test_checked_in_config_has_exact_outcome_only_contract() -> None:
     path = (
         EXPERIMENT / "configs"
-        / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v1.json"
+        / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2.json"
     )
     config = json.loads(path.read_text())
     validate_outcome_config(config)
@@ -289,3 +316,97 @@ def test_checked_in_config_has_exact_outcome_only_contract() -> None:
     changed["authenticated_capture_protocol"]["sha256"] = "0" * 64
     with pytest.raises(ValueError, match="capture protocol"):
         validate_outcome_config(changed)
+
+    changed = deepcopy(config)
+    changed["scientific_boundary"] += " changed"
+    with pytest.raises(ValueError, match="canonical SHA-256"):
+        validate_outcome_config(changed)
+
+    v1 = json.loads((
+        EXPERIMENT / "configs"
+        / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v1.json"
+    ).read_text())
+    with pytest.raises(ValueError, match="immutable v2"):
+        validate_outcome_config(v1)
+
+
+@pytest.mark.parametrize(
+    ("block", "field"),
+    [
+        ("configuration_provenance", "parent_sha256"),
+        ("authenticated_capture_artifacts", "facts_sha256"),
+        ("authenticated_capture_execution_stack", "cuda"),
+        ("authenticated_pr13_inputs", "factor_manifest_sha256"),
+        ("reference_high_core_seal", "literal_subset_and_state_hash_required"),
+        ("atomic_resume", "mixed_input_or_code_identity_rejected"),
+    ],
+)
+def test_v2_outcome_config_rejects_authenticated_contract_drift(
+    block: str,
+    field: str,
+) -> None:
+    path = (
+        EXPERIMENT / "configs"
+        / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2.json"
+    )
+    changed = json.loads(path.read_text())
+    value = changed[block][field]
+    changed[block][field] = not value if isinstance(value, bool) else "0" * 64
+    with pytest.raises(ValueError, match=block):
+        validate_outcome_config(changed)
+
+
+def test_v2_plan_preserves_raw_and_canonical_config_identities() -> None:
+    path = (
+        EXPERIMENT / "configs"
+        / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2.json"
+    )
+    raw = path.read_bytes()
+    raw_sha256 = hashlib.sha256(raw).hexdigest()
+    config = json.loads(raw)
+    canonical = canonical_sha256(config)
+    assert raw_sha256 == ALLOCATION_CONFIG_FILE_SHA256
+    assert canonical == ALLOCATION_CONFIG_CANONICAL_SHA256
+    rates = sorted({
+        int(pair[field])
+        for pair in config["traffic_pairs"]
+        for field in (
+            "metadata_matched_pages_per_expert",
+            "pr13_reference_pages_per_expert",
+        )
+    })
+    allocations = tuple(
+        SimpleNamespace(
+            arm=arm,
+            rate=rate,
+            layer=layer,
+            request_id=f"request-{request:03d}",
+            split="evaluation",
+        )
+        for request in range(config["request_source"]["evaluation_requests"])
+        for arm in config["arms"]
+        for rate in rates
+        for layer in config["injection_layers"]
+    )
+    plan = SimpleNamespace(
+        allocations=allocations,
+        allocation_config_file_sha256=raw_sha256,
+        allocation_config_canonical_sha256=canonical,
+    )
+    validate_plan_against_config(
+        plan, config, config_file_sha256=raw_sha256,
+    )
+
+    with pytest.raises(ValueError, match="raw allocation config"):
+        validate_plan_against_config(
+            plan, config, config_file_sha256="0" * 64,
+        )
+    wrong_canonical = SimpleNamespace(
+        allocations=allocations,
+        allocation_config_file_sha256=raw_sha256,
+        allocation_config_canonical_sha256="0" * 64,
+    )
+    with pytest.raises(ValueError, match="frozen allocation config"):
+        validate_plan_against_config(
+            wrong_canonical, config, config_file_sha256=raw_sha256,
+        )

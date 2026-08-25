@@ -108,7 +108,7 @@ def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
     capture = tmp_path / "capture.json"
     capture_sha = _write_json(capture, {})
     config = tmp_path / "allocation.json"
-    _write_json(config, {
+    config_sha = _write_json(config, {
         "authenticated_capture_protocol": {
             "path": capture.name,
             "sha256": capture_sha,
@@ -127,11 +127,17 @@ def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
 
     monkeypatch.setattr(runner, "EXPERIMENT", tmp_path)
     monkeypatch.setattr(runner, "FROZEN_ALLOCATION_CONFIG_PATH", config)
+    monkeypatch.setattr(runner, "ALLOCATION_CONFIG_FILE_SHA256", config_sha)
     monkeypatch.setattr(runner, "AUTHENTICATED_CAPTURE_CONFIG_PATH", capture.name)
     monkeypatch.setattr(runner, "AUTHENTICATED_CAPTURE_CONFIG_SHA256", capture_sha)
     monkeypatch.setattr(runner, "validate_outcome_config", lambda _config: None)
     monkeypatch.setattr(runner, "load_outcome_plan", lambda **_kwargs: plan)
-    monkeypatch.setattr(runner, "validate_plan_against_config", lambda *_args: None)
+    monkeypatch.setattr(
+        runner, "validate_plan_against_config", lambda *_args, **_kwargs: None,
+    )
+    monkeypatch.setattr(
+        runner, "_authenticate_outcome_code_bundle", lambda _plan: {},
+    )
     monkeypatch.setattr(runner, "validate_capture_inputs", forbidden_parser)
     args = SimpleNamespace(
         config=config, request_manifest=supplied_manifest,
@@ -145,6 +151,125 @@ def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
     with pytest.raises(ValueError, match="request manifest does not match"):
         runner._load_inputs(args)
     assert token_rows_exposed is False
+
+
+def test_outcome_code_bundle_is_canonical_and_covers_execution_sources() -> None:
+    bundle = runner._outcome_code_bundle()
+    payload = {
+        key: bundle[key]
+        for key in (
+            "schema", "scope", "roots", "files", "members",
+            "allocation_candidate_code_identity",
+        )
+    }
+    assert bundle["sha256"] == runner.canonical_sha256(payload)
+    assert bundle["files"] == len(bundle["members"])
+    members = {row["path"] for row in bundle["members"]}
+    assert runner.OUTCOME_CODE_REQUIRED_MEMBERS.issubset(members)
+    inventory = {
+        row["path"]: {"sha256": row["sha256"], "bytes": row["bytes"]}
+        for row in bundle["members"]
+    }
+    assert bundle["allocation_candidate_code_identity"] == {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": len(inventory),
+        "canonical_sha256": runner.canonical_sha256(inventory),
+    }
+
+
+def test_outcome_code_must_equal_sealed_allocation_bundle() -> None:
+    bundle = runner._outcome_code_bundle()
+    expected = dict(bundle["allocation_candidate_code_identity"])
+    admitted = runner._authenticate_outcome_code_bundle(
+        SimpleNamespace(calibration_candidate_code_identity=expected),
+    )
+    assert admitted["allocation_candidate_code_identity"] == expected
+
+    changed = dict(expected)
+    changed["canonical_sha256"] = "0" * 64
+    with pytest.raises(RuntimeError, match="sealed allocation code identity"):
+        runner._authenticate_outcome_code_bundle(
+            SimpleNamespace(calibration_candidate_code_identity=changed),
+        )
+
+
+def test_resume_rejects_a_different_outcome_code_bundle(tmp_path: Path) -> None:
+    paths = runner._cell_paths(tmp_path, "evaluation", 0)
+    paths["root"].mkdir(parents=True)
+    recorded_pins = {
+        "stable_input": "same",
+        "outcome_code_bundle": {"sha256": "a" * 64},
+    }
+    _write_json(paths["facts"], {
+        "schema": runner.OUTCOME_SCHEMA,
+        "completed": True,
+        "split": "evaluation",
+        "injection_layer": 0,
+        "allocations": 1,
+        "input_pins": recorded_pins,
+        "route_modes": list(runner.ROUTE_MODES),
+        "one_exact_pretoken_cache_per_request_across_all_layers": True,
+        "one_paired_native_baseline_per_request_across_all_layers": True,
+        "logical_rows_fanned_out_from_physical_execution": True,
+        "every_zero_route_mode_physically_executed": True,
+    })
+    current_pins = {
+        **recorded_pins,
+        "outcome_code_bundle": {"sha256": "b" * 64},
+    }
+    allocation = SimpleNamespace(request_id="7")
+    with pytest.raises(RuntimeError, match="cannot authenticate resume"):
+        runner._completed_cell(
+            paths,
+            split="evaluation",
+            layer=0,
+            pins=current_pins,
+            allocations=(allocation,),
+        )
+
+
+def _capture_execution_stack() -> dict[str, object]:
+    config = json.loads((
+        EXPERIMENT / "configs"
+        / "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2.json"
+    ).read_text())
+    return dict(config["authenticated_capture_execution_stack"])
+
+
+def test_exact_capture_execution_stack_is_admitted(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    stack = _capture_execution_stack()
+    monkeypatch.setattr(runner.torch, "__version__", stack["torch"])
+    monkeypatch.setattr(runner.torch.version, "cuda", stack["cuda"])
+    observed = runner._validate_execution_stack(
+        {"authenticated_capture_execution_stack": stack},
+        {"gpu": stack["gpu"]},
+    )
+    assert observed == stack
+
+
+@pytest.mark.parametrize("field", ["gpu", "torch", "cuda"])
+def test_capture_execution_stack_mismatch_fails_closed(
+    field: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    stack = _capture_execution_stack()
+    hardware = {"gpu": stack["gpu"]}
+    torch_version = str(stack["torch"])
+    cuda_version = str(stack["cuda"])
+    if field == "gpu":
+        hardware["gpu"] = "NVIDIA GeForce RTX 3090"
+    elif field == "torch":
+        torch_version = "0.0.0"
+    else:
+        cuda_version = "0.0"
+    monkeypatch.setattr(runner.torch, "__version__", torch_version)
+    monkeypatch.setattr(runner.torch.version, "cuda", cuda_version)
+    with pytest.raises(RuntimeError, match="execution stack mismatch"):
+        runner._validate_execution_stack(
+            {"authenticated_capture_execution_stack": stack}, hardware,
+        )
 
 
 class _PrefixObserver:
@@ -241,6 +366,15 @@ def test_outcome_runner_has_no_allocator_or_candidate_pickle_dependency() -> Non
     assert "_run_candidate(" in source
     assert "advance_exact_prefix_native(" in source
     assert "one_exact_pretoken_cache_per_request_across_all_layers" in source
+    run_phase = next(
+        node for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "run_phase"
+    )
+    run_source = ast.get_source_segment(source, run_phase)
+    assert run_source is not None
+    stack_gate = run_source.index("_validate_execution_stack(")
+    assert stack_gate < run_source.index("_completed_cell(")
+    assert stack_gate < run_source.index("_load_model(")
 
 
 class _MultiBaselineObserver:

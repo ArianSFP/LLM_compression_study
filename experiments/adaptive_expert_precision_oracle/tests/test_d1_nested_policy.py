@@ -59,14 +59,26 @@ def _candidate_logits(crossings: int, *, shallow: bool = False) -> np.ndarray:
 
 
 def _metrics(crossings: int, *, shallow: bool = False):
+    baseline = _baseline_logits()
+    candidate = _candidate_logits(crossings, shallow=shallow)
     return exact_all_expert_d1_metrics(
-        _baseline_logits(), _candidate_logits(crossings, shallow=shallow),
+        baseline,
+        candidate,
+        baseline_top8=np.argsort(-baseline, kind="stable")[:8],
+        candidate_top8=np.argsort(-candidate, kind="stable")[:8],
     )
 
 
 def _screen():
     sensitivities = np.arange(256, dtype=np.float64)[:, None] / 256.0
-    return build_screened_d1_boundaries(_baseline_logits(), sensitivities)
+    baseline = _baseline_logits()
+    order = np.argsort(-baseline, kind="stable")
+    return build_screened_d1_boundaries(
+        baseline,
+        sensitivities,
+        selected_expert_ids=order[5:8],
+        outsider_expert_ids=order[8:16],
+    )
 
 
 class _ToyGeometry:
