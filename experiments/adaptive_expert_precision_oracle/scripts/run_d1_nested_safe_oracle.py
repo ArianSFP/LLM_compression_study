@@ -1,0 +1,1617 @@
+#!/usr/bin/env python3
+"""Physical nested D1-safe Experiment A oracle.
+
+Allocation is restricted to local and same-token next-layer D1 information.
+This runner never computes a terminal logit or executes a candidate beyond the
+next router.  It writes per-layer allocation candidates which are calibrated
+and sealed before the separate downstream outcome runner may consume them.
+"""
+
+from __future__ import annotations
+
+import argparse
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import dataclass
+import gc
+import hashlib
+import json
+import multiprocessing as mp
+from pathlib import Path
+import pickle
+import platform
+import sys
+import time
+from typing import Any, Callable, Mapping, Sequence
+
+import numpy as np
+import pandas as pd
+import torch
+from threadpoolctl import threadpool_limits
+
+
+EXPERIMENT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(EXPERIMENT / "src"), str(EXPERIMENT / "scripts")]
+
+from oracle_study.average_rate_allocator import (  # noqa: E402
+    exact_group_option_allocate,
+    multiple_choice_allocate,
+)
+from oracle_study.causal_control import selector_and_execution_router_weights  # noqa: E402
+from oracle_study.d1_decode import (  # noqa: E402
+    cache_state_metrics,
+    clone_decode_cache,
+    mutation_safe_cached_autograd,
+)
+from oracle_study.d1_layer_slice import load_d1_layer_slice  # noqa: E402
+from oracle_study.d1_nested_allocation import (  # noqa: E402
+    AllocationCheckpoint,
+    PhysicalPageMove,
+    RouteRepairMetrics,
+    add_only_local_completion,
+    hard_saturating_route_repair,
+    physical_subset,
+    reverse_local_prune_to_reserve,
+    state_page_count,
+    validate_states,
+)
+from oracle_study.d1_nested_geometry import TokenStateGeometry  # noqa: E402
+from oracle_study.d1_nested_artifacts import (  # noqa: E402
+    validate_frozen_calibration_spec,
+)
+from oracle_study.d1_nested_policy import (  # noqa: E402
+    canonical_add_only_moves,
+    orchestrate_nested_policy_pair,
+)
+from oracle_study.d1_nested_search import (  # noqa: E402
+    ExactD1Metrics,
+    build_screened_d1_boundaries,
+    exact_all_expert_d1_metrics,
+    stable_top8,
+)
+import run_d1_slice_oracle_pilot as base  # noqa: E402
+
+
+SCHEMA = "pr13_d1_nested_safe_oracle_layer_candidates_v1"
+ARM_PR13 = "independent_pr13"
+ARM_STRICT = "strict_frozen_candidate_incumbent_repair"
+ARM_LOCAL = "nested_local_only"
+ARM_D1 = "nested_d1_safe"
+ARM_D1_SEVERITY = "nested_d1_safe_violation_mass"
+STRICT_BANK_WINDOWS = (16, 32, 64)
+
+
+@dataclass(frozen=True)
+class CompactLocalPair:
+    """Compact D1-blind core/endpoint result returned across a worker pipe."""
+
+    low_rate: int
+    high_rate: int
+    repair_window: int
+    common_core: np.ndarray
+    low_state: np.ndarray
+    high_state: np.ndarray
+    core_damage: float
+    low_damage: float
+    high_damage: float
+    core_stop_reason: str
+    low_stop_reason: str
+    high_stop_reason: str
+    core_to_low_moves: tuple[PhysicalPageMove, ...]
+    core_to_high_moves: tuple[PhysicalPageMove, ...]
+
+    def __post_init__(self) -> None:
+        low_rate = int(self.low_rate)
+        high_rate = int(self.high_rate)
+        window = int(self.repair_window)
+        core = np.asarray(validate_states(self.common_core), np.uint8)
+        low = np.asarray(validate_states(self.low_state), np.uint8)
+        high = np.asarray(validate_states(self.high_state), np.uint8)
+        damages = tuple(map(float, (
+            self.core_damage, self.low_damage, self.high_damage,
+        )))
+        reasons = tuple(map(str, (
+            self.core_stop_reason, self.low_stop_reason, self.high_stop_reason,
+        )))
+        low_moves = tuple(self.core_to_low_moves)
+        high_moves = tuple(self.core_to_high_moves)
+        if (
+            low_rate < 1
+            or high_rate <= low_rate
+            or window < 0
+            or any(not np.isfinite(value) or value < 0.0 for value in damages)
+            or any(not value for value in reasons)
+            or not physical_subset(core, low)
+            or not physical_subset(low, high)
+            or state_page_count(low) > 8 * low_rate
+            or state_page_count(high) > 8 * high_rate
+        ):
+            raise ValueError("compact Arm3 pair violates its physical contract")
+        if not np.array_equal(_replay_add_chain(core, low_moves), low):
+            raise ValueError("compact Arm3 low canonical chain does not replay")
+        if not np.array_equal(_replay_add_chain(core, high_moves), high):
+            raise ValueError("compact Arm3 high canonical chain does not replay")
+        for value in (core, low, high):
+            value.setflags(write=False)
+        object.__setattr__(self, "low_rate", low_rate)
+        object.__setattr__(self, "high_rate", high_rate)
+        object.__setattr__(self, "repair_window", window)
+        object.__setattr__(self, "common_core", core)
+        object.__setattr__(self, "low_state", low)
+        object.__setattr__(self, "high_state", high)
+        object.__setattr__(self, "core_damage", damages[0])
+        object.__setattr__(self, "low_damage", damages[1])
+        object.__setattr__(self, "high_damage", damages[2])
+        object.__setattr__(self, "core_stop_reason", reasons[0])
+        object.__setattr__(self, "low_stop_reason", reasons[1])
+        object.__setattr__(self, "high_stop_reason", reasons[2])
+        object.__setattr__(self, "core_to_low_moves", low_moves)
+        object.__setattr__(self, "core_to_high_moves", high_moves)
+
+
+@dataclass(frozen=True)
+class FrozenBankResult:
+    names: tuple[str, ...]
+    checkpoints: tuple[AllocationCheckpoint, ...]
+    metrics: tuple[ExactD1Metrics, ...]
+    selected_index: int
+    selected_name: str
+    reason: str
+
+
+class ExactReplayCache:
+    """One byte-keyed exact D1 replay cache shared by every arm for a token."""
+
+    def __init__(self, context: Any, geometry: TokenStateGeometry) -> None:
+        self.context = context
+        self.geometry = geometry
+        self._cache: dict[bytes, tuple[ExactD1Metrics, np.ndarray]] = {}
+        self.executions = 0
+        self.hits = 0
+        self._target = np.asarray(context.target_logits, np.float64)
+
+    @staticmethod
+    def key(states: np.ndarray) -> bytes:
+        return np.asarray(validate_states(states), np.uint8).tobytes(order="C")
+
+    def evaluate(self, states: np.ndarray) -> tuple[ExactD1Metrics, np.ndarray]:
+        value = validate_states(states)
+        key = self.key(value)
+        if key in self._cache:
+            self.hits += 1
+            return self._cache[key]
+        logits = np.asarray(
+            self.context.replay_logits(self.geometry.output_delta(value)),
+            np.float32,
+        ).reshape(-1)
+        metrics = exact_all_expert_d1_metrics(self._target, logits)
+        frozen_logits = logits.copy()
+        frozen_logits.setflags(write=False)
+        self._cache[key] = (metrics, frozen_logits)
+        self.executions += 1
+        return self._cache[key]
+
+    def __call__(self, states: np.ndarray) -> ExactD1Metrics:
+        return self.evaluate(states)[0]
+
+    def logits(self, states: np.ndarray) -> np.ndarray:
+        return self.evaluate(states)[1]
+
+    @property
+    def states(self) -> int:
+        return len(self._cache)
+
+
+def _replay_add_chain(
+    source: np.ndarray, moves: Sequence[PhysicalPageMove],
+) -> np.ndarray:
+    current = validate_states(source)
+    for move in moves:
+        if move.direction != "add":
+            raise ValueError("canonical physical chain contains a removal")
+        if int(current[move.expert, move.unit]) != move.source_state:
+            raise ValueError("canonical physical chain is stale")
+        current[move.expert, move.unit] = move.destination_state
+    return current
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(8 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def canonical_sha256(value: Any) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    value = json.loads(path.read_text())
+    if not isinstance(value, dict):
+        raise ValueError(f"JSON object required: {path}")
+    return value
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    result = [json.loads(line) for line in path.read_text().splitlines() if line]
+    if not result or any(not isinstance(row, dict) for row in result):
+        raise ValueError("request manifest must contain JSON objects")
+    return result
+
+
+def atomic_json(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    temporary.replace(path)
+
+
+def atomic_pickle(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("wb") as handle:
+        pickle.dump(payload, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    temporary.replace(path)
+
+
+def atomic_parquet(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    pd.DataFrame(list(rows)).to_parquet(temporary, index=False)
+    temporary.replace(path)
+
+
+def capture_path(directory: Path, request_id: str) -> Path:
+    path = directory / f"{request_id}.npz"
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    return path
+
+
+def load_capture(path: Path, layer: int) -> dict[str, np.ndarray]:
+    return base._load_capture(path, int(layer))
+
+
+def _selected_requests(
+    manifest: Path, split: str, request_limit: int | None,
+) -> list[dict[str, Any]]:
+    rows = [row for row in load_jsonl(manifest) if str(row["split"]) == split]
+    if request_limit is not None:
+        rows = rows[: int(request_limit)]
+    if not rows:
+        raise RuntimeError("selected request split is empty")
+    return rows
+
+
+def _groups(
+    request_rows: Sequence[Mapping[str, Any]],
+    captures: Mapping[str, Mapping[str, np.ndarray]],
+    layer: int,
+) -> list[dict[str, Any]]:
+    groups = []
+    for row in request_rows:
+        request_id = str(row["request_id"])
+        capture = captures[request_id]
+        position = int(row["decode_position"])
+        if position != len(capture["input_ids"]) - 1:
+            raise RuntimeError("capture does not end at its declared decode token")
+        ids = np.asarray(capture["router_ids"][layer, position], np.int64)
+        selector, execution = selector_and_execution_router_weights(
+            capture["router_scores"][layer, position],
+            historical_sum_atol=5e-7,
+            execution_sum_atol=0.003,
+        )
+        groups.append({
+            "group": len(groups),
+            "request_id": request_id,
+            "prompt_sha256": str(row["prompt_sha256"]),
+            "domain": str(row["domain"]),
+            "split": str(row["split"]),
+            "position": position,
+            "layer": int(layer),
+            "experts": ids,
+            "selector_weights": selector,
+            "execution_weights": execution,
+            "activation": np.asarray(capture["x"][position], np.float32),
+        })
+    return groups
+
+
+def _trace_states(trace: Any) -> np.ndarray:
+    allocation = getattr(trace, "allocation", trace)
+    states = np.stack([
+        np.asarray(frontier[int(index)].states, np.uint8)
+        for frontier, index in zip(trace.frontiers, allocation.option_indices)
+    ])
+    return validate_states(states)
+
+
+def _pr13_and_local_states(
+    refined: Mapping[str, Any],
+    group: Mapping[str, Any],
+    config: Mapping[str, Any],
+    rate: int,
+) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+    """Allocate PR13/local states from one already-refined rate frontier."""
+
+    budget = 8 * int(rate)
+    frontiers = tuple(refined["frontiers"])
+    features = tuple(refined["features"])
+    allocation = multiple_choice_allocate(
+        frontiers,
+        budget,
+        np.asarray(group["selector_weights"], np.float64) ** 2,
+    )
+    local = exact_group_option_allocate(
+        frontiers,
+        features,
+        np.asarray(group["execution_weights"], np.float64),
+        budget,
+        allocation.option_indices,
+        max_coordinate_sweeps=int(config["group_exact_coordinate_sweeps"]),
+        max_pair_passes=int(config["group_exact_pair_passes"]),
+    )
+    pr13_states = np.stack([
+        np.asarray(frontier[int(index)].states, np.uint8)
+        for frontier, index in zip(frontiers, allocation.option_indices)
+    ])
+    local_states = np.stack([
+        np.asarray(frontier[int(index)].states, np.uint8)
+        for frontier, index in zip(frontiers, local.option_indices)
+    ])
+    return validate_states(pr13_states), validate_states(local_states), {
+        "column_generation_rounds": int(refined["column_generation_rounds"]),
+        "column_generation_repairs": int(refined["column_generation_repairs"]),
+        "pr13_pages": state_page_count(pr13_states),
+        "frontier_local_pages": state_page_count(local_states),
+    }
+
+
+_COLLAPSE_CONTEXT: tuple[
+    Sequence[Mapping[str, Any]], Sequence[Mapping[str, Any]], Mapping[str, Any], int,
+] | None = None
+
+
+def _collapse_rate_task(
+    group_index: int,
+) -> tuple[int, tuple[np.ndarray, np.ndarray, dict[str, Any]]]:
+    if _COLLAPSE_CONTEXT is None:
+        raise RuntimeError("forked rate-collapse context is absent")
+    refined, groups, config, rate = _COLLAPSE_CONTEXT
+    with threadpool_limits(limits=1):
+        result = _pr13_and_local_states(
+            refined[int(group_index)], groups[int(group_index)], config, rate,
+        )
+    return int(group_index), result
+
+
+def _collapse_refined_rate(
+    refined: Sequence[Mapping[str, Any]],
+    groups: Sequence[Mapping[str, Any]],
+    config: Mapping[str, Any],
+    rate: int,
+    workers: int,
+    layer: int,
+) -> list[tuple[np.ndarray, np.ndarray, dict[str, Any]]]:
+    """Fork final MCKP/exact-local collapse across already-refined groups."""
+
+    if len(refined) != len(groups) or not groups:
+        raise ValueError("rate-collapse refined/group grids differ or are empty")
+    if int(workers) == 1 or len(groups) == 1:
+        return [
+            _pr13_and_local_states(item, group, config, int(rate))
+            for item, group in zip(refined, groups, strict=True)
+        ]
+    global _COLLAPSE_CONTEXT
+    _COLLAPSE_CONTEXT = (refined, groups, config, int(rate))
+    results: list[tuple[np.ndarray, np.ndarray, dict[str, Any]] | None] = [
+        None for _ in groups
+    ]
+    fork = mp.get_context("fork")
+    try:
+        with ProcessPoolExecutor(
+            max_workers=min(int(workers), len(groups)), mp_context=fork,
+        ) as pool:
+            futures = {
+                pool.submit(_collapse_rate_task, index): index
+                for index in range(len(groups))
+            }
+            for completed, future in enumerate(as_completed(futures), start=1):
+                index, result = future.result()
+                if index != futures[future] or results[index] is not None:
+                    raise RuntimeError("forked rate-collapse identity changed")
+                results[index] = result
+                if completed % 8 == 0 or completed == len(groups):
+                    print(
+                        f"[layer {layer}] collapsed rate={rate} "
+                        f"{completed}/{len(groups)} groups",
+                        flush=True,
+                    )
+    finally:
+        _COLLAPSE_CONTEXT = None
+    if any(value is None for value in results):
+        raise RuntimeError("forked rate-collapse grid was incomplete")
+    return list(results)  # type: ignore[arg-type]
+
+
+def _precompute_rate_states(
+    groups: Sequence[Mapping[str, Any]],
+    experts: Mapping[int, Mapping[str, Any]],
+    proxy: np.ndarray,
+    beta: float,
+    config: Mapping[str, Any],
+    rates: Sequence[int],
+    workers: int,
+    layer: int,
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[int, tuple[np.ndarray, np.ndarray, dict[str, Any]]]],
+]:
+    """Build/refine/collapse all groups in worker batches, retaining states only."""
+
+    geometries = base._build_geometries(
+        groups, experts, proxy, beta, config, int(workers), int(layer),
+    )
+    if len(geometries) != len(groups):
+        raise RuntimeError("coarse geometry grid does not match request groups")
+    state_grid: list[
+        dict[int, tuple[np.ndarray, np.ndarray, dict[str, Any]]]
+    ] = [dict() for _ in groups]
+    for rate in map(int, rates):
+        refined = base._refine_geometries(
+            geometries,
+            groups,
+            proxy,
+            beta,
+            config,
+            rate,
+            int(workers),
+            int(layer),
+        )
+        collapsed = _collapse_refined_rate(
+            refined, groups, config, rate, int(workers), int(layer),
+        )
+        for index, result in enumerate(collapsed):
+            state_grid[index][rate] = result
+        del refined, collapsed
+    return geometries, state_grid
+
+
+_ARM3_CONTEXT: tuple[
+    Sequence[Mapping[str, Any]],
+    Sequence[Mapping[str, Any]],
+    Sequence[Mapping[int, tuple[np.ndarray, np.ndarray, dict[str, Any]]]],
+    np.ndarray,
+    float,
+    Sequence[tuple[int, int]],
+    int,
+] | None = None
+
+
+def _compact_local_pair_task(
+    job: tuple[int, int, int],
+) -> tuple[int, int, int, CompactLocalPair]:
+    if _ARM3_CONTEXT is None:
+        raise RuntimeError("forked Arm3 context is absent")
+    group_index, pair_index, window = map(int, job)
+    geometries, groups, rate_grid, proxy, beta, pairs, refresh = _ARM3_CONTEXT
+    group = groups[group_index]
+    low_rate, high_rate = pairs[pair_index]
+    coarse = geometries[group_index]
+    geometry = TokenStateGeometry(
+        tuple(coarse["responses"]),
+        np.asarray(group["execution_weights"], np.float64),
+        proxy,
+        beta,
+    )
+    high_reference = rate_grid[group_index][high_rate][0]
+    with threadpool_limits(limits=1):
+        core, low, high = _local_nested_pair(
+            high_reference,
+            np.asarray(group["experts"], np.int64),
+            geometry,
+            low_rate,
+            high_rate,
+            window,
+            refresh,
+        )
+    common = np.asarray(core.final.states, np.uint8)
+    low_state = np.asarray(low.final.states, np.uint8)
+    high_state = np.asarray(high.final.states, np.uint8)
+    result = CompactLocalPair(
+        low_rate=low_rate,
+        high_rate=high_rate,
+        repair_window=window,
+        common_core=common,
+        low_state=low_state,
+        high_state=high_state,
+        core_damage=float(core.final.local_damage),
+        low_damage=float(low.final.local_damage),
+        high_damage=float(high.final.local_damage),
+        core_stop_reason=str(core.stop_reason),
+        low_stop_reason=str(low.stop_reason),
+        high_stop_reason=str(high.stop_reason),
+        core_to_low_moves=canonical_add_only_moves(common, low_state),
+        core_to_high_moves=canonical_add_only_moves(common, high_state),
+    )
+    return group_index, pair_index, window, result
+
+
+def _precompute_arm3_pairs(
+    geometries: Sequence[Mapping[str, Any]],
+    groups: Sequence[Mapping[str, Any]],
+    rate_grid: Sequence[Mapping[int, tuple[np.ndarray, np.ndarray, dict[str, Any]]]],
+    proxy: np.ndarray,
+    beta: float,
+    pair_specs: Sequence[tuple[int, int]],
+    repair_windows: Sequence[int],
+    refresh: int,
+    workers: int,
+    layer: int,
+) -> list[dict[tuple[int, int, int], CompactLocalPair]]:
+    """Precompute every D1-blind local pair before loading the D1 GPU slice."""
+
+    if len(geometries) != len(groups) or len(rate_grid) != len(groups):
+        raise ValueError("Arm3 precompute grids differ")
+    windows = tuple(map(int, repair_windows))
+    jobs = [
+        (group_index, pair_index, window)
+        for group_index in range(len(groups))
+        for pair_index in range(len(pair_specs))
+        for window in windows
+    ]
+    if not jobs:
+        raise ValueError("Arm3 precompute job grid is empty")
+    global _ARM3_CONTEXT
+    _ARM3_CONTEXT = (
+        geometries, groups, rate_grid, np.asarray(proxy), float(beta),
+        tuple(pair_specs), int(refresh),
+    )
+    results: list[dict[tuple[int, int, int], CompactLocalPair]] = [
+        {} for _ in groups
+    ]
+    try:
+        if int(workers) == 1 or len(jobs) == 1:
+            completed_rows = map(_compact_local_pair_task, jobs)
+            for group_index, pair_index, window, result in completed_rows:
+                results[group_index][(
+                    result.low_rate, result.high_rate, window,
+                )] = result
+        else:
+            fork = mp.get_context("fork")
+            with ProcessPoolExecutor(
+                max_workers=min(int(workers), len(jobs)), mp_context=fork,
+            ) as pool:
+                futures = {pool.submit(_compact_local_pair_task, job): job for job in jobs}
+                for completed, future in enumerate(as_completed(futures), start=1):
+                    group_index, pair_index, window, result = future.result()
+                    if (group_index, pair_index, window) != futures[future]:
+                        raise RuntimeError("forked Arm3 job identity changed")
+                    key = (result.low_rate, result.high_rate, window)
+                    if key in results[group_index]:
+                        raise RuntimeError("forked Arm3 result repeated")
+                    results[group_index][key] = result
+                    if completed % 16 == 0 or completed == len(jobs):
+                        print(
+                            f"[layer {layer}] Arm3 local pairs "
+                            f"{completed}/{len(jobs)}",
+                            flush=True,
+                        )
+    finally:
+        _ARM3_CONTEXT = None
+    expected = len(pair_specs) * len(windows)
+    if any(len(group) != expected for group in results):
+        raise RuntimeError("forked Arm3 result grid was incomplete")
+    return results
+
+
+@dataclass
+class D1Context:
+    model_slice: Any
+    prefix_cache: Any
+    baseline_logits: np.ndarray
+    baseline_ids: np.ndarray
+    target_logits: np.ndarray
+    target_ids: np.ndarray
+    logit_anchor: np.ndarray
+    sensitivities: np.ndarray
+    candidate_ids: np.ndarray
+    current_residual: np.ndarray
+    current_x: np.ndarray
+    current_routed: np.ndarray
+    parity: dict[str, Any]
+
+    def replay_logits(self, delta: np.ndarray) -> np.ndarray:
+        hidden = self.model_slice.compose_current_output(
+            self.current_residual[None, None, :],
+            self.current_x[None, None, :],
+            self.current_routed[None, None, :],
+            np.asarray(delta, np.float32)[None, None, :],
+        )
+        with torch.inference_mode():
+            logits, _, _, _ = self.model_slice.next_router_outputs_decode(
+                hidden, clone_decode_cache(self.prefix_cache),
+                int(self.parity["position"]),
+            )
+        raw = logits[0, 0].detach().float().cpu().numpy()
+        anchored = np.asarray(raw + self.logit_anchor, np.float32)
+        return anchored
+
+
+def _d1_context(
+    model_slice: Any,
+    capture: Mapping[str, np.ndarray],
+    layer: int,
+    position: int,
+) -> D1Context:
+    """Build the exact-prefix D1 context from authenticated stored hidden state."""
+
+    stored_hidden = torch.as_tensor(
+        np.asarray(capture["hidden"][layer], np.float32),
+        device=model_slice.device,
+        dtype=torch.bfloat16,
+    ).unsqueeze(0)
+    if stored_hidden.ndim != 3 or position >= stored_hidden.shape[1]:
+        raise RuntimeError("stored injection-layer hidden state has invalid shape")
+    stored_current = stored_hidden[:, position : position + 1]
+    zero = np.zeros_like(np.asarray(capture["routed"][position], np.float32))
+    singleton_current = model_slice.compose_current_output(
+        np.asarray(capture["residual"][position], np.float32)[None, None, :],
+        np.asarray(capture["x"][position], np.float32)[None, None, :],
+        np.asarray(capture["routed"][position], np.float32)[None, None, :],
+        zero[None, None, :],
+    ).detach()
+    if not torch.equal(singleton_current, stored_current):
+        raise RuntimeError(
+            "singleton zero-delta composition differs from authenticated stored hidden"
+        )
+    with torch.inference_mode():
+        prefix = model_slice.decode_prefix_cache(stored_hidden[:, :position])
+        stored_logits, _, stored_ids, stored_cache = (
+            model_slice.next_router_outputs_decode(
+                stored_current, clone_decode_cache(prefix), position,
+            )
+        )
+        singleton_logits, _, singleton_ids, singleton_cache = (
+            model_slice.next_router_outputs_decode(
+                singleton_current, clone_decode_cache(prefix), position,
+            )
+        )
+    cache_parity = cache_state_metrics(stored_cache, singleton_cache, layer + 1)
+    if (
+        not torch.equal(stored_logits, singleton_logits)
+        or not torch.equal(stored_ids, singleton_ids)
+        or not cache_parity.bit_identical
+    ):
+        raise RuntimeError("stored/singleton exact D1 decode is not bit-identical")
+    raw_baseline_logits = stored_logits[0, 0].detach().float().cpu().numpy()
+    baseline_ids = stored_ids[0, 0].detach().cpu().numpy()
+    target_logits = np.asarray(capture["router_logits"][layer + 1, position], np.float32)
+    target_ids = np.asarray(capture["router_ids"][layer + 1, position], np.int64)
+    logit_anchor = np.asarray(target_logits - raw_baseline_logits, np.float32)
+    raw_max_abs = float(np.max(np.abs(logit_anchor), initial=0.0))
+    anchored_baseline = np.asarray(raw_baseline_logits + logit_anchor, np.float32)
+    if raw_max_abs > 0.0625 or not np.array_equal(anchored_baseline, target_logits):
+        raise RuntimeError("raw D1 slice exceeds or fails its constant-logit anchor gate")
+    if not np.array_equal(baseline_ids, target_ids):
+        raise RuntimeError("stored-hidden cached decode changes ordered target IDs")
+    baseline_logits = anchored_baseline
+    target_order = stable_top8(target_logits)
+    if not np.array_equal(target_ids, target_order):
+        raise RuntimeError("captured ordered D1 IDs differ from stable target-logit top-8")
+    target_set = set(target_order.tolist())
+    outsiders = np.asarray(sorted(
+        (expert for expert in range(target_logits.size) if expert not in target_set),
+        key=lambda expert: (-float(target_logits[expert]), int(expert)),
+    )[:8], np.int64)
+    candidate_ids = np.concatenate((target_order[5:8], outsiders))
+    current = stored_current.detach().clone().requires_grad_(True)
+    with mutation_safe_cached_autograd():
+        logits, _ = model_slice.next_router_logits_decode(
+            current, clone_decode_cache(prefix), position,
+        )
+        values = logits[0, 0]
+        gradients = []
+        for offset, expert in enumerate(candidate_ids.tolist()):
+            gradient = torch.autograd.grad(
+                values[int(expert)], current,
+                retain_graph=offset + 1 < len(candidate_ids),
+                create_graph=False,
+            )[0]
+            gradients.append(gradient[0, 0].detach().float().cpu().numpy())
+    parity = {
+        "position": int(position),
+        "stored_current_hidden_bit_identical": True,
+        "singleton_zero_current_hidden_bit_identical": True,
+        "stored_singleton_router_bit_identical": True,
+        "stored_singleton_cache_bit_identical": bool(cache_parity.bit_identical),
+        "raw_cached_vs_full_router_max_abs": raw_max_abs,
+        "constant_logit_anchor_applied": bool(raw_max_abs > 0.0),
+        "anchored_cached_vs_full_router_max_abs": 0.0,
+        "anchored_cached_vs_full_router_bit_identical": True,
+        "cached_vs_full_ordered_top8_equal": True,
+    }
+    return D1Context(
+        model_slice=model_slice,
+        prefix_cache=prefix,
+        baseline_logits=baseline_logits,
+        baseline_ids=baseline_ids,
+        target_logits=target_logits,
+        target_ids=target_ids,
+        logit_anchor=logit_anchor,
+        sensitivities=np.stack(gradients),
+        candidate_ids=candidate_ids,
+        current_residual=np.asarray(capture["residual"][position], np.float32),
+        current_x=np.asarray(capture["x"][position], np.float32),
+        current_routed=np.asarray(capture["routed"][position], np.float32),
+        parity=parity,
+    )
+
+
+def _state_record(
+    *,
+    arm: str,
+    rate: int,
+    group: Mapping[str, Any],
+    common_core: np.ndarray,
+    states: np.ndarray,
+    moves: Sequence[PhysicalPageMove] | Sequence[Mapping[str, Any]],
+    geometry: TokenStateGeometry,
+    selector_weights: np.ndarray,
+    d1_logits: np.ndarray,
+    target_logits: np.ndarray,
+    target_ids: np.ndarray,
+    parameter: Mapping[str, Any],
+) -> dict[str, Any]:
+    exact = exact_all_expert_d1_metrics(target_logits, d1_logits)
+    if set(exact.baseline_top8.tolist()) != set(
+        np.asarray(target_ids, np.int64).reshape(-1).tolist()
+    ):
+        raise RuntimeError("stored target IDs differ from the target-logit top-8 set")
+    move_rows = [
+        move.to_dict() if isinstance(move, PhysicalPageMove) else dict(move)
+        for move in moves
+    ]
+    return {
+        "schema": SCHEMA,
+        "arm": str(arm),
+        "rate": int(rate),
+        "layer": int(group["layer"]),
+        "group": int(group["group"]),
+        "request_id": str(group["request_id"]),
+        "prompt_sha256": str(group["prompt_sha256"]),
+        "domain": str(group["domain"]),
+        "split": str(group["split"]),
+        "position": int(group["position"]),
+        "expert_ids": np.asarray(group["experts"], np.int64).tolist(),
+        "selector_weights": np.asarray(selector_weights, np.float64).tolist(),
+        "execution_weights": np.asarray(group["execution_weights"], np.float64).tolist(),
+        "common_core_states": validate_states(common_core),
+        "selected_states": validate_states(states),
+        "moves": move_rows,
+        "selected_pages": state_page_count(states),
+        "core_pages": state_page_count(common_core),
+        "local_damage": geometry.local_damage(states),
+        "all_q2_damage": geometry.all_q2_damage(),
+        "legacy_additive_damage": geometry.legacy_additive_damage(
+            states, selector_weights,
+        ),
+        "d1_candidate_logits": np.asarray(d1_logits, np.float32),
+        "d1_crossings": int(exact.membership_crossings),
+        "d1_violation_depth": float(exact.violation_depth),
+        "d1_routing_mass_churn": float(exact.routing_mass_lost),
+        "d1_labeled_margin": float(exact.target_set_margin),
+        "parameter": dict(parameter),
+        "state_sha256": hashlib.sha256(
+            validate_states(states).astype(np.uint8).tobytes(),
+        ).hexdigest(),
+    }
+
+
+def _local_nested_pair(
+    high_reference: np.ndarray,
+    expert_ids: np.ndarray,
+    geometry: TokenStateGeometry,
+    low_rate: int,
+    high_rate: int,
+    window: int,
+    refresh: int,
+) -> tuple[Any, Any, Any]:
+    core_trace = reverse_local_prune_to_reserve(
+        high_reference,
+        expert_ids,
+        budget_pages=8 * int(low_rate),
+        repair_window_pages=int(window),
+        local_damage=geometry.local_damage,
+        score_removals=geometry.score_moves,
+        refresh_after_accepted_pages=int(refresh),
+    )
+    low_trace = add_only_local_completion(
+        core_trace.final.states,
+        expert_ids,
+        budget_pages=8 * int(low_rate),
+        local_damage=geometry.local_damage,
+        score_additions=geometry.score_moves,
+        refresh_after_accepted_pages=int(refresh),
+    )
+    high_trace = add_only_local_completion(
+        low_trace.final.states,
+        expert_ids,
+        budget_pages=8 * int(high_rate),
+        local_damage=geometry.local_damage,
+        score_additions=geometry.score_moves,
+        refresh_after_accepted_pages=int(refresh),
+    )
+    if not (
+        physical_subset(core_trace.final.states, low_trace.final.states)
+        and physical_subset(low_trace.final.states, high_trace.final.states)
+    ):
+        raise RuntimeError("nested local physical chain failed")
+    return core_trace, low_trace, high_trace
+
+
+
+def _state_digest(states: np.ndarray) -> str:
+    return hashlib.sha256(
+        np.asarray(validate_states(states), np.uint8).tobytes(order="C"),
+    ).hexdigest()
+
+
+def _full_d1_boundaries(context: D1Context) -> Any:
+    sensitivities = np.asarray(context.sensitivities, np.float64)
+    candidate_ids = np.asarray(context.candidate_ids, np.int64).reshape(-1)
+    if (
+        sensitivities.ndim != 2
+        or sensitivities.shape[0] != candidate_ids.size
+        or len(set(candidate_ids.tolist())) != candidate_ids.size
+        or np.any((candidate_ids < 0) | (candidate_ids >= 256))
+    ):
+        raise ValueError("D1 context candidate sensitivities are invalid")
+    full = np.zeros((256, sensitivities.shape[1]), np.float64)
+    full[candidate_ids] = sensitivities
+    return build_screened_d1_boundaries(context.target_logits, full)
+
+
+def _checkpoint_for_state(
+    name: str,
+    expert_ids: np.ndarray,
+    states: np.ndarray,
+    geometry: TokenStateGeometry,
+    step: int,
+) -> AllocationCheckpoint:
+    value = validate_states(states)
+    return AllocationCheckpoint(
+        phase=str(name),
+        step=int(step),
+        expert_ids=np.asarray(expert_ids, np.int64),
+        states=value,
+        local_damage=float(geometry.local_damage(value)),
+    )
+
+
+def _strict_frozen_bank(
+    *,
+    rate: int,
+    expert_ids: np.ndarray,
+    pr13_state: np.ndarray,
+    exact_local_state: np.ndarray,
+    arm3_endpoints: Mapping[int, np.ndarray],
+    geometry: TokenStateGeometry,
+    exact_replay: Callable[[np.ndarray], ExactD1Metrics],
+) -> FrozenBankResult:
+    """Freeze the exact five-state Arm2 bank before any exact replay."""
+
+    if tuple(sorted(map(int, arm3_endpoints))) != STRICT_BANK_WINDOWS:
+        raise ValueError("strict Arm2 bank requires frozen W=16,32,64 endpoints")
+    names = (
+        "independent_pr13_incumbent",
+        "independent_exact_combined_local",
+        *(f"nested_local_window_{window}" for window in STRICT_BANK_WINDOWS),
+    )
+    states = (
+        validate_states(pr13_state),
+        validate_states(exact_local_state),
+        *(validate_states(arm3_endpoints[window]) for window in STRICT_BANK_WINDOWS),
+    )
+    # Construction of every immutable checkpoint intentionally precedes the
+    # first D1 callback: no replay can influence which candidates enter bank.
+    checkpoints = tuple(
+        _checkpoint_for_state(name, expert_ids, state, geometry, index)
+        for index, (name, state) in enumerate(zip(names, states, strict=True))
+    )
+    exact = tuple(exact_replay(checkpoint.states) for checkpoint in checkpoints)
+    values = tuple(
+        RouteRepairMetrics(
+            d1_crossings=metric.membership_crossings,
+            arm5_severity=metric.routing_mass_lost,
+            local_damage=checkpoint.local_damage,
+        )
+        for checkpoint, metric in zip(checkpoints, exact, strict=True)
+    )
+    selected = hard_saturating_route_repair(
+        names,
+        checkpoints,
+        values,
+        incumbent_index=0,
+        page_budget=8 * int(rate),
+        require_matched_pages=False,
+    )
+    return FrozenBankResult(
+        names=names,
+        checkpoints=checkpoints,
+        metrics=exact,
+        selected_index=selected.index,
+        selected_name=selected.name,
+        reason=selected.reason,
+    )
+
+
+def _metric_audit(metric: ExactD1Metrics) -> dict[str, Any]:
+    return {
+        "membership_crossings": int(metric.membership_crossings),
+        "violation_depth": float(metric.violation_depth),
+        "routing_mass_lost": float(metric.routing_mass_lost),
+        "target_set_margin": float(metric.target_set_margin),
+        "lost_target_experts": metric.lost_target_experts.tolist(),
+        "entering_outsiders": metric.entering_outsiders.tolist(),
+    }
+
+
+def _repair_audit(result: Any | None) -> dict[str, Any] | None:
+    if result is None:
+        return None
+    return {
+        "arm": str(result.arm),
+        "initial_state_sha256": _state_digest(result.initial_state),
+        "final_state_sha256": _state_digest(result.final_state),
+        "initial_metrics": _metric_audit(result.initial_metrics),
+        "final_metrics": _metric_audit(result.final_metrics),
+        "stop_reason": str(result.stop_reason),
+        "steps": [
+            {
+                "round_index": int(step.round_index),
+                "state_sha256": _state_digest(step.state),
+                "removal": step.removal.to_dict(),
+                "addition": step.addition.to_dict(),
+                "metrics": _metric_audit(step.metrics),
+                "local_damage": float(step.local_damage),
+            }
+            for step in result.steps
+        ],
+    }
+
+
+def _strict_bank_parameter(result: FrozenBankResult) -> dict[str, Any]:
+    return {
+        "frozen_candidate_bank": True,
+        "all_states_frozen_before_exact_d1_selection": True,
+        "candidate_names": list(result.names),
+        "candidate_state_sha256": [
+            _state_digest(checkpoint.states) for checkpoint in result.checkpoints
+        ],
+        "candidate_metrics": [
+            {
+                **_metric_audit(metric),
+                "local_damage": float(checkpoint.local_damage),
+                "pages": int(checkpoint.group_pages),
+            }
+            for checkpoint, metric in zip(
+                result.checkpoints, result.metrics, strict=True,
+            )
+        ],
+        "incumbent_name": result.names[0],
+        "selected_candidate": result.selected_name,
+        "selection_reason": result.reason,
+        "safe_incumbent_identity_retained": bool(
+            result.metrics[0].safe and result.selected_index == 0
+        ),
+        "selected_index": int(result.selected_index),
+    }
+
+
+def _policy_parameter(
+    result: Any,
+    *,
+    repair_window: int,
+    eta: float,
+    endpoint: str,
+) -> dict[str, Any]:
+    return {
+        "repair_window": int(repair_window),
+        "eta": float(eta),
+        "endpoint": str(endpoint),
+        "policy_arm": str(result.arm),
+        "low_stop_reason": str(result.low_stop_reason),
+        "high_stop_reason": str(result.high_stop_reason),
+        "arm3_low_damage": float(result.arm3_low_damage),
+        "arm3_high_damage": float(result.arm3_high_damage),
+        "low_local_damage_limit": float(result.low_local_damage_limit),
+        "high_reference_damage_limit": float(result.high_reference_damage_limit),
+        "pair_fallback_high_guardrail_infeasible": bool(
+            result.pair_fallback_high_guardrail_infeasible
+        ),
+        "high_guardrail_qualified_checkpoints": int(
+            result.high_guardrail_qualified_checkpoints
+        ),
+        "high_guardrail_repair_attempts": int(
+            result.high_guardrail_repair_attempts
+        ),
+        "strict_per_endpoint_local_guardrail_satisfied": True,
+        "low_metrics": _metric_audit(result.low_metrics),
+        "high_metrics": _metric_audit(result.high_metrics),
+        "low_repair": _repair_audit(result.low_repair),
+        "high_checkpoints": [
+            {
+                "checkpoint_index": int(checkpoint.checkpoint_index),
+                "state_sha256": _state_digest(checkpoint.state),
+                "metrics": _metric_audit(checkpoint.metrics),
+                "local_damage": float(checkpoint.local_damage),
+                "completion_moves": [
+                    move.to_dict() for move in checkpoint.completion_moves
+                ],
+                "repair": _repair_audit(checkpoint.repair),
+            }
+            for checkpoint in result.high_checkpoints
+        ],
+        "high_repair_audits": [
+            {
+                "attempt_index": int(audit.attempt_index),
+                "allowed_crossings": int(audit.allowed_crossings),
+                "accepted": bool(audit.accepted),
+                "result": _repair_audit(audit.result),
+            }
+            for audit in result.high_repair_audits
+        ],
+        "canonical_core_to_selected_chain": True,
+    }
+
+
+def _high_guardrail_audit(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Count pair fallbacks once through each policy's low endpoint row."""
+
+    pair_rows = [
+        row for row in rows
+        if row.get("arm") in {ARM_D1, ARM_D1_SEVERITY}
+        and isinstance(row.get("parameter"), Mapping)
+        and row["parameter"].get("endpoint") == "low"
+    ]
+    fallbacks = sum(
+        bool(row["parameter"].get("pair_fallback_high_guardrail_infeasible"))
+        for row in pair_rows
+    )
+    by_arm = {
+        arm: {
+            "policy_pairs": sum(row["arm"] == arm for row in pair_rows),
+            "fallback_pairs": sum(
+                row["arm"] == arm
+                and bool(row["parameter"].get(
+                    "pair_fallback_high_guardrail_infeasible",
+                ))
+                for row in pair_rows
+            ),
+        }
+        for arm in (ARM_D1, ARM_D1_SEVERITY)
+    }
+    for value in by_arm.values():
+        value["fallback_fraction"] = (
+            0.0 if value["policy_pairs"] == 0
+            else value["fallback_pairs"] / value["policy_pairs"]
+        )
+    return {
+        "policy_pairs": len(pair_rows),
+        "fallback_pairs": fallbacks,
+        "fallback_fraction": (
+            0.0 if not pair_rows else fallbacks / len(pair_rows)
+        ),
+        "qualified_checkpoints_total": sum(
+            int(row["parameter"].get("high_guardrail_qualified_checkpoints", 0))
+            for row in pair_rows
+        ),
+        "repair_attempts_total": sum(
+            int(row["parameter"].get("high_guardrail_repair_attempts", 0))
+            for row in pair_rows
+        ),
+        "by_arm": by_arm,
+        "counting_unit": "policy_pair_low_endpoint_only",
+    }
+
+
+def _config_windows_etas(
+    config: Mapping[str, Any],
+) -> tuple[tuple[int, ...], tuple[float, ...]]:
+    windows = tuple(map(
+        int, config["common_core"]["repair_window_pages_per_group_grid"],
+    ))
+    etas = tuple(map(float, config["local_guardrail"]["eta_grid"]))
+    if (
+        windows != STRICT_BANK_WINDOWS
+        or not etas
+        or len(set(windows)) != len(windows)
+        or len(set(etas)) != len(etas)
+        or any(window < 0 for window in windows)
+        or any(not np.isfinite(eta) or eta < 0.0 for eta in etas)
+    ):
+        raise ValueError("configured repair-window/eta grids are invalid")
+    return windows, etas
+
+
+def _policy_grid(
+    config: Mapping[str, Any],
+    split: str,
+    frozen_calibration: Mapping[str, Any] | None,
+) -> tuple[dict[tuple[int, int], dict[int, tuple[float, ...]]], dict[str, Any] | None]:
+    """Return full calibration or authenticated selected evaluation grid."""
+
+    pairs = tuple(
+        (
+            int(item["metadata_matched_pages_per_expert"]),
+            int(item["pr13_reference_pages_per_expert"]),
+        )
+        for item in config["traffic_pairs"]
+    )
+    windows, etas = _config_windows_etas(config)
+    if split == "calibration":
+        if frozen_calibration is not None:
+            raise ValueError("calibration split rejects a frozen-parameter override")
+        return {
+            pair: {window: etas for window in windows}
+            for pair in pairs
+        }, None
+    if split != "evaluation" or frozen_calibration is None:
+        raise ValueError("evaluation split requires authenticated frozen calibration")
+    digest = validate_frozen_calibration_spec(frozen_calibration)
+    spec = frozen_calibration.get("spec")
+    if not isinstance(spec, Mapping):
+        raise ValueError("frozen calibration spec is absent")
+    if (
+        spec.get("run_id") != config.get("run_id")
+        or spec.get("config_canonical_sha256") != canonical_sha256(config)
+        or tuple(spec.get("layers", ()))
+        != tuple(map(int, config["injection_layers"]))
+        or spec.get("arm5_inherits_arm4_parameters") is not True
+    ):
+        raise ValueError("frozen calibration is not bound to this allocation config")
+    pair_rows = spec.get("traffic_pairs")
+    if not isinstance(pair_rows, list):
+        raise ValueError("frozen calibration traffic-pair selections are absent")
+    indexed = {
+        (
+            int(row.get("metadata_matched_rate", -1)),
+            int(row.get("reference_rate", -1)),
+        ): row
+        for row in pair_rows if isinstance(row, Mapping)
+    }
+    if set(indexed) != set(pairs) or len(indexed) != len(pair_rows):
+        raise ValueError("frozen calibration traffic-pair grid changed")
+    grid: dict[tuple[int, int], dict[int, tuple[float, ...]]] = {}
+    for pair in pairs:
+        row = indexed[pair]
+        window = int(row.get("repair_window_pages", -1))
+        eta = float(row.get("eta", float("nan")))
+        parameter = {"repair_window_pages": window, "eta": eta}
+        if (
+            window not in windows
+            or eta not in etas
+            or row.get("selected_parameter_sha256") != canonical_sha256(parameter)
+            or row.get("applies_to_rates") != list(pair)
+            or row.get("applies_to_arms")
+            != [ARM_LOCAL, ARM_D1, ARM_D1_SEVERITY]
+        ):
+            raise ValueError("frozen calibration selected parameter changed")
+        grid[pair] = {window: (eta,)}
+    return grid, {
+        "frozen_calibration_spec_sha256": str(digest),
+        "calibration_evidence_sha256": str(
+            spec.get("calibration_evidence_sha256", "")
+        ),
+    }
+
+
+def _expected_rows_per_group(
+    rates: Sequence[int],
+    policy_grid: Mapping[tuple[int, int], Mapping[int, Sequence[float]]],
+) -> int:
+    rows = 2 * len(set(map(int, rates)))
+    for window_grid in policy_grid.values():
+        rows += 2 * len(window_grid)
+        rows += 4 * sum(len(tuple(etas)) for etas in window_grid.values())
+    return int(rows)
+
+
+
+def run_layer(args: argparse.Namespace, layer: int) -> dict[str, Any]:
+    started = time.perf_counter()
+    config = load_json(args.config)
+    pr13_config = load_json(args.pr13_config)
+    frozen_raw = (
+        None if args.frozen_calibration is None
+        else load_json(args.frozen_calibration)
+    )
+    policy_grid, frozen_facts = _policy_grid(config, args.split, frozen_raw)
+    config_windows, config_etas = _config_windows_etas(config)
+    if tuple(map(int, args.repair_windows)) != config_windows:
+        raise ValueError("CLI repair windows differ from the immutable config grid")
+    request_rows = _selected_requests(args.manifest, args.split, args.request_limit)
+    captures = {
+        str(row["request_id"]): load_capture(
+            capture_path(args.capture_dir, str(row["request_id"])), layer,
+        ) for row in request_rows
+    }
+    groups = _groups(request_rows, captures, layer)
+    factor_path = args.fit_dir / f"average_rate_factor_layer_{layer}.npz"
+    factor_sidecar = args.fit_dir / f"average_rate_factor_layer_{layer}.json"
+    if load_json(factor_sidecar)["sha256"] != sha256(factor_path):
+        raise RuntimeError("PR13 factor sidecar hash mismatch")
+    arrays = dict(np.load(factor_path, allow_pickle=False))
+    proxy = np.asarray(arrays["proxy"], np.float32)
+    beta = float(np.asarray(arrays["beta"]).reshape(-1)[0])
+    experts = base._prepare_experts(
+        args, layer, groups, arrays, proxy, beta, pr13_config,
+    )
+    pair_specs = [
+        (
+            int(item["metadata_matched_pages_per_expert"]),
+            int(item["pr13_reference_pages_per_expert"]),
+        ) for item in config["traffic_pairs"]
+    ]
+    rates = sorted({rate for pair in pair_specs for rate in pair})
+    geometries, rate_state_grid = _precompute_rate_states(
+        groups,
+        experts,
+        proxy,
+        beta,
+        pr13_config,
+        rates,
+        int(args.workers),
+        int(layer),
+    )
+    refresh = int(config["common_core"]["refresh_after_accepted_pages"])
+    arm3_grid = _precompute_arm3_pairs(
+        geometries,
+        groups,
+        rate_state_grid,
+        proxy,
+        beta,
+        pair_specs,
+        config_windows,
+        refresh,
+        int(args.workers),
+        int(layer),
+    )
+    del arrays, experts
+    gc.collect()
+    model_slice = load_d1_layer_slice(args.checkpoint, layer, device=args.device)
+
+    rows: list[dict[str, Any]] = []
+    parity_rows: list[dict[str, Any]] = []
+    replay_executions = 0
+    replay_hits = 0
+    screen = config["d1_screen"]
+    move_limit = min(32, int(screen["candidate_page_shortlist"]))
+    candidate_limit = min(8, int(screen["maximum_exact_finalists"]))
+    expected_per_group = _expected_rows_per_group(rates, policy_grid)
+    for group_index, (group, coarse) in enumerate(
+        zip(groups, geometries, strict=True),
+    ):
+        request_id = str(group["request_id"])
+        context = _d1_context(
+            model_slice, captures[request_id], layer, int(group["position"]),
+        )
+        token_geometry = TokenStateGeometry(
+            tuple(coarse["responses"]),
+            np.asarray(group["execution_weights"], np.float64),
+            proxy,
+            beta,
+        )
+        boundaries = _full_d1_boundaries(context)
+        replay = ExactReplayCache(context, token_geometry)
+        rate_states = rate_state_grid[group_index]
+        local_pairs = arm3_grid[group_index]
+        first_row = len(rows)
+
+        # Arm 1: exactly one independent PR13 incumbent at each numeric rate.
+        for rate in rates:
+            state = rate_states[rate][0]
+            rows.append(_state_record(
+                arm=ARM_PR13,
+                rate=rate,
+                group=group,
+                common_core=state,
+                states=state,
+                moves=(),
+                geometry=token_geometry,
+                selector_weights=np.asarray(group["selector_weights"]),
+                d1_logits=replay.logits(state),
+                target_logits=context.target_logits,
+                target_ids=context.target_ids,
+                parameter={
+                    "independent_column_generated": True,
+                    "frontier_facts": dict(rate_states[rate][2]),
+                },
+            ))
+
+        # Arm 2: freeze all five complete states at a rate before replaying any.
+        for rate in rates:
+            pair = next(pair for pair in pair_specs if rate in pair)
+            endpoints = {
+                window: (
+                    local_pairs[(pair[0], pair[1], window)].low_state
+                    if rate == pair[0]
+                    else local_pairs[(pair[0], pair[1], window)].high_state
+                )
+                for window in STRICT_BANK_WINDOWS
+            }
+            bank = _strict_frozen_bank(
+                rate=rate,
+                expert_ids=np.asarray(group["experts"], np.int64),
+                pr13_state=rate_states[rate][0],
+                exact_local_state=rate_states[rate][1],
+                arm3_endpoints=endpoints,
+                geometry=token_geometry,
+                exact_replay=replay,
+            )
+            selected = bank.checkpoints[bank.selected_index]
+            rows.append(_state_record(
+                arm=ARM_STRICT,
+                rate=rate,
+                group=group,
+                common_core=selected.states,
+                states=selected.states,
+                moves=(),
+                geometry=token_geometry,
+                selector_weights=np.asarray(group["selector_weights"]),
+                d1_logits=replay.logits(selected.states),
+                target_logits=context.target_logits,
+                target_ids=context.target_ids,
+                parameter=_strict_bank_parameter(bank),
+            ))
+
+        # Arms 3--5 share each D1-blind physical core and Arm3 endpoints.
+        for pair in pair_specs:
+            low_rate, high_rate = pair
+            for window, eta_values in policy_grid[pair].items():
+                local = local_pairs[(low_rate, high_rate, int(window))]
+                rows.append(_state_record(
+                    arm=ARM_LOCAL,
+                    rate=low_rate,
+                    group=group,
+                    common_core=local.common_core,
+                    states=local.low_state,
+                    moves=local.core_to_low_moves,
+                    geometry=token_geometry,
+                    selector_weights=np.asarray(group["selector_weights"]),
+                    d1_logits=replay.logits(local.low_state),
+                    target_logits=context.target_logits,
+                    target_ids=context.target_ids,
+                    parameter={
+                        "repair_window": int(window),
+                        "endpoint": "low",
+                        "core_stop_reason": local.core_stop_reason,
+                        "completion_stop_reason": local.low_stop_reason,
+                    },
+                ))
+                rows.append(_state_record(
+                    arm=ARM_LOCAL,
+                    rate=high_rate,
+                    group=group,
+                    common_core=local.common_core,
+                    states=local.high_state,
+                    moves=local.core_to_high_moves,
+                    geometry=token_geometry,
+                    selector_weights=np.asarray(group["selector_weights"]),
+                    d1_logits=replay.logits(local.high_state),
+                    target_logits=context.target_logits,
+                    target_ids=context.target_ids,
+                    parameter={
+                        "repair_window": int(window),
+                        "endpoint": "high",
+                        "core_stop_reason": local.core_stop_reason,
+                        "completion_stop_reason": local.high_stop_reason,
+                    },
+                ))
+                for eta in eta_values:
+                    for policy_name, arm_name in (
+                        ("arm4", ARM_D1), ("arm5", ARM_D1_SEVERITY),
+                    ):
+                        result = orchestrate_nested_policy_pair(
+                            local.common_core,
+                            local.low_state,
+                            local.high_state,
+                            np.asarray(group["experts"], np.int64),
+                            token_geometry,
+                            boundaries,
+                            replay,
+                            eta=float(eta),
+                            j_q2=token_geometry.all_q2_damage(),
+                            low_cap_pages=8 * low_rate,
+                            high_cap_pages=8 * high_rate,
+                            refresh_after_accepted_pages=refresh,
+                            arm=policy_name,
+                            maximum_repair_rounds=8,
+                            move_limit=move_limit,
+                            candidate_limit=candidate_limit,
+                        )
+                        for endpoint, rate, state, moves in (
+                            (
+                                "low", low_rate, result.low_state,
+                                result.core_to_low_moves,
+                            ),
+                            (
+                                "high", high_rate, result.high_state,
+                                result.core_to_high_moves,
+                            ),
+                        ):
+                            rows.append(_state_record(
+                                arm=arm_name,
+                                rate=rate,
+                                group=group,
+                                common_core=result.common_core,
+                                states=state,
+                                moves=moves,
+                                geometry=token_geometry,
+                                selector_weights=np.asarray(
+                                    group["selector_weights"],
+                                ),
+                                d1_logits=replay.logits(state),
+                                target_logits=context.target_logits,
+                                target_ids=context.target_ids,
+                                parameter=_policy_parameter(
+                                    result,
+                                    repair_window=int(window),
+                                    eta=float(eta),
+                                    endpoint=endpoint,
+                                ),
+                            ))
+        emitted = len(rows) - first_row
+        if emitted != expected_per_group:
+            raise RuntimeError(
+                f"candidate row grid changed: expected {expected_per_group}, got {emitted}"
+            )
+        replay_executions += replay.executions
+        replay_hits += replay.hits
+        parity_rows.append({
+            "request_id": request_id,
+            "layer": layer,
+            **context.parity,
+            "computed_vjp_sensitivity_rows": int(context.candidate_ids.size),
+            "expanded_d1_sensitivity_rows": 256,
+            "exact_replay_unique_states": int(replay.states),
+            "exact_replay_executions": int(replay.executions),
+            "exact_replay_cache_hits": int(replay.hits),
+        })
+        print(
+            f"[nested allocation] layer={layer} group={group['group'] + 1}/"
+            f"{len(groups)} rows={emitted} replays={replay.executions} "
+            f"cache_hits={replay.hits}",
+            flush=True,
+        )
+        del context, replay, boundaries
+        torch.cuda.empty_cache()
+
+    expected_rows = expected_per_group * len(groups)
+    if len(rows) != expected_rows:
+        raise RuntimeError("final candidate row count differs from immutable grid")
+    layer_dir = args.output_dir / args.split / f"layer_{layer:02d}"
+    layer_dir.mkdir(parents=True, exist_ok=True)
+    atomic_pickle(layer_dir / "nested_candidates.pkl", rows)
+    summary_rows = [{
+        **{
+            key: value for key, value in row.items()
+            if key not in {
+                "common_core_states", "selected_states", "moves", "parameter",
+                "d1_candidate_logits", "selector_weights", "execution_weights",
+            }
+        },
+        "parameter_json": json.dumps(
+            row["parameter"], sort_keys=True, separators=(",", ":"),
+        ),
+    } for row in rows]
+    atomic_parquet(layer_dir / "nested_candidate_metrics.parquet", summary_rows)
+    atomic_parquet(layer_dir / "nested_slice_parity.parquet", parity_rows)
+    rows_by_arm = {
+        arm: sum(row["arm"] == arm for row in rows)
+        for arm in (ARM_PR13, ARM_STRICT, ARM_LOCAL, ARM_D1, ARM_D1_SEVERITY)
+    }
+    facts = {
+        "completed": True,
+        "schema": SCHEMA,
+        "split": args.split,
+        "layer": layer,
+        "requests": len(groups),
+        "request_ids": [str(row["request_id"]) for row in request_rows],
+        "repair_windows": list(config_windows),
+        "eta_grid": list(config_etas),
+        "evaluated_policy_grid": {
+            f"{low}_to_{high}": {
+                str(window): list(map(float, etas))
+                for window, etas in windows.items()
+            }
+            for (low, high), windows in policy_grid.items()
+        },
+        "rates": rates,
+        "rows": len(rows),
+        "expected_rows": expected_rows,
+        "expected_rows_per_group": expected_per_group,
+        "rows_by_arm": rows_by_arm,
+        "high_guardrail_audit": _high_guardrail_audit(rows),
+        "exact_replay_executions": replay_executions,
+        "exact_replay_cache_hits": replay_hits,
+        "allocation_uses_terminal_or_downstream_outcome": False,
+        "candidate_execution_stops_at_d1_router": True,
+        "arm3_precomputed_before_gpu_d1": True,
+        "pr13_and_exact_local_collapsed_in_workers": True,
+        "frozen_calibration": (
+            None if frozen_facts is None else {
+                **frozen_facts,
+                "path": str(args.frozen_calibration.resolve()),
+                "file_sha256": sha256(args.frozen_calibration),
+            }
+        ),
+        "wall_seconds": time.perf_counter() - started,
+        "files": {
+            path.name: {"sha256": sha256(path), "bytes": path.stat().st_size}
+            for path in layer_dir.iterdir() if path.is_file()
+        },
+        "environment": {
+            "host": platform.node(),
+            "python": platform.python_version(),
+            "torch": torch.__version__,
+            "cuda": torch.version.cuda,
+            "gpu": torch.cuda.get_device_name(0),
+        },
+    }
+    atomic_json(layer_dir / "nested_layer_facts.json", facts)
+    del model_slice, geometries, rate_state_grid, arm3_grid
+    gc.collect()
+    torch.cuda.empty_cache()
+    return facts
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--trees", type=Path, required=True)
+    parser.add_argument("--fit-dir", type=Path, required=True)
+    parser.add_argument("--pr13-config", type=Path, required=True)
+    parser.add_argument("--capture-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--split", choices=("calibration", "evaluation"), required=True)
+    parser.add_argument("--layers", type=int, nargs="+", required=True)
+    parser.add_argument("--repair-windows", type=int, nargs="+", default=[16, 32, 64])
+    parser.add_argument("--request-limit", type=int)
+    parser.add_argument("--frozen-calibration", type=Path)
+    parser.add_argument("--workers", type=int, default=24)
+    parser.add_argument("--device", default="cuda")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    if args.request_limit is not None and args.request_limit < 1:
+        raise ValueError("request-limit must be positive")
+    if args.workers < 1 or args.workers > 64:
+        raise ValueError("workers must lie in [1,64]")
+    if any(window < 0 for window in args.repair_windows):
+        raise ValueError("repair windows must be nonnegative")
+    if args.split == "calibration" and args.frozen_calibration is not None:
+        raise ValueError("calibration split rejects --frozen-calibration")
+    if args.split == "evaluation" and args.frozen_calibration is None:
+        raise ValueError("evaluation split requires --frozen-calibration")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    facts = [run_layer(args, int(layer)) for layer in args.layers]
+    atomic_json(args.output_dir / f"nested_run_facts_{args.split}.json", {
+        "completed": True,
+        "schema": SCHEMA,
+        "split": args.split,
+        "layers": {str(row["layer"]): row for row in facts},
+        "runner_sha256": sha256(Path(__file__).resolve()),
+        "test_rows_admitted_or_used": False,
+    })
+
+
+if __name__ == "__main__":
+    main()

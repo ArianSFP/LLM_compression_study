@@ -1,0 +1,472 @@
+from __future__ import annotations
+
+from dataclasses import replace
+from pathlib import Path
+import sys
+
+import numpy as np
+import pytest
+
+
+EXPERIMENT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(EXPERIMENT / "src"))
+
+from oracle_study.d1_nested_allocation import (  # noqa: E402
+    DOWN_BIT,
+    apply_page_move,
+    physical_subset,
+    state_page_count,
+)
+from oracle_study.d1_nested_policy import (  # noqa: E402
+    canonical_add_only_moves,
+    orchestrate_nested_policy_pair,
+    replay_add_only_moves,
+)
+from oracle_study.d1_nested_search import (  # noqa: E402
+    build_screened_d1_boundaries,
+    exact_all_expert_d1_metrics,
+)
+
+
+IDS = np.arange(10, 18, dtype=np.int64)
+
+
+def _states(*units: int) -> np.ndarray:
+    result = np.zeros((8, 512), np.int64)
+    for unit in units:
+        result[0, int(unit)] |= DOWN_BIT
+    return result
+
+
+def _baseline_logits() -> np.ndarray:
+    return -np.arange(256, dtype=np.float64) / 10.0
+
+
+def _candidate_logits(crossings: int, *, shallow: bool = False) -> np.ndarray:
+    baseline = _baseline_logits()
+    if crossings == 0:
+        return baseline
+    result = baseline.copy()
+    result[7] = -0.70 if shallow else -2.0
+    result[8] = -0.65 if shallow else -0.50
+    if crossings >= 2:
+        result[6] = -2.5
+        result[9] = -0.55
+    return result
+
+
+def _metrics(crossings: int, *, shallow: bool = False):
+    return exact_all_expert_d1_metrics(
+        _baseline_logits(), _candidate_logits(crossings, shallow=shallow),
+    )
+
+
+def _screen():
+    sensitivities = np.arange(256, dtype=np.float64)[:, None] / 256.0
+    return build_screened_d1_boundaries(_baseline_logits(), sensitivities)
+
+
+class _ToyGeometry:
+    output_width = 1
+
+    def __init__(
+        self,
+        target_weights: dict[tuple[int, int, int], float],
+        *,
+        addition_priority: dict[int, float] | None = None,
+        extra_cost: float = 1.0,
+    ) -> None:
+        self.target_weights = dict(target_weights)
+        self.addition_priority = dict(addition_priority or {})
+        self.extra_cost = float(extra_cost)
+
+    @staticmethod
+    def _active(states: np.ndarray) -> set[tuple[int, int, int]]:
+        value = np.asarray(states, np.int64)
+        result = set()
+        for expert, unit in np.argwhere(value != 0):
+            state = int(value[expert, unit])
+            for bit in (1, 2, 4):
+                if state & bit:
+                    result.add((int(expert), int(unit), bit))
+        return result
+
+    def local_damage(self, states: np.ndarray) -> float:
+        active = self._active(states)
+        target = set(self.target_weights)
+        missing = sum(self.target_weights[key] for key in target - active)
+        extra = self.extra_cost * len(active - target)
+        return float(missing + extra)
+
+    def score_moves(self, states, moves):
+        return np.asarray([
+            self.local_damage(apply_page_move(states, move)) for move in moves
+        ])
+
+    def output_delta(self, states):
+        return np.zeros(1, np.float64)
+
+    def signed_move_effects(self, states, moves, sensitivities):
+        values = []
+        for move in moves:
+            if move.direction == "remove":
+                value = 0.0
+            elif (move.expert, move.unit, move.bit) not in self.target_weights:
+                value = 0.001
+            else:
+                value = self.addition_priority.get(move.unit, 0.001)
+            values.append(value)
+        return np.repeat(
+            np.asarray(values, np.float64)[:, None],
+            np.asarray(sensitivities).shape[0],
+            axis=1,
+        )
+
+
+class _StagedToyGeometry(_ToyGeometry):
+    """Expose a second repair page only after accepting the first one."""
+
+    def signed_move_effects(self, states, moves, sensitivities):
+        values = []
+        first_present = bool(np.asarray(states, np.int64)[0, 3] & DOWN_BIT)
+        for move in moves:
+            page = (move.expert, move.unit, move.bit)
+            if move.direction == "remove":
+                value = 0.0
+            elif page == (0, 3, DOWN_BIT) and not first_present:
+                value = 20.0
+            elif page == (0, 4, DOWN_BIT) and first_present:
+                value = 20.0
+            elif page == (0, 4, DOWN_BIT):
+                value = -20.0
+            else:
+                value = 0.001
+            values.append(value)
+        return np.repeat(
+            np.asarray(values, np.float64)[:, None],
+            np.asarray(sensitivities).shape[0],
+            axis=1,
+        )
+
+
+def _run(
+    core: np.ndarray,
+    low: np.ndarray,
+    high: np.ndarray,
+    geometry: _ToyGeometry,
+    replay,
+    *,
+    arm: str = "arm4",
+    eta: float = 0.1,
+    j_q2: float = 10.0,
+    refresh: int = 2,
+):
+    return orchestrate_nested_policy_pair(
+        core,
+        low,
+        high,
+        IDS,
+        geometry,
+        _screen(),
+        replay,
+        eta=eta,
+        j_q2=j_q2,
+        low_cap_pages=state_page_count(low),
+        high_cap_pages=max(state_page_count(high), state_page_count(low)),
+        refresh_after_accepted_pages=refresh,
+        arm=arm,
+    )
+
+
+def test_exact_safe_arm3_low_is_retained_byte_for_byte() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1)
+    geometry = _ToyGeometry({(0, 0, 1): 2.0, (0, 1, 1): 1.0})
+
+    result = _run(core, low, high, geometry, lambda states: _metrics(0))
+
+    np.testing.assert_array_equal(result.low_state, low)
+    assert result.low_state.tobytes() == low.astype(np.int64).tobytes()
+    assert result.low_repair is None
+    assert result.low_stop_reason == "arm3_low_exact_safe_identity"
+    np.testing.assert_array_equal(result.high_state, high)
+    assert result.high_metrics.safe
+    assert not result.low_state.flags.writeable
+    assert not result.high_state.flags.writeable
+
+
+def test_unsafe_low_uses_strict_same_page_exact_repair() -> None:
+    core = _states()
+    low = _states(0, 1)
+    geometry = _ToyGeometry(
+        {(0, 3, 1): 10.0, (0, 4, 1): 9.0},
+        addition_priority={3: 10.0, 4: 9.0},
+    )
+
+    def replay(states):
+        helpful = int(states[0, 3] != 0) + int(states[0, 4] != 0)
+        return _metrics(2 - helpful)
+
+    result = _run(core, low, low, geometry, replay)
+    crossings = [result.low_repair.initial_metrics.membership_crossings]
+    crossings.extend(step.metrics.membership_crossings for step in result.low_repair_steps)
+    assert crossings == [2, 1, 0]
+    assert all(right < left for left, right in zip(crossings, crossings[1:]))
+    assert state_page_count(result.low_state) == state_page_count(low)
+    assert physical_subset(core, result.low_state)
+    assert all(step.removal.direction == "remove" for step in result.low_repair_steps)
+    assert all(step.addition.direction == "add" for step in result.low_repair_steps)
+
+
+def test_low_repair_can_replace_a_previously_swapped_in_noncore_page() -> None:
+    core = _states()
+    low = _states(0, 1)
+    geometry = _StagedToyGeometry({(0, 1, 1): 10.0, (0, 4, 1): 9.0})
+
+    def replay(states):
+        if int(states[0, 4]) != 0:
+            return _metrics(0)
+        if int(states[0, 3]) != 0:
+            return _metrics(1)
+        return _metrics(2)
+
+    result = _run(core, low, low, geometry, replay)
+    assert [step.addition.unit for step in result.low_repair_steps] == [3, 4]
+    assert result.low_repair_steps[1].removal.unit == 3
+    np.testing.assert_array_equal(result.low_state, _states(1, 4))
+    assert state_page_count(result.low_state) == state_page_count(low)
+    assert physical_subset(core, result.low_state)
+
+
+def test_infeasible_high_guard_reverts_entire_pair_to_arm3_incumbents() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1)
+    geometry = _ToyGeometry(
+        {(0, 0, 1): 2.0, (0, 1, 1): 10.0},
+        addition_priority={1: 10.0},
+    )
+
+    def replay(states):
+        return _metrics(0 if state_page_count(states) == 1 else 1)
+
+    result = _run(core, low, high, geometry, replay, refresh=1)
+    assert result.pair_fallback_high_guardrail_infeasible
+    assert result.low_stop_reason == "pair_fallback_arm3_low_identity"
+    assert result.high_stop_reason == "pair_fallback_high_guardrail_infeasible"
+    np.testing.assert_array_equal(result.low_state, low)
+    np.testing.assert_array_equal(result.high_state, high)
+    assert result.low_repair is None
+    assert result.high_repair_audits == ()
+    assert result.high_guardrail_qualified_checkpoints == 1
+    assert result.high_guardrail_repair_attempts == 1
+    assert result.low_local_damage <= result.low_local_damage_limit
+    assert result.high_local_damage <= result.high_reference_damage_limit
+
+
+def test_safe_low_is_retained_only_when_it_meets_the_high_endpoint_guard() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1)
+    geometry = _ToyGeometry(
+        {(0, 0, 1): 2.0, (0, 1, 1): 10.0},
+        addition_priority={1: 10.0},
+    )
+
+    def replay(states):
+        return _metrics(0 if state_page_count(states) == 1 else 1)
+
+    result = _run(
+        core, low, high, geometry, replay,
+        eta=1.0, j_q2=10.0, refresh=1,
+    )
+    assert not result.pair_fallback_high_guardrail_infeasible
+    np.testing.assert_array_equal(result.high_state, result.low_state)
+    assert result.high_stop_reason == "low_retained_as_high_strict_guard_feasible"
+    assert result.high_local_damage <= result.high_reference_damage_limit
+    assert result.high_guardrail_repair_attempts == 1
+
+
+def test_complete_high_path_can_cross_unsafe_intermediate_and_recover() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1, 2)
+    geometry = _ToyGeometry({
+        (0, 0, 1): 30.0,
+        (0, 1, 1): 20.0,
+        (0, 2, 1): 10.0,
+    })
+
+    def replay(states):
+        if int(states[0, 2]) != 0:
+            return _metrics(0)
+        if int(states[0, 1]) != 0:
+            return _metrics(1)
+        return _metrics(0)
+
+    result = _run(
+        core, low, high, geometry, replay,
+        eta=1.0, j_q2=10.0, refresh=1,
+    )
+    assert not result.pair_fallback_high_guardrail_infeasible
+    np.testing.assert_array_equal(result.high_state, high)
+    assert result.high_metrics.safe
+    assert result.high_local_damage <= result.high_reference_damage_limit
+    assert result.high_stop_reason.endswith("high_cap")
+
+
+def test_safe_arm3_high_is_retained_over_a_lower_local_changed_state() -> None:
+    core = _states()
+    low = _states(0)
+    arm3_high = _states(0, 1)
+    geometry = _ToyGeometry({
+        (0, 0, 1): 30.0,
+        (0, 1, 1): 1.0,
+        (0, 2, 1): 20.0,
+    })
+
+    result = _run(
+        core, low, arm3_high, geometry, lambda states: _metrics(0),
+        eta=1.0, j_q2=20.0, refresh=1,
+    )
+
+    np.testing.assert_array_equal(result.high_state, arm3_high)
+    assert result.high_state.tobytes() == arm3_high.tobytes()
+    assert result.high_stop_reason == "arm3_high_same_rate_incumbent_identity"
+    assert not result.pair_fallback_high_guardrail_infeasible
+
+
+def test_changed_unsafe_high_requires_strict_arm3_high_reduction() -> None:
+    core = _states()
+    low = _states(0)
+    arm3_high = _states(0, 1)
+    geometry = _ToyGeometry({
+        (0, 0, 1): 30.0,
+        (0, 1, 1): 1.0,
+        (0, 2, 1): 20.0,
+    })
+
+    def replay(states):
+        value = np.asarray(states)
+        if state_page_count(value) == 2 and int(value[0, 2]) != 0:
+            return _metrics(1)
+        return _metrics(2)
+
+    result = _run(
+        core, low, arm3_high, geometry, replay,
+        eta=1.0, j_q2=20.0, refresh=1,
+    )
+
+    assert not np.array_equal(result.high_state, arm3_high)
+    assert result.arm3_high_metrics.membership_crossings == 2
+    assert result.high_metrics.membership_crossings == 1
+    assert (
+        result.high_metrics.membership_crossings
+        < result.arm3_high_metrics.membership_crossings
+    )
+    assert (
+        result.high_metrics.membership_crossings
+        <= result.low_metrics.membership_crossings
+    )
+    assert not result.pair_fallback_high_guardrail_infeasible
+
+
+def test_literal_low_high_nesting_and_canonical_chains_replay() -> None:
+    core = _states(0)
+    low = _states(0, 1)
+    high = _states(0, 1, 2, 3)
+    geometry = _ToyGeometry({
+        (0, 0, 1): 4.0,
+        (0, 1, 1): 3.0,
+        (0, 2, 1): 2.0,
+        (0, 3, 1): 1.0,
+    })
+    result = _run(core, low, high, geometry, lambda states: _metrics(0))
+
+    assert physical_subset(result.low_state, result.high_state)
+    assert state_page_count(result.low_state) < state_page_count(result.high_state)
+    np.testing.assert_array_equal(
+        replay_add_only_moves(core, result.core_to_low_moves), result.low_state,
+    )
+    np.testing.assert_array_equal(
+        replay_add_only_moves(core, result.core_to_high_moves), result.high_state,
+    )
+    assert result.core_to_low_moves == canonical_add_only_moves(core, result.low_state)
+    assert result.core_to_high_moves == canonical_add_only_moves(core, result.high_state)
+
+
+def test_unsafe_high_batch_can_be_swap_repaired_without_clearing_low() -> None:
+    core = _states()
+    low = _states(0)
+    arm3_high = _states(0, 1)
+    geometry = _ToyGeometry(
+        {(0, 0, 1): 20.0, (0, 1, 1): 10.0, (0, 2, 1): 9.0},
+        addition_priority={1: 10.0, 2: 20.0},
+    )
+
+    def replay(states):
+        if int(states[0, 2]) != 0:
+            return _metrics(0)
+        return _metrics(0 if state_page_count(states) == 1 else 1)
+
+    result = _run(
+        core, low, arm3_high, geometry, replay,
+        eta=0.1, j_q2=10.0, refresh=1,
+    )
+    assert result.high_metrics.safe
+    assert physical_subset(result.low_state, result.high_state)
+    assert int(result.high_state[0, 0]) == 1
+    assert int(result.high_state[0, 2]) == 1
+    assert len(result.high_repair_audits) == 1
+    assert result.high_repair_audits[0].accepted
+    assert not result.pair_fallback_high_guardrail_infeasible
+    assert result.high_local_damage <= result.high_reference_damage_limit
+    assert result.high_guardrail_repair_attempts == 1
+    assert result.high_repair_steps[0].removal.unit == 1
+    assert result.high_repair_steps[0].addition.unit == 2
+
+
+def test_arm4_ignores_severity_arm5_uses_it_only_while_unsafe() -> None:
+    core = _states()
+    low = _states(0, 1)
+    geometry = _ToyGeometry(
+        {(0, 3, 1): 10.0, (0, 4, 1): 9.0},
+        addition_priority={3: 10.0, 4: 9.0},
+    )
+
+    def replay(states):
+        if int(states[0, 3]) != 0:
+            return _metrics(1, shallow=False)
+        if int(states[0, 4]) != 0:
+            return _metrics(1, shallow=True)
+        return _metrics(2)
+
+    arm4 = _run(core, low, low, geometry, replay, arm="arm4")
+    arm5 = _run(core, low, low, geometry, replay, arm="arm5")
+    assert arm4.low_repair_steps[0].addition.unit == 3
+    assert arm5.low_repair_steps[0].addition.unit == 4
+
+    safe4 = _run(core, _states(3), _states(3), geometry, lambda states: _metrics(0), arm="arm4")
+    safe5 = _run(core, _states(3), _states(3), geometry, lambda states: _metrics(0), arm="arm5")
+    np.testing.assert_array_equal(safe4.low_state, safe5.low_state)
+    assert safe4.low_repair is None and safe5.low_repair is None
+
+
+
+def test_result_constructor_rejects_either_endpoint_guardrail_violation() -> None:
+    core = _states()
+    low = _states(0)
+    high = _states(0, 1)
+    geometry = _ToyGeometry({(0, 0, 1): 2.0, (0, 1, 1): 1.0})
+    result = _run(core, low, high, geometry, lambda states: _metrics(0))
+    with pytest.raises(ValueError, match="per-endpoint local guardrail"):
+        replace(
+            result,
+            high_local_damage=result.high_reference_damage_limit + 1.0,
+        )
+    with pytest.raises(ValueError, match="per-endpoint local guardrail"):
+        replace(
+            result,
+            low_local_damage=result.low_local_damage_limit + 1.0,
+        )
