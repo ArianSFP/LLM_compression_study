@@ -512,8 +512,24 @@ def test_zero_frozen_route_identity_proof_matches_hook_computation() -> None:
     assert proof["zero_frozen_set_live_weight_max_abs"] == 0.0
 
     if torch.cuda.is_available():
+        cuda_logits = logits.cuda()
+        cuda_ids = torch.topk(cuda_logits, 8, dim=-1).indices
+        cuda_probabilities = torch.softmax(
+            cuda_logits, dtype=torch.float, dim=-1,
+        )
+        cuda_scores = torch.gather(cuda_probabilities, -1, cuda_ids)
+        cuda_scores = cuda_scores / cuda_scores.sum(dim=-1, keepdim=True)
+        cross_baseline = SimpleNamespace(
+            router_logits={
+                layer: cuda_logits.cpu() for layer in range(5, 40)
+            },
+            router_ids={layer: cuda_ids.cpu() for layer in range(5, 40)},
+            router_scores={
+                layer: cuda_scores.cpu() for layer in range(5, 40)
+            },
+        )
         cross_device = runner._prove_zero_frozen_routes_are_identity(
-            baseline, 4, torch.device("cuda"),
+            cross_baseline, 4, torch.device("cuda"),
         )
         assert cross_device[
             "zero_frozen_set_live_weight_all_downstream_scores_bit_identical"
