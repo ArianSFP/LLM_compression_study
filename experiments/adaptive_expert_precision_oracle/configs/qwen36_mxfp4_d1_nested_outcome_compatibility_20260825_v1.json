@@ -1,0 +1,51 @@
+{
+  "schema": "pr13_d1_nested_outcome_compatibility_protocol_v1",
+  "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+  "scope": "outcome_phase_only",
+  "reason": "The allocation config extends the authenticated capture hardware_execution_path with CPU-worker metadata; the original outcome runner incorrectly required whole-dictionary equality.",
+  "allocation_config_file_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+  "authenticated_capture_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+  "allocation_manifest_sha256": "1bdd2d1c047416ff4649d65306733af5a760ed7aa4295d293cd06c034679ca59",
+  "allocation_candidate_code_identity": {
+    "schema": "pr13_d1_nested_code_bundle_v1",
+    "files": 139,
+    "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08"
+  },
+  "outcome_code_identity": {
+    "schema": "pr13_d1_nested_code_bundle_v1",
+    "files": 139,
+    "canonical_sha256": "aee8e5e7d24ae274a3db46c9878c55486284b64ba1c95a67cea6057c1fff3cbc"
+  },
+  "changed_python_members": {
+    "scripts/run_d1_nested_outcomes.py": {
+      "allocation_sha256": "1f0bdc9476157c9500a1b08d14560ddd8a46b2a5aeb3296f978f430699492fb5",
+      "outcome_sha256": "fe1e343849c5df77800df927b5ebae2e0143aecf813590d795ae3a2ef5c4fadf"
+    },
+    "src/oracle_study/d1_nested_outcomes.py": {
+      "allocation_sha256": "5355e3199e5c8b9113bbff8327c705390e0cceb9518c785604e391c04318bca1",
+      "outcome_sha256": "e9f6bf70c9a0ade33b2d55f6cbd241dbee137e021a463c7e6e3c9690cddf165d"
+    }
+  },
+  "capture_hardware_execution_path": {
+    "required_gpu_name_substring": "RTX PRO 6000",
+    "minimum_gpu_memory_gib": 90,
+    "attention_implementation": "eager",
+    "experts_implementation": "eager",
+    "full_model_load": "dequantized_bfloat16_cuda0",
+    "cache": "complete_native_hybrid_cache_with_kv_convolution_and_recurrent_state"
+  },
+  "allowed_allocation_only_hardware_extensions": {
+    "cpu_worker_blas_threads": 1,
+    "cpu_worker_processes_allowed_range": [
+      1,
+      64
+    ],
+    "cpu_worker_processes_default": 24,
+    "cpu_worker_process_count_is_semantics_inert": true
+  },
+  "allocation_states_unchanged": true,
+  "outcome_execution_semantics_unchanged": true,
+  "terminal_outcomes_exposed_before_fix": false,
+  "failed_attempt_wrote_outcome_cells": false,
+  "experiment_b_started": false
+}

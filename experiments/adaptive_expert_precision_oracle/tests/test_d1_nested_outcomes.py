@@ -25,6 +25,7 @@ from oracle_study.d1_nested_artifacts import (  # noqa: E402
 from oracle_study.d1_nested_outcomes import (  # noqa: E402
     ALLOCATION_CONFIG_CANONICAL_SHA256,
     ALLOCATION_CONFIG_FILE_SHA256,
+    OUTCOME_COMPATIBILITY_SCHEMA,
     ROUTE_MODES,
     join_request_manifest,
     load_outcome_plan,
@@ -34,6 +35,7 @@ from oracle_study.d1_nested_outcomes import (  # noqa: E402
     route_mode_contrasts,
     validate_complete_allocation_grid,
     validate_outcome_config,
+    validate_outcome_compatibility_protocol,
     validate_plan_against_config,
 )
 
@@ -409,4 +411,58 @@ def test_v2_plan_preserves_raw_and_canonical_config_identities() -> None:
     with pytest.raises(ValueError, match="frozen allocation config"):
         validate_plan_against_config(
             wrong_canonical, config, config_file_sha256=raw_sha256,
+        )
+
+
+def test_outcome_compatibility_allows_only_exact_cpu_metadata_extension() -> None:
+    allocation_identity = {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": 139,
+        "canonical_sha256": "a" * 64,
+    }
+    outcome_identity = {
+        "schema": "pr13_d1_nested_code_bundle_v1",
+        "files": 139,
+        "canonical_sha256": "b" * 64,
+    }
+    capture = {
+        "required_gpu_name_substring": "RTX PRO 6000",
+        "minimum_gpu_memory_gib": 90,
+    }
+    extensions = {
+        "cpu_worker_blas_threads": 1,
+        "cpu_worker_process_count_is_semantics_inert": True,
+    }
+    protocol = {
+        "schema": OUTCOME_COMPATIBILITY_SCHEMA,
+        "allocation_config_file_sha256": "c" * 64,
+        "authenticated_capture_config_sha256": "d" * 64,
+        "allocation_candidate_code_identity": allocation_identity,
+        "outcome_code_identity": outcome_identity,
+        "capture_hardware_execution_path": capture,
+        "allowed_allocation_only_hardware_extensions": extensions,
+        "allocation_states_unchanged": True,
+        "outcome_execution_semantics_unchanged": True,
+    }
+    validated = validate_outcome_compatibility_protocol(
+        protocol,
+        allocation_config_file_sha256="c" * 64,
+        capture_config_file_sha256="d" * 64,
+        allocation_candidate_code_identity=allocation_identity,
+        outcome_code_identity=outcome_identity,
+        allocation_hardware_execution_path={**capture, **extensions},
+        capture_hardware_execution_path=capture,
+    )
+    assert validated["allowed_allocation_only_hardware_extensions"] == extensions
+
+    changed = {**capture, **extensions, "attention_implementation": "sdpa"}
+    with pytest.raises(ValueError, match="hardware extension"):
+        validate_outcome_compatibility_protocol(
+            protocol,
+            allocation_config_file_sha256="c" * 64,
+            capture_config_file_sha256="d" * 64,
+            allocation_candidate_code_identity=allocation_identity,
+            outcome_code_identity=outcome_identity,
+            allocation_hardware_execution_path=changed,
+            capture_hardware_execution_path=capture,
         )

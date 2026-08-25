@@ -47,6 +47,9 @@ AUTHENTICATED_CAPTURE_CONFIG_SHA256 = (
     "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713"
 )
 OUTCOME_SCHEMA = "pr13_d1_nested_cached_decode_outcomes_v1"
+OUTCOME_COMPATIBILITY_SCHEMA = (
+    "pr13_d1_nested_outcome_compatibility_protocol_v1"
+)
 QUALITY_FILE = "d1_nested_outcome_quality.parquet"
 PROPAGATION_FILE = "d1_nested_outcome_propagation.parquet"
 CACHE_FILE = "d1_nested_outcome_cache.parquet"
@@ -146,6 +149,92 @@ def _required_candidate_code_identity(value: Any) -> dict[str, Any]:
             value.get("canonical_sha256"),
             field="calibration candidate code canonical SHA-256",
         ),
+    }
+
+
+def validate_outcome_compatibility_protocol(
+    protocol: Mapping[str, Any],
+    *,
+    allocation_config_file_sha256: str,
+    capture_config_file_sha256: str,
+    allocation_candidate_code_identity: Mapping[str, Any],
+    outcome_code_identity: Mapping[str, Any],
+    allocation_hardware_execution_path: Mapping[str, Any],
+    capture_hardware_execution_path: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate the sealed allocation-to-outcome compatibility exception.
+
+    The v2 allocation config added CPU-worker metadata beneath
+    ``hardware_execution_path`` after the authenticated capture config was
+    frozen. Those fields do not alter model execution, but whole-dictionary
+    equality incorrectly rejected the extension. This validator permits only
+    the explicitly enumerated extra fields while requiring every capture field
+    and both old/new code identities to match exactly.
+    """
+
+    if protocol.get("schema") != OUTCOME_COMPATIBILITY_SCHEMA:
+        raise ValueError("unexpected nested outcome compatibility schema")
+    if protocol.get("allocation_config_file_sha256") != _required_sha256(
+        allocation_config_file_sha256,
+        field="allocation config file SHA-256",
+    ):
+        raise ValueError("compatibility allocation config pin changed")
+    if protocol.get("authenticated_capture_config_sha256") != _required_sha256(
+        capture_config_file_sha256,
+        field="authenticated capture config SHA-256",
+    ):
+        raise ValueError("compatibility capture config pin changed")
+
+    expected_allocation_identity = _required_candidate_code_identity(
+        protocol.get("allocation_candidate_code_identity")
+    )
+    observed_allocation_identity = _required_candidate_code_identity(
+        allocation_candidate_code_identity
+    )
+    if expected_allocation_identity != observed_allocation_identity:
+        raise ValueError("compatibility allocation code identity changed")
+    expected_outcome_identity = _required_candidate_code_identity(
+        protocol.get("outcome_code_identity")
+    )
+    observed_outcome_identity = _required_candidate_code_identity(
+        outcome_code_identity
+    )
+    if expected_outcome_identity != observed_outcome_identity:
+        raise ValueError("compatibility outcome code identity changed")
+
+    expected_capture = protocol.get("capture_hardware_execution_path")
+    extensions = protocol.get("allowed_allocation_only_hardware_extensions")
+    if not isinstance(expected_capture, Mapping) or not isinstance(
+        extensions, Mapping
+    ):
+        raise ValueError("compatibility hardware contracts are incomplete")
+    capture = dict(capture_hardware_execution_path)
+    allocation = dict(allocation_hardware_execution_path)
+    expected_capture = dict(expected_capture)
+    extensions = dict(extensions)
+    if capture != expected_capture:
+        raise ValueError("authenticated capture hardware contract changed")
+    if set(expected_capture).intersection(extensions):
+        raise ValueError("compatibility hardware extension shadows capture field")
+    expected_allocation = {**expected_capture, **extensions}
+    if allocation != expected_allocation:
+        raise ValueError(
+            "allocation hardware extension differs from compatibility seal"
+        )
+    if protocol.get("allocation_states_unchanged") is not True:
+        raise ValueError("compatibility protocol does not preserve allocation states")
+    if protocol.get("outcome_execution_semantics_unchanged") is not True:
+        raise ValueError("compatibility protocol changes outcome execution semantics")
+    return {
+        "schema": OUTCOME_COMPATIBILITY_SCHEMA,
+        "allocation_config_file_sha256": str(allocation_config_file_sha256),
+        "authenticated_capture_config_sha256": str(capture_config_file_sha256),
+        "allocation_candidate_code_identity": observed_allocation_identity,
+        "outcome_code_identity": observed_outcome_identity,
+        "capture_hardware_execution_path": expected_capture,
+        "allowed_allocation_only_hardware_extensions": extensions,
+        "allocation_states_unchanged": True,
+        "outcome_execution_semantics_unchanged": True,
     }
 
 

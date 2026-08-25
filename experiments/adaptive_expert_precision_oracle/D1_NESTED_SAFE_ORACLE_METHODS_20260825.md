@@ -50,6 +50,25 @@ Prefill is exact. Each request contributes exactly one isolated teacher-forced
 decode token behind its complete native hybrid prefix cache. Candidate caches
 are private and never advance another token.
 
+## Outcome compatibility erratum (sealed before outcomes)
+
+The first outcome invocation failed closed before model loading or outcome-cell
+creation because the allocation config's `hardware_execution_path` extends the
+authenticated capture dictionary with four CPU-worker metadata fields. The six
+GPU, eager-execution, model-load and hybrid-cache fields were identical, but
+the original runner compared the complete dictionaries.
+
+The checked-in
+[`qwen36_mxfp4_d1_nested_outcome_compatibility_20260825_v1.json`](configs/qwen36_mxfp4_d1_nested_outcome_compatibility_20260825_v1.json)
+permits exactly those four sealed, semantics-inert CPU fields and no others. It
+pins the original allocation code identity `d301feff...fae08`, the separately
+versioned outcome code identity `aee8e5e7...f3cbc`, both changed Python-file
+hashes, the allocation and capture config hashes, and the sealed allocation
+manifest hash. Every capture hardware field must still match exactly. The
+compatibility repair changes neither allocation states nor cached-decode
+execution semantics, and its raw file hash is required on both run and finalize
+commands.
+
 ## Independent request cohort
 
 The source is a pinned 256-request, eight-domain prompt-token manifest. Its

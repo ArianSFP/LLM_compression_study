@@ -38,6 +38,7 @@ from oracle_study.d1_nested_outcomes import (  # noqa: E402
     AUTHENTICATED_CAPTURE_CONFIG_SHA256,
     CACHE_FILE,
     CONTRAST_FILE,
+    OUTCOME_COMPATIBILITY_SCHEMA,
     OUTCOME_SCHEMA,
     PROPAGATION_FILE,
     QUALITY_FILE,
@@ -55,6 +56,7 @@ from oracle_study.d1_nested_outcomes import (  # noqa: E402
     route_mode_contrasts,
     validate_complete_allocation_grid,
     validate_outcome_config,
+    validate_outcome_compatibility_protocol,
     validate_plan_against_config,
 )
 from oracle_study.split_interaction_field import split_state_output  # noqa: E402
@@ -166,18 +168,36 @@ def _outcome_code_bundle() -> dict[str, Any]:
     }
 
 
-def _authenticate_outcome_code_bundle(plan: Any) -> dict[str, Any]:
-    """Require outcome code to equal the allocation-stage sealed bundle."""
+def _authenticate_outcome_code_bundle(
+    plan: Any,
+    protocol: Mapping[str, Any],
+    *,
+    allocation_config_sha256: str,
+    capture_config: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Authenticate separately versioned outcome code against a checked-in seal."""
 
     bundle = _outcome_code_bundle()
     observed = bundle["allocation_candidate_code_identity"]
     expected = dict(plan.calibration_candidate_code_identity)
-    if observed != expected:
-        raise RuntimeError(
-            "outcome code bundle differs from the sealed allocation code identity: "
-            f"expected={expected}, observed={observed}"
-        )
-    return bundle
+    compatibility = validate_outcome_compatibility_protocol(
+        protocol,
+        allocation_config_file_sha256=allocation_config_sha256,
+        capture_config_file_sha256=AUTHENTICATED_CAPTURE_CONFIG_SHA256,
+        allocation_candidate_code_identity=expected,
+        outcome_code_identity=observed,
+        allocation_hardware_execution_path=load_json(
+            FROZEN_ALLOCATION_CONFIG_PATH
+        )["hardware_execution_path"],
+        capture_hardware_execution_path=capture_config[
+            "hardware_execution_path"
+        ],
+    )
+    return {
+        **bundle,
+        "allocation_code_identity_equal_to_outcome_code_identity": False,
+        "compatibility_protocol": compatibility,
+    }
 
 
 def _validate_execution_stack(
@@ -1733,7 +1753,7 @@ def _load_inputs(args: argparse.Namespace):
         "checkpoint", "checkpoint_revision", "checkpoint_index_sha256",
         "checkpoint_config_sha256", "tokenizer_json_sha256", "selected_trees",
         "selected_tree_sha256", "request_source", "decode_position",
-        "injection_layers", "hardware_execution_path",
+        "injection_layers",
     )
     changed = [
         field for field in capture_critical_fields
@@ -1752,7 +1772,23 @@ def _load_inputs(args: argparse.Namespace):
     validate_plan_against_config(
         plan, config, config_file_sha256=allocation_config_sha256,
     )
-    outcome_code_bundle = _authenticate_outcome_code_bundle(plan)
+    compatibility_path = Path(args.outcome_compatibility_protocol)
+    compatibility_sha256 = file_sha256(compatibility_path)
+    if compatibility_sha256 != args.expected_compatibility_sha256:
+        raise ValueError("outcome compatibility protocol SHA-256 changed")
+    compatibility_protocol = load_json(compatibility_path)
+    if compatibility_protocol.get("schema") != OUTCOME_COMPATIBILITY_SCHEMA:
+        raise ValueError("outcome compatibility protocol schema changed")
+    outcome_code_bundle = _authenticate_outcome_code_bundle(
+        plan,
+        compatibility_protocol,
+        allocation_config_sha256=allocation_config_sha256,
+        capture_config=capture_config,
+    )
+    outcome_code_bundle["compatibility_protocol_file"] = {
+        "path": str(compatibility_path),
+        "sha256": compatibility_sha256,
+    }
     request_facts_path = _resolve_request_manifest_facts_path(
         capture_config, args.request_manifest, args.request_manifest_facts,
     )
@@ -2106,6 +2142,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--allocation-seal", type=Path, required=True)
     parser.add_argument("--expected-allocation-sha256", required=True)
     parser.add_argument("--expected-calibration-sha256", required=True)
+    parser.add_argument(
+        "--outcome-compatibility-protocol", type=Path, required=True,
+    )
+    parser.add_argument("--expected-compatibility-sha256", required=True)
     parser.add_argument(
         "--splits", choices=("calibration", "evaluation"), nargs="+",
         default=["evaluation"],
