@@ -62,12 +62,20 @@ The checked-in
 [`qwen36_mxfp4_d1_nested_outcome_compatibility_20260825_v1.json`](configs/qwen36_mxfp4_d1_nested_outcome_compatibility_20260825_v1.json)
 permits exactly those four sealed, semantics-inert CPU fields and no others. It
 pins the original allocation code identity `d301feff...fae08`, the separately
-versioned outcome code identity `aee8e5e7...f3cbc`, both changed Python-file
+versioned outcome code identity `27068ba4...759b`, both changed Python-file
 hashes, the allocation and capture config hashes, and the sealed allocation
 manifest hash. Every capture hardware field must still match exactly. The
 compatibility repair changes neither allocation states nor cached-decode
 execution semantics, and its raw file hash is required on both run and finalize
 commands.
+
+A second pre-outcome invocation passed admission and model preparation, then
+failed on the first zero-dose frozen-route proof because recomputed CUDA scores
+were subtracted from the authenticated CPU baseline tensor. No outcome cell was
+written. The proof now moves the baseline scores to the recomputation device
+before the existing bitwise comparison; a CUDA cross-device regression test is
+part of the focused suite. This is device normalization in a validation gate,
+not a change to candidate execution or any reported metric.
 
 ## Independent request cohort
 

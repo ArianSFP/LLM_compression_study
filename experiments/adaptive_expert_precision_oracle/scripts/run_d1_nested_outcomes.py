@@ -998,7 +998,7 @@ def _prove_zero_frozen_routes_are_identity(
     for downstream in range(int(layer) + 1, 40):
         logits = baseline.router_logits[downstream].to(device)
         ids = baseline.router_ids[downstream].to(device)
-        native = baseline.router_scores[downstream]
+        native = baseline.router_scores[downstream].to(device)
         probabilities = torch.softmax(logits, dtype=torch.float, dim=-1)
         recomputed = torch.gather(
             probabilities, dim=-1, index=ids,

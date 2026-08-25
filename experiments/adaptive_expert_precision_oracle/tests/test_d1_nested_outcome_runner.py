@@ -114,6 +114,10 @@ def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
             "sha256": capture_sha,
         },
     })
+    compatibility = tmp_path / "compatibility.json"
+    compatibility_sha = _write_json(compatibility, {
+        "schema": runner.OUTCOME_COMPATIBILITY_SCHEMA,
+    })
     plan = SimpleNamespace(
         request_manifest_sha256=original_manifest_sha,
         request_manifest_facts_sha256=original_facts_sha,
@@ -136,7 +140,7 @@ def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
         runner, "validate_plan_against_config", lambda *_args, **_kwargs: None,
     )
     monkeypatch.setattr(
-        runner, "_authenticate_outcome_code_bundle", lambda _plan: {},
+        runner, "_authenticate_outcome_code_bundle", lambda *_args, **_kwargs: {},
     )
     monkeypatch.setattr(runner, "validate_capture_inputs", forbidden_parser)
     args = SimpleNamespace(
@@ -146,6 +150,8 @@ def test_substituted_tokens_are_rejected_before_request_rows_are_parsed(
         allocation_seal=tmp_path / "allocations.seal.json",
         expected_allocation_sha256="a" * 64,
         expected_calibration_sha256="b" * 64,
+        outcome_compatibility_protocol=compatibility,
+        expected_compatibility_sha256=compatibility_sha,
         splits=["evaluation"], layers=None,
     )
     with pytest.raises(ValueError, match="request manifest does not match"):
@@ -177,19 +183,38 @@ def test_outcome_code_bundle_is_canonical_and_covers_execution_sources() -> None
     }
 
 
-def test_outcome_code_must_equal_sealed_allocation_bundle() -> None:
-    bundle = runner._outcome_code_bundle()
-    expected = dict(bundle["allocation_candidate_code_identity"])
+def test_outcome_code_is_separately_bound_by_compatibility_protocol() -> None:
+    protocol = json.loads((
+        EXPERIMENT / "configs"
+        / "qwen36_mxfp4_d1_nested_outcome_compatibility_20260825_v1.json"
+    ).read_text())
+    capture_config = json.loads((
+        EXPERIMENT / runner.AUTHENTICATED_CAPTURE_CONFIG_PATH
+    ).read_text())
+    expected_allocation = dict(protocol["allocation_candidate_code_identity"])
     admitted = runner._authenticate_outcome_code_bundle(
-        SimpleNamespace(calibration_candidate_code_identity=expected),
+        SimpleNamespace(calibration_candidate_code_identity=expected_allocation),
+        protocol,
+        allocation_config_sha256=protocol["allocation_config_file_sha256"],
+        capture_config=capture_config,
     )
-    assert admitted["allocation_candidate_code_identity"] == expected
+    assert admitted["allocation_candidate_code_identity"] == protocol[
+        "outcome_code_identity"
+    ]
+    assert admitted[
+        "allocation_code_identity_equal_to_outcome_code_identity"
+    ] is False
 
-    changed = dict(expected)
-    changed["canonical_sha256"] = "0" * 64
-    with pytest.raises(RuntimeError, match="sealed allocation code identity"):
+    changed = json.loads(json.dumps(protocol))
+    changed["outcome_code_identity"]["canonical_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="outcome code identity changed"):
         runner._authenticate_outcome_code_bundle(
-            SimpleNamespace(calibration_candidate_code_identity=changed),
+            SimpleNamespace(
+                calibration_candidate_code_identity=expected_allocation,
+            ),
+            changed,
+            allocation_config_sha256=protocol["allocation_config_file_sha256"],
+            capture_config=capture_config,
         )
 
 
@@ -485,6 +510,15 @@ def test_zero_frozen_route_identity_proof_matches_hook_computation() -> None:
         "zero_frozen_set_live_weight_all_downstream_scores_bit_identical"
     ] is True
     assert proof["zero_frozen_set_live_weight_max_abs"] == 0.0
+
+    if torch.cuda.is_available():
+        cross_device = runner._prove_zero_frozen_routes_are_identity(
+            baseline, 4, torch.device("cuda"),
+        )
+        assert cross_device[
+            "zero_frozen_set_live_weight_all_downstream_scores_bit_identical"
+        ] is True
+        assert cross_device["zero_frozen_set_live_weight_max_abs"] == 0.0
 
     baseline.router_scores[12] = scores.clone()
     baseline.router_scores[12][0, 0] = 0.0

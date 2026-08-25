@@ -14,12 +14,12 @@
   "outcome_code_identity": {
     "schema": "pr13_d1_nested_code_bundle_v1",
     "files": 139,
-    "canonical_sha256": "aee8e5e7d24ae274a3db46c9878c55486284b64ba1c95a67cea6057c1fff3cbc"
+    "canonical_sha256": "27068ba44ee46a3d5bb5a26ba985be15061afd618e5c093b315b14f07161759b"
   },
   "changed_python_members": {
     "scripts/run_d1_nested_outcomes.py": {
       "allocation_sha256": "1f0bdc9476157c9500a1b08d14560ddd8a46b2a5aeb3296f978f430699492fb5",
-      "outcome_sha256": "fe1e343849c5df77800df927b5ebae2e0143aecf813590d795ae3a2ef5c4fadf"
+      "outcome_sha256": "318220905d1ee68c9b910eb2a310d7dc4c6b6a47426068726a5342f36fb23b5f"
     },
     "src/oracle_study/d1_nested_outcomes.py": {
       "allocation_sha256": "5355e3199e5c8b9113bbff8327c705390e0cceb9518c785604e391c04318bca1",
@@ -47,5 +47,20 @@
   "outcome_execution_semantics_unchanged": true,
   "terminal_outcomes_exposed_before_fix": false,
   "failed_attempt_wrote_outcome_cells": false,
-  "experiment_b_started": false
+  "experiment_b_started": false,
+  "pre_outcome_failed_attempts": [
+    {
+      "stage": "input_admission",
+      "failure": "whole hardware_execution_path dictionary compared instead of sealed capture fields plus explicit allocation-only metadata",
+      "model_loaded": false,
+      "outcome_cells_written": false
+    },
+    {
+      "stage": "first_zero_dose_frozen_route_identity_proof",
+      "failure": "recomputed CUDA selector scores subtracted from authenticated CPU baseline scores without device normalization",
+      "model_loaded": true,
+      "outcome_cells_written": false
+    }
+  ],
+  "zero_dose_proof_device_fix": "move native baseline router scores to the recomputation device before float difference and existing CPU bitwise equality checks"
 }
