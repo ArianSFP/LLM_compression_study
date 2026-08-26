@@ -1,0 +1,58 @@
+{
+  "completed": true,
+  "experiment_b_started": false,
+  "outputs": {
+    "d1_nested_adjacent_rate_monotonicity.parquet": {
+      "bytes": 7027,
+      "rows": 6,
+      "sha256": "b3d79f6c790e26d460f02fed47de0105e65e5a74cf79d448b1cd8e90a666dccf"
+    },
+    "d1_nested_changed_cell_failure_decomposition.parquet": {
+      "bytes": 8790,
+      "rows": 4,
+      "sha256": "168f6ff882b542a5e1532f722283a9afafc5d153cd1de17a0ec3766e8cc46a60"
+    },
+    "d1_nested_primary_metric_failure_summary.parquet": {
+      "bytes": 9871,
+      "rows": 28,
+      "sha256": "ab22dad8c55b8fe02d9ba3eee2d28a4c9e5508e1371184195e85845f3fe736a8"
+    },
+    "d1_nested_product_attention_decomposition.parquet": {
+      "bytes": 7615,
+      "rows": 4,
+      "sha256": "0cbc688a6124690e8c78fc7813d1822f02d9f54f8651c0b7fb0feba0751be007"
+    }
+  },
+  "post_hoc_descriptive_only": true,
+  "schema": "pr13_d1_nested_failure_diagnostics_v1",
+  "sources": {
+    "comparisons": {
+      "bytes": 139491,
+      "path": "analysis/d1_nested_allocation_comparisons.parquet",
+      "sha256": "15fa0b6c9408a5b68390588b1b1391b3aa9518df8c2e549e416214e59f806d4e"
+    },
+    "promotion": {
+      "bytes": 6893,
+      "path": "analysis/d1_nested_experiment_a_promotion.json",
+      "sha256": "0157eeb743acb5e4becec3e12027be43ef63db3a228e82b745d469627d94209c"
+    },
+    "quality": {
+      "bytes": 2586055,
+      "path": "outcomes/d1_nested_outcome_quality.parquet",
+      "sha256": "722a76bedc43842e274187e8c5749cb520a164ba1344fc8d2fbc288d1b5aea6b"
+    },
+    "request_means": {
+      "bytes": 246164,
+      "path": "analysis/d1_nested_outcome_request_means.parquet",
+      "sha256": "d9e4e2c15ff26f4a454d8a6dd66ed12874d90d48bbbb23beeba5f5cd97622197"
+    },
+    "strata": {
+      "bytes": 9677,
+      "path": "analysis/d1_nested_primary_strata.parquet",
+      "sha256": "b84ad77d9c3f0c60bef634096a11a3058d637f71da21c911cd7e90afc11a82df"
+    }
+  },
+  "used_for_allocation": false,
+  "used_for_primary_inference": false,
+  "used_for_promotion": false
+}

@@ -1,0 +1,39 @@
+{
+  "files": {
+    "README.txt": {
+      "bytes": 855,
+      "sha256": "abfe13d23da692db4fa9e1eea7d2c70b4fa907e8a6d781870f5b45e30882dde4"
+    },
+    "cpu_worker_audit_benchmark.py": {
+      "bytes": 7782,
+      "sha256": "c32818e2cb1fbcc900e23d975c7b999ee8bd04d273437c0c3c225f0c933acfd9"
+    },
+    "exact_command.txt": {
+      "bytes": 192,
+      "sha256": "5bf9c677b082baaa8a1fe3a61ef6fc79bd2a4d72d3af24d51ff726402f604959"
+    },
+    "host_facts_after.json": {
+      "bytes": 551,
+      "sha256": "b40b39d0d759a1e43771ae5605a62cc581dd2792681907ddf4ffc7a0c9b9c221"
+    },
+    "host_facts_before.json": {
+      "bytes": 3221,
+      "sha256": "0b2e1d85dbe07e199efc0330c12c238dc35405ad10c1c2e2d52e73dcec2d63e5"
+    },
+    "lscpu.txt": {
+      "bytes": 3878,
+      "sha256": "f9dcec091c6b9ab2a5da057a7584e1168826123e3f9b6b6ff408afd2dbeb4eeb"
+    },
+    "raw_output.txt": {
+      "bytes": 319,
+      "sha256": "5f4aec4f8f9a3eb9a2a7a9a7c6ae2165d9861dc015d2a8f250009bca7d11d239"
+    },
+    "raw_results.json": {
+      "bytes": 4019,
+      "sha256": "1f7bfcd36a53e35849163630c793326da337ce2fd028e97e13469a1ced5862b2"
+    }
+  },
+  "pilot_nonpromotable": true,
+  "schema": "pr13_d1_cpu_worker_audit_sha256_manifest_v1",
+  "scientific_evidence": false
+}

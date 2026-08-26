@@ -1,0 +1,1552 @@
+[layer 0] decoding 205 active experts
+[layer 0] decoded 16/205 experts
+[layer 0] decoded 32/205 experts
+[layer 0] decoded 48/205 experts
+[layer 0] decoded 64/205 experts
+[layer 0] decoded 80/205 experts
+[layer 0] decoded 96/205 experts
+[layer 0] decoded 112/205 experts
+[layer 0] decoded 128/205 experts
+[layer 0] decoded 144/205 experts
+[layer 0] decoded 160/205 experts
+[layer 0] decoded 176/205 experts
+[layer 0] decoded 192/205 experts
+[layer 0] decoded 205/205 experts
+[layer 0] building 96 exact option geometries
+[layer 0] built 8/96 geometries
+[layer 0] built 16/96 geometries
+[layer 0] built 24/96 geometries
+[layer 0] built 32/96 geometries
+[layer 0] built 40/96 geometries
+[layer 0] built 48/96 geometries
+[layer 0] built 56/96 geometries
+[layer 0] built 64/96 geometries
+[layer 0] built 72/96 geometries
+[layer 0] built 80/96 geometries
+[layer 0] built 88/96 geometries
+[layer 0] built 96/96 geometries
+[layer 0] column-generating 96 rate-360 geometries
+[layer 0] refined 8/96 geometries
+[layer 0] refined 16/96 geometries
+[layer 0] refined 24/96 geometries
+[layer 0] refined 32/96 geometries
+[layer 0] refined 40/96 geometries
+[layer 0] refined 48/96 geometries
+[layer 0] refined 56/96 geometries
+[layer 0] refined 64/96 geometries
+[layer 0] refined 72/96 geometries
+[layer 0] refined 80/96 geometries
+[layer 0] refined 88/96 geometries
+[layer 0] refined 96/96 geometries
+[layer 0] collapsed rate=360 8/96 groups
+[layer 0] collapsed rate=360 16/96 groups
+[layer 0] collapsed rate=360 24/96 groups
+[layer 0] collapsed rate=360 32/96 groups
+[layer 0] collapsed rate=360 40/96 groups
+[layer 0] collapsed rate=360 48/96 groups
+[layer 0] collapsed rate=360 56/96 groups
+[layer 0] collapsed rate=360 64/96 groups
+[layer 0] collapsed rate=360 72/96 groups
+[layer 0] collapsed rate=360 80/96 groups
+[layer 0] collapsed rate=360 88/96 groups
+[layer 0] collapsed rate=360 96/96 groups
+[layer 0] column-generating 96 rate-384 geometries
+[layer 0] refined 8/96 geometries
+[layer 0] refined 16/96 geometries
+[layer 0] refined 24/96 geometries
+[layer 0] refined 32/96 geometries
+[layer 0] refined 40/96 geometries
+[layer 0] refined 48/96 geometries
+[layer 0] refined 56/96 geometries
+[layer 0] refined 64/96 geometries
+[layer 0] refined 72/96 geometries
+[layer 0] refined 80/96 geometries
+[layer 0] refined 88/96 geometries
+[layer 0] refined 96/96 geometries
+[layer 0] collapsed rate=384 8/96 groups
+[layer 0] collapsed rate=384 16/96 groups
+[layer 0] collapsed rate=384 24/96 groups
+[layer 0] collapsed rate=384 32/96 groups
+[layer 0] collapsed rate=384 40/96 groups
+[layer 0] collapsed rate=384 48/96 groups
+[layer 0] collapsed rate=384 56/96 groups
+[layer 0] collapsed rate=384 64/96 groups
+[layer 0] collapsed rate=384 72/96 groups
+[layer 0] collapsed rate=384 80/96 groups
+[layer 0] collapsed rate=384 88/96 groups
+[layer 0] collapsed rate=384 96/96 groups
+[layer 0] column-generating 96 rate-725 geometries
+[layer 0] refined 8/96 geometries
+[layer 0] refined 16/96 geometries
+[layer 0] refined 24/96 geometries
+[layer 0] refined 32/96 geometries
+[layer 0] refined 40/96 geometries
+[layer 0] refined 48/96 geometries
+[layer 0] refined 56/96 geometries
+[layer 0] refined 64/96 geometries
+[layer 0] refined 72/96 geometries
+[layer 0] refined 80/96 geometries
+[layer 0] refined 88/96 geometries
+[layer 0] refined 96/96 geometries
+[layer 0] collapsed rate=725 8/96 groups
+[layer 0] collapsed rate=725 16/96 groups
+[layer 0] collapsed rate=725 24/96 groups
+[layer 0] collapsed rate=725 32/96 groups
+[layer 0] collapsed rate=725 40/96 groups
+[layer 0] collapsed rate=725 48/96 groups
+[layer 0] collapsed rate=725 56/96 groups
+[layer 0] collapsed rate=725 64/96 groups
+[layer 0] collapsed rate=725 72/96 groups
+[layer 0] collapsed rate=725 80/96 groups
+[layer 0] collapsed rate=725 88/96 groups
+[layer 0] collapsed rate=725 96/96 groups
+[layer 0] column-generating 96 rate-749 geometries
+[layer 0] refined 8/96 geometries
+[layer 0] refined 16/96 geometries
+[layer 0] refined 24/96 geometries
+[layer 0] refined 32/96 geometries
+[layer 0] refined 40/96 geometries
+[layer 0] refined 48/96 geometries
+[layer 0] refined 56/96 geometries
+[layer 0] refined 64/96 geometries
+[layer 0] refined 72/96 geometries
+[layer 0] refined 80/96 geometries
+[layer 0] refined 88/96 geometries
+[layer 0] refined 96/96 geometries
+[layer 0] collapsed rate=749 8/96 groups
+[layer 0] collapsed rate=749 16/96 groups
+[layer 0] collapsed rate=749 24/96 groups
+[layer 0] collapsed rate=749 32/96 groups
+[layer 0] collapsed rate=749 40/96 groups
+[layer 0] collapsed rate=749 48/96 groups
+[layer 0] collapsed rate=749 56/96 groups
+[layer 0] collapsed rate=749 64/96 groups
+[layer 0] collapsed rate=749 72/96 groups
+[layer 0] collapsed rate=749 80/96 groups
+[layer 0] collapsed rate=749 88/96 groups
+[layer 0] collapsed rate=749 96/96 groups
+[layer 0] Arm3 local pairs 16/576
+[layer 0] Arm3 local pairs 32/576
+[layer 0] Arm3 local pairs 48/576
+[layer 0] Arm3 local pairs 64/576
+[layer 0] Arm3 local pairs 80/576
+[layer 0] Arm3 local pairs 96/576
+[layer 0] Arm3 local pairs 112/576
+[layer 0] Arm3 local pairs 128/576
+[layer 0] Arm3 local pairs 144/576
+[layer 0] Arm3 local pairs 160/576
+[layer 0] Arm3 local pairs 176/576
+[layer 0] Arm3 local pairs 192/576
+[layer 0] Arm3 local pairs 208/576
+[layer 0] Arm3 local pairs 224/576
+[layer 0] Arm3 local pairs 240/576
+[layer 0] Arm3 local pairs 256/576
+[layer 0] Arm3 local pairs 272/576
+[layer 0] Arm3 local pairs 288/576
+[layer 0] Arm3 local pairs 304/576
+[layer 0] Arm3 local pairs 320/576
+[layer 0] Arm3 local pairs 336/576
+[layer 0] Arm3 local pairs 352/576
+[layer 0] Arm3 local pairs 368/576
+[layer 0] Arm3 local pairs 384/576
+[layer 0] Arm3 local pairs 400/576
+[layer 0] Arm3 local pairs 416/576
+[layer 0] Arm3 local pairs 432/576
+[layer 0] Arm3 local pairs 448/576
+[layer 0] Arm3 local pairs 464/576
+[layer 0] Arm3 local pairs 480/576
+[layer 0] Arm3 local pairs 496/576
+[layer 0] Arm3 local pairs 512/576
+[layer 0] Arm3 local pairs 528/576
+[layer 0] Arm3 local pairs 544/576
+[layer 0] Arm3 local pairs 560/576
+[layer 0] Arm3 local pairs 576/576
+[nested allocation] layer=0 group=1/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=2/96 rows=20 replays=36 cache_hits=66 high_path_cache=1/1
+[nested allocation] layer=0 group=3/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=0 group=4/96 rows=20 replays=68 cache_hits=96 high_path_cache=1/1
+[nested allocation] layer=0 group=5/96 rows=20 replays=29 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=0 group=6/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=7/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=8/96 rows=20 replays=34 cache_hits=66 high_path_cache=1/1
+[nested allocation] layer=0 group=9/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=10/96 rows=20 replays=25 cache_hits=59 high_path_cache=1/1
+[nested allocation] layer=0 group=11/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=0 group=12/96 rows=20 replays=36 cache_hits=66 high_path_cache=2/2
+[nested allocation] layer=0 group=13/96 rows=20 replays=43 cache_hits=73 high_path_cache=2/2
+[nested allocation] layer=0 group=14/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=15/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=16/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=17/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=18/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=19/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=20/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=21/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=22/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=23/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=24/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=25/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=26/96 rows=20 replays=215 cache_hits=245 high_path_cache=2/2
+[nested allocation] layer=0 group=27/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=28/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=29/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=30/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=0 group=31/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=32/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=33/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=34/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=35/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=36/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=0 group=37/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=38/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=39/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=40/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=41/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=42/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=43/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=44/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=45/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=46/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=47/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=48/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=49/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=50/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=51/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=52/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=53/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=54/96 rows=20 replays=82 cache_hits=112 high_path_cache=2/2
+[nested allocation] layer=0 group=55/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=56/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=57/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=58/96 rows=20 replays=44 cache_hits=72 high_path_cache=2/2
+[nested allocation] layer=0 group=59/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=60/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=61/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=62/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=63/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=64/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=65/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=0 group=66/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=67/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=68/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=69/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=0 group=70/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=71/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=72/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=73/96 rows=20 replays=36 cache_hits=64 high_path_cache=2/2
+[nested allocation] layer=0 group=74/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=0 group=75/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=76/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=77/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=78/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=79/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=80/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=81/96 rows=20 replays=44 cache_hits=74 high_path_cache=2/2
+[nested allocation] layer=0 group=82/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=83/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=84/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=0 group=85/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=86/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=87/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=88/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=89/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=90/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=91/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=92/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=93/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=94/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=95/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=0 group=96/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested profile] wrote /workspace/pr13_d1_nested_safe_oracle_20260825_v2/profiles/evaluation/layer_00_timings.json
+[layer 1] decoding 187 active experts
+[layer 1] decoded 16/187 experts
+[layer 1] decoded 32/187 experts
+[layer 1] decoded 48/187 experts
+[layer 1] decoded 64/187 experts
+[layer 1] decoded 80/187 experts
+[layer 1] decoded 96/187 experts
+[layer 1] decoded 112/187 experts
+[layer 1] decoded 128/187 experts
+[layer 1] decoded 144/187 experts
+[layer 1] decoded 160/187 experts
+[layer 1] decoded 176/187 experts
+[layer 1] decoded 187/187 experts
+[layer 1] building 96 exact option geometries
+[layer 1] built 8/96 geometries
+[layer 1] built 16/96 geometries
+[layer 1] built 24/96 geometries
+[layer 1] built 32/96 geometries
+[layer 1] built 40/96 geometries
+[layer 1] built 48/96 geometries
+[layer 1] built 56/96 geometries
+[layer 1] built 64/96 geometries
+[layer 1] built 72/96 geometries
+[layer 1] built 80/96 geometries
+[layer 1] built 88/96 geometries
+[layer 1] built 96/96 geometries
+[layer 1] column-generating 96 rate-360 geometries
+[layer 1] refined 8/96 geometries
+[layer 1] refined 16/96 geometries
+[layer 1] refined 24/96 geometries
+[layer 1] refined 32/96 geometries
+[layer 1] refined 40/96 geometries
+[layer 1] refined 48/96 geometries
+[layer 1] refined 56/96 geometries
+[layer 1] refined 64/96 geometries
+[layer 1] refined 72/96 geometries
+[layer 1] refined 80/96 geometries
+[layer 1] refined 88/96 geometries
+[layer 1] refined 96/96 geometries
+[layer 1] collapsed rate=360 8/96 groups
+[layer 1] collapsed rate=360 16/96 groups
+[layer 1] collapsed rate=360 24/96 groups
+[layer 1] collapsed rate=360 32/96 groups
+[layer 1] collapsed rate=360 40/96 groups
+[layer 1] collapsed rate=360 48/96 groups
+[layer 1] collapsed rate=360 56/96 groups
+[layer 1] collapsed rate=360 64/96 groups
+[layer 1] collapsed rate=360 72/96 groups
+[layer 1] collapsed rate=360 80/96 groups
+[layer 1] collapsed rate=360 88/96 groups
+[layer 1] collapsed rate=360 96/96 groups
+[layer 1] column-generating 96 rate-384 geometries
+[layer 1] refined 8/96 geometries
+[layer 1] refined 16/96 geometries
+[layer 1] refined 24/96 geometries
+[layer 1] refined 32/96 geometries
+[layer 1] refined 40/96 geometries
+[layer 1] refined 48/96 geometries
+[layer 1] refined 56/96 geometries
+[layer 1] refined 64/96 geometries
+[layer 1] refined 72/96 geometries
+[layer 1] refined 80/96 geometries
+[layer 1] refined 88/96 geometries
+[layer 1] refined 96/96 geometries
+[layer 1] collapsed rate=384 8/96 groups
+[layer 1] collapsed rate=384 16/96 groups
+[layer 1] collapsed rate=384 24/96 groups
+[layer 1] collapsed rate=384 32/96 groups
+[layer 1] collapsed rate=384 40/96 groups
+[layer 1] collapsed rate=384 48/96 groups
+[layer 1] collapsed rate=384 56/96 groups
+[layer 1] collapsed rate=384 64/96 groups
+[layer 1] collapsed rate=384 72/96 groups
+[layer 1] collapsed rate=384 80/96 groups
+[layer 1] collapsed rate=384 88/96 groups
+[layer 1] collapsed rate=384 96/96 groups
+[layer 1] column-generating 96 rate-725 geometries
+[layer 1] refined 8/96 geometries
+[layer 1] refined 16/96 geometries
+[layer 1] refined 24/96 geometries
+[layer 1] refined 32/96 geometries
+[layer 1] refined 40/96 geometries
+[layer 1] refined 48/96 geometries
+[layer 1] refined 56/96 geometries
+[layer 1] refined 64/96 geometries
+[layer 1] refined 72/96 geometries
+[layer 1] refined 80/96 geometries
+[layer 1] refined 88/96 geometries
+[layer 1] refined 96/96 geometries
+[layer 1] collapsed rate=725 8/96 groups
+[layer 1] collapsed rate=725 16/96 groups
+[layer 1] collapsed rate=725 24/96 groups
+[layer 1] collapsed rate=725 32/96 groups
+[layer 1] collapsed rate=725 40/96 groups
+[layer 1] collapsed rate=725 48/96 groups
+[layer 1] collapsed rate=725 56/96 groups
+[layer 1] collapsed rate=725 64/96 groups
+[layer 1] collapsed rate=725 72/96 groups
+[layer 1] collapsed rate=725 80/96 groups
+[layer 1] collapsed rate=725 88/96 groups
+[layer 1] collapsed rate=725 96/96 groups
+[layer 1] column-generating 96 rate-749 geometries
+[layer 1] refined 8/96 geometries
+[layer 1] refined 16/96 geometries
+[layer 1] refined 24/96 geometries
+[layer 1] refined 32/96 geometries
+[layer 1] refined 40/96 geometries
+[layer 1] refined 48/96 geometries
+[layer 1] refined 56/96 geometries
+[layer 1] refined 64/96 geometries
+[layer 1] refined 72/96 geometries
+[layer 1] refined 80/96 geometries
+[layer 1] refined 88/96 geometries
+[layer 1] refined 96/96 geometries
+[layer 1] collapsed rate=749 8/96 groups
+[layer 1] collapsed rate=749 16/96 groups
+[layer 1] collapsed rate=749 24/96 groups
+[layer 1] collapsed rate=749 32/96 groups
+[layer 1] collapsed rate=749 40/96 groups
+[layer 1] collapsed rate=749 48/96 groups
+[layer 1] collapsed rate=749 56/96 groups
+[layer 1] collapsed rate=749 64/96 groups
+[layer 1] collapsed rate=749 72/96 groups
+[layer 1] collapsed rate=749 80/96 groups
+[layer 1] collapsed rate=749 88/96 groups
+[layer 1] collapsed rate=749 96/96 groups
+[layer 1] Arm3 local pairs 16/576
+[layer 1] Arm3 local pairs 32/576
+[layer 1] Arm3 local pairs 48/576
+[layer 1] Arm3 local pairs 64/576
+[layer 1] Arm3 local pairs 80/576
+[layer 1] Arm3 local pairs 96/576
+[layer 1] Arm3 local pairs 112/576
+[layer 1] Arm3 local pairs 128/576
+[layer 1] Arm3 local pairs 144/576
+[layer 1] Arm3 local pairs 160/576
+[layer 1] Arm3 local pairs 176/576
+[layer 1] Arm3 local pairs 192/576
+[layer 1] Arm3 local pairs 208/576
+[layer 1] Arm3 local pairs 224/576
+[layer 1] Arm3 local pairs 240/576
+[layer 1] Arm3 local pairs 256/576
+[layer 1] Arm3 local pairs 272/576
+[layer 1] Arm3 local pairs 288/576
+[layer 1] Arm3 local pairs 304/576
+[layer 1] Arm3 local pairs 320/576
+[layer 1] Arm3 local pairs 336/576
+[layer 1] Arm3 local pairs 352/576
+[layer 1] Arm3 local pairs 368/576
+[layer 1] Arm3 local pairs 384/576
+[layer 1] Arm3 local pairs 400/576
+[layer 1] Arm3 local pairs 416/576
+[layer 1] Arm3 local pairs 432/576
+[layer 1] Arm3 local pairs 448/576
+[layer 1] Arm3 local pairs 464/576
+[layer 1] Arm3 local pairs 480/576
+[layer 1] Arm3 local pairs 496/576
+[layer 1] Arm3 local pairs 512/576
+[layer 1] Arm3 local pairs 528/576
+[layer 1] Arm3 local pairs 544/576
+[layer 1] Arm3 local pairs 560/576
+[layer 1] Arm3 local pairs 576/576
+[nested allocation] layer=1 group=1/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=2/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=3/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=4/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=5/96 rows=20 replays=43 cache_hits=75 high_path_cache=2/2
+[nested allocation] layer=1 group=6/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=7/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=8/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=9/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=10/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=11/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=12/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=13/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=14/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=15/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=16/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=17/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=18/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=19/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=20/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=21/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=22/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=23/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=24/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=25/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=26/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=27/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=28/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=29/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=30/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=31/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=32/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=33/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=34/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=35/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=36/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=37/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=38/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=39/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=40/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=41/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=42/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=43/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=44/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=45/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=46/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=47/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=48/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=49/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=50/96 rows=20 replays=80 cache_hits=110 high_path_cache=2/2
+[nested allocation] layer=1 group=51/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=52/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=53/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=54/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=55/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=56/96 rows=20 replays=36 cache_hits=64 high_path_cache=0/0
+[nested allocation] layer=1 group=57/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=58/96 rows=20 replays=45 cache_hits=73 high_path_cache=2/2
+[nested allocation] layer=1 group=59/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=60/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=61/96 rows=20 replays=34 cache_hits=66 high_path_cache=2/2
+[nested allocation] layer=1 group=62/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=63/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=64/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=65/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=66/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=67/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=68/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=69/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=70/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=71/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=72/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=73/96 rows=20 replays=53 cache_hits=85 high_path_cache=1/1
+[nested allocation] layer=1 group=74/96 rows=20 replays=34 cache_hits=66 high_path_cache=1/1
+[nested allocation] layer=1 group=75/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=76/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=77/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=78/96 rows=20 replays=28 cache_hits=58 high_path_cache=1/1
+[nested allocation] layer=1 group=79/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=80/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=1 group=81/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=82/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=83/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=1 group=84/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=85/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=86/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=87/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=88/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=89/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=90/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=91/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=92/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=93/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=94/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=95/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=1 group=96/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested profile] wrote /workspace/pr13_d1_nested_safe_oracle_20260825_v2/profiles/evaluation/layer_01_timings.json
+[layer 4] decoding 168 active experts
+[layer 4] decoded 16/168 experts
+[layer 4] decoded 32/168 experts
+[layer 4] decoded 48/168 experts
+[layer 4] decoded 64/168 experts
+[layer 4] decoded 80/168 experts
+[layer 4] decoded 96/168 experts
+[layer 4] decoded 112/168 experts
+[layer 4] decoded 128/168 experts
+[layer 4] decoded 144/168 experts
+[layer 4] decoded 160/168 experts
+[layer 4] decoded 168/168 experts
+[layer 4] building 96 exact option geometries
+[layer 4] built 8/96 geometries
+[layer 4] built 16/96 geometries
+[layer 4] built 24/96 geometries
+[layer 4] built 32/96 geometries
+[layer 4] built 40/96 geometries
+[layer 4] built 48/96 geometries
+[layer 4] built 56/96 geometries
+[layer 4] built 64/96 geometries
+[layer 4] built 72/96 geometries
+[layer 4] built 80/96 geometries
+[layer 4] built 88/96 geometries
+[layer 4] built 96/96 geometries
+[layer 4] column-generating 96 rate-360 geometries
+[layer 4] refined 8/96 geometries
+[layer 4] refined 16/96 geometries
+[layer 4] refined 24/96 geometries
+[layer 4] refined 32/96 geometries
+[layer 4] refined 40/96 geometries
+[layer 4] refined 48/96 geometries
+[layer 4] refined 56/96 geometries
+[layer 4] refined 64/96 geometries
+[layer 4] refined 72/96 geometries
+[layer 4] refined 80/96 geometries
+[layer 4] refined 88/96 geometries
+[layer 4] refined 96/96 geometries
+[layer 4] collapsed rate=360 8/96 groups
+[layer 4] collapsed rate=360 16/96 groups
+[layer 4] collapsed rate=360 24/96 groups
+[layer 4] collapsed rate=360 32/96 groups
+[layer 4] collapsed rate=360 40/96 groups
+[layer 4] collapsed rate=360 48/96 groups
+[layer 4] collapsed rate=360 56/96 groups
+[layer 4] collapsed rate=360 64/96 groups
+[layer 4] collapsed rate=360 72/96 groups
+[layer 4] collapsed rate=360 80/96 groups
+[layer 4] collapsed rate=360 88/96 groups
+[layer 4] collapsed rate=360 96/96 groups
+[layer 4] column-generating 96 rate-384 geometries
+[layer 4] refined 8/96 geometries
+[layer 4] refined 16/96 geometries
+[layer 4] refined 24/96 geometries
+[layer 4] refined 32/96 geometries
+[layer 4] refined 40/96 geometries
+[layer 4] refined 48/96 geometries
+[layer 4] refined 56/96 geometries
+[layer 4] refined 64/96 geometries
+[layer 4] refined 72/96 geometries
+[layer 4] refined 80/96 geometries
+[layer 4] refined 88/96 geometries
+[layer 4] refined 96/96 geometries
+[layer 4] collapsed rate=384 8/96 groups
+[layer 4] collapsed rate=384 16/96 groups
+[layer 4] collapsed rate=384 24/96 groups
+[layer 4] collapsed rate=384 32/96 groups
+[layer 4] collapsed rate=384 40/96 groups
+[layer 4] collapsed rate=384 48/96 groups
+[layer 4] collapsed rate=384 56/96 groups
+[layer 4] collapsed rate=384 64/96 groups
+[layer 4] collapsed rate=384 72/96 groups
+[layer 4] collapsed rate=384 80/96 groups
+[layer 4] collapsed rate=384 88/96 groups
+[layer 4] collapsed rate=384 96/96 groups
+[layer 4] column-generating 96 rate-725 geometries
+[layer 4] refined 8/96 geometries
+[layer 4] refined 16/96 geometries
+[layer 4] refined 24/96 geometries
+[layer 4] refined 32/96 geometries
+[layer 4] refined 40/96 geometries
+[layer 4] refined 48/96 geometries
+[layer 4] refined 56/96 geometries
+[layer 4] refined 64/96 geometries
+[layer 4] refined 72/96 geometries
+[layer 4] refined 80/96 geometries
+[layer 4] refined 88/96 geometries
+[layer 4] refined 96/96 geometries
+[layer 4] collapsed rate=725 8/96 groups
+[layer 4] collapsed rate=725 16/96 groups
+[layer 4] collapsed rate=725 24/96 groups
+[layer 4] collapsed rate=725 32/96 groups
+[layer 4] collapsed rate=725 40/96 groups
+[layer 4] collapsed rate=725 48/96 groups
+[layer 4] collapsed rate=725 56/96 groups
+[layer 4] collapsed rate=725 64/96 groups
+[layer 4] collapsed rate=725 72/96 groups
+[layer 4] collapsed rate=725 80/96 groups
+[layer 4] collapsed rate=725 88/96 groups
+[layer 4] collapsed rate=725 96/96 groups
+[layer 4] column-generating 96 rate-749 geometries
+[layer 4] refined 8/96 geometries
+[layer 4] refined 16/96 geometries
+[layer 4] refined 24/96 geometries
+[layer 4] refined 32/96 geometries
+[layer 4] refined 40/96 geometries
+[layer 4] refined 48/96 geometries
+[layer 4] refined 56/96 geometries
+[layer 4] refined 64/96 geometries
+[layer 4] refined 72/96 geometries
+[layer 4] refined 80/96 geometries
+[layer 4] refined 88/96 geometries
+[layer 4] refined 96/96 geometries
+[layer 4] collapsed rate=749 8/96 groups
+[layer 4] collapsed rate=749 16/96 groups
+[layer 4] collapsed rate=749 24/96 groups
+[layer 4] collapsed rate=749 32/96 groups
+[layer 4] collapsed rate=749 40/96 groups
+[layer 4] collapsed rate=749 48/96 groups
+[layer 4] collapsed rate=749 56/96 groups
+[layer 4] collapsed rate=749 64/96 groups
+[layer 4] collapsed rate=749 72/96 groups
+[layer 4] collapsed rate=749 80/96 groups
+[layer 4] collapsed rate=749 88/96 groups
+[layer 4] collapsed rate=749 96/96 groups
+[layer 4] Arm3 local pairs 16/576
+[layer 4] Arm3 local pairs 32/576
+[layer 4] Arm3 local pairs 48/576
+[layer 4] Arm3 local pairs 64/576
+[layer 4] Arm3 local pairs 80/576
+[layer 4] Arm3 local pairs 96/576
+[layer 4] Arm3 local pairs 112/576
+[layer 4] Arm3 local pairs 128/576
+[layer 4] Arm3 local pairs 144/576
+[layer 4] Arm3 local pairs 160/576
+[layer 4] Arm3 local pairs 176/576
+[layer 4] Arm3 local pairs 192/576
+[layer 4] Arm3 local pairs 208/576
+[layer 4] Arm3 local pairs 224/576
+[layer 4] Arm3 local pairs 240/576
+[layer 4] Arm3 local pairs 256/576
+[layer 4] Arm3 local pairs 272/576
+[layer 4] Arm3 local pairs 288/576
+[layer 4] Arm3 local pairs 304/576
+[layer 4] Arm3 local pairs 320/576
+[layer 4] Arm3 local pairs 336/576
+[layer 4] Arm3 local pairs 352/576
+[layer 4] Arm3 local pairs 368/576
+[layer 4] Arm3 local pairs 384/576
+[layer 4] Arm3 local pairs 400/576
+[layer 4] Arm3 local pairs 416/576
+[layer 4] Arm3 local pairs 432/576
+[layer 4] Arm3 local pairs 448/576
+[layer 4] Arm3 local pairs 464/576
+[layer 4] Arm3 local pairs 480/576
+[layer 4] Arm3 local pairs 496/576
+[layer 4] Arm3 local pairs 512/576
+[layer 4] Arm3 local pairs 528/576
+[layer 4] Arm3 local pairs 544/576
+[layer 4] Arm3 local pairs 560/576
+[layer 4] Arm3 local pairs 576/576
+[nested allocation] layer=4 group=1/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=2/96 rows=20 replays=36 cache_hits=64 high_path_cache=2/2
+[nested allocation] layer=4 group=3/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=4/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=5/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=6/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=7/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=8/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=9/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=10/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=11/96 rows=20 replays=17 cache_hits=51 high_path_cache=0/0
+[nested allocation] layer=4 group=12/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=13/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=14/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=15/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=16/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=17/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=18/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=19/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=20/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=21/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=22/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=23/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=24/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=25/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=26/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=27/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=28/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=29/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=30/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=31/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=32/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=33/96 rows=20 replays=36 cache_hits=64 high_path_cache=2/2
+[nested allocation] layer=4 group=34/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=35/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=36/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=37/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=38/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=39/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=40/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=41/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=42/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=43/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=44/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=45/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=46/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=47/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=48/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=49/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=50/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=51/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=52/96 rows=20 replays=39 cache_hits=71 high_path_cache=2/2
+[nested allocation] layer=4 group=53/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=54/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=55/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=56/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=57/96 rows=20 replays=28 cache_hits=56 high_path_cache=0/0
+[nested allocation] layer=4 group=58/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=59/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=60/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=4 group=61/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=62/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=63/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=64/96 rows=20 replays=69 cache_hits=99 high_path_cache=2/2
+[nested allocation] layer=4 group=65/96 rows=20 replays=28 cache_hits=58 high_path_cache=1/1
+[nested allocation] layer=4 group=66/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=67/96 rows=20 replays=17 cache_hits=51 high_path_cache=0/0
+[nested allocation] layer=4 group=68/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=69/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=70/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=71/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=4 group=72/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=73/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=74/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=75/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=76/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=4 group=77/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=78/96 rows=20 replays=35 cache_hits=65 high_path_cache=1/1
+[nested allocation] layer=4 group=79/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=80/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=81/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=4 group=82/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=83/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=84/96 rows=20 replays=35 cache_hits=65 high_path_cache=1/1
+[nested allocation] layer=4 group=85/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=86/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=87/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=88/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=89/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=90/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=91/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=92/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=93/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=94/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=95/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=4 group=96/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested profile] wrote /workspace/pr13_d1_nested_safe_oracle_20260825_v2/profiles/evaluation/layer_04_timings.json
+[layer 6] decoding 181 active experts
+[layer 6] decoded 16/181 experts
+[layer 6] decoded 32/181 experts
+[layer 6] decoded 48/181 experts
+[layer 6] decoded 64/181 experts
+[layer 6] decoded 80/181 experts
+[layer 6] decoded 96/181 experts
+[layer 6] decoded 112/181 experts
+[layer 6] decoded 128/181 experts
+[layer 6] decoded 144/181 experts
+[layer 6] decoded 160/181 experts
+[layer 6] decoded 176/181 experts
+[layer 6] decoded 181/181 experts
+[layer 6] building 96 exact option geometries
+[layer 6] built 8/96 geometries
+[layer 6] built 16/96 geometries
+[layer 6] built 24/96 geometries
+[layer 6] built 32/96 geometries
+[layer 6] built 40/96 geometries
+[layer 6] built 48/96 geometries
+[layer 6] built 56/96 geometries
+[layer 6] built 64/96 geometries
+[layer 6] built 72/96 geometries
+[layer 6] built 80/96 geometries
+[layer 6] built 88/96 geometries
+[layer 6] built 96/96 geometries
+[layer 6] column-generating 96 rate-360 geometries
+[layer 6] refined 8/96 geometries
+[layer 6] refined 16/96 geometries
+[layer 6] refined 24/96 geometries
+[layer 6] refined 32/96 geometries
+[layer 6] refined 40/96 geometries
+[layer 6] refined 48/96 geometries
+[layer 6] refined 56/96 geometries
+[layer 6] refined 64/96 geometries
+[layer 6] refined 72/96 geometries
+[layer 6] refined 80/96 geometries
+[layer 6] refined 88/96 geometries
+[layer 6] refined 96/96 geometries
+[layer 6] collapsed rate=360 8/96 groups
+[layer 6] collapsed rate=360 16/96 groups
+[layer 6] collapsed rate=360 24/96 groups
+[layer 6] collapsed rate=360 32/96 groups
+[layer 6] collapsed rate=360 40/96 groups
+[layer 6] collapsed rate=360 48/96 groups
+[layer 6] collapsed rate=360 56/96 groups
+[layer 6] collapsed rate=360 64/96 groups
+[layer 6] collapsed rate=360 72/96 groups
+[layer 6] collapsed rate=360 80/96 groups
+[layer 6] collapsed rate=360 88/96 groups
+[layer 6] collapsed rate=360 96/96 groups
+[layer 6] column-generating 96 rate-384 geometries
+[layer 6] refined 8/96 geometries
+[layer 6] refined 16/96 geometries
+[layer 6] refined 24/96 geometries
+[layer 6] refined 32/96 geometries
+[layer 6] refined 40/96 geometries
+[layer 6] refined 48/96 geometries
+[layer 6] refined 56/96 geometries
+[layer 6] refined 64/96 geometries
+[layer 6] refined 72/96 geometries
+[layer 6] refined 80/96 geometries
+[layer 6] refined 88/96 geometries
+[layer 6] refined 96/96 geometries
+[layer 6] collapsed rate=384 8/96 groups
+[layer 6] collapsed rate=384 16/96 groups
+[layer 6] collapsed rate=384 24/96 groups
+[layer 6] collapsed rate=384 32/96 groups
+[layer 6] collapsed rate=384 40/96 groups
+[layer 6] collapsed rate=384 48/96 groups
+[layer 6] collapsed rate=384 56/96 groups
+[layer 6] collapsed rate=384 64/96 groups
+[layer 6] collapsed rate=384 72/96 groups
+[layer 6] collapsed rate=384 80/96 groups
+[layer 6] collapsed rate=384 88/96 groups
+[layer 6] collapsed rate=384 96/96 groups
+[layer 6] column-generating 96 rate-725 geometries
+[layer 6] refined 8/96 geometries
+[layer 6] refined 16/96 geometries
+[layer 6] refined 24/96 geometries
+[layer 6] refined 32/96 geometries
+[layer 6] refined 40/96 geometries
+[layer 6] refined 48/96 geometries
+[layer 6] refined 56/96 geometries
+[layer 6] refined 64/96 geometries
+[layer 6] refined 72/96 geometries
+[layer 6] refined 80/96 geometries
+[layer 6] refined 88/96 geometries
+[layer 6] refined 96/96 geometries
+[layer 6] collapsed rate=725 8/96 groups
+[layer 6] collapsed rate=725 16/96 groups
+[layer 6] collapsed rate=725 24/96 groups
+[layer 6] collapsed rate=725 32/96 groups
+[layer 6] collapsed rate=725 40/96 groups
+[layer 6] collapsed rate=725 48/96 groups
+[layer 6] collapsed rate=725 56/96 groups
+[layer 6] collapsed rate=725 64/96 groups
+[layer 6] collapsed rate=725 72/96 groups
+[layer 6] collapsed rate=725 80/96 groups
+[layer 6] collapsed rate=725 88/96 groups
+[layer 6] collapsed rate=725 96/96 groups
+[layer 6] column-generating 96 rate-749 geometries
+[layer 6] refined 8/96 geometries
+[layer 6] refined 16/96 geometries
+[layer 6] refined 24/96 geometries
+[layer 6] refined 32/96 geometries
+[layer 6] refined 40/96 geometries
+[layer 6] refined 48/96 geometries
+[layer 6] refined 56/96 geometries
+[layer 6] refined 64/96 geometries
+[layer 6] refined 72/96 geometries
+[layer 6] refined 80/96 geometries
+[layer 6] refined 88/96 geometries
+[layer 6] refined 96/96 geometries
+[layer 6] collapsed rate=749 8/96 groups
+[layer 6] collapsed rate=749 16/96 groups
+[layer 6] collapsed rate=749 24/96 groups
+[layer 6] collapsed rate=749 32/96 groups
+[layer 6] collapsed rate=749 40/96 groups
+[layer 6] collapsed rate=749 48/96 groups
+[layer 6] collapsed rate=749 56/96 groups
+[layer 6] collapsed rate=749 64/96 groups
+[layer 6] collapsed rate=749 72/96 groups
+[layer 6] collapsed rate=749 80/96 groups
+[layer 6] collapsed rate=749 88/96 groups
+[layer 6] collapsed rate=749 96/96 groups
+[layer 6] Arm3 local pairs 16/576
+[layer 6] Arm3 local pairs 32/576
+[layer 6] Arm3 local pairs 48/576
+[layer 6] Arm3 local pairs 64/576
+[layer 6] Arm3 local pairs 80/576
+[layer 6] Arm3 local pairs 96/576
+[layer 6] Arm3 local pairs 112/576
+[layer 6] Arm3 local pairs 128/576
+[layer 6] Arm3 local pairs 144/576
+[layer 6] Arm3 local pairs 160/576
+[layer 6] Arm3 local pairs 176/576
+[layer 6] Arm3 local pairs 192/576
+[layer 6] Arm3 local pairs 208/576
+[layer 6] Arm3 local pairs 224/576
+[layer 6] Arm3 local pairs 240/576
+[layer 6] Arm3 local pairs 256/576
+[layer 6] Arm3 local pairs 272/576
+[layer 6] Arm3 local pairs 288/576
+[layer 6] Arm3 local pairs 304/576
+[layer 6] Arm3 local pairs 320/576
+[layer 6] Arm3 local pairs 336/576
+[layer 6] Arm3 local pairs 352/576
+[layer 6] Arm3 local pairs 368/576
+[layer 6] Arm3 local pairs 384/576
+[layer 6] Arm3 local pairs 400/576
+[layer 6] Arm3 local pairs 416/576
+[layer 6] Arm3 local pairs 432/576
+[layer 6] Arm3 local pairs 448/576
+[layer 6] Arm3 local pairs 464/576
+[layer 6] Arm3 local pairs 480/576
+[layer 6] Arm3 local pairs 496/576
+[layer 6] Arm3 local pairs 512/576
+[layer 6] Arm3 local pairs 528/576
+[layer 6] Arm3 local pairs 544/576
+[layer 6] Arm3 local pairs 560/576
+[layer 6] Arm3 local pairs 576/576
+[nested allocation] layer=6 group=1/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=2/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=3/96 rows=20 replays=34 cache_hits=66 high_path_cache=2/2
+[nested allocation] layer=6 group=4/96 rows=20 replays=27 cache_hits=57 high_path_cache=0/0
+[nested allocation] layer=6 group=5/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=6/96 rows=20 replays=52 cache_hits=80 high_path_cache=2/2
+[nested allocation] layer=6 group=7/96 rows=20 replays=71 cache_hits=101 high_path_cache=1/1
+[nested allocation] layer=6 group=8/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=9/96 rows=20 replays=36 cache_hits=66 high_path_cache=2/2
+[nested allocation] layer=6 group=10/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=11/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=12/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=13/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=14/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=6 group=15/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=16/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=17/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=18/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=19/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=20/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=21/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=22/96 rows=20 replays=35 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=6 group=23/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=24/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=25/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=26/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=27/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=28/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=29/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=6 group=30/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=31/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=32/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=33/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=34/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=35/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=36/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=37/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=38/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=39/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=40/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=41/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=42/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=43/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=44/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=45/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=46/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=47/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=48/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=6 group=49/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=6 group=50/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=51/96 rows=20 replays=27 cache_hits=59 high_path_cache=1/1
+[nested allocation] layer=6 group=52/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=53/96 rows=20 replays=61 cache_hits=89 high_path_cache=2/2
+[nested allocation] layer=6 group=54/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=55/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=6 group=56/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=57/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=58/96 rows=20 replays=62 cache_hits=94 high_path_cache=2/2
+[nested allocation] layer=6 group=59/96 rows=20 replays=37 cache_hits=65 high_path_cache=1/1
+[nested allocation] layer=6 group=60/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=61/96 rows=20 replays=28 cache_hits=58 high_path_cache=1/1
+[nested allocation] layer=6 group=62/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=63/96 rows=20 replays=36 cache_hits=64 high_path_cache=2/2
+[nested allocation] layer=6 group=64/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=6 group=65/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=66/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=67/96 rows=20 replays=36 cache_hits=64 high_path_cache=1/1
+[nested allocation] layer=6 group=68/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=69/96 rows=20 replays=35 cache_hits=65 high_path_cache=1/1
+[nested allocation] layer=6 group=70/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=71/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=72/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=73/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=74/96 rows=20 replays=47 cache_hits=77 high_path_cache=2/2
+[nested allocation] layer=6 group=75/96 rows=20 replays=35 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=6 group=76/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=77/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=78/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=79/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=80/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=81/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=82/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=6 group=83/96 rows=20 replays=29 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=6 group=84/96 rows=20 replays=54 cache_hits=82 high_path_cache=2/2
+[nested allocation] layer=6 group=85/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=86/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=87/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=88/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=89/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=90/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=91/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=92/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=93/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=94/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=95/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=6 group=96/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested profile] wrote /workspace/pr13_d1_nested_safe_oracle_20260825_v2/profiles/evaluation/layer_06_timings.json
+[layer 12] decoding 172 active experts
+[layer 12] decoded 16/172 experts
+[layer 12] decoded 32/172 experts
+[layer 12] decoded 48/172 experts
+[layer 12] decoded 64/172 experts
+[layer 12] decoded 80/172 experts
+[layer 12] decoded 96/172 experts
+[layer 12] decoded 112/172 experts
+[layer 12] decoded 128/172 experts
+[layer 12] decoded 144/172 experts
+[layer 12] decoded 160/172 experts
+[layer 12] decoded 172/172 experts
+[layer 12] building 96 exact option geometries
+[layer 12] built 8/96 geometries
+[layer 12] built 16/96 geometries
+[layer 12] built 24/96 geometries
+[layer 12] built 32/96 geometries
+[layer 12] built 40/96 geometries
+[layer 12] built 48/96 geometries
+[layer 12] built 56/96 geometries
+[layer 12] built 64/96 geometries
+[layer 12] built 72/96 geometries
+[layer 12] built 80/96 geometries
+[layer 12] built 88/96 geometries
+[layer 12] built 96/96 geometries
+[layer 12] column-generating 96 rate-360 geometries
+[layer 12] refined 8/96 geometries
+[layer 12] refined 16/96 geometries
+[layer 12] refined 24/96 geometries
+[layer 12] refined 32/96 geometries
+[layer 12] refined 40/96 geometries
+[layer 12] refined 48/96 geometries
+[layer 12] refined 56/96 geometries
+[layer 12] refined 64/96 geometries
+[layer 12] refined 72/96 geometries
+[layer 12] refined 80/96 geometries
+[layer 12] refined 88/96 geometries
+[layer 12] refined 96/96 geometries
+[layer 12] collapsed rate=360 8/96 groups
+[layer 12] collapsed rate=360 16/96 groups
+[layer 12] collapsed rate=360 24/96 groups
+[layer 12] collapsed rate=360 32/96 groups
+[layer 12] collapsed rate=360 40/96 groups
+[layer 12] collapsed rate=360 48/96 groups
+[layer 12] collapsed rate=360 56/96 groups
+[layer 12] collapsed rate=360 64/96 groups
+[layer 12] collapsed rate=360 72/96 groups
+[layer 12] collapsed rate=360 80/96 groups
+[layer 12] collapsed rate=360 88/96 groups
+[layer 12] collapsed rate=360 96/96 groups
+[layer 12] column-generating 96 rate-384 geometries
+[layer 12] refined 8/96 geometries
+[layer 12] refined 16/96 geometries
+[layer 12] refined 24/96 geometries
+[layer 12] refined 32/96 geometries
+[layer 12] refined 40/96 geometries
+[layer 12] refined 48/96 geometries
+[layer 12] refined 56/96 geometries
+[layer 12] refined 64/96 geometries
+[layer 12] refined 72/96 geometries
+[layer 12] refined 80/96 geometries
+[layer 12] refined 88/96 geometries
+[layer 12] refined 96/96 geometries
+[layer 12] collapsed rate=384 8/96 groups
+[layer 12] collapsed rate=384 16/96 groups
+[layer 12] collapsed rate=384 24/96 groups
+[layer 12] collapsed rate=384 32/96 groups
+[layer 12] collapsed rate=384 40/96 groups
+[layer 12] collapsed rate=384 48/96 groups
+[layer 12] collapsed rate=384 56/96 groups
+[layer 12] collapsed rate=384 64/96 groups
+[layer 12] collapsed rate=384 72/96 groups
+[layer 12] collapsed rate=384 80/96 groups
+[layer 12] collapsed rate=384 88/96 groups
+[layer 12] collapsed rate=384 96/96 groups
+[layer 12] column-generating 96 rate-725 geometries
+[layer 12] refined 8/96 geometries
+[layer 12] refined 16/96 geometries
+[layer 12] refined 24/96 geometries
+[layer 12] refined 32/96 geometries
+[layer 12] refined 40/96 geometries
+[layer 12] refined 48/96 geometries
+[layer 12] refined 56/96 geometries
+[layer 12] refined 64/96 geometries
+[layer 12] refined 72/96 geometries
+[layer 12] refined 80/96 geometries
+[layer 12] refined 88/96 geometries
+[layer 12] refined 96/96 geometries
+[layer 12] collapsed rate=725 8/96 groups
+[layer 12] collapsed rate=725 16/96 groups
+[layer 12] collapsed rate=725 24/96 groups
+[layer 12] collapsed rate=725 32/96 groups
+[layer 12] collapsed rate=725 40/96 groups
+[layer 12] collapsed rate=725 48/96 groups
+[layer 12] collapsed rate=725 56/96 groups
+[layer 12] collapsed rate=725 64/96 groups
+[layer 12] collapsed rate=725 72/96 groups
+[layer 12] collapsed rate=725 80/96 groups
+[layer 12] collapsed rate=725 88/96 groups
+[layer 12] collapsed rate=725 96/96 groups
+[layer 12] column-generating 96 rate-749 geometries
+[layer 12] refined 8/96 geometries
+[layer 12] refined 16/96 geometries
+[layer 12] refined 24/96 geometries
+[layer 12] refined 32/96 geometries
+[layer 12] refined 40/96 geometries
+[layer 12] refined 48/96 geometries
+[layer 12] refined 56/96 geometries
+[layer 12] refined 64/96 geometries
+[layer 12] refined 72/96 geometries
+[layer 12] refined 80/96 geometries
+[layer 12] refined 88/96 geometries
+[layer 12] refined 96/96 geometries
+[layer 12] collapsed rate=749 8/96 groups
+[layer 12] collapsed rate=749 16/96 groups
+[layer 12] collapsed rate=749 24/96 groups
+[layer 12] collapsed rate=749 32/96 groups
+[layer 12] collapsed rate=749 40/96 groups
+[layer 12] collapsed rate=749 48/96 groups
+[layer 12] collapsed rate=749 56/96 groups
+[layer 12] collapsed rate=749 64/96 groups
+[layer 12] collapsed rate=749 72/96 groups
+[layer 12] collapsed rate=749 80/96 groups
+[layer 12] collapsed rate=749 88/96 groups
+[layer 12] collapsed rate=749 96/96 groups
+[layer 12] Arm3 local pairs 16/576
+[layer 12] Arm3 local pairs 32/576
+[layer 12] Arm3 local pairs 48/576
+[layer 12] Arm3 local pairs 64/576
+[layer 12] Arm3 local pairs 80/576
+[layer 12] Arm3 local pairs 96/576
+[layer 12] Arm3 local pairs 112/576
+[layer 12] Arm3 local pairs 128/576
+[layer 12] Arm3 local pairs 144/576
+[layer 12] Arm3 local pairs 160/576
+[layer 12] Arm3 local pairs 176/576
+[layer 12] Arm3 local pairs 192/576
+[layer 12] Arm3 local pairs 208/576
+[layer 12] Arm3 local pairs 224/576
+[layer 12] Arm3 local pairs 240/576
+[layer 12] Arm3 local pairs 256/576
+[layer 12] Arm3 local pairs 272/576
+[layer 12] Arm3 local pairs 288/576
+[layer 12] Arm3 local pairs 304/576
+[layer 12] Arm3 local pairs 320/576
+[layer 12] Arm3 local pairs 336/576
+[layer 12] Arm3 local pairs 352/576
+[layer 12] Arm3 local pairs 368/576
+[layer 12] Arm3 local pairs 384/576
+[layer 12] Arm3 local pairs 400/576
+[layer 12] Arm3 local pairs 416/576
+[layer 12] Arm3 local pairs 432/576
+[layer 12] Arm3 local pairs 448/576
+[layer 12] Arm3 local pairs 464/576
+[layer 12] Arm3 local pairs 480/576
+[layer 12] Arm3 local pairs 496/576
+[layer 12] Arm3 local pairs 512/576
+[layer 12] Arm3 local pairs 528/576
+[layer 12] Arm3 local pairs 544/576
+[layer 12] Arm3 local pairs 560/576
+[layer 12] Arm3 local pairs 576/576
+[nested allocation] layer=12 group=1/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=2/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=3/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=4/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=5/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=6/96 rows=20 replays=63 cache_hits=91 high_path_cache=2/2
+[nested allocation] layer=12 group=7/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=8/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=9/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=10/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=11/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=12/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=13/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=14/96 rows=20 replays=36 cache_hits=66 high_path_cache=1/1
+[nested allocation] layer=12 group=15/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=16/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=17/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=18/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=19/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=20/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=21/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=22/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=23/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=24/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=25/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=26/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=27/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=28/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=29/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=30/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=31/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=32/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=33/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=34/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=35/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=36/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=37/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=38/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=39/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=40/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=41/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=42/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=43/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=44/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=45/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=46/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=47/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=48/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=49/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=50/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=51/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=52/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=53/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=54/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=55/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=56/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=57/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=58/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=59/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=60/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=61/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=62/96 rows=20 replays=35 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=12 group=63/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=12 group=64/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=65/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=66/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=67/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=68/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=12 group=69/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=70/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=71/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=72/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=73/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=74/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=75/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=12 group=76/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=77/96 rows=20 replays=51 cache_hits=81 high_path_cache=1/1
+[nested allocation] layer=12 group=78/96 rows=20 replays=76 cache_hits=104 high_path_cache=1/1
+[nested allocation] layer=12 group=79/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=80/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=81/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=12 group=82/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=83/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=84/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=12 group=85/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=86/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=87/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=88/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=89/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=90/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=91/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=92/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=93/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=94/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=95/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=12 group=96/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested profile] wrote /workspace/pr13_d1_nested_safe_oracle_20260825_v2/profiles/evaluation/layer_12_timings.json
+[layer 23] decoding 170 active experts
+[layer 23] decoded 16/170 experts
+[layer 23] decoded 32/170 experts
+[layer 23] decoded 48/170 experts
+[layer 23] decoded 64/170 experts
+[layer 23] decoded 80/170 experts
+[layer 23] decoded 96/170 experts
+[layer 23] decoded 112/170 experts
+[layer 23] decoded 128/170 experts
+[layer 23] decoded 144/170 experts
+[layer 23] decoded 160/170 experts
+[layer 23] decoded 170/170 experts
+[layer 23] building 96 exact option geometries
+[layer 23] built 8/96 geometries
+[layer 23] built 16/96 geometries
+[layer 23] built 24/96 geometries
+[layer 23] built 32/96 geometries
+[layer 23] built 40/96 geometries
+[layer 23] built 48/96 geometries
+[layer 23] built 56/96 geometries
+[layer 23] built 64/96 geometries
+[layer 23] built 72/96 geometries
+[layer 23] built 80/96 geometries
+[layer 23] built 88/96 geometries
+[layer 23] built 96/96 geometries
+[layer 23] column-generating 96 rate-360 geometries
+[layer 23] refined 8/96 geometries
+[layer 23] refined 16/96 geometries
+[layer 23] refined 24/96 geometries
+[layer 23] refined 32/96 geometries
+[layer 23] refined 40/96 geometries
+[layer 23] refined 48/96 geometries
+[layer 23] refined 56/96 geometries
+[layer 23] refined 64/96 geometries
+[layer 23] refined 72/96 geometries
+[layer 23] refined 80/96 geometries
+[layer 23] refined 88/96 geometries
+[layer 23] refined 96/96 geometries
+[layer 23] collapsed rate=360 8/96 groups
+[layer 23] collapsed rate=360 16/96 groups
+[layer 23] collapsed rate=360 24/96 groups
+[layer 23] collapsed rate=360 32/96 groups
+[layer 23] collapsed rate=360 40/96 groups
+[layer 23] collapsed rate=360 48/96 groups
+[layer 23] collapsed rate=360 56/96 groups
+[layer 23] collapsed rate=360 64/96 groups
+[layer 23] collapsed rate=360 72/96 groups
+[layer 23] collapsed rate=360 80/96 groups
+[layer 23] collapsed rate=360 88/96 groups
+[layer 23] collapsed rate=360 96/96 groups
+[layer 23] column-generating 96 rate-384 geometries
+[layer 23] refined 8/96 geometries
+[layer 23] refined 16/96 geometries
+[layer 23] refined 24/96 geometries
+[layer 23] refined 32/96 geometries
+[layer 23] refined 40/96 geometries
+[layer 23] refined 48/96 geometries
+[layer 23] refined 56/96 geometries
+[layer 23] refined 64/96 geometries
+[layer 23] refined 72/96 geometries
+[layer 23] refined 80/96 geometries
+[layer 23] refined 88/96 geometries
+[layer 23] refined 96/96 geometries
+[layer 23] collapsed rate=384 8/96 groups
+[layer 23] collapsed rate=384 16/96 groups
+[layer 23] collapsed rate=384 24/96 groups
+[layer 23] collapsed rate=384 32/96 groups
+[layer 23] collapsed rate=384 40/96 groups
+[layer 23] collapsed rate=384 48/96 groups
+[layer 23] collapsed rate=384 56/96 groups
+[layer 23] collapsed rate=384 64/96 groups
+[layer 23] collapsed rate=384 72/96 groups
+[layer 23] collapsed rate=384 80/96 groups
+[layer 23] collapsed rate=384 88/96 groups
+[layer 23] collapsed rate=384 96/96 groups
+[layer 23] column-generating 96 rate-725 geometries
+[layer 23] refined 8/96 geometries
+[layer 23] refined 16/96 geometries
+[layer 23] refined 24/96 geometries
+[layer 23] refined 32/96 geometries
+[layer 23] refined 40/96 geometries
+[layer 23] refined 48/96 geometries
+[layer 23] refined 56/96 geometries
+[layer 23] refined 64/96 geometries
+[layer 23] refined 72/96 geometries
+[layer 23] refined 80/96 geometries
+[layer 23] refined 88/96 geometries
+[layer 23] refined 96/96 geometries
+[layer 23] collapsed rate=725 8/96 groups
+[layer 23] collapsed rate=725 16/96 groups
+[layer 23] collapsed rate=725 24/96 groups
+[layer 23] collapsed rate=725 32/96 groups
+[layer 23] collapsed rate=725 40/96 groups
+[layer 23] collapsed rate=725 48/96 groups
+[layer 23] collapsed rate=725 56/96 groups
+[layer 23] collapsed rate=725 64/96 groups
+[layer 23] collapsed rate=725 72/96 groups
+[layer 23] collapsed rate=725 80/96 groups
+[layer 23] collapsed rate=725 88/96 groups
+[layer 23] collapsed rate=725 96/96 groups
+[layer 23] column-generating 96 rate-749 geometries
+[layer 23] refined 8/96 geometries
+[layer 23] refined 16/96 geometries
+[layer 23] refined 24/96 geometries
+[layer 23] refined 32/96 geometries
+[layer 23] refined 40/96 geometries
+[layer 23] refined 48/96 geometries
+[layer 23] refined 56/96 geometries
+[layer 23] refined 64/96 geometries
+[layer 23] refined 72/96 geometries
+[layer 23] refined 80/96 geometries
+[layer 23] refined 88/96 geometries
+[layer 23] refined 96/96 geometries
+[layer 23] collapsed rate=749 8/96 groups
+[layer 23] collapsed rate=749 16/96 groups
+[layer 23] collapsed rate=749 24/96 groups
+[layer 23] collapsed rate=749 32/96 groups
+[layer 23] collapsed rate=749 40/96 groups
+[layer 23] collapsed rate=749 48/96 groups
+[layer 23] collapsed rate=749 56/96 groups
+[layer 23] collapsed rate=749 64/96 groups
+[layer 23] collapsed rate=749 72/96 groups
+[layer 23] collapsed rate=749 80/96 groups
+[layer 23] collapsed rate=749 88/96 groups
+[layer 23] collapsed rate=749 96/96 groups
+[layer 23] Arm3 local pairs 16/576
+[layer 23] Arm3 local pairs 32/576
+[layer 23] Arm3 local pairs 48/576
+[layer 23] Arm3 local pairs 64/576
+[layer 23] Arm3 local pairs 80/576
+[layer 23] Arm3 local pairs 96/576
+[layer 23] Arm3 local pairs 112/576
+[layer 23] Arm3 local pairs 128/576
+[layer 23] Arm3 local pairs 144/576
+[layer 23] Arm3 local pairs 160/576
+[layer 23] Arm3 local pairs 176/576
+[layer 23] Arm3 local pairs 192/576
+[layer 23] Arm3 local pairs 208/576
+[layer 23] Arm3 local pairs 224/576
+[layer 23] Arm3 local pairs 240/576
+[layer 23] Arm3 local pairs 256/576
+[layer 23] Arm3 local pairs 272/576
+[layer 23] Arm3 local pairs 288/576
+[layer 23] Arm3 local pairs 304/576
+[layer 23] Arm3 local pairs 320/576
+[layer 23] Arm3 local pairs 336/576
+[layer 23] Arm3 local pairs 352/576
+[layer 23] Arm3 local pairs 368/576
+[layer 23] Arm3 local pairs 384/576
+[layer 23] Arm3 local pairs 400/576
+[layer 23] Arm3 local pairs 416/576
+[layer 23] Arm3 local pairs 432/576
+[layer 23] Arm3 local pairs 448/576
+[layer 23] Arm3 local pairs 464/576
+[layer 23] Arm3 local pairs 480/576
+[layer 23] Arm3 local pairs 496/576
+[layer 23] Arm3 local pairs 512/576
+[layer 23] Arm3 local pairs 528/576
+[layer 23] Arm3 local pairs 544/576
+[layer 23] Arm3 local pairs 560/576
+[layer 23] Arm3 local pairs 576/576
+[nested allocation] layer=23 group=1/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=2/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=3/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=4/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=5/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=6/96 rows=20 replays=35 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=23 group=7/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=8/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=9/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=10/96 rows=20 replays=35 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=23 group=11/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=12/96 rows=20 replays=64 cache_hits=92 high_path_cache=1/1
+[nested allocation] layer=23 group=13/96 rows=20 replays=35 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=23 group=14/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=15/96 rows=20 replays=27 cache_hits=57 high_path_cache=0/0
+[nested allocation] layer=23 group=16/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=17/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=18/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=19/96 rows=20 replays=17 cache_hits=51 high_path_cache=0/0
+[nested allocation] layer=23 group=20/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=21/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=22/96 rows=20 replays=28 cache_hits=56 high_path_cache=1/1
+[nested allocation] layer=23 group=23/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=24/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=25/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=26/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=27/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=28/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=29/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=30/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=31/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=32/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=33/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=34/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=35/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=36/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=37/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=38/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=39/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=40/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=41/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=42/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=43/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=44/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=45/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=46/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=47/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=48/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=49/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=50/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=51/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=23 group=52/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=53/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=54/96 rows=20 replays=37 cache_hits=65 high_path_cache=2/2
+[nested allocation] layer=23 group=55/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=56/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=57/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=58/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=59/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=60/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=61/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=62/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=63/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=64/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=65/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=66/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=67/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=68/96 rows=20 replays=46 cache_hits=76 high_path_cache=2/2
+[nested allocation] layer=23 group=69/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=70/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=71/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=72/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=73/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=74/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=23 group=75/96 rows=20 replays=18 cache_hits=50 high_path_cache=0/0
+[nested allocation] layer=23 group=76/96 rows=20 replays=19 cache_hits=49 high_path_cache=0/0
+[nested allocation] layer=23 group=77/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=78/96 rows=20 replays=34 cache_hits=66 high_path_cache=2/2
+[nested allocation] layer=23 group=79/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=80/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=81/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=82/96 rows=20 replays=27 cache_hits=57 high_path_cache=1/1
+[nested allocation] layer=23 group=83/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=84/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=85/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=86/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=87/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=88/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=89/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=90/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=91/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=92/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=93/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=94/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=95/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested allocation] layer=23 group=96/96 rows=20 replays=20 cache_hits=48 high_path_cache=0/0
+[nested profile] wrote /workspace/pr13_d1_nested_safe_oracle_20260825_v2/profiles/evaluation/layer_23_timings.json

@@ -1,0 +1,114 @@
+{
+  "allocation_manifest_authenticated_again_before_analysis": true,
+  "attention_stratum_semantics": "same-token D1 next-layer mixer",
+  "ci_vs_holm_clarification": "The percentile confidence intervals are nominal and are not Holm-adjusted. Holm correction applies only to the four sign-flip p-values. Each primary gate requires both conditions.",
+  "completed": true,
+  "experiment_b_started": false,
+  "live_minus_fully_frozen_distributions_are_descriptive_only": true,
+  "live_minus_fully_frozen_distributions_used_for_promotion": false,
+  "outputs": {
+    "d1_nested_allocation_arm_summary.parquet": {
+      "bytes": 19466,
+      "rows": 340,
+      "sha256": "6461b63aca4c156ce61e972ca53beb9d995ca1319b6afb737de136ba94e1dbd0"
+    },
+    "d1_nested_allocation_comparisons.parquet": {
+      "bytes": 139491,
+      "rows": 6912,
+      "sha256": "15fa0b6c9408a5b68390588b1b1391b3aa9518df8c2e549e416214e59f806d4e"
+    },
+    "d1_nested_allocation_rows.parquet": {
+      "bytes": 552973,
+      "rows": 11520,
+      "sha256": "9739e1c727cf4768879d65b416325c8c77ca27c5112e75124f4791fbff985ef1"
+    },
+    "d1_nested_allocation_side_summary.parquet": {
+      "bytes": 22104,
+      "rows": 204,
+      "sha256": "8daec1adfd8b9e7e1aaf58e84234aec5240f92b98094afe2e28257be786087c5"
+    },
+    "d1_nested_experiment_a_promotion.json": {
+      "bytes": 6893,
+      "sha256": "0157eeb743acb5e4becec3e12027be43ef63db3a228e82b745d469627d94209c"
+    },
+    "d1_nested_live_minus_fully_frozen_distributions.parquet": {
+      "bytes": 9649,
+      "rows": 20,
+      "sha256": "1be32ac33d787f9c9418946c3940ca964dbebfe3ec9a797d1e0fd3260e29257e"
+    },
+    "d1_nested_nesting_rows.parquet": {
+      "bytes": 52187,
+      "rows": 3456,
+      "sha256": "3270069dd2ab1cf062b4977a330398b650ee2bdd4ed46787092ba51aba476ea8"
+    },
+    "d1_nested_outcome_descriptive_summary.parquet": {
+      "bytes": 27081,
+      "rows": 660,
+      "sha256": "2a94eebaf188e1232b7422724b4a41cb32fe804bec5dd91c1a1296469382cbdb"
+    },
+    "d1_nested_outcome_request_means.parquet": {
+      "bytes": 246164,
+      "rows": 5760,
+      "sha256": "d9e4e2c15ff26f4a454d8a6dd66ed12874d90d48bbbb23beeba5f5cd97622197"
+    },
+    "d1_nested_outcome_route_mode_request_contrasts.parquet": {
+      "bytes": 30318,
+      "rows": 1920,
+      "sha256": "6c3f36dd077003cc9f37614659d6c7b76b723240745101a96a06f7a9bffaaabb"
+    },
+    "d1_nested_primary_inference.parquet": {
+      "bytes": 22738,
+      "rows": 4,
+      "sha256": "566151e78606769afdeb48022bf7996104f3dd10ecacc00e6647eab41e9a91f3"
+    },
+    "d1_nested_primary_request_differences.parquet": {
+      "bytes": 16673,
+      "rows": 384,
+      "sha256": "928b60fd8b6a700c7cedd742851ce34fb19463f5988e0fde2066cfc764fdce7e"
+    },
+    "d1_nested_primary_request_layer_differences.parquet": {
+      "bytes": 47555,
+      "rows": 2304,
+      "sha256": "4752856918f8c1ca2b9990dd5984b56ecd46d67c7fa0fca165b9d5c89aec5259"
+    },
+    "d1_nested_primary_strata.parquet": {
+      "bytes": 9677,
+      "rows": 64,
+      "sha256": "b84ad77d9c3f0c60bef634096a11a3058d637f71da21c911cd7e90afc11a82df"
+    },
+    "d1_nested_secondary_descriptive_summary.parquet": {
+      "bytes": 9678,
+      "rows": 12,
+      "sha256": "0ed77bfbfd36ebfaa21c927c4fab2664cde85731bda5b002eb1d8a1c5a0a2e8f"
+    },
+    "d1_nested_secondary_request_differences.parquet": {
+      "bytes": 28413,
+      "rows": 1152,
+      "sha256": "9a84e790b4b6f0b81fc6b2ca8a8b32d04e8b459ba8428ae09f249bd8dc978337"
+    }
+  },
+  "primary_bootstrap": {
+    "confidence": 0.95,
+    "multiplicity_adjusted": false,
+    "resamples": 10000,
+    "type": "two_sided_nominal_percentile"
+  },
+  "primary_sign_flip": {
+    "alternative": "less",
+    "monte_carlo_draws": 100000,
+    "multiplicity": "Holm within the four-test primary family"
+  },
+  "promotion_decision_does_not_start_experiment_b": true,
+  "promotion_status": "failed",
+  "schema": "pr13_d1_nested_cached_decode_outcome_analysis_v2",
+  "secondary_contrasts_are_descriptive_only": true,
+  "secondary_contrasts_used_for_promotion": false,
+  "source_allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+  "source_allocation_manifest_sha256": "1bdd2d1c047416ff4649d65306733af5a760ed7aa4295d293cd06c034679ca59",
+  "source_allocation_seal_sha256": "28d82ab3bbb7f76d41aec13b20342f9f79ba8e641a71806d5e1ac2ce3656a566",
+  "source_run_facts_sha256": "86462e5ac4f5388e079c977b2c1e274b97ee943bf9698df920b775c377621918",
+  "terminal_metrics_are_outcomes_only": true,
+  "terminal_metrics_used_for_allocation_selection": false,
+  "unit_of_independence": "request",
+  "within_request_layer_weighting": "equal"
+}

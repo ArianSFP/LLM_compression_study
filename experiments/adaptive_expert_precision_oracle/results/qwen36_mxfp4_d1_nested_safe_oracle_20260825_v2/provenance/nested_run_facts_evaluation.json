@@ -1,0 +1,2461 @@
+{
+  "atomic_resume_protocol": "validated_facts_last_per_layer_exact_six_layer_merge_v1",
+  "captured_route_cuda_preflight": {
+    "all_ordered_ids_exact": true,
+    "boundary_probability_ties": 79,
+    "captured_ordered_router_ids_authoritative": true,
+    "contexts": 576,
+    "numpy_stable_order_mismatches": 154,
+    "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+    "operation_role": "captured_unanchored_target_route_authentication",
+    "ordered_matches": 576,
+    "requests": 96,
+    "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+    "target_injection_layers": [
+      0,
+      1,
+      4,
+      6,
+      12,
+      23
+    ]
+  },
+  "completed": true,
+  "completed_for_sealing": true,
+  "input_pins": {
+    "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+    "authenticated_capture_execution_stack": {
+      "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+      "candidate_route_operation_role": "anchored_candidate_route_execution",
+      "cuda": "12.8",
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+      "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+      "torch": "2.8.0+cu128"
+    },
+    "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+    "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+    "captured_route_cuda_preflight": {
+      "all_ordered_ids_exact": true,
+      "boundary_probability_ties": 79,
+      "captured_ordered_router_ids_authoritative": true,
+      "contexts": 576,
+      "numpy_stable_order_mismatches": 154,
+      "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+      "operation_role": "captured_unanchored_target_route_authentication",
+      "ordered_matches": 576,
+      "requests": 96,
+      "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+      "target_injection_layers": [
+        0,
+        1,
+        4,
+        6,
+        12,
+        23
+      ]
+    },
+    "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+    "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+    "code_identity": {
+      "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+      "files": 139,
+      "schema": "pr13_d1_nested_code_bundle_v1"
+    },
+    "factor_layers": {
+      "0": {
+        "factor": {
+          "bytes": 10101292,
+          "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+        },
+        "sidecar": {
+          "bytes": 4450,
+          "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+        }
+      },
+      "1": {
+        "factor": {
+          "bytes": 11823526,
+          "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+        },
+        "sidecar": {
+          "bytes": 4448,
+          "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+        }
+      },
+      "12": {
+        "factor": {
+          "bytes": 11865526,
+          "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+        },
+        "sidecar": {
+          "bytes": 4430,
+          "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+        }
+      },
+      "23": {
+        "factor": {
+          "bytes": 11864033,
+          "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+        },
+        "sidecar": {
+          "bytes": 4437,
+          "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+        }
+      },
+      "4": {
+        "factor": {
+          "bytes": 11862595,
+          "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+        },
+        "sidecar": {
+          "bytes": 4430,
+          "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+        }
+      },
+      "6": {
+        "factor": {
+          "bytes": 11864427,
+          "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+        },
+        "sidecar": {
+          "bytes": 4432,
+          "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+        }
+      }
+    },
+    "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+    "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+    "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+    "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+    "schema": "pr13_d1_nested_allocation_input_pins_v1",
+    "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+    "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+  },
+  "layers": {
+    "0": {
+      "allocation_uses_terminal_or_downstream_outcome": false,
+      "arm3_precomputed_before_gpu_d1": true,
+      "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+      "candidate_execution_stops_at_d1_router": true,
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "completed": true,
+      "completed_for_sealing": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "gpu_memory_gib": 94.97064208984375,
+        "host": "46a778128889",
+        "numpy": "2.1.2",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta_grid": [
+        0.0,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "evaluated_policy_grid": {
+        "360_to_384": {
+          "16": [
+            0.001
+          ]
+        },
+        "725_to_749": {
+          "16": [
+            0.0005
+          ]
+        }
+      },
+      "exact_replay_cache_hits": 5141,
+      "exact_replay_executions": 2345,
+      "expected_rows": 1920,
+      "expected_rows_per_group": 20,
+      "files": {
+        "nested_candidate_metrics.parquet": {
+          "bytes": 1967232,
+          "sha256": "bad1375f91def123f12888863227dedecdc55d60de931c0249d310bad58714d3"
+        },
+        "nested_candidates.pkl": {
+          "bytes": 144331679,
+          "sha256": "2bf4cc484397fa442e6ccd937047ce96c273ab998fc8d531823408e7a20785a0"
+        },
+        "nested_slice_parity.parquet": {
+          "bytes": 27293,
+          "sha256": "319a824bf53fb126ee597ee771a5bb3685189b2d48a710250359b0f3edf8c032"
+        }
+      },
+      "frozen_calibration": {
+        "calibration_evidence_sha256": "481a9026302dc2518f10384773beef02e898173602aa3dc6a944c1ac2aeb4e43",
+        "file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+        "frozen_calibration_spec_sha256": "17f5e3ae1b358bed7cf403605af6bbfced7903be8fbc3e4d20eb9bb23794100d",
+        "path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2/sealed/d1_nested_frozen_calibration.json"
+      },
+      "high_guardrail_audit": {
+        "by_arm": {
+          "nested_d1_safe": {
+            "fallback_fraction": 0.020833333333333332,
+            "fallback_pairs": 4,
+            "policy_pairs": 192
+          },
+          "nested_d1_safe_violation_mass": {
+            "fallback_fraction": 0.020833333333333332,
+            "fallback_pairs": 4,
+            "policy_pairs": 192
+          }
+        },
+        "counting_unit": "policy_pair_low_endpoint_only",
+        "fallback_fraction": 0.020833333333333332,
+        "fallback_pairs": 8,
+        "policy_pairs": 384,
+        "qualified_checkpoints_total": 11458,
+        "repair_attempts_total": 54
+      },
+      "input_pins": {
+        "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+        "authenticated_capture_execution_stack": {
+          "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "candidate_route_operation_role": "anchored_candidate_route_execution",
+          "cuda": "12.8",
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+          "torch": "2.8.0+cu128"
+        },
+        "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+        "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+        "captured_route_cuda_preflight": {
+          "all_ordered_ids_exact": true,
+          "boundary_probability_ties": 79,
+          "captured_ordered_router_ids_authoritative": true,
+          "contexts": 576,
+          "numpy_stable_order_mismatches": 154,
+          "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "operation_role": "captured_unanchored_target_route_authentication",
+          "ordered_matches": 576,
+          "requests": 96,
+          "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+          "target_injection_layers": [
+            0,
+            1,
+            4,
+            6,
+            12,
+            23
+          ]
+        },
+        "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+        "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "code_identity": {
+          "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+          "files": 139,
+          "schema": "pr13_d1_nested_code_bundle_v1"
+        },
+        "factor_layers": {
+          "0": {
+            "factor": {
+              "bytes": 10101292,
+              "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+            },
+            "sidecar": {
+              "bytes": 4450,
+              "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+            }
+          },
+          "1": {
+            "factor": {
+              "bytes": 11823526,
+              "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+            },
+            "sidecar": {
+              "bytes": 4448,
+              "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+            }
+          },
+          "12": {
+            "factor": {
+              "bytes": 11865526,
+              "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+            }
+          },
+          "23": {
+            "factor": {
+              "bytes": 11864033,
+              "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+            },
+            "sidecar": {
+              "bytes": 4437,
+              "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+            }
+          },
+          "4": {
+            "factor": {
+              "bytes": 11862595,
+              "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+            }
+          },
+          "6": {
+            "factor": {
+              "bytes": 11864427,
+              "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+            },
+            "sidecar": {
+              "bytes": 4432,
+              "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+            }
+          }
+        },
+        "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+        "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+        "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+        "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+      },
+      "layer": 0,
+      "paired_reference_high_core_sealed": true,
+      "partial_request_cohort": false,
+      "pilot_nonpromotable": false,
+      "pr13_and_exact_local_collapsed_in_workers": true,
+      "rates": [
+        360,
+        384,
+        725,
+        749
+      ],
+      "raw_slice_route_audit": {
+        "anchored_ordered_top8_matches": 96,
+        "anchored_router_bit_identical": 96,
+        "contexts": 96,
+        "raw_ordered_top8_matches": 96,
+        "raw_top8_set_matches": 96
+      },
+      "repair_windows": [
+        16,
+        32,
+        64
+      ],
+      "request_ids": [
+        "558584988808259415",
+        "393464904586804375",
+        "3404922740724473745",
+        "7199494395763459203",
+        "8457789193798827243",
+        "4963754866821007154",
+        "4413705822487714868",
+        "4616451127735508063",
+        "1707003798920043071",
+        "4806368433481488527",
+        "8111466125146286729",
+        "7164360317188859247",
+        "6729680310910103666",
+        "4855709850821438829",
+        "1660261496820229908",
+        "3434075084377169637",
+        "6436791395642776617",
+        "515115621874868733",
+        "3632512936450520256",
+        "1502447895823767604",
+        "6843078368187517683",
+        "7781095486656531063",
+        "3022724970163322358",
+        "7146432270286818794",
+        "9141109278082892603",
+        "91031053726977608",
+        "4874249050910137242",
+        "5882762878523117416",
+        "7535525274406291286",
+        "3982243681309800602",
+        "912395742506091108",
+        "52991150560169882",
+        "5862949379626769174",
+        "5799208855988669742",
+        "2750011635522019245",
+        "5761435855233029959",
+        "8967117636875241316",
+        "9176575585199638651",
+        "1894755734022723091",
+        "190493949229088614",
+        "7043956596854349455",
+        "421972479081072919",
+        "7659917110696245302",
+        "495796889814520199",
+        "1738518524105729289",
+        "7306298575608536309",
+        "4459448628162848517",
+        "9171611274567999294",
+        "3500008414755652255",
+        "5864017725187494850",
+        "3559561149198049337",
+        "2823098420399483888",
+        "2789576936148212496",
+        "419210697297598529",
+        "7239956928726888867",
+        "7847348801934963868",
+        "2606758720771458505",
+        "6674877872408724631",
+        "7328097994579285116",
+        "1701513283508009876",
+        "4455318792560909706",
+        "6668074360176338556",
+        "1400145707980462518",
+        "8436710057592427097",
+        "2163452943204592875",
+        "4749339940031243183",
+        "1858171369235574131",
+        "4436927216379069931",
+        "448496304748495759",
+        "8912148053955568453",
+        "4987362207623148655",
+        "7183616764903958745",
+        "4973729897437122653",
+        "3877359492363448383",
+        "2649191586442838652",
+        "1513483498020732592",
+        "16575062651416817",
+        "5069639662103810080",
+        "5055447355458603219",
+        "4938891164624240307",
+        "7228980071435333936",
+        "8779584329404905313",
+        "3870707644846258720",
+        "4864109989738514153",
+        "3758180779316396578",
+        "3529534416123147106",
+        "7472570167665621879",
+        "3210318741924536608",
+        "5172182069167381448",
+        "6998989979261173502",
+        "6546470013050408316",
+        "3001551291530579884",
+        "2396344933077658871",
+        "4338466236330227483",
+        "938075745397929658",
+        "5534578158596052265"
+      ],
+      "requests": 96,
+      "rows": 1920,
+      "rows_by_arm": {
+        "independent_pr13": 384,
+        "nested_d1_safe": 384,
+        "nested_d1_safe_violation_mass": 384,
+        "nested_local_only": 384,
+        "strict_frozen_candidate_incumbent_repair": 384
+      },
+      "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+      "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+      "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+      "split": "evaluation",
+      "wall_seconds": 1830.3605429064482
+    },
+    "1": {
+      "allocation_uses_terminal_or_downstream_outcome": false,
+      "arm3_precomputed_before_gpu_d1": true,
+      "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+      "candidate_execution_stops_at_d1_router": true,
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "completed": true,
+      "completed_for_sealing": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "gpu_memory_gib": 94.97064208984375,
+        "host": "46a778128889",
+        "numpy": "2.1.2",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta_grid": [
+        0.0,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "evaluated_policy_grid": {
+        "360_to_384": {
+          "16": [
+            0.001
+          ]
+        },
+        "725_to_749": {
+          "16": [
+            0.0005
+          ]
+        }
+      },
+      "exact_replay_cache_hits": 4858,
+      "exact_replay_executions": 2076,
+      "expected_rows": 1920,
+      "expected_rows_per_group": 20,
+      "files": {
+        "nested_candidate_metrics.parquet": {
+          "bytes": 1966672,
+          "sha256": "ad15d182ed113fb66d2fc87008ec55160e4144bc3fd79f850ab39b6db7c680aa"
+        },
+        "nested_candidates.pkl": {
+          "bytes": 144282239,
+          "sha256": "de86f3579c45f425ca664d169ae5c5e38072b1e25c31cec38d0b4d8f407af125"
+        },
+        "nested_slice_parity.parquet": {
+          "bytes": 27000,
+          "sha256": "c79df05a9ec4a3bfe3a587468767ca2060e815bba8519444d4f8191873905f62"
+        }
+      },
+      "frozen_calibration": {
+        "calibration_evidence_sha256": "481a9026302dc2518f10384773beef02e898173602aa3dc6a944c1ac2aeb4e43",
+        "file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+        "frozen_calibration_spec_sha256": "17f5e3ae1b358bed7cf403605af6bbfced7903be8fbc3e4d20eb9bb23794100d",
+        "path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2/sealed/d1_nested_frozen_calibration.json"
+      },
+      "high_guardrail_audit": {
+        "by_arm": {
+          "nested_d1_safe": {
+            "fallback_fraction": 0.010416666666666666,
+            "fallback_pairs": 2,
+            "policy_pairs": 192
+          },
+          "nested_d1_safe_violation_mass": {
+            "fallback_fraction": 0.010416666666666666,
+            "fallback_pairs": 2,
+            "policy_pairs": 192
+          }
+        },
+        "counting_unit": "policy_pair_low_endpoint_only",
+        "fallback_fraction": 0.010416666666666666,
+        "fallback_pairs": 4,
+        "policy_pairs": 384,
+        "qualified_checkpoints_total": 6076,
+        "repair_attempts_total": 6
+      },
+      "input_pins": {
+        "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+        "authenticated_capture_execution_stack": {
+          "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "candidate_route_operation_role": "anchored_candidate_route_execution",
+          "cuda": "12.8",
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+          "torch": "2.8.0+cu128"
+        },
+        "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+        "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+        "captured_route_cuda_preflight": {
+          "all_ordered_ids_exact": true,
+          "boundary_probability_ties": 79,
+          "captured_ordered_router_ids_authoritative": true,
+          "contexts": 576,
+          "numpy_stable_order_mismatches": 154,
+          "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "operation_role": "captured_unanchored_target_route_authentication",
+          "ordered_matches": 576,
+          "requests": 96,
+          "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+          "target_injection_layers": [
+            0,
+            1,
+            4,
+            6,
+            12,
+            23
+          ]
+        },
+        "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+        "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "code_identity": {
+          "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+          "files": 139,
+          "schema": "pr13_d1_nested_code_bundle_v1"
+        },
+        "factor_layers": {
+          "0": {
+            "factor": {
+              "bytes": 10101292,
+              "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+            },
+            "sidecar": {
+              "bytes": 4450,
+              "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+            }
+          },
+          "1": {
+            "factor": {
+              "bytes": 11823526,
+              "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+            },
+            "sidecar": {
+              "bytes": 4448,
+              "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+            }
+          },
+          "12": {
+            "factor": {
+              "bytes": 11865526,
+              "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+            }
+          },
+          "23": {
+            "factor": {
+              "bytes": 11864033,
+              "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+            },
+            "sidecar": {
+              "bytes": 4437,
+              "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+            }
+          },
+          "4": {
+            "factor": {
+              "bytes": 11862595,
+              "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+            }
+          },
+          "6": {
+            "factor": {
+              "bytes": 11864427,
+              "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+            },
+            "sidecar": {
+              "bytes": 4432,
+              "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+            }
+          }
+        },
+        "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+        "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+        "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+        "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+      },
+      "layer": 1,
+      "paired_reference_high_core_sealed": true,
+      "partial_request_cohort": false,
+      "pilot_nonpromotable": false,
+      "pr13_and_exact_local_collapsed_in_workers": true,
+      "rates": [
+        360,
+        384,
+        725,
+        749
+      ],
+      "raw_slice_route_audit": {
+        "anchored_ordered_top8_matches": 96,
+        "anchored_router_bit_identical": 96,
+        "contexts": 96,
+        "raw_ordered_top8_matches": 96,
+        "raw_top8_set_matches": 96
+      },
+      "repair_windows": [
+        16,
+        32,
+        64
+      ],
+      "request_ids": [
+        "558584988808259415",
+        "393464904586804375",
+        "3404922740724473745",
+        "7199494395763459203",
+        "8457789193798827243",
+        "4963754866821007154",
+        "4413705822487714868",
+        "4616451127735508063",
+        "1707003798920043071",
+        "4806368433481488527",
+        "8111466125146286729",
+        "7164360317188859247",
+        "6729680310910103666",
+        "4855709850821438829",
+        "1660261496820229908",
+        "3434075084377169637",
+        "6436791395642776617",
+        "515115621874868733",
+        "3632512936450520256",
+        "1502447895823767604",
+        "6843078368187517683",
+        "7781095486656531063",
+        "3022724970163322358",
+        "7146432270286818794",
+        "9141109278082892603",
+        "91031053726977608",
+        "4874249050910137242",
+        "5882762878523117416",
+        "7535525274406291286",
+        "3982243681309800602",
+        "912395742506091108",
+        "52991150560169882",
+        "5862949379626769174",
+        "5799208855988669742",
+        "2750011635522019245",
+        "5761435855233029959",
+        "8967117636875241316",
+        "9176575585199638651",
+        "1894755734022723091",
+        "190493949229088614",
+        "7043956596854349455",
+        "421972479081072919",
+        "7659917110696245302",
+        "495796889814520199",
+        "1738518524105729289",
+        "7306298575608536309",
+        "4459448628162848517",
+        "9171611274567999294",
+        "3500008414755652255",
+        "5864017725187494850",
+        "3559561149198049337",
+        "2823098420399483888",
+        "2789576936148212496",
+        "419210697297598529",
+        "7239956928726888867",
+        "7847348801934963868",
+        "2606758720771458505",
+        "6674877872408724631",
+        "7328097994579285116",
+        "1701513283508009876",
+        "4455318792560909706",
+        "6668074360176338556",
+        "1400145707980462518",
+        "8436710057592427097",
+        "2163452943204592875",
+        "4749339940031243183",
+        "1858171369235574131",
+        "4436927216379069931",
+        "448496304748495759",
+        "8912148053955568453",
+        "4987362207623148655",
+        "7183616764903958745",
+        "4973729897437122653",
+        "3877359492363448383",
+        "2649191586442838652",
+        "1513483498020732592",
+        "16575062651416817",
+        "5069639662103810080",
+        "5055447355458603219",
+        "4938891164624240307",
+        "7228980071435333936",
+        "8779584329404905313",
+        "3870707644846258720",
+        "4864109989738514153",
+        "3758180779316396578",
+        "3529534416123147106",
+        "7472570167665621879",
+        "3210318741924536608",
+        "5172182069167381448",
+        "6998989979261173502",
+        "6546470013050408316",
+        "3001551291530579884",
+        "2396344933077658871",
+        "4338466236330227483",
+        "938075745397929658",
+        "5534578158596052265"
+      ],
+      "requests": 96,
+      "rows": 1920,
+      "rows_by_arm": {
+        "independent_pr13": 384,
+        "nested_d1_safe": 384,
+        "nested_d1_safe_violation_mass": 384,
+        "nested_local_only": 384,
+        "strict_frozen_candidate_incumbent_repair": 384
+      },
+      "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+      "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+      "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+      "split": "evaluation",
+      "wall_seconds": 1649.8613910153508
+    },
+    "12": {
+      "allocation_uses_terminal_or_downstream_outcome": false,
+      "arm3_precomputed_before_gpu_d1": true,
+      "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+      "candidate_execution_stops_at_d1_router": true,
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "completed": true,
+      "completed_for_sealing": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "gpu_memory_gib": 94.97064208984375,
+        "host": "46a778128889",
+        "numpy": "2.1.2",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta_grid": [
+        0.0,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "evaluated_policy_grid": {
+        "360_to_384": {
+          "16": [
+            0.001
+          ]
+        },
+        "725_to_749": {
+          "16": [
+            0.0005
+          ]
+        }
+      },
+      "exact_replay_cache_hits": 4976,
+      "exact_replay_executions": 2120,
+      "expected_rows": 1920,
+      "expected_rows_per_group": 20,
+      "files": {
+        "nested_candidate_metrics.parquet": {
+          "bytes": 1964976,
+          "sha256": "bb85ce9b6b09efde0c0d11ec082970b6ef061eb92e215c1b05bc15fdf15205ba"
+        },
+        "nested_candidates.pkl": {
+          "bytes": 144274490,
+          "sha256": "660a2b4a300ebc1c2eba8d37d0440b8572dbd48023ba07273a3ceb2048aea3b3"
+        },
+        "nested_slice_parity.parquet": {
+          "bytes": 27000,
+          "sha256": "b7a31865165eb915cccb9beef045bd63f44a7d4fbe701badef4478d964af3e51"
+        }
+      },
+      "frozen_calibration": {
+        "calibration_evidence_sha256": "481a9026302dc2518f10384773beef02e898173602aa3dc6a944c1ac2aeb4e43",
+        "file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+        "frozen_calibration_spec_sha256": "17f5e3ae1b358bed7cf403605af6bbfced7903be8fbc3e4d20eb9bb23794100d",
+        "path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2/sealed/d1_nested_frozen_calibration.json"
+      },
+      "high_guardrail_audit": {
+        "by_arm": {
+          "nested_d1_safe": {
+            "fallback_fraction": 0.020833333333333332,
+            "fallback_pairs": 4,
+            "policy_pairs": 192
+          },
+          "nested_d1_safe_violation_mass": {
+            "fallback_fraction": 0.020833333333333332,
+            "fallback_pairs": 4,
+            "policy_pairs": 192
+          }
+        },
+        "counting_unit": "policy_pair_low_endpoint_only",
+        "fallback_fraction": 0.020833333333333332,
+        "fallback_pairs": 8,
+        "policy_pairs": 384,
+        "qualified_checkpoints_total": 3834,
+        "repair_attempts_total": 8
+      },
+      "input_pins": {
+        "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+        "authenticated_capture_execution_stack": {
+          "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "candidate_route_operation_role": "anchored_candidate_route_execution",
+          "cuda": "12.8",
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+          "torch": "2.8.0+cu128"
+        },
+        "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+        "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+        "captured_route_cuda_preflight": {
+          "all_ordered_ids_exact": true,
+          "boundary_probability_ties": 79,
+          "captured_ordered_router_ids_authoritative": true,
+          "contexts": 576,
+          "numpy_stable_order_mismatches": 154,
+          "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "operation_role": "captured_unanchored_target_route_authentication",
+          "ordered_matches": 576,
+          "requests": 96,
+          "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+          "target_injection_layers": [
+            0,
+            1,
+            4,
+            6,
+            12,
+            23
+          ]
+        },
+        "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+        "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "code_identity": {
+          "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+          "files": 139,
+          "schema": "pr13_d1_nested_code_bundle_v1"
+        },
+        "factor_layers": {
+          "0": {
+            "factor": {
+              "bytes": 10101292,
+              "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+            },
+            "sidecar": {
+              "bytes": 4450,
+              "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+            }
+          },
+          "1": {
+            "factor": {
+              "bytes": 11823526,
+              "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+            },
+            "sidecar": {
+              "bytes": 4448,
+              "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+            }
+          },
+          "12": {
+            "factor": {
+              "bytes": 11865526,
+              "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+            }
+          },
+          "23": {
+            "factor": {
+              "bytes": 11864033,
+              "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+            },
+            "sidecar": {
+              "bytes": 4437,
+              "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+            }
+          },
+          "4": {
+            "factor": {
+              "bytes": 11862595,
+              "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+            }
+          },
+          "6": {
+            "factor": {
+              "bytes": 11864427,
+              "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+            },
+            "sidecar": {
+              "bytes": 4432,
+              "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+            }
+          }
+        },
+        "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+        "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+        "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+        "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+      },
+      "layer": 12,
+      "paired_reference_high_core_sealed": true,
+      "partial_request_cohort": false,
+      "pilot_nonpromotable": false,
+      "pr13_and_exact_local_collapsed_in_workers": true,
+      "rates": [
+        360,
+        384,
+        725,
+        749
+      ],
+      "raw_slice_route_audit": {
+        "anchored_ordered_top8_matches": 96,
+        "anchored_router_bit_identical": 96,
+        "contexts": 96,
+        "raw_ordered_top8_matches": 96,
+        "raw_top8_set_matches": 96
+      },
+      "repair_windows": [
+        16,
+        32,
+        64
+      ],
+      "request_ids": [
+        "558584988808259415",
+        "393464904586804375",
+        "3404922740724473745",
+        "7199494395763459203",
+        "8457789193798827243",
+        "4963754866821007154",
+        "4413705822487714868",
+        "4616451127735508063",
+        "1707003798920043071",
+        "4806368433481488527",
+        "8111466125146286729",
+        "7164360317188859247",
+        "6729680310910103666",
+        "4855709850821438829",
+        "1660261496820229908",
+        "3434075084377169637",
+        "6436791395642776617",
+        "515115621874868733",
+        "3632512936450520256",
+        "1502447895823767604",
+        "6843078368187517683",
+        "7781095486656531063",
+        "3022724970163322358",
+        "7146432270286818794",
+        "9141109278082892603",
+        "91031053726977608",
+        "4874249050910137242",
+        "5882762878523117416",
+        "7535525274406291286",
+        "3982243681309800602",
+        "912395742506091108",
+        "52991150560169882",
+        "5862949379626769174",
+        "5799208855988669742",
+        "2750011635522019245",
+        "5761435855233029959",
+        "8967117636875241316",
+        "9176575585199638651",
+        "1894755734022723091",
+        "190493949229088614",
+        "7043956596854349455",
+        "421972479081072919",
+        "7659917110696245302",
+        "495796889814520199",
+        "1738518524105729289",
+        "7306298575608536309",
+        "4459448628162848517",
+        "9171611274567999294",
+        "3500008414755652255",
+        "5864017725187494850",
+        "3559561149198049337",
+        "2823098420399483888",
+        "2789576936148212496",
+        "419210697297598529",
+        "7239956928726888867",
+        "7847348801934963868",
+        "2606758720771458505",
+        "6674877872408724631",
+        "7328097994579285116",
+        "1701513283508009876",
+        "4455318792560909706",
+        "6668074360176338556",
+        "1400145707980462518",
+        "8436710057592427097",
+        "2163452943204592875",
+        "4749339940031243183",
+        "1858171369235574131",
+        "4436927216379069931",
+        "448496304748495759",
+        "8912148053955568453",
+        "4987362207623148655",
+        "7183616764903958745",
+        "4973729897437122653",
+        "3877359492363448383",
+        "2649191586442838652",
+        "1513483498020732592",
+        "16575062651416817",
+        "5069639662103810080",
+        "5055447355458603219",
+        "4938891164624240307",
+        "7228980071435333936",
+        "8779584329404905313",
+        "3870707644846258720",
+        "4864109989738514153",
+        "3758180779316396578",
+        "3529534416123147106",
+        "7472570167665621879",
+        "3210318741924536608",
+        "5172182069167381448",
+        "6998989979261173502",
+        "6546470013050408316",
+        "3001551291530579884",
+        "2396344933077658871",
+        "4338466236330227483",
+        "938075745397929658",
+        "5534578158596052265"
+      ],
+      "requests": 96,
+      "rows": 1920,
+      "rows_by_arm": {
+        "independent_pr13": 384,
+        "nested_d1_safe": 384,
+        "nested_d1_safe_violation_mass": 384,
+        "nested_local_only": 384,
+        "strict_frozen_candidate_incumbent_repair": 384
+      },
+      "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+      "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+      "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+      "split": "evaluation",
+      "wall_seconds": 2062.2974731884897
+    },
+    "23": {
+      "allocation_uses_terminal_or_downstream_outcome": false,
+      "arm3_precomputed_before_gpu_d1": true,
+      "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+      "candidate_execution_stops_at_d1_router": true,
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "completed": true,
+      "completed_for_sealing": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "gpu_memory_gib": 94.97064208984375,
+        "host": "46a778128889",
+        "numpy": "2.1.2",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta_grid": [
+        0.0,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "evaluated_policy_grid": {
+        "360_to_384": {
+          "16": [
+            0.001
+          ]
+        },
+        "725_to_749": {
+          "16": [
+            0.0005
+          ]
+        }
+      },
+      "exact_replay_cache_hits": 4847,
+      "exact_replay_executions": 2065,
+      "expected_rows": 1920,
+      "expected_rows_per_group": 20,
+      "files": {
+        "nested_candidate_metrics.parquet": {
+          "bytes": 1964414,
+          "sha256": "be62c6bca602934e9b815f9c0abfd7ae378aa34c61ffe0fe046023865cb3a52d"
+        },
+        "nested_candidates.pkl": {
+          "bytes": 144277777,
+          "sha256": "d1979ac81dd36a552e9960a5dba2d0fc39bb48692e52de4851f2a14e4dda74a4"
+        },
+        "nested_slice_parity.parquet": {
+          "bytes": 27079,
+          "sha256": "9dc6dfb99bc5d2cda44ac2adcfac96cbb07d71da666d2dd24c026e99f3a80b9a"
+        }
+      },
+      "frozen_calibration": {
+        "calibration_evidence_sha256": "481a9026302dc2518f10384773beef02e898173602aa3dc6a944c1ac2aeb4e43",
+        "file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+        "frozen_calibration_spec_sha256": "17f5e3ae1b358bed7cf403605af6bbfced7903be8fbc3e4d20eb9bb23794100d",
+        "path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2/sealed/d1_nested_frozen_calibration.json"
+      },
+      "high_guardrail_audit": {
+        "by_arm": {
+          "nested_d1_safe": {
+            "fallback_fraction": 0.010416666666666666,
+            "fallback_pairs": 2,
+            "policy_pairs": 192
+          },
+          "nested_d1_safe_violation_mass": {
+            "fallback_fraction": 0.010416666666666666,
+            "fallback_pairs": 2,
+            "policy_pairs": 192
+          }
+        },
+        "counting_unit": "policy_pair_low_endpoint_only",
+        "fallback_fraction": 0.010416666666666666,
+        "fallback_pairs": 4,
+        "policy_pairs": 384,
+        "qualified_checkpoints_total": 3976,
+        "repair_attempts_total": 6
+      },
+      "input_pins": {
+        "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+        "authenticated_capture_execution_stack": {
+          "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "candidate_route_operation_role": "anchored_candidate_route_execution",
+          "cuda": "12.8",
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+          "torch": "2.8.0+cu128"
+        },
+        "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+        "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+        "captured_route_cuda_preflight": {
+          "all_ordered_ids_exact": true,
+          "boundary_probability_ties": 79,
+          "captured_ordered_router_ids_authoritative": true,
+          "contexts": 576,
+          "numpy_stable_order_mismatches": 154,
+          "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "operation_role": "captured_unanchored_target_route_authentication",
+          "ordered_matches": 576,
+          "requests": 96,
+          "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+          "target_injection_layers": [
+            0,
+            1,
+            4,
+            6,
+            12,
+            23
+          ]
+        },
+        "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+        "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "code_identity": {
+          "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+          "files": 139,
+          "schema": "pr13_d1_nested_code_bundle_v1"
+        },
+        "factor_layers": {
+          "0": {
+            "factor": {
+              "bytes": 10101292,
+              "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+            },
+            "sidecar": {
+              "bytes": 4450,
+              "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+            }
+          },
+          "1": {
+            "factor": {
+              "bytes": 11823526,
+              "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+            },
+            "sidecar": {
+              "bytes": 4448,
+              "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+            }
+          },
+          "12": {
+            "factor": {
+              "bytes": 11865526,
+              "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+            }
+          },
+          "23": {
+            "factor": {
+              "bytes": 11864033,
+              "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+            },
+            "sidecar": {
+              "bytes": 4437,
+              "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+            }
+          },
+          "4": {
+            "factor": {
+              "bytes": 11862595,
+              "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+            }
+          },
+          "6": {
+            "factor": {
+              "bytes": 11864427,
+              "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+            },
+            "sidecar": {
+              "bytes": 4432,
+              "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+            }
+          }
+        },
+        "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+        "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+        "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+        "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+      },
+      "layer": 23,
+      "paired_reference_high_core_sealed": true,
+      "partial_request_cohort": false,
+      "pilot_nonpromotable": false,
+      "pr13_and_exact_local_collapsed_in_workers": true,
+      "rates": [
+        360,
+        384,
+        725,
+        749
+      ],
+      "raw_slice_route_audit": {
+        "anchored_ordered_top8_matches": 96,
+        "anchored_router_bit_identical": 96,
+        "contexts": 96,
+        "raw_ordered_top8_matches": 96,
+        "raw_top8_set_matches": 96
+      },
+      "repair_windows": [
+        16,
+        32,
+        64
+      ],
+      "request_ids": [
+        "558584988808259415",
+        "393464904586804375",
+        "3404922740724473745",
+        "7199494395763459203",
+        "8457789193798827243",
+        "4963754866821007154",
+        "4413705822487714868",
+        "4616451127735508063",
+        "1707003798920043071",
+        "4806368433481488527",
+        "8111466125146286729",
+        "7164360317188859247",
+        "6729680310910103666",
+        "4855709850821438829",
+        "1660261496820229908",
+        "3434075084377169637",
+        "6436791395642776617",
+        "515115621874868733",
+        "3632512936450520256",
+        "1502447895823767604",
+        "6843078368187517683",
+        "7781095486656531063",
+        "3022724970163322358",
+        "7146432270286818794",
+        "9141109278082892603",
+        "91031053726977608",
+        "4874249050910137242",
+        "5882762878523117416",
+        "7535525274406291286",
+        "3982243681309800602",
+        "912395742506091108",
+        "52991150560169882",
+        "5862949379626769174",
+        "5799208855988669742",
+        "2750011635522019245",
+        "5761435855233029959",
+        "8967117636875241316",
+        "9176575585199638651",
+        "1894755734022723091",
+        "190493949229088614",
+        "7043956596854349455",
+        "421972479081072919",
+        "7659917110696245302",
+        "495796889814520199",
+        "1738518524105729289",
+        "7306298575608536309",
+        "4459448628162848517",
+        "9171611274567999294",
+        "3500008414755652255",
+        "5864017725187494850",
+        "3559561149198049337",
+        "2823098420399483888",
+        "2789576936148212496",
+        "419210697297598529",
+        "7239956928726888867",
+        "7847348801934963868",
+        "2606758720771458505",
+        "6674877872408724631",
+        "7328097994579285116",
+        "1701513283508009876",
+        "4455318792560909706",
+        "6668074360176338556",
+        "1400145707980462518",
+        "8436710057592427097",
+        "2163452943204592875",
+        "4749339940031243183",
+        "1858171369235574131",
+        "4436927216379069931",
+        "448496304748495759",
+        "8912148053955568453",
+        "4987362207623148655",
+        "7183616764903958745",
+        "4973729897437122653",
+        "3877359492363448383",
+        "2649191586442838652",
+        "1513483498020732592",
+        "16575062651416817",
+        "5069639662103810080",
+        "5055447355458603219",
+        "4938891164624240307",
+        "7228980071435333936",
+        "8779584329404905313",
+        "3870707644846258720",
+        "4864109989738514153",
+        "3758180779316396578",
+        "3529534416123147106",
+        "7472570167665621879",
+        "3210318741924536608",
+        "5172182069167381448",
+        "6998989979261173502",
+        "6546470013050408316",
+        "3001551291530579884",
+        "2396344933077658871",
+        "4338466236330227483",
+        "938075745397929658",
+        "5534578158596052265"
+      ],
+      "requests": 96,
+      "rows": 1920,
+      "rows_by_arm": {
+        "independent_pr13": 384,
+        "nested_d1_safe": 384,
+        "nested_d1_safe_violation_mass": 384,
+        "nested_local_only": 384,
+        "strict_frozen_candidate_incumbent_repair": 384
+      },
+      "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+      "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+      "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+      "split": "evaluation",
+      "wall_seconds": 1964.6522964574397
+    },
+    "4": {
+      "allocation_uses_terminal_or_downstream_outcome": false,
+      "arm3_precomputed_before_gpu_d1": true,
+      "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+      "candidate_execution_stops_at_d1_router": true,
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "completed": true,
+      "completed_for_sealing": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "gpu_memory_gib": 94.97064208984375,
+        "host": "46a778128889",
+        "numpy": "2.1.2",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta_grid": [
+        0.0,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "evaluated_policy_grid": {
+        "360_to_384": {
+          "16": [
+            0.001
+          ]
+        },
+        "725_to_749": {
+          "16": [
+            0.0005
+          ]
+        }
+      },
+      "exact_replay_cache_hits": 4821,
+      "exact_replay_executions": 2043,
+      "expected_rows": 1920,
+      "expected_rows_per_group": 20,
+      "files": {
+        "nested_candidate_metrics.parquet": {
+          "bytes": 1963979,
+          "sha256": "329d6cc46ac252e691a51517a440026fd1f4b54f6a25108d415c8a4367e67ce8"
+        },
+        "nested_candidates.pkl": {
+          "bytes": 144281575,
+          "sha256": "86b8e35283388d006e0af6c665abfb9c06fe4ceb3b74750e2d8b294db9c3ac10"
+        },
+        "nested_slice_parity.parquet": {
+          "bytes": 27050,
+          "sha256": "a363b64641c9791d3f61b778dc9b1ff0a6a45c874ef0f764fbd4ae5be48a66fb"
+        }
+      },
+      "frozen_calibration": {
+        "calibration_evidence_sha256": "481a9026302dc2518f10384773beef02e898173602aa3dc6a944c1ac2aeb4e43",
+        "file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+        "frozen_calibration_spec_sha256": "17f5e3ae1b358bed7cf403605af6bbfced7903be8fbc3e4d20eb9bb23794100d",
+        "path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2/sealed/d1_nested_frozen_calibration.json"
+      },
+      "high_guardrail_audit": {
+        "by_arm": {
+          "nested_d1_safe": {
+            "fallback_fraction": 0.015625,
+            "fallback_pairs": 3,
+            "policy_pairs": 192
+          },
+          "nested_d1_safe_violation_mass": {
+            "fallback_fraction": 0.015625,
+            "fallback_pairs": 3,
+            "policy_pairs": 192
+          }
+        },
+        "counting_unit": "policy_pair_low_endpoint_only",
+        "fallback_fraction": 0.015625,
+        "fallback_pairs": 6,
+        "policy_pairs": 384,
+        "qualified_checkpoints_total": 4608,
+        "repair_attempts_total": 10
+      },
+      "input_pins": {
+        "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+        "authenticated_capture_execution_stack": {
+          "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "candidate_route_operation_role": "anchored_candidate_route_execution",
+          "cuda": "12.8",
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+          "torch": "2.8.0+cu128"
+        },
+        "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+        "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+        "captured_route_cuda_preflight": {
+          "all_ordered_ids_exact": true,
+          "boundary_probability_ties": 79,
+          "captured_ordered_router_ids_authoritative": true,
+          "contexts": 576,
+          "numpy_stable_order_mismatches": 154,
+          "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "operation_role": "captured_unanchored_target_route_authentication",
+          "ordered_matches": 576,
+          "requests": 96,
+          "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+          "target_injection_layers": [
+            0,
+            1,
+            4,
+            6,
+            12,
+            23
+          ]
+        },
+        "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+        "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "code_identity": {
+          "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+          "files": 139,
+          "schema": "pr13_d1_nested_code_bundle_v1"
+        },
+        "factor_layers": {
+          "0": {
+            "factor": {
+              "bytes": 10101292,
+              "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+            },
+            "sidecar": {
+              "bytes": 4450,
+              "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+            }
+          },
+          "1": {
+            "factor": {
+              "bytes": 11823526,
+              "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+            },
+            "sidecar": {
+              "bytes": 4448,
+              "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+            }
+          },
+          "12": {
+            "factor": {
+              "bytes": 11865526,
+              "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+            }
+          },
+          "23": {
+            "factor": {
+              "bytes": 11864033,
+              "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+            },
+            "sidecar": {
+              "bytes": 4437,
+              "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+            }
+          },
+          "4": {
+            "factor": {
+              "bytes": 11862595,
+              "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+            }
+          },
+          "6": {
+            "factor": {
+              "bytes": 11864427,
+              "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+            },
+            "sidecar": {
+              "bytes": 4432,
+              "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+            }
+          }
+        },
+        "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+        "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+        "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+        "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+      },
+      "layer": 4,
+      "paired_reference_high_core_sealed": true,
+      "partial_request_cohort": false,
+      "pilot_nonpromotable": false,
+      "pr13_and_exact_local_collapsed_in_workers": true,
+      "rates": [
+        360,
+        384,
+        725,
+        749
+      ],
+      "raw_slice_route_audit": {
+        "anchored_ordered_top8_matches": 96,
+        "anchored_router_bit_identical": 96,
+        "contexts": 96,
+        "raw_ordered_top8_matches": 96,
+        "raw_top8_set_matches": 96
+      },
+      "repair_windows": [
+        16,
+        32,
+        64
+      ],
+      "request_ids": [
+        "558584988808259415",
+        "393464904586804375",
+        "3404922740724473745",
+        "7199494395763459203",
+        "8457789193798827243",
+        "4963754866821007154",
+        "4413705822487714868",
+        "4616451127735508063",
+        "1707003798920043071",
+        "4806368433481488527",
+        "8111466125146286729",
+        "7164360317188859247",
+        "6729680310910103666",
+        "4855709850821438829",
+        "1660261496820229908",
+        "3434075084377169637",
+        "6436791395642776617",
+        "515115621874868733",
+        "3632512936450520256",
+        "1502447895823767604",
+        "6843078368187517683",
+        "7781095486656531063",
+        "3022724970163322358",
+        "7146432270286818794",
+        "9141109278082892603",
+        "91031053726977608",
+        "4874249050910137242",
+        "5882762878523117416",
+        "7535525274406291286",
+        "3982243681309800602",
+        "912395742506091108",
+        "52991150560169882",
+        "5862949379626769174",
+        "5799208855988669742",
+        "2750011635522019245",
+        "5761435855233029959",
+        "8967117636875241316",
+        "9176575585199638651",
+        "1894755734022723091",
+        "190493949229088614",
+        "7043956596854349455",
+        "421972479081072919",
+        "7659917110696245302",
+        "495796889814520199",
+        "1738518524105729289",
+        "7306298575608536309",
+        "4459448628162848517",
+        "9171611274567999294",
+        "3500008414755652255",
+        "5864017725187494850",
+        "3559561149198049337",
+        "2823098420399483888",
+        "2789576936148212496",
+        "419210697297598529",
+        "7239956928726888867",
+        "7847348801934963868",
+        "2606758720771458505",
+        "6674877872408724631",
+        "7328097994579285116",
+        "1701513283508009876",
+        "4455318792560909706",
+        "6668074360176338556",
+        "1400145707980462518",
+        "8436710057592427097",
+        "2163452943204592875",
+        "4749339940031243183",
+        "1858171369235574131",
+        "4436927216379069931",
+        "448496304748495759",
+        "8912148053955568453",
+        "4987362207623148655",
+        "7183616764903958745",
+        "4973729897437122653",
+        "3877359492363448383",
+        "2649191586442838652",
+        "1513483498020732592",
+        "16575062651416817",
+        "5069639662103810080",
+        "5055447355458603219",
+        "4938891164624240307",
+        "7228980071435333936",
+        "8779584329404905313",
+        "3870707644846258720",
+        "4864109989738514153",
+        "3758180779316396578",
+        "3529534416123147106",
+        "7472570167665621879",
+        "3210318741924536608",
+        "5172182069167381448",
+        "6998989979261173502",
+        "6546470013050408316",
+        "3001551291530579884",
+        "2396344933077658871",
+        "4338466236330227483",
+        "938075745397929658",
+        "5534578158596052265"
+      ],
+      "requests": 96,
+      "rows": 1920,
+      "rows_by_arm": {
+        "independent_pr13": 384,
+        "nested_d1_safe": 384,
+        "nested_d1_safe_violation_mass": 384,
+        "nested_local_only": 384,
+        "strict_frozen_candidate_incumbent_repair": 384
+      },
+      "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+      "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+      "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+      "split": "evaluation",
+      "wall_seconds": 1807.7613155078143
+    },
+    "6": {
+      "allocation_uses_terminal_or_downstream_outcome": false,
+      "arm3_precomputed_before_gpu_d1": true,
+      "atomic_resume_protocol": "facts_last_exact_three_file_inventory_v1",
+      "candidate_execution_stops_at_d1_router": true,
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "completed": true,
+      "completed_for_sealing": true,
+      "environment": {
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "gpu_memory_gib": 94.97064208984375,
+        "host": "46a778128889",
+        "numpy": "2.1.2",
+        "python": "3.12.3",
+        "torch": "2.8.0+cu128"
+      },
+      "eta_grid": [
+        0.0,
+        0.0001,
+        0.00025,
+        0.0005,
+        0.001
+      ],
+      "evaluated_policy_grid": {
+        "360_to_384": {
+          "16": [
+            0.001
+          ]
+        },
+        "725_to_749": {
+          "16": [
+            0.0005
+          ]
+        }
+      },
+      "exact_replay_cache_hits": 5106,
+      "exact_replay_executions": 2294,
+      "expected_rows": 1920,
+      "expected_rows_per_group": 20,
+      "files": {
+        "nested_candidate_metrics.parquet": {
+          "bytes": 1986777,
+          "sha256": "b8d245b7ff948d620e177d109d3d47074e9fb3f6296964e59acb13c7916fb9d7"
+        },
+        "nested_candidates.pkl": {
+          "bytes": 144383422,
+          "sha256": "b7fd0a8349dd1f3e255899bae29208b0452bd438853a3212ceb02389adb32bd6"
+        },
+        "nested_slice_parity.parquet": {
+          "bytes": 27474,
+          "sha256": "b88b2874f9ac9ccc0cc7e2c6d4ee7faf959ea5128d0cadee2d3dbc6b3d79bc90"
+        }
+      },
+      "frozen_calibration": {
+        "calibration_evidence_sha256": "481a9026302dc2518f10384773beef02e898173602aa3dc6a944c1ac2aeb4e43",
+        "file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+        "frozen_calibration_spec_sha256": "17f5e3ae1b358bed7cf403605af6bbfced7903be8fbc3e4d20eb9bb23794100d",
+        "path": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2/sealed/d1_nested_frozen_calibration.json"
+      },
+      "high_guardrail_audit": {
+        "by_arm": {
+          "nested_d1_safe": {
+            "fallback_fraction": 0.020833333333333332,
+            "fallback_pairs": 4,
+            "policy_pairs": 192
+          },
+          "nested_d1_safe_violation_mass": {
+            "fallback_fraction": 0.020833333333333332,
+            "fallback_pairs": 4,
+            "policy_pairs": 192
+          }
+        },
+        "counting_unit": "policy_pair_low_endpoint_only",
+        "fallback_fraction": 0.020833333333333332,
+        "fallback_pairs": 8,
+        "policy_pairs": 384,
+        "qualified_checkpoints_total": 5334,
+        "repair_attempts_total": 34
+      },
+      "input_pins": {
+        "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+        "authenticated_capture_execution_stack": {
+          "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "candidate_route_operation_role": "anchored_candidate_route_execution",
+          "cuda": "12.8",
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+          "torch": "2.8.0+cu128"
+        },
+        "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+        "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+        "captured_route_cuda_preflight": {
+          "all_ordered_ids_exact": true,
+          "boundary_probability_ties": 79,
+          "captured_ordered_router_ids_authoritative": true,
+          "contexts": 576,
+          "numpy_stable_order_mismatches": 154,
+          "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+          "operation_role": "captured_unanchored_target_route_authentication",
+          "ordered_matches": 576,
+          "requests": 96,
+          "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+          "target_injection_layers": [
+            0,
+            1,
+            4,
+            6,
+            12,
+            23
+          ]
+        },
+        "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+        "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+        "code_identity": {
+          "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+          "files": 139,
+          "schema": "pr13_d1_nested_code_bundle_v1"
+        },
+        "factor_layers": {
+          "0": {
+            "factor": {
+              "bytes": 10101292,
+              "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+            },
+            "sidecar": {
+              "bytes": 4450,
+              "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+            }
+          },
+          "1": {
+            "factor": {
+              "bytes": 11823526,
+              "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+            },
+            "sidecar": {
+              "bytes": 4448,
+              "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+            }
+          },
+          "12": {
+            "factor": {
+              "bytes": 11865526,
+              "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+            }
+          },
+          "23": {
+            "factor": {
+              "bytes": 11864033,
+              "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+            },
+            "sidecar": {
+              "bytes": 4437,
+              "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+            }
+          },
+          "4": {
+            "factor": {
+              "bytes": 11862595,
+              "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+            },
+            "sidecar": {
+              "bytes": 4430,
+              "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+            }
+          },
+          "6": {
+            "factor": {
+              "bytes": 11864427,
+              "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+            },
+            "sidecar": {
+              "bytes": 4432,
+              "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+            }
+          }
+        },
+        "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+        "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+        "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+        "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+        "schema": "pr13_d1_nested_allocation_input_pins_v1",
+        "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+        "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+      },
+      "layer": 6,
+      "paired_reference_high_core_sealed": true,
+      "partial_request_cohort": false,
+      "pilot_nonpromotable": false,
+      "pr13_and_exact_local_collapsed_in_workers": true,
+      "rates": [
+        360,
+        384,
+        725,
+        749
+      ],
+      "raw_slice_route_audit": {
+        "anchored_ordered_top8_matches": 96,
+        "anchored_router_bit_identical": 96,
+        "contexts": 96,
+        "raw_ordered_top8_matches": 91,
+        "raw_top8_set_matches": 95
+      },
+      "repair_windows": [
+        16,
+        32,
+        64
+      ],
+      "request_ids": [
+        "558584988808259415",
+        "393464904586804375",
+        "3404922740724473745",
+        "7199494395763459203",
+        "8457789193798827243",
+        "4963754866821007154",
+        "4413705822487714868",
+        "4616451127735508063",
+        "1707003798920043071",
+        "4806368433481488527",
+        "8111466125146286729",
+        "7164360317188859247",
+        "6729680310910103666",
+        "4855709850821438829",
+        "1660261496820229908",
+        "3434075084377169637",
+        "6436791395642776617",
+        "515115621874868733",
+        "3632512936450520256",
+        "1502447895823767604",
+        "6843078368187517683",
+        "7781095486656531063",
+        "3022724970163322358",
+        "7146432270286818794",
+        "9141109278082892603",
+        "91031053726977608",
+        "4874249050910137242",
+        "5882762878523117416",
+        "7535525274406291286",
+        "3982243681309800602",
+        "912395742506091108",
+        "52991150560169882",
+        "5862949379626769174",
+        "5799208855988669742",
+        "2750011635522019245",
+        "5761435855233029959",
+        "8967117636875241316",
+        "9176575585199638651",
+        "1894755734022723091",
+        "190493949229088614",
+        "7043956596854349455",
+        "421972479081072919",
+        "7659917110696245302",
+        "495796889814520199",
+        "1738518524105729289",
+        "7306298575608536309",
+        "4459448628162848517",
+        "9171611274567999294",
+        "3500008414755652255",
+        "5864017725187494850",
+        "3559561149198049337",
+        "2823098420399483888",
+        "2789576936148212496",
+        "419210697297598529",
+        "7239956928726888867",
+        "7847348801934963868",
+        "2606758720771458505",
+        "6674877872408724631",
+        "7328097994579285116",
+        "1701513283508009876",
+        "4455318792560909706",
+        "6668074360176338556",
+        "1400145707980462518",
+        "8436710057592427097",
+        "2163452943204592875",
+        "4749339940031243183",
+        "1858171369235574131",
+        "4436927216379069931",
+        "448496304748495759",
+        "8912148053955568453",
+        "4987362207623148655",
+        "7183616764903958745",
+        "4973729897437122653",
+        "3877359492363448383",
+        "2649191586442838652",
+        "1513483498020732592",
+        "16575062651416817",
+        "5069639662103810080",
+        "5055447355458603219",
+        "4938891164624240307",
+        "7228980071435333936",
+        "8779584329404905313",
+        "3870707644846258720",
+        "4864109989738514153",
+        "3758180779316396578",
+        "3529534416123147106",
+        "7472570167665621879",
+        "3210318741924536608",
+        "5172182069167381448",
+        "6998989979261173502",
+        "6546470013050408316",
+        "3001551291530579884",
+        "2396344933077658871",
+        "4338466236330227483",
+        "938075745397929658",
+        "5534578158596052265"
+      ],
+      "requests": 96,
+      "rows": 1920,
+      "rows_by_arm": {
+        "independent_pr13": 384,
+        "nested_d1_safe": 384,
+        "nested_d1_safe_violation_mass": 384,
+        "nested_local_only": 384,
+        "strict_frozen_candidate_incumbent_repair": 384
+      },
+      "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+      "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+      "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+      "split": "evaluation",
+      "wall_seconds": 2227.9980346728116
+    }
+  },
+  "pilot_nonpromotable": false,
+  "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+  "run_identity": {
+    "captured_route_cuda_preflight": {
+      "all_ordered_ids_exact": true,
+      "boundary_probability_ties": 79,
+      "captured_ordered_router_ids_authoritative": true,
+      "contexts": 576,
+      "numpy_stable_order_mismatches": 154,
+      "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+      "operation_role": "captured_unanchored_target_route_authentication",
+      "ordered_matches": 576,
+      "requests": 96,
+      "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+      "target_injection_layers": [
+        0,
+        1,
+        4,
+        6,
+        12,
+        23
+      ]
+    },
+    "completed_for_sealing": true,
+    "cpu_worker_blas_threads": 1,
+    "cpu_worker_processes": 27,
+    "frozen_calibration_file_sha256": "2fceb169839d195e8a4cae957c0255ff630edbb4f5fcffa42d844ae9854d3052",
+    "hardware_runtime": {
+      "cuda": "12.8",
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "gpu_memory_gib": 94.97064208984375,
+      "numpy": "2.1.2",
+      "python": "3.12.3",
+      "torch": "2.8.0+cu128"
+    },
+    "input_pins": {
+      "allocation_config_sha256": "f800d43c047af5ef34d3872d5c04856ded12d3509718d1a1f46af2e40d34a599",
+      "authenticated_capture_execution_stack": {
+        "candidate_route_operation": "raw_logits_fp32_plus_anchor_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "candidate_route_operation_role": "anchored_candidate_route_execution",
+        "cuda": "12.8",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "target_preflight_operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "target_preflight_operation_role": "captured_unanchored_target_route_authentication",
+        "torch": "2.8.0+cu128"
+      },
+      "capture_facts_sha256": "65a1ae5dc5a149d8855f4bef4001181058ed66a4df5302877e6a0e859d543643",
+      "capture_protocol_config_sha256": "c37eb2c63de64dba87baa44b0ef57fc2206b32db8f82dfc2d49a9e9da0da1713",
+      "captured_route_cuda_preflight": {
+        "all_ordered_ids_exact": true,
+        "boundary_probability_ties": 79,
+        "captured_ordered_router_ids_authoritative": true,
+        "contexts": 576,
+        "numpy_stable_order_mismatches": 154,
+        "operation": "raw_logits_fp32_cuda_then_softmax_fp32_then_torch_topk_k8_sorted",
+        "operation_role": "captured_unanchored_target_route_authentication",
+        "ordered_matches": 576,
+        "requests": 96,
+        "schema": "pr13_d1_captured_route_cuda_preflight_v1",
+        "target_injection_layers": [
+          0,
+          1,
+          4,
+          6,
+          12,
+          23
+        ]
+      },
+      "checkpoint_config_sha256": "52411f11bf654a1a5b3bfb15c84be894ee57d97e95dbdd37656f6c75846edc1a",
+      "checkpoint_index_sha256": "842c9ba65c2bebe47cc834eb8e8a744b7ba8f610b9fc8cd751cbc7a4564d39fb",
+      "code_identity": {
+        "canonical_sha256": "d301fefff68e4d7aaa148f2e7cb9ec2f6a3baef6563dfb68b815166e426fae08",
+        "files": 139,
+        "schema": "pr13_d1_nested_code_bundle_v1"
+      },
+      "factor_layers": {
+        "0": {
+          "factor": {
+            "bytes": 10101292,
+            "sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84"
+          },
+          "sidecar": {
+            "bytes": 4450,
+            "sha256": "80f96a06cf4c3f3f508a59534f619f1d290da98af28d4302dc8d80e4806c890a"
+          }
+        },
+        "1": {
+          "factor": {
+            "bytes": 11823526,
+            "sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299"
+          },
+          "sidecar": {
+            "bytes": 4448,
+            "sha256": "9d68924b4fb1016f769cd4df42035c503a56eaa4b787418e5b4191b9e9920873"
+          }
+        },
+        "12": {
+          "factor": {
+            "bytes": 11865526,
+            "sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594"
+          },
+          "sidecar": {
+            "bytes": 4430,
+            "sha256": "aebe00b55f73958f9ea12d6979fe1a7f720cabe38e3d39b7f46385c5bc5e8e74"
+          }
+        },
+        "23": {
+          "factor": {
+            "bytes": 11864033,
+            "sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6"
+          },
+          "sidecar": {
+            "bytes": 4437,
+            "sha256": "e56fb1ca613e2294b8fe9f7a941b79ab31ac132d2e16b851e3fa77ee3fcaf449"
+          }
+        },
+        "4": {
+          "factor": {
+            "bytes": 11862595,
+            "sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5"
+          },
+          "sidecar": {
+            "bytes": 4430,
+            "sha256": "772672cafea387eec24cf81e44ece8676550603537e1c7995810796f2ced1893"
+          }
+        },
+        "6": {
+          "factor": {
+            "bytes": 11864427,
+            "sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b"
+          },
+          "sidecar": {
+            "bytes": 4432,
+            "sha256": "2680eb0bcbfc4956a55410580adf02598501e219cca32914594040d6ff768463"
+          }
+        }
+      },
+      "factor_manifest_sha256": "60204faca5d9d7974e035ff05088938af942fbd5e0d313c030dddc6748157069",
+      "pr13_config_sha256": "56ec0ba55610a0542603d758597129fd3180fd944d973d1b367b7a0bc1a5d006",
+      "request_manifest_facts_sha256": "43732f6b4efd3d26df382936ea40fd1d5ea04d0ac9231810c10433f4dcbb9b2c",
+      "request_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+      "schema": "pr13_d1_nested_allocation_input_pins_v1",
+      "selected_tree_sha256": "da4675181fd81c87bd2d3db7ff2d3dea1f075db4ea98f23ab90f14943ee2bfe8",
+      "tokenizer_json_sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+    },
+    "output_dir": "/workspace/pr13_d1_nested_safe_oracle_20260825_v2",
+    "pilot_nonpromotable": false,
+    "request_ids": [
+      "558584988808259415",
+      "393464904586804375",
+      "3404922740724473745",
+      "7199494395763459203",
+      "8457789193798827243",
+      "4963754866821007154",
+      "4413705822487714868",
+      "4616451127735508063",
+      "1707003798920043071",
+      "4806368433481488527",
+      "8111466125146286729",
+      "7164360317188859247",
+      "6729680310910103666",
+      "4855709850821438829",
+      "1660261496820229908",
+      "3434075084377169637",
+      "6436791395642776617",
+      "515115621874868733",
+      "3632512936450520256",
+      "1502447895823767604",
+      "6843078368187517683",
+      "7781095486656531063",
+      "3022724970163322358",
+      "7146432270286818794",
+      "9141109278082892603",
+      "91031053726977608",
+      "4874249050910137242",
+      "5882762878523117416",
+      "7535525274406291286",
+      "3982243681309800602",
+      "912395742506091108",
+      "52991150560169882",
+      "5862949379626769174",
+      "5799208855988669742",
+      "2750011635522019245",
+      "5761435855233029959",
+      "8967117636875241316",
+      "9176575585199638651",
+      "1894755734022723091",
+      "190493949229088614",
+      "7043956596854349455",
+      "421972479081072919",
+      "7659917110696245302",
+      "495796889814520199",
+      "1738518524105729289",
+      "7306298575608536309",
+      "4459448628162848517",
+      "9171611274567999294",
+      "3500008414755652255",
+      "5864017725187494850",
+      "3559561149198049337",
+      "2823098420399483888",
+      "2789576936148212496",
+      "419210697297598529",
+      "7239956928726888867",
+      "7847348801934963868",
+      "2606758720771458505",
+      "6674877872408724631",
+      "7328097994579285116",
+      "1701513283508009876",
+      "4455318792560909706",
+      "6668074360176338556",
+      "1400145707980462518",
+      "8436710057592427097",
+      "2163452943204592875",
+      "4749339940031243183",
+      "1858171369235574131",
+      "4436927216379069931",
+      "448496304748495759",
+      "8912148053955568453",
+      "4987362207623148655",
+      "7183616764903958745",
+      "4973729897437122653",
+      "3877359492363448383",
+      "2649191586442838652",
+      "1513483498020732592",
+      "16575062651416817",
+      "5069639662103810080",
+      "5055447355458603219",
+      "4938891164624240307",
+      "7228980071435333936",
+      "8779584329404905313",
+      "3870707644846258720",
+      "4864109989738514153",
+      "3758180779316396578",
+      "3529534416123147106",
+      "7472570167665621879",
+      "3210318741924536608",
+      "5172182069167381448",
+      "6998989979261173502",
+      "6546470013050408316",
+      "3001551291530579884",
+      "2396344933077658871",
+      "4338466236330227483",
+      "938075745397929658",
+      "5534578158596052265"
+    ],
+    "run_id": "qwen36_mxfp4_d1_nested_safe_allocation_20260825_v2",
+    "schema": "pr13_d1_nested_allocation_run_identity_v1",
+    "split": "evaluation"
+  },
+  "run_identity_sha256": "cfa2df3e413813cff4f2dbf50e2587c8f2a2e540fb3a56d7e932e8cbc75e2521",
+  "runner_sha256": "20415e4282da67c69f0770ada6ed4a43ded418a50165906aafe2d2a1563441ea",
+  "schema": "pr13_d1_nested_safe_oracle_layer_candidates_v1",
+  "split": "evaluation",
+  "test_rows_admitted_or_used": false
+}

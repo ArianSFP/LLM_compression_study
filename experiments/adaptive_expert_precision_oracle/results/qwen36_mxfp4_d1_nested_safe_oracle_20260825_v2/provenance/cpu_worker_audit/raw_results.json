@@ -1,0 +1,131 @@
+{
+  "pilot_nonpromotable": true,
+  "rows": [
+    {
+      "aggregate_cpu_seconds": 48.055636,
+      "cpu_stat_after": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54615,
+        "nr_throttled": 13276,
+        "system_usec": 439749597,
+        "throttled_usec": 115180690988,
+        "usage_usec": 49318065416,
+        "user_usec": 48878315819
+      },
+      "cpu_stat_before": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54585,
+        "nr_throttled": 13276,
+        "system_usec": 439682636,
+        "throttled_usec": 115180690988,
+        "usage_usec": 49270009780,
+        "user_usec": 48830327144
+      },
+      "effective_cpu_equivalents": 15.919313621174924,
+      "throttled_aggregate_seconds": 0.0,
+      "throttled_periods": 0,
+      "throughput_million_iterations_per_second": 143.39691994019105,
+      "wall_seconds": 3.018700249493122,
+      "workers": 16
+    },
+    {
+      "aggregate_cpu_seconds": 72.075548,
+      "cpu_stat_after": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54645,
+        "nr_throttled": 13276,
+        "system_usec": 439900737,
+        "throttled_usec": 115180690988,
+        "usage_usec": 49390140964,
+        "user_usec": 48950240226
+      },
+      "cpu_stat_before": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54615,
+        "nr_throttled": 13276,
+        "system_usec": 439749597,
+        "throttled_usec": 115180690988,
+        "usage_usec": 49318065416,
+        "user_usec": 48878315819
+      },
+      "effective_cpu_equivalents": 23.89354479940671,
+      "throttled_aggregate_seconds": 0.0,
+      "throttled_periods": 0,
+      "throughput_million_iterations_per_second": 219.30241687298354,
+      "wall_seconds": 3.016528045758605,
+      "workers": 24
+    },
+    {
+      "aggregate_cpu_seconds": 81.084899,
+      "cpu_stat_after": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54675,
+        "nr_throttled": 13277,
+        "system_usec": 440025594,
+        "throttled_usec": 115180691881,
+        "usage_usec": 49471225863,
+        "user_usec": 49031200268
+      },
+      "cpu_stat_before": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54645,
+        "nr_throttled": 13276,
+        "system_usec": 439900737,
+        "throttled_usec": 115180690988,
+        "usage_usec": 49390140964,
+        "user_usec": 48950240226
+      },
+      "effective_cpu_equivalents": 26.841093767220197,
+      "throttled_aggregate_seconds": 0.000893,
+      "throttled_periods": 1,
+      "throughput_million_iterations_per_second": 240.72759756981955,
+      "wall_seconds": 3.020923800766468,
+      "workers": 27
+    },
+    {
+      "aggregate_cpu_seconds": 82.045963,
+      "cpu_stat_after": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54706,
+        "nr_throttled": 13307,
+        "system_usec": 440189072,
+        "throttled_usec": 115194783594,
+        "usage_usec": 49553271826,
+        "user_usec": 49113082753
+      },
+      "cpu_stat_before": {
+        "burst_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_bursts": 0,
+        "nr_periods": 54675,
+        "nr_throttled": 13277,
+        "system_usec": 440025594,
+        "throttled_usec": 115180691881,
+        "usage_usec": 49471225863,
+        "user_usec": 49031200268
+      },
+      "effective_cpu_equivalents": 27.133241181687577,
+      "throttled_aggregate_seconds": 14.091713,
+      "throttled_periods": 30,
+      "throughput_million_iterations_per_second": 239.93276136124445,
+      "wall_seconds": 3.0238172598183155,
+      "workers": 32
+    }
+  ],
+  "schema": "pr13_d1_cpu_worker_scaling_results_v1",
+  "scientific_evidence": false
+}

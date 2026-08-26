@@ -1,0 +1,1 @@
+/workspace/codebook_env/bin/python /tmp/cpu_worker_audit_benchmark.py --output-dir /workspace/pr13_d1_nested_safe_oracle_20260825_v2/pilots/cpu_worker_audit --duration 3 --workers 16 24 27 32

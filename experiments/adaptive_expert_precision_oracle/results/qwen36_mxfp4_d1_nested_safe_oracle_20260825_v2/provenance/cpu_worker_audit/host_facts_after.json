@@ -1,0 +1,20 @@
+{
+  "cpu_pressure_after": [
+    "some avg10=2.50 avg60=0.48 avg300=0.15 total=824160977",
+    "full avg10=2.50 avg60=0.48 avg300=0.15 total=811964857"
+  ],
+  "cpu_stat_after": {
+    "burst_usec": 0,
+    "core_sched.force_idle_usec": 0,
+    "nr_bursts": 0,
+    "nr_periods": 54706,
+    "nr_throttled": 13307,
+    "system_usec": 440189088,
+    "throttled_usec": 115194783594,
+    "usage_usec": 49553273652,
+    "user_usec": 49113084563
+  },
+  "pilot_nonpromotable": true,
+  "schema": "pr13_d1_cpu_worker_post_facts_v1",
+  "scientific_evidence": false
+}
