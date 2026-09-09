@@ -136,7 +136,10 @@ validation protocol.
 ## Separate live all-layer development pilot
 
 After held-out validation completes, run one bounded, explicitly exploratory
-pilot on the first development code request. Compare PR13 with a two-choice
+pilot on the first development code request and first development dialogue
+request (the latter is a targeted follow-up to the observed continuation
+outlier). These are selected development cases, not a population estimate.
+Compare PR13 with a two-choice
 terminal-KL oracle (PR13 versus exact-local) at 360 and 725 pages/expert. Use
 two compressed teacher-forced decode steps followed by four exact decode steps.
 The routed experts in all 40 layers are treated; other components stay on the
@@ -154,8 +157,13 @@ global optimum, or a runtime controller.
 
 Each policy keeps its own cache across both compressed steps. No saved
 exact-prefix residual is reused on a different trajectory. The immutable
-expert-data cache is limited to 16 GiB of CPU arrays and must pass cold/warm
+expert-data caches are limited to 1 GiB per CPU worker (eight workers total),
+and must pass cold/warm
 allocation parity against the development banks. Model/source/factor identities,
 the initial reference gate, per-layer inputs, candidate seals, choices and
 trajectory outcomes are preserved. The same 0.125 Q4 reconstruction gate applies.
 No reserved request is used, and validation coefficients remain frozen.
+
+CPU preparation for independent trajectories runs in spawned worker processes;
+GPU execution is serialized. Each trajectory retains independent allocation
+maps and caches. Parallel scheduling cannot change its within-trajectory order.
