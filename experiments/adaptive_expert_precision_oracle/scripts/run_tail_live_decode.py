@@ -168,7 +168,8 @@ def main():
                     values['records_json']=np.asarray(json.dumps(records))
                     save_npz(cell/'bank.npz',values)
                     base.atomic_json(cell/'bank_meta.json',dict(bank_sha256=sha(cell/'bank.npz'),
-                                                               terminal_labels_read=False,**facts))
+                        current_candidate_labels_read_before_seal=False,
+                        policy_adapts_to_prior_terminal_labels=state['policy']=='two_choice_oracle',**facts))
                     ready.append((state,cap,cell))
             state,cap,cell=ready.popleft()
             rate,policy,step,layer=(state[k] for k in ['rate','policy','step','layer'])

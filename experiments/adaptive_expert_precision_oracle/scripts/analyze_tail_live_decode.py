@@ -43,7 +43,8 @@ def main():
                     choice=json.loads((cell/'choice.json').read_text())
                     digest=hashlib.sha256((cell/'bank.npz').read_bytes()).hexdigest()
                     assert digest==meta['bank_sha256']==choice['bank_sha256']
-                    assert meta['terminal_labels_read'] is False
+                    assert meta['current_candidate_labels_read_before_seal'] is False
+                    assert meta['policy_adapts_to_prior_terminal_labels']==(policy=='two_choice_oracle')
                     assert meta['factor_sha256']==identity['factor_sha256'][str(layer)]
                     assert meta['q4_routed_max_abs']<=.125
                     assert choice['request_id']==request and choice['rate']==rate and choice['policy']==policy
