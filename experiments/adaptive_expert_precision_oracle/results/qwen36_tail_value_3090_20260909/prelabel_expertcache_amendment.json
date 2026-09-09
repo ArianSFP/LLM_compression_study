@@ -1,0 +1,8 @@
+{
+  "old_sha256": "fc88825a51af56ba84538ee4f641e416a10417195e39368e8461e3186808ebb0",
+  "new_sha256": "6adcd6077cfe801189c6a4c1c961cd11b9937d222871ef1d9b7da8849e1666f9",
+  "reason": "Cache weighted per-expert row states while preserving sequential expert summation; randomized float32/float64 parity tests passed. Full-bank parity pending.",
+  "label_count": 0,
+  "completed_banks": 20,
+  "inflight": "Earlier banks may use earlier arithmetic-equivalent performance versions."
+}

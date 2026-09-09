@@ -1,0 +1,5 @@
+{
+  "reason": "Require prediction factor hash to match fitted model; metric and fitting constants unchanged.",
+  "terminal_label_count": 0,
+  "fit_script_sha256": "7a0f6345f39d4dd3a90243d7dd49686bdc383c89eaf80b6259e267795487794c"
+}

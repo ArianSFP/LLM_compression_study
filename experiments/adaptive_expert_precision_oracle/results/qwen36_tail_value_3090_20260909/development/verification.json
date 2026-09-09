@@ -1,0 +1,14 @@
+{
+  "verified": true,
+  "requests": 32,
+  "cells": 192,
+  "candidate_rows": 5806,
+  "cache_probes": 7,
+  "omitted_cache_probes": [
+    {
+      "request_id": "63660253257321630",
+      "domain": "multilingual",
+      "reason": "no continuation tokens after the fixed decode position"
+    }
+  ]
+}

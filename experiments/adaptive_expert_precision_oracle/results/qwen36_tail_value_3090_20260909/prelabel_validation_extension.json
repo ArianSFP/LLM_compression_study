@@ -1,0 +1,11 @@
+{
+  "reason": "Freeze learned-metric private-cache validation extension and reporting code before development labels.",
+  "terminal_label_count": 0,
+  "files": {
+    "TAIL_VALUE_3090_METHODS.md": "49f7a56ce226aa92b25253fa1ba53ed381ab28cc7388e01724c5476527b8cd79",
+    "scripts/fit_tail_value_metric.py": "7a0f6345f39d4dd3a90243d7dd49686bdc383c89eaf80b6259e267795487794c",
+    "scripts/analyze_tail_value_bank.py": "c50ce4d0a9e2ff183df8c9063fa775fb27c983b31333ade0859c2e9fae6ea358",
+    "scripts/verify_tail_value_run.py": "60ec5bbf863f8cb715e9401f8b5d94cabb15002d0675b750df5581ec814bca10",
+    "scripts/run_tail_value_validation.py": "cbb6c88ed84a3c622988c8565f1f5dfbc505e7240283827e82e9acb448b874a5"
+  }
+}

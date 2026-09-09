@@ -1,0 +1,15 @@
+{
+  "old": {
+    "run_tail_value_3090.py": "8ef6c81aac794cc5504388a69ae36f292ea7d6e55839f5bc3f5f05a51fc2c6f2",
+    "prepare_tail_value_bank.py": "fc88825a51af56ba84538ee4f641e416a10417195e39368e8461e3186808ebb0",
+    "tail_value_streaming.py": "1939405c3efce879833fccac47044eebfaffbf90513987f3686791509f9e40e0"
+  },
+  "new": {
+    "run_tail_value_3090.py": "9286ea134b92ea0105a732e743ada63a4c336c775bab8bd5fac96f3dc541e656",
+    "prepare_tail_value_bank.py": "fc88825a51af56ba84538ee4f641e416a10417195e39368e8461e3186808ebb0",
+    "tail_value_streaming.py": "102d30b77c4d355e0206644b12a2a19c770c2546e997946f08a54460b99b137c"
+  },
+  "reason": "8 GiB offline immutable expert-weight cache; prior current-token captures must reproduce exactly before labels",
+  "captures_retained": 32,
+  "candidate_labels_before_change": 0
+}

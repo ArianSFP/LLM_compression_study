@@ -1,0 +1,27 @@
+[
+  {
+    "file": "bank_expertcache.npz",
+    "arrays_and_records_bit_exact": true,
+    "seconds": 343.0645887311548
+  },
+  {
+    "file": "bank_instrumented.npz",
+    "arrays_and_records_bit_exact": true,
+    "seconds": 682.062611522153
+  },
+  {
+    "file": "bank_optimized.npz",
+    "arrays_and_records_bit_exact": true,
+    "seconds": 535.3054824583232
+  },
+  {
+    "file": "bank_rowcast.npz",
+    "arrays_and_records_bit_exact": true,
+    "seconds": 549.5190093871206
+  },
+  {
+    "file": "bank_vectorized.npz",
+    "arrays_and_records_bit_exact": true,
+    "seconds": 628.6829891502857
+  }
+]

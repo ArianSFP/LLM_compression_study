@@ -1,0 +1,594 @@
+{
+  "schema": "tail_value_descriptive_v1",
+  "candidate_rows": 5806,
+  "cells": 384,
+  "completed": true,
+  "summaries": [
+    {
+      "split": "development",
+      "rate": 360,
+      "policy": "d1_first",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.00026540523844595143,
+        "median": -1.7256040158268129e-06,
+        "p95": 0.0044085340643581095,
+        "maximum": 0.008767253738672784,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.0003972579917569571,
+        "median": -1.7331531469248297e-08,
+        "p95": 0.0010349329855994082,
+        "maximum": 0.008312768370766813,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.010351397081354019,
+        "median": -2.1855048970564894e-07,
+        "p95": 0.0358481208483378,
+        "maximum": 0.104157288869222,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": -0.005566552324446731,
+        "median": 3.973645116654249e-08,
+        "p95": 0.038422226905822754,
+        "maximum": 0.08332586288452148,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "d1_constraint_regret": {
+        "mean": 2.382128339473155e-06,
+        "median": 0.0,
+        "p95": 1.0015689611009278e-09,
+        "maximum": 7.622588115433852e-05,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.0625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.061636572912736665
+    },
+    {
+      "split": "development",
+      "rate": 360,
+      "policy": "local",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": 0.00044177471392552864,
+        "median": -9.680988846720123e-06,
+        "p95": 0.00528318782563322,
+        "maximum": 0.011314429032305876,
+        "negative_fraction": 0.59375,
+        "harmed_fraction": 0.40625
+      },
+      "delta_vs_pr13_high": {
+        "mean": 0.0003099219606145232,
+        "median": -7.080646332961275e-07,
+        "p95": 0.005446164781945595,
+        "maximum": 0.018890176589290302,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.014625390424052014,
+        "median": -6.490154343434066e-06,
+        "p95": 0.032476034752714135,
+        "maximum": 0.104157288869222,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": -0.009840545667144726,
+        "median": 4.967055389215602e-08,
+        "p95": 0.038422226905822754,
+        "maximum": 0.08332586288452148,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "d1_constraint_regret": {
+        "mean": 2.382128339473155e-06,
+        "median": 0.0,
+        "p95": 1.0015689611009278e-09,
+        "maximum": 7.622588115433852e-05,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.0625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": -0.10259586255837745
+    },
+    {
+      "split": "development",
+      "rate": 360,
+      "policy": "metric",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.0005009624837675081,
+        "median": 5.30652935519053e-07,
+        "p95": 0.0019394766489237252,
+        "maximum": 0.009598282224033028,
+        "negative_fraction": 0.46875,
+        "harmed_fraction": 0.53125
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.0006328152370785137,
+        "median": -1.0480095262721534e-06,
+        "p95": 0.0010864707962205946,
+        "maximum": 0.004782590161388119,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.010707772435286126,
+        "median": -2.98048898154472e-08,
+        "p95": 0.04864817857742308,
+        "maximum": 0.06249380111694336,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": -0.005922927678378838,
+        "median": -4.211592022329569e-05,
+        "p95": 0.04135531187057495,
+        "maximum": 0.0675210952758789,
+        "negative_fraction": 0.59375,
+        "harmed_fraction": 0.40625
+      },
+      "d1_constraint_regret": {
+        "mean": 2.382128339473155e-06,
+        "median": 0.0,
+        "p95": 1.0015689611009278e-09,
+        "maximum": 7.622588115433852e-05,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.0625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.11634137607110479
+    },
+    {
+      "split": "development",
+      "rate": 360,
+      "policy": "metric_d1_nonworsening",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.0012328392060327019,
+        "median": 2.318670430841626e-07,
+        "p95": 0.0013755069566771037,
+        "maximum": 0.009598282224033028,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.0013646919593437075,
+        "median": -2.8019867327107777e-06,
+        "p95": 0.0005447469258024048,
+        "maximum": 0.0017423848334724805,
+        "negative_fraction": 0.59375,
+        "harmed_fraction": 0.40625
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.006696501689939183,
+        "median": -2.98048898154472e-08,
+        "p95": 0.04864817857742308,
+        "maximum": 0.06249380111694336,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": -0.0019116569330318947,
+        "median": -2.364310603297781e-06,
+        "p95": 0.04135531187057495,
+        "maximum": 0.0675210952758789,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "d1_constraint_regret": {
+        "mean": 2.382128339473155e-06,
+        "median": 0.0,
+        "p95": 1.0015689611009278e-09,
+        "maximum": 7.622588115433852e-05,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.0625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.28630928333311556
+    },
+    {
+      "split": "development",
+      "rate": 360,
+      "policy": "oracle",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.0043059700743210486,
+        "median": -0.0006055552542723793,
+        "p95": -7.130213324361522e-07,
+        "maximum": -1.1132435380941293e-07,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.004437822827632054,
+        "median": -0.0007630968088901587,
+        "p95": -3.9028422215518336e-07,
+        "maximum": -1.2971632301628233e-07,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": 0.0013349856520431889,
+        "median": -2.930552000179887e-06,
+        "p95": 0.08573722740014392,
+        "maximum": 0.2083150545756022,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": 0.006119830408950478,
+        "median": -2.0960774236300495e-06,
+        "p95": 0.08128902912139892,
+        "maximum": 0.1874836285909017,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "d1_constraint_regret": {
+        "mean": 2.382128339473155e-06,
+        "median": 0.0,
+        "p95": 1.0015689611009278e-09,
+        "maximum": 7.622588115433852e-05,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.0625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 1.0
+    },
+    {
+      "split": "development",
+      "rate": 360,
+      "policy": "oracle_d1_nonworsening",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.004303587945981575,
+        "median": -0.00056744231369521,
+        "p95": -7.130213324361522e-07,
+        "maximum": -1.0909864500696642e-07,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.004435440699292581,
+        "median": -0.0007630968088901587,
+        "p95": -3.9028422215518336e-07,
+        "maximum": -1.274906142138358e-07,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": 0.0009872993414340074,
+        "median": -2.930552000179887e-06,
+        "p95": 0.08573722740014392,
+        "maximum": 0.2083150545756022,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": 0.005772144098341297,
+        "median": -2.0960774236300495e-06,
+        "p95": 0.08128902912139892,
+        "maximum": 0.1874836285909017,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "d1_constraint_regret": {
+        "mean": 2.382128339473155e-06,
+        "median": 0.0,
+        "p95": 1.0015689611009278e-09,
+        "maximum": 7.622588115433852e-05,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.0625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.9994467847434242
+    },
+    {
+      "split": "development",
+      "rate": 725,
+      "policy": "d1_first",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.00022865963641185402,
+        "median": -2.3119249211352628e-05,
+        "p95": 0.0007288693965620039,
+        "maximum": 0.011769283097237349,
+        "negative_fraction": 0.65625,
+        "harmed_fraction": 0.34375
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.0005334614297789787,
+        "median": -2.1547109578060977e-06,
+        "p95": 0.0015514763681835574,
+        "maximum": 0.0034621458034962416,
+        "negative_fraction": 0.65625,
+        "harmed_fraction": 0.34375
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.003183422792067218,
+        "median": -0.0001174221980212072,
+        "p95": 0.05958031614621477,
+        "maximum": 0.1101227601369222,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": -0.0011318709771317428,
+        "median": -1.5070040999394982e-05,
+        "p95": 0.054187291860580425,
+        "maximum": 0.11582295099894206,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "d1_constraint_regret": {
+        "mean": 6.683561380308826e-05,
+        "median": 0.0,
+        "p95": 6.210870148303606e-05,
+        "maximum": 0.00201200678323706,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.15625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.07223220907227151
+    },
+    {
+      "split": "development",
+      "rate": 725,
+      "policy": "local",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -9.995687449906286e-05,
+        "median": -8.01727749906907e-06,
+        "p95": 0.0009472700780217261,
+        "maximum": 0.011769283097237349,
+        "negative_fraction": 0.625,
+        "harmed_fraction": 0.375
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.00040475866786618755,
+        "median": -1.945116084793123e-06,
+        "p95": 0.0023734087268508105,
+        "maximum": 0.005778867343906313,
+        "negative_fraction": 0.65625,
+        "harmed_fraction": 0.34375
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.002582225490191418,
+        "median": -7.520119424953009e-06,
+        "p95": 0.05958031614621477,
+        "maximum": 0.1101227601369222,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": -0.0005306736752559429,
+        "median": 8.940698847936801e-08,
+        "p95": 0.054187291860580425,
+        "maximum": 0.11582295099894206,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "d1_constraint_regret": {
+        "mean": 6.683561380308826e-05,
+        "median": 0.0,
+        "p95": 6.210870148303606e-05,
+        "maximum": 0.00201200678323706,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.15625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.03157577773815096
+    },
+    {
+      "split": "development",
+      "rate": 725,
+      "policy": "metric",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": 0.0015262176865814836,
+        "median": -7.407616186190976e-07,
+        "p95": 0.0010892075647646487,
+        "maximum": 0.05059668499355515,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_vs_pr13_high": {
+        "mean": 0.0012214158932143588,
+        "median": -2.4766160455769182e-08,
+        "p95": 0.00968064716338024,
+        "maximum": 0.021096025748799246,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": 0.007756495148597331,
+        "median": 9.934169042935537e-09,
+        "p95": 0.05145293672879537,
+        "maximum": 0.22713772455851236,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": 0.009808046963532805,
+        "median": 6.804792368105458e-07,
+        "p95": 0.10770498514175411,
+        "maximum": 0.14416424433390299,
+        "negative_fraction": 0.4375,
+        "harmed_fraction": 0.53125
+      },
+      "d1_constraint_regret": {
+        "mean": 6.683561380308826e-05,
+        "median": 0.0,
+        "p95": 6.210870148303606e-05,
+        "maximum": 0.00201200678323706,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.15625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": -0.48212302248389816
+    },
+    {
+      "split": "development",
+      "rate": 725,
+      "policy": "metric_d1_nonworsening",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": 0.0013871114640429776,
+        "median": -2.96590773511222e-06,
+        "p95": 0.0010892075647646487,
+        "maximum": 0.05059668499355515,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_vs_pr13_high": {
+        "mean": 0.0010823096706758528,
+        "median": -6.656756005677758e-08,
+        "p95": 0.007820107662613877,
+        "maximum": 0.021096025748799246,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": 0.007808010888163667,
+        "median": -7.947278390929569e-08,
+        "p95": 0.05145293672879537,
+        "maximum": 0.22713772455851236,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": 0.009859562703099142,
+        "median": 3.476937611897787e-08,
+        "p95": 0.10770498514175411,
+        "maximum": 0.14416424433390299,
+        "negative_fraction": 0.46875,
+        "harmed_fraction": 0.5
+      },
+      "d1_constraint_regret": {
+        "mean": 6.683561380308826e-05,
+        "median": 0.0,
+        "p95": 6.210870148303606e-05,
+        "maximum": 0.00201200678323706,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.15625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": -0.4381802002729975
+    },
+    {
+      "split": "development",
+      "rate": 725,
+      "policy": "oracle",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.003165618764103836,
+        "median": -0.0007236468756559589,
+        "p95": -3.2262350039118565e-07,
+        "maximum": -7.84931977193537e-08,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.0034704205574709606,
+        "median": -0.0005547197808179287,
+        "p95": -2.9933255284537103e-06,
+        "maximum": -1.1012274647725917e-07,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": -0.0017815611918150505,
+        "median": -1.8228989423126527e-06,
+        "p95": 0.07156830678383509,
+        "maximum": 0.09881909688313802,
+        "negative_fraction": 0.53125,
+        "harmed_fraction": 0.46875
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": 0.00026999062312042365,
+        "median": -6.735278035800243e-05,
+        "p95": 0.058491246898969014,
+        "maximum": 0.24997790654500326,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "d1_constraint_regret": {
+        "mean": 6.683561380308826e-05,
+        "median": 0.0,
+        "p95": 6.210870148303606e-05,
+        "maximum": 0.00201200678323706,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.15625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 1.0
+    },
+    {
+      "split": "development",
+      "rate": 725,
+      "policy": "oracle_d1_nonworsening",
+      "requests": 32,
+      "delta_vs_pr13_low": {
+        "mean": -0.003098783150300747,
+        "median": -0.0007235299741334227,
+        "p95": -3.2262350039118565e-07,
+        "maximum": -7.84931977193537e-08,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_vs_pr13_high": {
+        "mean": -0.0034035849436678716,
+        "median": -0.0005547197808179287,
+        "p95": -2.9933255284537103e-06,
+        "maximum": -1.1012274647725917e-07,
+        "negative_fraction": 1.0,
+        "harmed_fraction": 0.0
+      },
+      "delta_nll_vs_pr13_low": {
+        "mean": 0.002904077804491755,
+        "median": -7.251800724361601e-07,
+        "p95": 0.07156830678383509,
+        "maximum": 0.09881909688313802,
+        "negative_fraction": 0.5,
+        "harmed_fraction": 0.5
+      },
+      "delta_nll_vs_pr13_high": {
+        "mean": 0.004955629619427232,
+        "median": -6.735278035800243e-05,
+        "p95": 0.058491246898969014,
+        "maximum": 0.24997790654500326,
+        "negative_fraction": 0.5625,
+        "harmed_fraction": 0.4375
+      },
+      "d1_constraint_regret": {
+        "mean": 6.683561380308826e-05,
+        "median": 0.0,
+        "p95": 6.210870148303606e-05,
+        "maximum": 0.00201200678323706,
+        "negative_fraction": 0.0,
+        "harmed_fraction": 0.15625
+      },
+      "fraction_same_payload_oracle_headroom_recovered": 0.978887030061559
+    }
+  ],
+  "inference": "exploratory development/validation; bank optimum is hindsight; no Experiment B promotion; extra learned metadata unpriced",
+  "predictions_model_sha256": "70538ee7d349ed1b97d43cbfbe23005725af35149b524ed316675ab2f63f149e",
+  "cache_summary": [
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "requests": 7,
+      "mean_current_delta_kl": -0.0025615072615567313,
+      "mean_future_delta_kl": -0.002275174416993087,
+      "future_harmed_fraction": 0.14285714285714285,
+      "worst_request_mean_future_delta_kl": 0.0022197773403149768
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "requests": 7,
+      "mean_current_delta_kl": -0.0031136865426658134,
+      "mean_future_delta_kl": 0.005068575840606995,
+      "future_harmed_fraction": 0.5714285714285714,
+      "worst_request_mean_future_delta_kl": 0.034679512300044735
+    }
+  ]
+}

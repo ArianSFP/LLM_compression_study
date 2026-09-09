@@ -1,0 +1,188 @@
+{
+  "request_id": "7797517645080975273",
+  "domain": "factual_qa",
+  "horizon": 4,
+  "mode": "single_layer_single_injection_private_cache_then_exact_decode",
+  "outcomes": [
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 0,
+      "selected_key": "r360_c0",
+      "kl": 6.51315349387005e-06,
+      "nll": 0.9749226570129395,
+      "delta_nll": -4.476308822631836e-05
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 1,
+      "selected_key": "r360_c0",
+      "kl": 0.0007391199469566345,
+      "nll": 2.244478702545166,
+      "delta_nll": -0.11163687705993652
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 2,
+      "selected_key": "r360_c0",
+      "kl": 5.399168003350496e-05,
+      "nll": 5.132619857788086,
+      "delta_nll": -0.12411069869995117
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 3,
+      "selected_key": "r360_c0",
+      "kl": 0.00011092191562056541,
+      "nll": 1.06622314453125,
+      "delta_nll": -0.0010591745376586914
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 4,
+      "selected_key": "r360_c0",
+      "kl": 0.0008469289168715477,
+      "nll": 2.0181283950805664,
+      "delta_nll": -0.10924220085144043
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 0,
+      "selected_key": "r360_c3",
+      "kl": 2.6109482860192657e-06,
+      "nll": 0.9749310612678528,
+      "delta_nll": -3.635883331298828e-05
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 1,
+      "selected_key": "r360_c3",
+      "kl": 3.977050073444843e-05,
+      "nll": 2.356764316558838,
+      "delta_nll": 0.0006487369537353516
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 2,
+      "selected_key": "r360_c3",
+      "kl": 7.911175998742692e-07,
+      "nll": 5.256744384765625,
+      "delta_nll": 1.3828277587890625e-05
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 3,
+      "selected_key": "r360_c3",
+      "kl": 0.007093019783496857,
+      "nll": 1.2350115776062012,
+      "delta_nll": 0.16772925853729248
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 4,
+      "selected_key": "r360_c3",
+      "kl": 0.0034964904189109802,
+      "nll": 1.910699486732483,
+      "delta_nll": -0.21667110919952393
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 0,
+      "selected_key": "r725_c0",
+      "kl": 5.068613972980529e-06,
+      "nll": 0.974907636642456,
+      "delta_nll": -5.97834587097168e-05
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 1,
+      "selected_key": "r725_c0",
+      "kl": 0.0007334193214774132,
+      "nll": 2.2444419860839844,
+      "delta_nll": -0.11167359352111816
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 2,
+      "selected_key": "r725_c0",
+      "kl": 2.0537208911264315e-07,
+      "nll": 5.256734371185303,
+      "delta_nll": 3.814697265625e-06
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 3,
+      "selected_key": "r725_c0",
+      "kl": 0.0018077269196510315,
+      "nll": 1.1497306823730469,
+      "delta_nll": 0.08244836330413818
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 4,
+      "selected_key": "r725_c0",
+      "kl": 0.0034961961209774017,
+      "nll": 1.9106966257095337,
+      "delta_nll": -0.21667397022247314
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 0,
+      "selected_key": "r725_c8",
+      "kl": 8.621700544608757e-07,
+      "nll": 0.9749459028244019,
+      "delta_nll": -2.1517276763916016e-05
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 1,
+      "selected_key": "r725_c8",
+      "kl": 0.000751822255551815,
+      "nll": 2.244551181793213,
+      "delta_nll": -0.11156439781188965
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 2,
+      "selected_key": "r725_c8",
+      "kl": 4.100985825061798e-05,
+      "nll": 5.381083011627197,
+      "delta_nll": 0.12435245513916016
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 3,
+      "selected_key": "r725_c8",
+      "kl": 3.993615973740816e-05,
+      "nll": 1.0666395425796509,
+      "delta_nll": -0.0006427764892578125
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 4,
+      "selected_key": "r725_c8",
+      "kl": 0.0008473750203847885,
+      "nll": 2.018112897872925,
+      "delta_nll": -0.10925769805908203
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "schema": "tail_value_psd_proxy4_v1",
+  "feature_names": [
+    "local_damage",
+    "proxy0_squared",
+    "proxy1_squared",
+    "proxy2_squared",
+    "proxy3_squared"
+  ],
+  "training_bank_seal_sha256": "1b4165d7d7fabe0ee340a1d8aa27edaa1130faced85219ae3425611323d8043b",
+  "features_require_exact_q4_residual": true,
+  "layers": {
+    "0": {
+      "coefficients": [
+        1.3158418324750523,
+        0.0,
+        289347.51147498324,
+        0.0,
+        0.0
+      ],
+      "factor_sha256": "b24c5a50c1a31f9b2b7b43baa26e46913d861586a525a9bfff17b0520a9bfe84",
+      "local_floor": 1.3158418324750523,
+      "ridge": 0.001,
+      "pairs": 905,
+      "pair_rmse": 0.018460433331632987
+    },
+    "1": {
+      "coefficients": [
+        2.872238361404371,
+        0.0,
+        0.0,
+        0.0,
+        1218704.4796329925
+      ],
+      "factor_sha256": "9cbc7b15be500381a4b9bd583133653caaf0b89da3be315712de3be173e1f299",
+      "local_floor": 0.49270719320759043,
+      "ridge": 0.001,
+      "pairs": 895,
+      "pair_rmse": 0.036882198414951974
+    },
+    "4": {
+      "coefficients": [
+        0.1979280371695095,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "factor_sha256": "8dcf5aa5259d95fdf58c26c8f0a18da3f5308c78f7d56fdbdec797a4ffa776d5",
+      "local_floor": 0.1979280371695095,
+      "ridge": 0.001,
+      "pairs": 900,
+      "pair_rmse": 0.024881631381626867
+    },
+    "6": {
+      "coefficients": [
+        0.10416421185158593,
+        15172.822575031667,
+        146778.0908303577,
+        70485.32766202981,
+        0.0
+      ],
+      "factor_sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b",
+      "local_floor": 0.10416421185158593,
+      "ridge": 0.001,
+      "pairs": 909,
+      "pair_rmse": 0.017300843805212116
+    },
+    "12": {
+      "coefficients": [
+        0.11477259020204977,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "factor_sha256": "18295c4b448346674fc0a2d0c9d0b65476bd3fd4db1c74efa165a8163c953594",
+      "local_floor": 0.11477259020204977,
+      "ridge": 0.001,
+      "pairs": 903,
+      "pair_rmse": 0.019536048412243646
+    },
+    "23": {
+      "coefficients": [
+        0.3754457440430148,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "factor_sha256": "6cc5f7fa1f9249963f0c9b25c3bee23cc63f11b5fb5fb31bd32b924c1ea553c6",
+      "local_floor": 0.02923558895955604,
+      "ridge": 0.001,
+      "pairs": 910,
+      "pair_rmse": 0.006768763237993962
+    }
+  }
+}

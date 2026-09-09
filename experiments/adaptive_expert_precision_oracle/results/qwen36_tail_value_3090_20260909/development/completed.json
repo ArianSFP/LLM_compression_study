@@ -1,0 +1,20 @@
+{
+  "completed": true,
+  "requests": 32,
+  "layers": [
+    0,
+    1,
+    4,
+    6,
+    12,
+    23
+  ],
+  "elapsed_seconds": 4849.291628593579,
+  "peak_gpu_gib": 12.82087516784668,
+  "expert_weight_cache": {
+    "bytes": 8587837440,
+    "limit_bytes": 8589934592,
+    "hits": 1913578,
+    "misses": 139068
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "old": "8961f699fdd65554d93645dc09d40a75d14d434ade59cb57e77ffa61ffd0cc15",
+  "new": "fc88825a51af56ba84538ee4f641e416a10417195e39368e8461e3186808ebb0",
+  "reason": "vectorize exact unit effects; float32/float64 bit parity tests passed; full-bank parity pending",
+  "banks_before_change": 0,
+  "terminal_candidate_labels_before_change": 0
+}

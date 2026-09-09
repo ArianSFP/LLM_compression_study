@@ -1,0 +1,7 @@
+{
+  "old": "341ca2fff82c269cd6c30a83a78be46d3e7304452b3072ec8cf2c8d78919b33d",
+  "new": "9800608084583c6c92f6f5fd0b0d0a6d1b99a7232e45751f3c3267c58a71a936",
+  "reason": "omit unused high completion; no intended candidate change; parity checked on legacy code smoke",
+  "banks_before_change": 0,
+  "terminal_candidate_labels_before_change": 0
+}

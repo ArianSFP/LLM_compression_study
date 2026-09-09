@@ -1,0 +1,7 @@
+{
+  "old": "9800608084583c6c92f6f5fd0b0d0a6d1b99a7232e45751f3c3267c58a71a936",
+  "new": "c56edbc8c563d5e27c5702ddfa55267ee0d62ced016388b89f2ed1871f3bfdf8",
+  "reason": "require and record original 0.125 Q4 reconstruction tolerance",
+  "banks_before_change": 0,
+  "terminal_candidate_labels_before_change": 0
+}

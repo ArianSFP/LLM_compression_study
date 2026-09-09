@@ -1,0 +1,10 @@
+{
+  "protocol_commit": "829e6db",
+  "terminal_label_count": 0,
+  "files": {
+    "TAIL_VALUE_3090_METHODS.md": "a518a9016462e788959ed0be30ec79096919f3ac36f99d4ef208a9bc2c2a1388",
+    "scripts/fit_tail_value_metric.py": "11e8f7f85e38b6b990174ca085a037a13270880808bab086ebc237cde7821c76",
+    "scripts/analyze_tail_value_bank.py": "85034a07441857d55b2e349826f3cc7ec16f7ca874223da771f139a19ce53785",
+    "scripts/verify_tail_value_run.py": "ab5dea157cda65965293563ea98b15c43ca44a47b71ebe1bdc342f252e2f846e"
+  }
+}

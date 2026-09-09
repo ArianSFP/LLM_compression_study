@@ -1,0 +1,6 @@
+{
+  "scope": "sampled development bank preparation; pod lifetime watermark is not experiment-exclusive",
+  "sampled_preparation_memory_bytes": 106607931392,
+  "cgroup_lifetime_peak_bytes": 113611571200,
+  "current_memory_bytes": 82037198848
+}

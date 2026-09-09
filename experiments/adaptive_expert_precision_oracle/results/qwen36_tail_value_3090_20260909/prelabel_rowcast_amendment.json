@@ -1,0 +1,7 @@
+{
+  "old": "c56edbc8c563d5e27c5702ddfa55267ee0d62ced016388b89f2ed1871f3bfdf8",
+  "new": "8961f699fdd65554d93645dc09d40a75d14d434ade59cb57e77ffa61ffd0cc15",
+  "reason": "convert selected row rather than entire matrix to float64; candidate parity must pass",
+  "banks_before_change": 0,
+  "terminal_candidate_labels_before_change": 0
+}

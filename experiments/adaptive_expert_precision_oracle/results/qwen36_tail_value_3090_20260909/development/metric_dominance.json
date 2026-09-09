@@ -1,0 +1,18 @@
+{
+  "schema": "tail_metric_dominance_v1",
+  "summaries": [
+    {
+      "rate": 360,
+      "cells": 192,
+      "oracle_winner_dominated_fraction": 0.421875,
+      "fraction_oracle_headroom_remaining_in_optimistic_envelope": 0.9465584932836889
+    },
+    {
+      "rate": 725,
+      "cells": 192,
+      "oracle_winner_dominated_fraction": 0.390625,
+      "fraction_oracle_headroom_remaining_in_optimistic_envelope": 0.9578914310242058
+    }
+  ],
+  "interpretation": "Strictly lower local damage and no larger squared proxy feature dominates under positive-local/nonnegative-proxy metrics. The nondominated set plus incumbent is an optimistic capacity envelope, selected with terminal labels; it is not a realizable trained policy or a global allocation bound."
+}
