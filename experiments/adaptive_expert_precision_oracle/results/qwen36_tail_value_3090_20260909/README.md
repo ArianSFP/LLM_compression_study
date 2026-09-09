@@ -82,16 +82,79 @@ winners from the positive-local/nonnegative-proxy metric family, but its
 optimistic nondominated-plus-incumbent envelope retains about 95% of headroom.
 That envelope is not evidence that shared fitted coefficients can recover it.
 
-## Frozen validation and artifact status
+## Completed frozen validation
 
-The fitted model is frozen at SHA256
+The model remained frozen at SHA256
 `70538ee7d349ed1b97d43cbfbe23005725af35149b524ed316675ab2f63f149e`.
-Validation is running with 32 held-out requests and unchanged coefficients.
-No validation outcomes informed the table or model above. The 64-request
-reserve remains unused. Experiment B remains paused.
+All 32 held-out requests, 192 banks, 384 budget cells and 5,826 candidate rows
+passed verification. Five continuation probes passed repeated-reference and
+first-token consistency gates. Three first-domain requests have no continuation
+at the fixed position (dialogue/instruction, multilingual and reasoning).
+The run took 5,763 seconds and peaked at 12.821 GiB allocated GPU memory.
+
+Negative KL/NLL differences improve on PR13 at the same payload. These are
+means of per-request averages across six layers, with 32 requests per row.
+
+| Payload | Policy | Mean delta KL | Mean delta NLL | Fraction of requests with worse KL |
+|---:|---|---:|---:|---:|
+| 360 | metric | -0.00143915 | +0.00291358 | 46.9% |
+| 360 | metric_d1_nonworsening | -0.00143099 | +0.00286427 | 46.9% |
+| 360 | oracle | -0.00349014 | -0.02188374 | 0.0% |
+| 360 | oracle_d1_nonworsening | -0.00348910 | -0.02232689 | 0.0% |
+| 725 | metric | +0.00081754 | -0.00428953 | 53.1% |
+| 725 | metric_d1_nonworsening | +0.00079901 | -0.00140974 | 50.0% |
+| 725 | oracle | -0.00342503 | -0.01632303 | 0.0% |
+| 725 | oracle_d1_nonworsening | -0.00342021 | -0.01558010 | 0.0% |
+
+The fitted metric recovers 41.2% of same-payload hindsight headroom at 360,
+but worsens mean KL at 725. Its 360 KL improvement accompanies slightly worse
+mean NLL, so the two objectives should not be conflated. The D1 restriction
+barely changes the oracle headroom and does not repair the metric's 725 result.
+The full [analysis](validation/analysis.json) includes p95, maxima, external
+higher-payload comparisons and other fixed selectors; request and stratum
+parquets preserve the underlying contrasts.
+
+Short continuation probes compare future exact decoding after a single
+layer-6 compressed token. They average five selected requests, not all 32.
+
+| Payload | Policy | Mean future delta KL | Fraction of probed requests harmed |
+|---:|---|---:|---:|
+| 360 | current_token_oracle | +0.00243762 | 60% |
+| 360 | metric | +0.01115649 | 100% |
+| 725 | current_token_oracle | -0.00345552 | 20% |
+| 725 | metric | +0.00732257 | 60% |
+
+Metric+D1 selects the same choices as the metric in these probes. Future KL
+regressions at both budgets prevent a cache-safety claim. The hindsight oracle's
+future effects also change sign between budgets and cohorts. Current-token KL
+alone is insufficient evidence of safe continuation. The validation dominance
+envelope retains about 97% of headroom; this remains an optimistic capacity
+diagnostic, not a realizable shared selector.
+
+## Targeted live all-layer pilot — in progress
+
+The plan was sealed before validation labels. Two selected development cases
+(first code and the dialogue continuation outlier), two budgets and two
+policies produce eight independent trajectories. Each runs two compressed
+tokens across all 40 routed-expert layers, followed by four exact future tokens.
+Every candidate bank is rebuilt from the trajectory's live activations and
+routes. The two-choice oracle compares PR13 with exact-local allocation using
+current-token KL. This is a targeted diagnostic, not a population estimate,
+global oracle or runtime controller. No validation results alter its settings.
+
+## Artifact and promotion status
+
+The 64-request reserve remains unused. Experiment A remains failed and
+Experiment B remains paused. No deployment or runtime speed claim follows from
+these oracle emulations. A larger GPU is unnecessary for these numerical
+experiments, but longer/broader live studies will benefit from more resident
+expert weights. These measured timings use EPYC 7C13, not Zen4; the model's
+CPU-resident BF16 expert weights also require substantial system RAM.
 
 Raw banks, captures and pinned inputs are mirrored locally at
 `/home/arian/LLM_compression_study/tail_value_3090_artifacts` and on persistent
-pod storage at `/workspace/tail_value_3090_20260909`. The committed bank seal
-authenticates all 192 development banks. Shutdown using runpodctl is pending
-completion and preservation of the validation work.
+pod storage at `/workspace/tail_value_3090_20260909`. All development and
+validation banks and all 40 original factor files have verified local hashes.
+Shutdown using runpodctl is pending completion and preservation of the live
+pilot. Changes are committed locally; public publication needs explicit
+approval for the included tokenized manifests and request-level artifacts.

@@ -1,0 +1,24 @@
+{
+  "verified": true,
+  "requests": 32,
+  "cells": 192,
+  "candidate_rows": 5826,
+  "cache_probes": 5,
+  "omitted_cache_probes": [
+    {
+      "request_id": "6155895093875212790",
+      "domain": "dialogue_instruction",
+      "reason": "no continuation tokens after the fixed decode position"
+    },
+    {
+      "request_id": "4060931083108662384",
+      "domain": "multilingual",
+      "reason": "no continuation tokens after the fixed decode position"
+    },
+    {
+      "request_id": "9059717894180090104",
+      "domain": "reasoning",
+      "reason": "no continuation tokens after the fixed decode position"
+    }
+  ]
+}

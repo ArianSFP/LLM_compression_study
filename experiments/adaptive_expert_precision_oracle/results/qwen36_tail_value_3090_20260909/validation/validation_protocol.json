@@ -1,0 +1,12 @@
+{
+  "wrapper_sha256": "cbb6c88ed84a3c622988c8565f1f5dfbc505e7240283827e82e9acb448b874a5",
+  "metric_sha256": "70538ee7d349ed1b97d43cbfbe23005725af35149b524ed316675ab2f63f149e",
+  "cache_probe_policies": [
+    "pr13",
+    "current_token_oracle",
+    "metric",
+    "metric_d1_nonworsening"
+  ],
+  "model_frozen_before_validation": true,
+  "metric_predictions_read_terminal_kl": false
+}

@@ -1,0 +1,375 @@
+{
+  "request_id": "1269794776252053281",
+  "domain": "prose",
+  "horizon": 4,
+  "mode": "single_layer_single_injection_private_cache_then_exact_decode",
+  "outcomes": [
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 0,
+      "selected_key": "r360_c0",
+      "kl": 1.4234288755687885e-05,
+      "nll": 0.2591542899608612,
+      "delta_nll": -0.00018221139907836914
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 1,
+      "selected_key": "r360_c0",
+      "kl": 0.0008030225872062147,
+      "nll": 1.9853239059448242,
+      "delta_nll": 0.05283951759338379
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 2,
+      "selected_key": "r360_c0",
+      "kl": -1.5512651430071855e-07,
+      "nll": 7.986990567587782e-06,
+      "delta_nll": -4.768335202243179e-07
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 3,
+      "selected_key": "r360_c0",
+      "kl": 0.00015724981494713575,
+      "nll": 0.2383064478635788,
+      "delta_nll": 0.00042006373405456543
+    },
+    {
+      "rate": 360,
+      "policy": "pr13",
+      "step": 4,
+      "selected_key": "r360_c0",
+      "kl": 0.00013538755592890084,
+      "nll": 0.35893240571022034,
+      "delta_nll": 0.0005768239498138428
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 0,
+      "selected_key": "r360_c5",
+      "kl": 2.1402547645266168e-06,
+      "nll": 0.2592957615852356,
+      "delta_nll": -4.073977470397949e-05
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 1,
+      "selected_key": "r360_c5",
+      "kl": 0.00033382419496774673,
+      "nll": 1.9880284070968628,
+      "delta_nll": 0.05554401874542236
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 2,
+      "selected_key": "r360_c5",
+      "kl": -1.4121692970547883e-07,
+      "nll": 8.34461570775602e-06,
+      "delta_nll": -1.1920838005607948e-07
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 3,
+      "selected_key": "r360_c5",
+      "kl": 0.00548379123210907,
+      "nll": 0.29626673460006714,
+      "delta_nll": 0.05838035047054291
+    },
+    {
+      "rate": 360,
+      "policy": "current_token_oracle",
+      "step": 4,
+      "selected_key": "r360_c5",
+      "kl": 0.0017514461651444435,
+      "nll": 0.32358554005622864,
+      "delta_nll": -0.034770041704177856
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 0,
+      "selected_key": "r725_c0",
+      "kl": 5.318617695593275e-06,
+      "nll": 0.2593793570995331,
+      "delta_nll": 4.285573959350586e-05
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 1,
+      "selected_key": "r725_c0",
+      "kl": 0.002924560569226742,
+      "nll": 1.8359742164611816,
+      "delta_nll": -0.09651017189025879
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 2,
+      "selected_key": "r725_c0",
+      "kl": -7.457505546426546e-08,
+      "nll": 8.702239938429557e-06,
+      "delta_nll": 2.3841585061745718e-07
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 3,
+      "selected_key": "r725_c0",
+      "kl": 0.00042233290150761604,
+      "nll": 0.24512740969657898,
+      "delta_nll": 0.0072410255670547485
+    },
+    {
+      "rate": 725,
+      "policy": "pr13",
+      "step": 4,
+      "selected_key": "r725_c0",
+      "kl": 0.0016816772986203432,
+      "nll": 0.32306692004203796,
+      "delta_nll": -0.03528866171836853
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 0,
+      "selected_key": "r725_c10",
+      "kl": 2.863560212063021e-06,
+      "nll": 0.2593555450439453,
+      "delta_nll": 1.9043684005737305e-05
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 1,
+      "selected_key": "r725_c10",
+      "kl": 0.0006342369597405195,
+      "nll": 1.9918748140335083,
+      "delta_nll": 0.05939042568206787
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 2,
+      "selected_key": "r725_c10",
+      "kl": -6.277948472188655e-08,
+      "nll": 8.34461570775602e-06,
+      "delta_nll": -1.1920838005607948e-07
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 3,
+      "selected_key": "r725_c10",
+      "kl": 0.001485183835029602,
+      "nll": 0.26596975326538086,
+      "delta_nll": 0.02808336913585663
+    },
+    {
+      "rate": 725,
+      "policy": "current_token_oracle",
+      "step": 4,
+      "selected_key": "r725_c10",
+      "kl": 3.6763206026080297e-06,
+      "nll": 0.3583639860153198,
+      "delta_nll": 8.404254913330078e-06
+    },
+    {
+      "rate": 360,
+      "policy": "metric",
+      "step": 0,
+      "selected_key": "r360_c4",
+      "kl": 8.288483513751999e-06,
+      "nll": 0.2595742344856262,
+      "delta_nll": 0.0002377331256866455
+    },
+    {
+      "rate": 360,
+      "policy": "metric",
+      "step": 1,
+      "selected_key": "r360_c4",
+      "kl": 0.003126866649836302,
+      "nll": 2.0725154876708984,
+      "delta_nll": 0.140031099319458
+    },
+    {
+      "rate": 360,
+      "policy": "metric",
+      "step": 2,
+      "selected_key": "r360_c4",
+      "kl": 1.4090133504396363e-09,
+      "nll": 9.417489309271332e-06,
+      "delta_nll": 9.536652214592323e-07
+    },
+    {
+      "rate": 360,
+      "policy": "metric",
+      "step": 3,
+      "selected_key": "r360_c4",
+      "kl": 0.005538668483495712,
+      "nll": 0.2961345911026001,
+      "delta_nll": 0.05824820697307587
+    },
+    {
+      "rate": 360,
+      "policy": "metric",
+      "step": 4,
+      "selected_key": "r360_c4",
+      "kl": 4.1524603147991e-05,
+      "nll": 0.35906410217285156,
+      "delta_nll": 0.0007085204124450684
+    },
+    {
+      "rate": 360,
+      "policy": "metric_d1_nonworsening",
+      "step": 0,
+      "selected_key": "r360_c4",
+      "kl": 8.288483513751999e-06,
+      "nll": 0.2595742344856262,
+      "delta_nll": 0.0002377331256866455
+    },
+    {
+      "rate": 360,
+      "policy": "metric_d1_nonworsening",
+      "step": 1,
+      "selected_key": "r360_c4",
+      "kl": 0.003126866649836302,
+      "nll": 2.0725154876708984,
+      "delta_nll": 0.140031099319458
+    },
+    {
+      "rate": 360,
+      "policy": "metric_d1_nonworsening",
+      "step": 2,
+      "selected_key": "r360_c4",
+      "kl": 1.4090133504396363e-09,
+      "nll": 9.417489309271332e-06,
+      "delta_nll": 9.536652214592323e-07
+    },
+    {
+      "rate": 360,
+      "policy": "metric_d1_nonworsening",
+      "step": 3,
+      "selected_key": "r360_c4",
+      "kl": 0.005538668483495712,
+      "nll": 0.2961345911026001,
+      "delta_nll": 0.05824820697307587
+    },
+    {
+      "rate": 360,
+      "policy": "metric_d1_nonworsening",
+      "step": 4,
+      "selected_key": "r360_c4",
+      "kl": 4.1524603147991e-05,
+      "nll": 0.35906410217285156,
+      "delta_nll": 0.0007085204124450684
+    },
+    {
+      "rate": 725,
+      "policy": "metric",
+      "step": 0,
+      "selected_key": "r725_c9",
+      "kl": 1.1018148143193685e-05,
+      "nll": 0.2592045068740845,
+      "delta_nll": -0.00013199448585510254
+    },
+    {
+      "rate": 725,
+      "policy": "metric",
+      "step": 1,
+      "selected_key": "r725_c9",
+      "kl": 0.00502396235242486,
+      "nll": 1.9708900451660156,
+      "delta_nll": 0.038405656814575195
+    },
+    {
+      "rate": 725,
+      "policy": "metric",
+      "step": 2,
+      "selected_key": "r725_c9",
+      "kl": 2.8058718015699924e-08,
+      "nll": 9.179073458653875e-06,
+      "delta_nll": 7.152493708417751e-07
+    },
+    {
+      "rate": 725,
+      "policy": "metric",
+      "step": 3,
+      "selected_key": "r725_c9",
+      "kl": 0.0014630258083343506,
+      "nll": 0.26599279046058655,
+      "delta_nll": 0.028106406331062317
+    },
+    {
+      "rate": 725,
+      "policy": "metric",
+      "step": 4,
+      "selected_key": "r725_c9",
+      "kl": 4.3512580305105075e-05,
+      "nll": 0.35902366042137146,
+      "delta_nll": 0.0006680786609649658
+    },
+    {
+      "rate": 725,
+      "policy": "metric_d1_nonworsening",
+      "step": 0,
+      "selected_key": "r725_c9",
+      "kl": 1.1018148143193685e-05,
+      "nll": 0.2592045068740845,
+      "delta_nll": -0.00013199448585510254
+    },
+    {
+      "rate": 725,
+      "policy": "metric_d1_nonworsening",
+      "step": 1,
+      "selected_key": "r725_c9",
+      "kl": 0.00502396235242486,
+      "nll": 1.9708900451660156,
+      "delta_nll": 0.038405656814575195
+    },
+    {
+      "rate": 725,
+      "policy": "metric_d1_nonworsening",
+      "step": 2,
+      "selected_key": "r725_c9",
+      "kl": 2.8058718015699924e-08,
+      "nll": 9.179073458653875e-06,
+      "delta_nll": 7.152493708417751e-07
+    },
+    {
+      "rate": 725,
+      "policy": "metric_d1_nonworsening",
+      "step": 3,
+      "selected_key": "r725_c9",
+      "kl": 0.0014630258083343506,
+      "nll": 0.26599279046058655,
+      "delta_nll": 0.028106406331062317
+    },
+    {
+      "rate": 725,
+      "policy": "metric_d1_nonworsening",
+      "step": 4,
+      "selected_key": "r725_c9",
+      "kl": 4.3512580305105075e-05,
+      "nll": 0.35902366042137146,
+      "delta_nll": 0.0006680786609649658
+    }
+  ],
+  "policy_names": [
+    "pr13",
+    "current_token_oracle",
+    "metric",
+    "metric_d1_nonworsening"
+  ],
+  "metric_selection_reads_terminal_kl": false
+}

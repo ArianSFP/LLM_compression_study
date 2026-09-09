@@ -1,0 +1,67 @@
+{
+  "request_ids": [
+    "1417130510859521146",
+    "5061163745797436117"
+  ],
+  "rates": [
+    360,
+    725
+  ],
+  "policies": [
+    "pr13",
+    "two_choice_oracle"
+  ],
+  "compressed_steps": 2,
+  "exact_future_steps": 4,
+  "layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "cpu_workers": 8,
+  "per_worker_cpu_expert_cache_limit_bytes": 1073741824,
+  "validation_labels_at_plan_seal": 0,
+  "source_sha256": {
+    "run_tail_live_decode.py": "c3925552c4538ed4ae441164b084d51249396e1ce25664f414018a5c33c6caea",
+    "tail_live_options.py": "86d99357588c5af28a5f8d80db44e4afa7563fefca9b50e98486976b07d66748",
+    "analyze_tail_live_decode.py": "b4e41591c88e9501cf6d0cf57e5461ecde361788f56807632c77b218a40e10f0"
+  },
+  "scope": "Targeted post-development exploratory cases; no reserve use; no validation outcome-driven tuning."
+}
