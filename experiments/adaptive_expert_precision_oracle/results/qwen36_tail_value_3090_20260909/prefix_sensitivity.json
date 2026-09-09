@@ -1,0 +1,36 @@
+{
+  "schema": "effective_prefix_sensitivity_v1",
+  "contrasts": [
+    {
+      "contrast": "nested_d1_safe_360_vs_independent_pr13_384_product_matched",
+      "requests": 96,
+      "distinct_effective_inputs": 74,
+      "original_mean": 0.0006062052364042585,
+      "equal_distinct_input_mean": -4.103945866984536e-05
+    },
+    {
+      "contrast": "nested_d1_safe_725_vs_independent_pr13_749_product_matched",
+      "requests": 96,
+      "distinct_effective_inputs": 74,
+      "original_mean": -0.00023039101862789278,
+      "equal_distinct_input_mean": 0.00017358416444169435
+    },
+    {
+      "contrast": "nested_d1_safe_vs_nested_local_only_at_360",
+      "requests": 96,
+      "distinct_effective_inputs": 74,
+      "original_mean": -4.348278696623108e-05,
+      "equal_distinct_input_mean": -5.641010201024574e-05
+    },
+    {
+      "contrast": "nested_d1_safe_vs_nested_local_only_at_725",
+      "requests": 96,
+      "distinct_effective_inputs": 74,
+      "original_mean": 5.092695167038542e-07,
+      "equal_distinct_input_mean": 6.606739676158168e-07
+    }
+  ],
+  "summarisation_fraction_of_sentinel_net_regression": 0.9917730250914754,
+  "original_promotion_decision": "failed_unchanged",
+  "interpretation": "Equal distinct-input weighting changes domain weights and the estimand. Descriptive sensitivity only, not corrected confirmatory inference or a promotion."
+}

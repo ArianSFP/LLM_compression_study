@@ -1,0 +1,208 @@
+{
+  "schema": "tail_value_cohort_audit_v1",
+  "source_sha256": "f8894fa1ba3cc29d30c1f7d60dd11d32e2449792c3fd2e404187bfceedfb19c4",
+  "old_manifest_sha256": "a2934ea02e3ee9c01f566c12969e81baf83b0bf30ee18d0fadeb5bff46a0c546",
+  "old": {
+    "calibration": {
+      "requests": 32,
+      "unique_effective_inputs": 26,
+      "domains": {
+        "code": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "dialogue_instruction": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "factual_qa": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "long_context": {
+          "requests": 4,
+          "unique_effective_inputs": 1
+        },
+        "multilingual": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "prose": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "reasoning": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "summarisation": {
+          "requests": 4,
+          "unique_effective_inputs": 1
+        }
+      }
+    },
+    "evaluation": {
+      "requests": 96,
+      "unique_effective_inputs": 74,
+      "domains": {
+        "code": {
+          "requests": 12,
+          "unique_effective_inputs": 12
+        },
+        "dialogue_instruction": {
+          "requests": 12,
+          "unique_effective_inputs": 12
+        },
+        "factual_qa": {
+          "requests": 12,
+          "unique_effective_inputs": 12
+        },
+        "long_context": {
+          "requests": 12,
+          "unique_effective_inputs": 1
+        },
+        "multilingual": {
+          "requests": 12,
+          "unique_effective_inputs": 12
+        },
+        "prose": {
+          "requests": 12,
+          "unique_effective_inputs": 12
+        },
+        "reasoning": {
+          "requests": 12,
+          "unique_effective_inputs": 12
+        },
+        "summarisation": {
+          "requests": 12,
+          "unique_effective_inputs": 1
+        }
+      }
+    },
+    "evaluation_inputs_seen_in_calibration": 24
+  },
+  "new": {
+    "development": {
+      "requests": 32,
+      "unique_effective_inputs": 32,
+      "domains": {
+        "code": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "dialogue_instruction": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "factual_qa": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "long_context": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "multilingual": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "prose": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "reasoning": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "summarisation": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        }
+      }
+    },
+    "reserve": {
+      "requests": 64,
+      "unique_effective_inputs": 64,
+      "domains": {
+        "code": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "dialogue_instruction": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "factual_qa": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "long_context": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "multilingual": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "prose": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "reasoning": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        },
+        "summarisation": {
+          "requests": 8,
+          "unique_effective_inputs": 8
+        }
+      }
+    },
+    "validation": {
+      "requests": 32,
+      "unique_effective_inputs": 32,
+      "domains": {
+        "code": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "dialogue_instruction": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "factual_qa": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "long_context": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "multilingual": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "prose": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "reasoning": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        },
+        "summarisation": {
+          "requests": 4,
+          "unique_effective_inputs": 4
+        }
+      }
+    }
+  },
+  "position_rule": "min(63,token_count-2)",
+  "old_full_request_overlap": 0,
+  "effective_input_overlap": 0,
+  "reserve_outcomes_may_be_executed": false,
+  "limitation": "Prefix uniqueness does not prove independence of source templates or documents; source supplies no grouping IDs. Reserve is unused in this experiment, not certified unseen in all prior projects.",
+  "development_sha256": "10e972cf7087c01673d3fe10aa45a8caccb4ee8195c1a44e39a198762d090689",
+  "validation_sha256": "de09883de25c88577ffc201281fcf8eceb23141fef9f9bd49612025abd40ff65",
+  "reserve_sha256": "71016a799e11f900f474429ecc4dba49fdf1833050b3f29787fc79cc9e576849"
+}

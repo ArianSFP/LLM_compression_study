@@ -1,0 +1,20 @@
+{
+  "schema": "tail_value_3090_benchmark_v1",
+  "load_seconds": 837.9966381527483,
+  "prefix_seconds": 23.114960860460997,
+  "decode_seconds": 0.6226714514195919,
+  "position": 63,
+  "request_id": "2489012719546680569",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "torch": "2.8.0+cu128",
+  "peak_gpu_allocated_gib": 6.313093662261963,
+  "repeat_logits_bit_exact": true,
+  "native_expert_bit_exact": true,
+  "native_expert_max_abs": 0.0,
+  "cache_tensors": 80,
+  "cache_coordinates": 17367040,
+  "cache_bit_identical": true,
+  "cache_max_abs": 0.0,
+  "cache_mse": 0.0,
+  "passed": true
+}
