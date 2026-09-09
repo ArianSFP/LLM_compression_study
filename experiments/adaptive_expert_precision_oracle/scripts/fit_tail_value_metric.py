@@ -48,7 +48,7 @@ def load_banks(run, fit_dir):
             request=name.rsplit('_l',1)[0]
             for r,x in zip(records,xs):
                 if r['kind']!='external_pr13_high':
-                    rows.append(dict(request_id=request,layer=layer,features=x.tolist(),**r))
+                    rows.append(dict(request_id=request,layer=layer,features=x.tolist(),factor_sha256=facts['factor_sha256'],**r))
     return rows
 
 
@@ -79,7 +79,8 @@ def main():
             bases={(r['request_id'],r['rate']):i for i,r in enumerate(rr) if r['kind']=='pr13'}
             baseline=np.asarray([bases[(r['request_id'],r['rate'])] for r in rr])
             coef,diagnostic=fit_pairs(x,y,baseline)
-            fitted[str(layer)]=dict(coefficients=coef.tolist(),**diagnostic)
+            assert len({r['factor_sha256'] for r in rr})==1
+            fitted[str(layer)]=dict(coefficients=coef.tolist(),factor_sha256=rr[0]['factor_sha256'],**diagnostic)
         model=dict(schema='tail_value_psd_proxy4_v1',feature_names=['local_damage','proxy0_squared','proxy1_squared','proxy2_squared','proxy3_squared'],
                    training_bank_seal_sha256=hashlib.sha256((a.run/'bank_seal.json').read_bytes()).hexdigest(),
                    features_require_exact_q4_residual=True,layers=fitted)
@@ -91,6 +92,8 @@ def main():
         if a.output is None:
             raise ValueError('--output required')
         model=json.loads(a.model.read_text())
+        if any(r['factor_sha256']!=model['layers'][str(r['layer'])]['factor_sha256'] for r in rows):
+            raise ValueError('prediction factors differ from training')
         predictions=[dict(request_id=r['request_id'],layer=r['layer'],rate=r['rate'],key=r['key'],
                           predicted_damage=float(np.asarray(r['features'])@model['layers'][str(r['layer'])]['coefficients'])) for r in rows]
         output=dict(model_sha256=hashlib.sha256(a.model.read_bytes()).hexdigest(),terminal_labels_read=False,predictions=predictions)
