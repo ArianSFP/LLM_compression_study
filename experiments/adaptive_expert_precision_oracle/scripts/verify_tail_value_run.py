@@ -54,6 +54,12 @@ def verify(run, manifest):
             expected_probe={(rate,policy,step) for rate in [360,725] for policy in policies for step in range(horizon+1)}
             assert len(probe['outcomes'])==len(expected_probe)
             assert {(r['rate'],r['policy'],r['step']) for r in probe['outcomes']}==expected_probe
+            cell=json.loads((run/'labels'/f'{request}_l6.json').read_text())
+            labels={r['key']:r for r in cell['outcomes']}
+            for outcome in probe['outcomes']:
+                if outcome['step']==0:
+                    reference=labels[outcome['selected_key']]
+                    assert outcome['kl']==reference['kl'] and outcome['nll']==reference['nll']
             probes+=1
     result=dict(verified=True,requests=len(identity['request_ids']),cells=len(expected),
                 candidate_rows=candidate_rows,cache_probes=probes,omitted_cache_probes=omitted)
