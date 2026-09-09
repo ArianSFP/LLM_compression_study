@@ -11,6 +11,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from oracle_study.d1_decode import cache_state_metrics
 from tail_value_streaming import load_streamed, forward
+import tail_value_streaming
 
 
 def main():
@@ -18,7 +19,11 @@ def main():
     p.add_argument("--checkpoint", required=True)
     p.add_argument("--manifest", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--expert-cache-gib", type=float, default=0.)
     a = p.parse_args()
+    if a.expert_cache_gib<0:
+        raise ValueError("expert cache size must be nonnegative")
+    tail_value_streaming._CACHE_LIMIT=int(a.expert_cache_gib*2**30)
     a.output.mkdir(parents=True, exist_ok=True)
     torch.set_num_threads(8)
     torch.backends.cuda.matmul.allow_tf32 = False
@@ -52,6 +57,7 @@ def main():
     for name, parameter in experts.named_parameters():
         parameter.data = cpu[name]
     facts = dict(schema="tail_value_3090_benchmark_v1", load_seconds=load_seconds,
+                 expert_cache_limit_gib=a.expert_cache_gib,
                  prefix_seconds=prefix_seconds, decode_seconds=decode_seconds,
                  position=position, request_id=row["request_id"],
                  gpu=torch.cuda.get_device_name(), torch=torch.__version__,
