@@ -124,3 +124,11 @@ candidate. The validation wrapper seals its own source hash and fitted model
 hash before validation labels, and refuses to introduce this protocol after
 labels exist. Each policy receives its own cache. The original development
 runner remains unchanged.
+
+A post-development descriptive check examines coordinate dominance within the
+five metric features. Strictly smaller local damage and no larger squared proxy
+projection costs prevent a positive-local, nonnegative-proxy metric from ranking
+the dominated candidate first. The best terminal KL among the remaining
+candidates plus the incumbent is an optimistic capacity envelope, not an
+implementable selector. This check does not change fitted coefficients or the
+validation protocol.
