@@ -1,0 +1,9 @@
+{
+  "logits_bit_exact": true,
+  "development_capture_bit_exact": true,
+  "cache_tensors": 80,
+  "cache_coordinates": 17367040,
+  "cache_bit_identical": true,
+  "cache_max_abs": 0.0,
+  "cache_mse": 0.0
+}

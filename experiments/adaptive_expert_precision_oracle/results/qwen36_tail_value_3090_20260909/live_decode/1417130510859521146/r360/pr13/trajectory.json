@@ -1,0 +1,532 @@
+{
+  "rate": 360,
+  "policy": "pr13",
+  "request_id": "1417130510859521146",
+  "domain": "code",
+  "points": [
+    {
+      "step": 0,
+      "mode": "all_layers_compressed",
+      "kl": 0.013918576762080193,
+      "nll": 0.012938359752297401,
+      "delta_nll": -0.02225997857749462
+    },
+    {
+      "step": 1,
+      "mode": "all_layers_compressed",
+      "kl": 0.023601684719324112,
+      "nll": 0.021947592496871948,
+      "delta_nll": -0.03760620951652527
+    },
+    {
+      "step": 2,
+      "mode": "exact_decode_after_compressed_history",
+      "kl": 0.0019380059093236923,
+      "nll": 0.5245872139930725,
+      "delta_nll": -0.052586913108825684
+    },
+    {
+      "step": 3,
+      "mode": "exact_decode_after_compressed_history",
+      "kl": 0.0008331743883900344,
+      "nll": 0.15636131167411804,
+      "delta_nll": 0.00499330461025238
+    },
+    {
+      "step": 4,
+      "mode": "exact_decode_after_compressed_history",
+      "kl": 0.07667174190282822,
+      "nll": 5.695601940155029,
+      "delta_nll": 0.5104889869689941
+    },
+    {
+      "step": 5,
+      "mode": "exact_decode_after_compressed_history",
+      "kl": 0.001831618370488286,
+      "nll": 0.0169078316539526,
+      "delta_nll": 0.00452400092035532
+    }
+  ],
+  "choices": [
+    {
+      "step": 0,
+      "layer": 0,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 1,
+      "kind": "pr13",
+      "pages": 2874
+    },
+    {
+      "step": 0,
+      "layer": 2,
+      "kind": "pr13",
+      "pages": 2876
+    },
+    {
+      "step": 0,
+      "layer": 3,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 0,
+      "layer": 4,
+      "kind": "pr13",
+      "pages": 2876
+    },
+    {
+      "step": 0,
+      "layer": 5,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 0,
+      "layer": 6,
+      "kind": "pr13",
+      "pages": 2864
+    },
+    {
+      "step": 0,
+      "layer": 7,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 8,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 0,
+      "layer": 9,
+      "kind": "pr13",
+      "pages": 2875
+    },
+    {
+      "step": 0,
+      "layer": 10,
+      "kind": "pr13",
+      "pages": 2876
+    },
+    {
+      "step": 0,
+      "layer": 11,
+      "kind": "pr13",
+      "pages": 2862
+    },
+    {
+      "step": 0,
+      "layer": 12,
+      "kind": "pr13",
+      "pages": 2875
+    },
+    {
+      "step": 0,
+      "layer": 13,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 0,
+      "layer": 14,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 15,
+      "kind": "pr13",
+      "pages": 2866
+    },
+    {
+      "step": 0,
+      "layer": 16,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 0,
+      "layer": 17,
+      "kind": "pr13",
+      "pages": 2871
+    },
+    {
+      "step": 0,
+      "layer": 18,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 19,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 20,
+      "kind": "pr13",
+      "pages": 2874
+    },
+    {
+      "step": 0,
+      "layer": 21,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 0,
+      "layer": 22,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 23,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 0,
+      "layer": 24,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 0,
+      "layer": 25,
+      "kind": "pr13",
+      "pages": 2873
+    },
+    {
+      "step": 0,
+      "layer": 26,
+      "kind": "pr13",
+      "pages": 2874
+    },
+    {
+      "step": 0,
+      "layer": 27,
+      "kind": "pr13",
+      "pages": 2875
+    },
+    {
+      "step": 0,
+      "layer": 28,
+      "kind": "pr13",
+      "pages": 2869
+    },
+    {
+      "step": 0,
+      "layer": 29,
+      "kind": "pr13",
+      "pages": 2876
+    },
+    {
+      "step": 0,
+      "layer": 30,
+      "kind": "pr13",
+      "pages": 2867
+    },
+    {
+      "step": 0,
+      "layer": 31,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 0,
+      "layer": 32,
+      "kind": "pr13",
+      "pages": 2876
+    },
+    {
+      "step": 0,
+      "layer": 33,
+      "kind": "pr13",
+      "pages": 2858
+    },
+    {
+      "step": 0,
+      "layer": 34,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 0,
+      "layer": 35,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 0,
+      "layer": 36,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 0,
+      "layer": 37,
+      "kind": "pr13",
+      "pages": 2872
+    },
+    {
+      "step": 0,
+      "layer": 38,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 0,
+      "layer": 39,
+      "kind": "pr13",
+      "pages": 2872
+    },
+    {
+      "step": 1,
+      "layer": 0,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 1,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 2,
+      "kind": "pr13",
+      "pages": 2873
+    },
+    {
+      "step": 1,
+      "layer": 3,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 4,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 5,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 1,
+      "layer": 6,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 7,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 8,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 9,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 10,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 11,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 1,
+      "layer": 12,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 13,
+      "kind": "pr13",
+      "pages": 2862
+    },
+    {
+      "step": 1,
+      "layer": 14,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 15,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 16,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 17,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 18,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 19,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 20,
+      "kind": "pr13",
+      "pages": 2874
+    },
+    {
+      "step": 1,
+      "layer": 21,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 22,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 23,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 24,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 1,
+      "layer": 25,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 26,
+      "kind": "pr13",
+      "pages": 2879
+    },
+    {
+      "step": 1,
+      "layer": 27,
+      "kind": "pr13",
+      "pages": 2877
+    },
+    {
+      "step": 1,
+      "layer": 28,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 29,
+      "kind": "pr13",
+      "pages": 2863
+    },
+    {
+      "step": 1,
+      "layer": 30,
+      "kind": "pr13",
+      "pages": 2865
+    },
+    {
+      "step": 1,
+      "layer": 31,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 32,
+      "kind": "pr13",
+      "pages": 2878
+    },
+    {
+      "step": 1,
+      "layer": 33,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 34,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 35,
+      "kind": "pr13",
+      "pages": 2852
+    },
+    {
+      "step": 1,
+      "layer": 36,
+      "kind": "pr13",
+      "pages": 2873
+    },
+    {
+      "step": 1,
+      "layer": 37,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 38,
+      "kind": "pr13",
+      "pages": 2880
+    },
+    {
+      "step": 1,
+      "layer": 39,
+      "kind": "pr13",
+      "pages": 2877
+    }
+  ]
+}

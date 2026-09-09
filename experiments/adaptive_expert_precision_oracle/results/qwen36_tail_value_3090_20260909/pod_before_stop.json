@@ -1,0 +1,10 @@
+{
+  "id": "uaabfeqxwpma38",
+  "name": "square_crimson_cobra",
+  "desiredStatus": "RUNNING",
+  "runtimeStatus": "running",
+  "ssh_endpoint": {
+    "ip": "213.192.2.92",
+    "port": 40120
+  }
+}

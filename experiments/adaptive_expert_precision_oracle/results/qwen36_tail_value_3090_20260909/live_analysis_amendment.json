@@ -1,0 +1,7 @@
+{
+  "reason": "Original analyzer incorrectly required uint8, whereas the sealed allocator saves integer states as int64. Accept integer dtypes with exact shape and range 0..7, then cast to uint8 only for bit counting.",
+  "old_analysis_sha256": "b4e41591c88e9501cf6d0cf57e5461ecde361788f56807632c77b218a40e10f0",
+  "new_analysis_sha256": "034677887c4a3c2e6ef7516a56ccb35a7bab094b8503051c2b117f564dc57b04",
+  "candidate_banks_or_choices_changed": false,
+  "completed_before_amendment": true
+}

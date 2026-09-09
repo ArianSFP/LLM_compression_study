@@ -1,0 +1,19 @@
+{
+  "bank_sha256": "72ff1989aaa184a1e2105f79626bee5da47d4bbc5c71e72f47765af87fb6876e",
+  "request_id": "1417130510859521146",
+  "chosen": "pr13",
+  "outcomes": [
+    {
+      "kind": "pr13",
+      "pages": 2880,
+      "local_damage": 0.004411978010505727,
+      "kl": 0.010718336328864098,
+      "nll": 0.014897524379193783,
+      "delta_nll": -0.020300813019275665
+    }
+  ],
+  "rate": 360,
+  "policy": "two_choice_oracle",
+  "step": 0,
+  "layer": 18
+}

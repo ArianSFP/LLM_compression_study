@@ -1,0 +1,10 @@
+{
+  "bank_sha256": "728ebc1e956085ed022d4bf4c6c95f5052d549207992704ed05660b4e27c0a30",
+  "current_candidate_labels_read_before_seal": false,
+  "policy_adapts_to_prior_terminal_labels": true,
+  "seconds": 77.46840285882354,
+  "q4_routed_max_abs": 0.0002165760145301978,
+  "factor_sha256": "8ca08a91686acb20b018c1b70aa2665136501a77efb7e89d47a6d03af20aa33b",
+  "cpu_expert_cache_bytes": 1058856960,
+  "cpu_expert_cache_limit_bytes": 1073741824
+}

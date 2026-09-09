@@ -1,0 +1,9 @@
+{
+  "verified": true,
+  "unique_requests_with_model_outcomes": 64,
+  "reserved_requests": 64,
+  "reserve_overlap": 0,
+  "metric_sha256": "70538ee7d349ed1b97d43cbfbe23005725af35149b524ed316675ab2f63f149e",
+  "live_banks": 640,
+  "live_analysis_regression_tests_passed": 5
+}

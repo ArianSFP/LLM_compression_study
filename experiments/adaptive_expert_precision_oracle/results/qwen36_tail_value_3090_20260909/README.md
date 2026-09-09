@@ -1,4 +1,4 @@
-# Tail-value feasibility and effective-prefix audit
+# Completed 3090 tail-value study and effective-prefix audit
 
 Parent result: `8cd2230a21bbe4aca2910ec7fb6b5426bd43eda7`.
 Methods: [TAIL_VALUE_3090_METHODS.md](../../TAIL_VALUE_3090_METHODS.md).
@@ -124,37 +124,101 @@ layer-6 compressed token. They average five selected requests, not all 32.
 | 725 | current_token_oracle | -0.00345552 | 20% |
 | 725 | metric | +0.00732257 | 60% |
 
-Metric+D1 selects the same choices as the metric in these probes. Future KL
+Metric+D1 selects the same choices as the metric in these probes. The
+long-context case has the largest mean future regression (+0.04870 at 360 and
++0.04399 at 725), but all five metric probes worsen at 360. Future KL
 regressions at both budgets prevent a cache-safety claim. The hindsight oracle's
 future effects also change sign between budgets and cohorts. Current-token KL
 alone is insufficient evidence of safe continuation. The validation dominance
 envelope retains about 97% of headroom; this remains an optimistic capacity
 diagnostic, not a realizable shared selector.
 
-## Targeted live all-layer pilot — in progress
+## Completed targeted live all-layer pilot
 
 The plan was sealed before validation labels. Two selected development cases
 (first code and the dialogue continuation outlier), two budgets and two
-policies produce eight independent trajectories. Each runs two compressed
+policies produced eight independent trajectories. Each ran two compressed
 tokens across all 40 routed-expert layers, followed by four exact future tokens.
-Every candidate bank is rebuilt from the trajectory's live activations and
-routes. The two-choice oracle compares PR13 with exact-local allocation using
-current-token KL. This is a targeted diagnostic, not a population estimate,
-global oracle or runtime controller. No validation results alter its settings.
+Every candidate bank was rebuilt from the trajectory's live activations and
+routes. The two-choice oracle compared PR13 with exact-local allocation using
+current-token KL, with later layers exact during each trial. Earlier selected
+allocations and the trajectory's inherited cache remained active.
 
-## Artifact and promotion status
+All 640 live layer cells passed bank-hash, budget, state, candidate-choice and
+replay checks. Both reference cases matched their original development captures
+and repeated logits/caches exactly; every selected trial replay was bit-exact.
+The pilot took 7,303 seconds (121.7 minutes), including model loading, and
+peaked at 13.315 GiB allocated GPU memory. CPU bank preparation had median
+79.08 seconds and p95 84.12 seconds with eight independent preparation workers.
 
-The 64-request reserve remains unused. Experiment A remains failed and
-Experiment B remains paused. No deployment or runtime speed claim follows from
-these oracle emulations. A larger GPU is unnecessary for these numerical
-experiments, but longer/broader live studies will benefit from more resident
-expert weights. These measured timings use EPYC 7C13, not Zen4; the model's
-CPU-resident BF16 expert weights also require substantial system RAM.
+Differences below compare the two-choice oracle with PR13 at the same payload.
+Compressed columns average two tokens; future columns average four exact tokens
+after the trajectory's compressed history. Negative values improve the metric.
 
-Raw banks, captures and pinned inputs are mirrored locally at
-`/home/arian/LLM_compression_study/tail_value_3090_artifacts` and on persistent
-pod storage at `/workspace/tail_value_3090_20260909`. All development and
-validation banks and all 40 original factor files have verified local hashes.
-Shutdown using runpodctl is pending completion and preservation of the live
-pilot. Changes are committed locally; public publication needs explicit
-approval for the included tokenized manifests and request-level artifacts.
+| Targeted case | Payload | Compressed delta KL | Future delta KL | Future delta NLL |
+|---|---:|---:|---:|---:|
+| code | 360 | -0.00648232 | -0.01810921 | -0.16263391 |
+| code | 725 | +0.02688111 | +0.00373847 | -0.02130817 |
+| dialogue_instruction | 360 | -0.00001919 | +0.00048264 | +0.17715597 |
+| dialogue_instruction | 725 | -0.00006677 | -0.00135943 | +0.15638304 |
+
+The code case improves on both compressed and future KL at 360, but worsens on
+both at 725. Dialogue at 360 improves compressed KL but worsens future KL and
+NLL. Dialogue at 725 improves KL while worsening future NLL. Greedy per-layer
+terminal-KL choices therefore do not ensure a better complete trajectory, and
+KL gains do not ensure lower next-token NLL. These two deliberately selected
+cases are diagnostic examples, not population estimates or a global oracle.
+No validation outcomes altered the pilot settings.
+
+The original final analyzer incorrectly required `uint8` storage, while the
+allocator saves valid `int64` states. The documented analysis-only correction
+accepts integer storage, validates shape and the range 0..7, and casts solely
+for bit counting. Five regression tests pass. Original analyzer source, failure
+log and hashes are preserved; no candidate, allocation, label or trajectory was
+changed. See [amendment](live_analysis_amendment.json) and
+[verified analysis](live_decode/analysis.json).
+
+## Decision and next work
+
+The 3090 phase is complete: corrected-cohort development and frozen validation,
+short private-cache probes, and the bounded all-layer live pilot all ran on the
+24-GiB card. The hardware is sufficient for these numerical experiments when
+paired with substantial host RAM. The measured machine had an EPYC 7C13,
+a 27.2-core quota and a 116.4-GiB RAM limit; these are not 24-core Zen4 timings.
+Bank preparation used about 99.3 GiB of host RAM in development. Plan around
+128 GB of system RAM for this setup and budget hours for the streamed runs.
+This is numerical emulation with CPU-resident BF16 expert weights, not a
+native mixed-precision kernel throughput benchmark.
+
+The current metric should not be promoted. Before spending a fresh evaluation
+set, define a continuation-aware selection objective on development data, with
+explicit KL and NLL criteria and a PR13 fallback. Evaluate it on evolving
+all-layer trajectories, rather than treating isolated-layer terminal KL as a
+safety guarantee. Freeze the new objective and selector before using fresh
+held-out requests. More VRAM would make broader/longer trajectory collection
+faster by retaining more weights, but does not resolve this objective mismatch.
+
+The 64-request reserve received no model outcomes in this experiment.
+Experiment A remains failed and Experiment B remains paused. The fitted metric
+still needs exact Q4 residuals and its extra metadata is unpriced; there is no
+runtime-controller or product promotion claim.
+
+## Preservation and shutdown
+
+All 3,533 remote artifact files match their local SHA256 hashes, and all 40
+original factor files match pilot provenance. Full raw banks, captures, source,
+logs, protocol snapshots and pinned inputs are preserved at
+`/home/arian/LLM_compression_study/tail_value_3090_artifacts`.
+The [inventory](artifact_inventory_sha256.json) and
+[local verification](final_local_verification.json) authenticate the final
+remote snapshot. Lightweight results are included in this branch; large bank
+and capture files remain in the raw local mirror.
+
+Pod `uaabfeqxwpma38` (`square_crimson_cobra`, SSH `213.192.2.92:40120`)
+was stopped with runpodctl after preservation. Its actual `runtimeStatus` was
+verified as `stopped` at 2026-09-09 06:30:38 UTC; see the
+[shutdown record](pod_after_stop.json). The other pod was not stopped.
+
+Changes are committed locally. Public publication requires explicit approval
+for the included tokenized manifests and request-level artifacts; no push has
+occurred.

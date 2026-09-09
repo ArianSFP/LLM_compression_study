@@ -1,0 +1,10 @@
+{
+  "completed": true,
+  "trajectories": 8,
+  "all_chosen_replays_bit_exact": true,
+  "live_layer_cells": 640,
+  "elapsed_seconds": 7302.620388770476,
+  "peak_gpu_gib": 13.315350532531738,
+  "cpu_workers": 8,
+  "per_worker_expert_cache_limit_bytes": 1073741824
+}

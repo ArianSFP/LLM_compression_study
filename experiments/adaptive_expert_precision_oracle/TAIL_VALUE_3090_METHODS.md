@@ -167,3 +167,15 @@ No reserved request is used, and validation coefficients remain frozen.
 CPU preparation for independent trajectories runs in spawned worker processes;
 GPU execution is serialized. Each trajectory retains independent allocation
 maps and caches. Parallel scheduling cannot change its within-trajectory order.
+
+## Completion and analysis-only storage correction
+
+Development and frozen validation each completed 32 requests / 192 banks.
+The live pilot completed all eight trajectories and 640 live cells, with every
+chosen replay bit-exact. Its final analyzer initially rejected the allocator's
+int64 state storage because the verifier assumed uint8. The correction accepts
+integer dtypes with the same exact shape and 0..7 bounds, casting only for
+bit counting. Five regression cases cover supported storage and invalid values.
+No search, allocation or label changed. Original source, hashes and failure
+log are preserved in the result artifacts. The final report records the mixed
+KL/NLL and continuation results, verified local preservation and pod shutdown.

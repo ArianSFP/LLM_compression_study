@@ -9,6 +9,13 @@ import numpy as np
 import pandas as pd
 
 
+def state_pages(state):
+    assert state.shape==(8,512)
+    assert np.issubdtype(state.dtype,np.integer)
+    assert np.min(state)>=0 and np.max(state)<=7
+    return int(np.unpackbits(state.astype(np.uint8)).sum())
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--run',type=Path,required=True)
@@ -53,8 +60,7 @@ def main():
                     records=json.loads(str(bank['records_json']))
                     for record in records:
                         state=bank[record['kind']+'_state']
-                        assert state.shape==(8,512) and state.dtype==np.uint8 and np.max(state)<=7
-                        pages=int(np.unpackbits(state).sum())
+                        pages=state_pages(state)
                         assert pages==record['pages'] and pages<=8*rate
                     desired={'pr13'} if policy=='pr13' else {r['kind'] for r in records}
                     assert {r['kind'] for r in choice['outcomes']}==desired

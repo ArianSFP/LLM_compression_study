@@ -1,0 +1,27 @@
+{
+  "bank_sha256": "fb8ddc23c85bc5ca2e6fe624222e2923579324cdf22c237be19fa6c1084daae1",
+  "request_id": "1417130510859521146",
+  "chosen": "pr13",
+  "outcomes": [
+    {
+      "kind": "pr13",
+      "pages": 2875,
+      "local_damage": 0.047628375578738294,
+      "kl": 0.0038897297345101833,
+      "nll": 0.027365930378437042,
+      "delta_nll": -0.00783240795135498
+    },
+    {
+      "kind": "exact_local",
+      "pages": 2871,
+      "local_damage": 0.046312991458678565,
+      "kl": 0.004538981709629297,
+      "nll": 0.02227221429347992,
+      "delta_nll": -0.012926124036312103
+    }
+  ],
+  "rate": 360,
+  "policy": "two_choice_oracle",
+  "step": 0,
+  "layer": 35
+}

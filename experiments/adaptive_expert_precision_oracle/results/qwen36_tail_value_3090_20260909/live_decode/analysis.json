@@ -1,0 +1,63 @@
+{
+  "verified": true,
+  "requests": 2,
+  "trajectories": 8,
+  "live_layer_cells": 640,
+  "median_cpu_bank_seconds": 79.08379004336894,
+  "p95_cpu_bank_seconds": 84.11711494773627,
+  "summaries": [
+    {
+      "request_id": "1417130510859521146",
+      "domain": "code",
+      "rate": 360,
+      "compressed_pr13_mean_kl": 0.018760130740702152,
+      "compressed_oracle_mean_kl": 0.012277814093977213,
+      "compressed_mean_delta_kl": -0.006482316646724939,
+      "compressed_mean_delta_nll": 0.007619461975991726,
+      "future_pr13_mean_kl": 0.020318635142757557,
+      "future_oracle_mean_kl": 0.0022094267915235832,
+      "future_mean_delta_kl": -0.018109208351233974,
+      "future_mean_delta_nll": -0.16263390588574111
+    },
+    {
+      "request_id": "1417130510859521146",
+      "domain": "code",
+      "rate": 725,
+      "compressed_pr13_mean_kl": 0.0039537406992167234,
+      "compressed_oracle_mean_kl": 0.03083485458046198,
+      "compressed_mean_delta_kl": 0.026881113881245255,
+      "compressed_mean_delta_nll": -0.04273522226139903,
+      "future_pr13_mean_kl": 0.00022089262756708195,
+      "future_oracle_mean_kl": 0.003959358298061488,
+      "future_mean_delta_kl": 0.0037384656704944064,
+      "future_mean_delta_nll": -0.02130817249417305
+    },
+    {
+      "request_id": "5061163745797436117",
+      "domain": "dialogue_instruction",
+      "rate": 360,
+      "compressed_pr13_mean_kl": 3.2580595870967954e-05,
+      "compressed_oracle_mean_kl": 1.3390122148848604e-05,
+      "compressed_mean_delta_kl": -1.919047372211935e-05,
+      "compressed_mean_delta_nll": 0.06226825714111328,
+      "future_pr13_mean_kl": 0.007042785960948095,
+      "future_oracle_mean_kl": 0.0075254254043102264,
+      "future_mean_delta_kl": 0.0004826394433621317,
+      "future_mean_delta_nll": 0.1771559715270996
+    },
+    {
+      "request_id": "5061163745797436117",
+      "domain": "dialogue_instruction",
+      "rate": 725,
+      "compressed_pr13_mean_kl": 7.135305713745765e-05,
+      "compressed_oracle_mean_kl": 4.585308488458395e-06,
+      "compressed_mean_delta_kl": -6.676774864899926e-05,
+      "compressed_mean_delta_nll": -0.18696093559265137,
+      "future_pr13_mean_kl": 0.0027791140018962324,
+      "future_oracle_mean_kl": 0.0014196852425811812,
+      "future_mean_delta_kl": -0.0013594287593150511,
+      "future_mean_delta_nll": 0.15638303756713867
+    }
+  ],
+  "interpretation": "Two selected development cases; fresh routed-expert allocations at all 40 layers; two-choice myopic oracle, not global optimization or a runtime controller. Future steps are exact after compressed history."
+}
