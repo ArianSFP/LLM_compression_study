@@ -117,3 +117,10 @@ The continuation probe uses the first request in each domain at the already
 fixed decode position, with up to four available future teacher-forced steps.
 A request with no such tokens is explicitly omitted from the continuation
 probe; its single-token cell remains in the main study.
+
+For validation, the continuation probe additionally follows the frozen metric
+and its D1-nonworsening subset. These two choices use no terminal KL to select a
+candidate. The validation wrapper seals its own source hash and fitted model
+hash before validation labels, and refuses to introduce this protocol after
+labels exist. Each policy receives its own cache. The original development
+runner remains unchanged.

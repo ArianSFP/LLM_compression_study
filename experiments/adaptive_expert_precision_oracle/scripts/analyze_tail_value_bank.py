@@ -77,16 +77,17 @@ def main():
         for rate in [360,725]:
             outcomes=[r for r in probe["outcomes"] if r["rate"]==rate]
             baseline={r["step"]:r for r in outcomes if r["policy"]=="pr13"}
-            candidate={r["step"]:r for r in outcomes if r["policy"]=="current_token_oracle"}
-            cache_rows.append(dict(request_id=probe["request_id"],domain=probe["domain"],rate=rate,
-                horizon=probe["horizon"],current_delta_kl=candidate[0]["kl"]-baseline[0]["kl"],
-                mean_future_delta_kl=float(np.mean([candidate[s]["kl"]-baseline[s]["kl"] for s in range(1,probe["horizon"]+1)]))))
+            for policy in sorted({r["policy"] for r in outcomes}-{"pr13"}):
+                candidate={r["step"]:r for r in outcomes if r["policy"]==policy}
+                cache_rows.append(dict(request_id=probe["request_id"],domain=probe["domain"],rate=rate,policy=policy,
+                    horizon=probe["horizon"],current_delta_kl=candidate[0]["kl"]-baseline[0]["kl"],
+                    mean_future_delta_kl=float(np.mean([candidate[s]["kl"]-baseline[s]["kl"] for s in range(1,probe["horizon"]+1)]))))
     cache_summary=[]
     if cache_rows:
         cache_frame=pd.DataFrame(cache_rows)
         cache_frame.to_parquet(a.run/"cache_contrasts.parquet",index=False)
-        for rate,g in cache_frame.groupby("rate"):
-            cache_summary.append(dict(rate=int(rate),requests=len(g),mean_current_delta_kl=float(g.current_delta_kl.mean()),
+        for (rate,policy),g in cache_frame.groupby(["rate","policy"]):
+            cache_summary.append(dict(rate=int(rate),policy=policy,requests=len(g),mean_current_delta_kl=float(g.current_delta_kl.mean()),
                 mean_future_delta_kl=float(g.mean_future_delta_kl.mean()),
                 future_harmed_fraction=float((g.mean_future_delta_kl>0).mean()),
                 worst_request_mean_future_delta_kl=float(g.mean_future_delta_kl.max())))

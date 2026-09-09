@@ -39,6 +39,9 @@ def verify(run, manifest):
             candidate_rows+=len(cell['outcomes'])
     probes=0
     omitted=[]
+    policies=['pr13','current_token_oracle']
+    if (run/'validation_protocol.json').exists():
+        policies=json.loads((run/'validation_protocol.json').read_text())['cache_probe_policies']
     if 6 in identity['layers']:
         for request in domain_first.values():
             row=requests[request]
@@ -48,7 +51,9 @@ def verify(run, manifest):
                 continue
             probe=json.loads((run/'cache_probe'/(request+'.json')).read_text())
             assert probe['horizon']==horizon
-            assert len(probe['outcomes'])==4*(probe['horizon']+1)
+            expected_probe={(rate,policy,step) for rate in [360,725] for policy in policies for step in range(horizon+1)}
+            assert len(probe['outcomes'])==len(expected_probe)
+            assert {(r['rate'],r['policy'],r['step']) for r in probe['outcomes']}==expected_probe
             probes+=1
     result=dict(verified=True,requests=len(identity['request_ids']),cells=len(expected),
                 candidate_rows=candidate_rows,cache_probes=probes,omitted_cache_probes=omitted)
