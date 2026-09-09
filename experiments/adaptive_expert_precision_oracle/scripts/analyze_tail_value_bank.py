@@ -70,13 +70,32 @@ def main():
                            mean_delta_vs_pr13_high=float(g.delta_vs_pr13_high.mean()),
                            mean_d1_constraint_regret=float(g.d1_constraint_regret.mean())))
     pd.DataFrame(strata).to_parquet(a.run/"stratum_contrasts.parquet",index=False)
+    cache_rows=[]
+    for path in sorted((a.run/"cache_probe").glob("*.json")):
+        probe=json.loads(path.read_text())
+        for rate in [360,725]:
+            outcomes=[r for r in probe["outcomes"] if r["rate"]==rate]
+            baseline={r["step"]:r for r in outcomes if r["policy"]=="pr13"}
+            candidate={r["step"]:r for r in outcomes if r["policy"]=="current_token_oracle"}
+            cache_rows.append(dict(request_id=probe["request_id"],domain=probe["domain"],rate=rate,
+                horizon=probe["horizon"],current_delta_kl=candidate[0]["kl"]-baseline[0]["kl"],
+                mean_future_delta_kl=float(np.mean([candidate[s]["kl"]-baseline[s]["kl"] for s in range(1,probe["horizon"]+1)]))))
+    cache_summary=[]
+    if cache_rows:
+        cache_frame=pd.DataFrame(cache_rows)
+        cache_frame.to_parquet(a.run/"cache_contrasts.parquet",index=False)
+        for rate,g in cache_frame.groupby("rate"):
+            cache_summary.append(dict(rate=int(rate),requests=len(g),mean_current_delta_kl=float(g.current_delta_kl.mean()),
+                mean_future_delta_kl=float(g.mean_future_delta_kl.mean()),
+                future_harmed_fraction=float((g.mean_future_delta_kl>0).mean()),
+                worst_request_mean_future_delta_kl=float(g.mean_future_delta_kl.max())))
     frame.to_parquet(a.run/"candidate_labels.parquet",index=False)
     contrast.to_parquet(a.run/"cell_contrasts.parquet",index=False)
     req.to_parquet(a.run/"request_contrasts.parquet",index=False)
     facts=dict(schema="tail_value_descriptive_v1",candidate_rows=len(frame),cells=frame.groupby(["request_id","layer","rate"]).ngroups,
                completed=(a.run/"completed.json").exists(),summaries=summaries,
                inference="exploratory development/validation; bank optimum is hindsight; no Experiment B promotion; extra learned metadata unpriced",
-               predictions_model_sha256=(pred["model_sha256"] if predictions else None))
+               predictions_model_sha256=(pred["model_sha256"] if predictions else None),cache_summary=cache_summary)
     (a.run/"analysis.json").write_text(json.dumps(facts,indent=2)+"\n")
     print(json.dumps(facts,indent=2))
 
