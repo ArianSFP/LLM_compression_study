@@ -13,7 +13,7 @@ def test_d1_opportunity_cost_and_future_reversal_are_reported(tmp_path,monkeypat
     cache=[]
     for rate in [360,725]:
         for kind,kl,d1,damage in [('pr13',2.,0,2.),('pair',1.,1,3.),('external_pr13_high',.5,0,1.)]:
-            rows.append(dict(key=f'{rate}_{kind}',rate=rate,kind=kind,kl=kl,d1_missing=d1,local_damage=damage,pages=8*rate))
+            rows.append(dict(key=f'{rate}_{kind}',rate=rate,kind=kind,kl=kl,nll=kl+1.,d1_missing=d1,local_damage=damage,pages=8*rate))
         for policy in ['pr13','current_token_oracle']:
             for step in [0,1]:
                 kl=2. if policy=='pr13' else (1. if step==0 else 3.)

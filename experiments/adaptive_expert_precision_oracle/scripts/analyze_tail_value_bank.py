@@ -44,6 +44,7 @@ def main():
         for policy,r in picks.items():
             contrasts.append(dict(request_id=request,domain=low.domain,split=low.split,layer=int(layer),rate=int(rate),
                      policy=policy,delta_vs_pr13_low=float(r.kl-low.kl),delta_vs_pr13_high=float(r.kl-high.kl),
+                     delta_nll_vs_pr13_low=float(r.nll-low.nll),delta_nll_vs_pr13_high=float(r.nll-high.nll),
                      d1_constraint_regret=float(picks["oracle_d1_nonworsening"].kl-picks["oracle"].kl),
                      selected_kind=r.kind,pages=int(r.pages),reference_low_kl=float(low.kl)))
     contrast=pd.DataFrame(contrasts)
@@ -51,7 +52,7 @@ def main():
     summaries=[]
     for (split,rate,policy),g in req.groupby(["split","rate","policy"]):
         s=dict(split=split,rate=int(rate),policy=policy,requests=len(g))
-        for col in ["delta_vs_pr13_low","delta_vs_pr13_high","d1_constraint_regret"]:
+        for col in ["delta_vs_pr13_low","delta_vs_pr13_high","delta_nll_vs_pr13_low","delta_nll_vs_pr13_high","d1_constraint_regret"]:
             v=g[col].to_numpy()
             s[col]=dict(mean=float(v.mean()),median=float(np.median(v)),p95=float(np.quantile(v,.95)),
                         maximum=float(v.max()),negative_fraction=float(np.mean(v<0)),
