@@ -132,3 +132,30 @@ the dominated candidate first. The best terminal KL among the remaining
 candidates plus the incumbent is an optimistic capacity envelope, not an
 implementable selector. This check does not change fitted coefficients or the
 validation protocol.
+
+## Separate live all-layer development pilot
+
+After held-out validation completes, run one bounded, explicitly exploratory
+pilot on the first development code request. Compare PR13 with a two-choice
+terminal-KL oracle (PR13 versus exact-local) at 360 and 725 pages/expert. Use
+two compressed teacher-forced decode steps followed by four exact decode steps.
+The routed experts in all 40 layers are treated; other components stay on the
+same reference path. This uses the established anchored BF16 output-injection
+model of the Q2/Q4 allocations, not a deployed mixed-precision kernel.
+
+At each current layer, rebuild options using the live activation and live route
+after preceding interventions and the policy's inherited cache. Seal those
+two options before scoring them against the full Q4 reference trajectory.
+Subsequent layers are exact during each local oracle trial. Exact ties prefer
+PR13. Neither candidate is an unpriced Q4/no-compression fallback. A final replay
+must match the chosen trial exactly. This is adaptive offline label use in a
+new protocol; it is not the globally frozen-bank validation experiment, a
+global optimum, or a runtime controller.
+
+Each policy keeps its own cache across both compressed steps. No saved
+exact-prefix residual is reused on a different trajectory. The immutable
+expert-data cache is limited to 16 GiB of CPU arrays and must pass cold/warm
+allocation parity against the development banks. Model/source/factor identities,
+the initial reference gate, per-layer inputs, candidate seals, choices and
+trajectory outcomes are preserved. The same 0.125 Q4 reconstruction gate applies.
+No reserved request is used, and validation coefficients remain frozen.
